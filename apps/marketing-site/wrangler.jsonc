@@ -1,25 +1,71 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "my-marketing-site",
+	"name": "jamesryan-marketing",
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "my-marketing-site",
-		},
+			"database_name": "jamesryan-emdash",
+			"database_id": "3c250296-434a-49e4-9fd4-98e72e855a82"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "89d4a7fc3c4944d1a794c570516c0f60"
+		}
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
-			"bucket_name": "my-marketing-media",
-		},
+			"bucket_name": "jamesryan-media"
+		}
 	],
-	// Worker Loader for plugin sandboxing
 	"worker_loaders": [
 		{
-			"binding": "LOADER",
-		},
+			"binding": "LOADER"
+		}
 	],
+	"routes": [
+		{
+			"pattern": "jamesryan.dev",
+			"custom_domain": true
+		}
+	],
+	"env": {
+		"staging": {
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "jamesryan-emdash-staging",
+					"database_id": "c623fded-80e8-412d-a12c-5b634f856195"
+				}
+			],
+			"kv_namespaces": [
+				{
+					"binding": "SESSION",
+					"id": "89d4a7fc3c4944d1a794c570516c0f60"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "MEDIA",
+					"bucket_name": "jamesryan-media-staging"
+				}
+			],
+			"worker_loaders": [
+				{
+					"binding": "LOADER"
+				}
+			],
+			"routes": [
+				{
+					"pattern": "staging.jamesryan.dev",
+					"custom_domain": true
+				}
+			]
+		}
+	}
 }

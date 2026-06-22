@@ -12,7 +12,7 @@ export const GET: APIRoute = async ({ params }) => {
 		const parts = slug.split("/");
 		const prefix = parts[0];
 		entryId = parts.slice(1).join("/");
-		if (prefix === "blog") {
+		if (prefix === "posts") {
 			collection = "posts";
 		} else if (prefix === "work") {
 			collection = "projects";
@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ params }) => {
 	}
 
 	const settings = await getSiteSettings();
-	const siteTitle = settings?.title || "Oatmeal";
+	const siteTitle = settings?.title || "James Ryan";
 
 	const fullMarkdown = `# ${title}
 *Published on ${siteTitle}*

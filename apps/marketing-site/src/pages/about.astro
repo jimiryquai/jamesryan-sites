@@ -1,49 +1,123 @@
 ---
-import { getEmDashEntry } from "emdash";
+import { getSiteSettings } from "emdash";
 import Base from "../layouts/Base.astro";
-import MarketingBlocks from "../components/MarketingBlocks.astro";
+import { resolveBlogSiteIdentity } from "../utils/site-identity";
 
-const { entry: page, cacheHint } = await getEmDashEntry("pages", "about");
+const settings = await getSiteSettings();
+const { siteTitle } = resolveBlogSiteIdentity(settings);
 
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const pageTitle = page?.data.title || "About Us";
-const pageContent = page?.data.content;
+import LinkedInIcon from "@jamesryan/ui/components/icons/social/linkedin-icon.astro";
+import XIcon from "@jamesryan/ui/components/icons/social/x-icon.astro";
+import GitHubIcon from "@jamesryan/ui/components/icons/social/github-icon.astro";
 ---
 
 <Base
-	title={pageTitle}
-	description="We're on a mission to simplify customer support and automate conversations."
+	title={`About — ${siteTitle}`}
+	description="AI-native marketer & engineer based in the UK."
 >
-	{
-		pageContent ? (
-			<MarketingBlocks value={pageContent} />
-		) : (
-			<div class="empty-state">
-				<h1>{pageTitle}</h1>
-				<p>Add about content in the admin.</p>
-				<a href="/_emdash/admin" class="btn btn-primary">
-					Open Admin
-				</a>
+	<div class="mx-auto w-full max-w-5xl px-6 lg:px-8 py-16 sm:py-24 font-sans">
+		<div
+			class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start"
+		>
+			{/* Photo Column */}
+			<div class="lg:col-span-5 flex flex-col items-center">
+				<div
+					class="relative w-72 h-72 sm:w-80 sm:h-80 rounded-3xl overflow-hidden shadow-xl border-4 border-white dark:border-olive-900 bg-olive-950/2.5 dark:bg-white/5"
+				>
+					<img
+						src="/images/avatar.webp"
+						alt="James Ryan"
+						class="w-full h-full object-cover grayscale"
+					/>
+				</div>
+				<div class="mt-8 flex gap-4">
+					<a
+						href="https://www.linkedin.com/in/jimiryquai"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="LinkedIn"
+						class="flex items-center justify-center p-2.5 text-olive-700 dark:text-olive-350 bg-olive-950/5 dark:bg-white/5 border border-olive-950/5 dark:border-white/10 rounded-full hover:bg-olive-950/10 dark:hover:bg-white/10 hover:text-olive-950 dark:hover:text-white transition-all duration-150 hover:scale-105"
+					>
+						<LinkedInIcon class="size-5" />
+					</a>
+					<a
+						href="https://www.x.com/jimiryquai"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="X"
+						class="flex items-center justify-center p-2.5 text-olive-700 dark:text-olive-350 bg-olive-950/5 dark:bg-white/5 border border-olive-950/5 dark:border-white/10 rounded-full hover:bg-olive-950/10 dark:hover:bg-white/10 hover:text-olive-950 dark:hover:text-white transition-all duration-150 hover:scale-105"
+					>
+						<XIcon class="size-5" />
+					</a>
+					<a
+						href="https://github.com/jimiryquai"
+						target="_blank"
+						rel="noopener noreferrer"
+						aria-label="GitHub"
+						class="flex items-center justify-center p-2.5 text-olive-700 dark:text-olive-350 bg-olive-950/5 dark:bg-white/5 border border-olive-950/5 dark:border-white/10 rounded-full hover:bg-olive-950/10 dark:hover:bg-white/10 hover:text-olive-950 dark:hover:text-white transition-all duration-150 hover:scale-105"
+					>
+						<GitHubIcon class="size-5" />
+					</a>
+				</div>
 			</div>
-		)
-	}
+
+			{/* Content Column */}
+			<div class="lg:col-span-7">
+				<h1
+					class="text-4xl sm:text-5xl font-display tracking-tight text-olive-950 dark:text-white mb-6"
+				>
+					I'm James Ryan.
+				</h1>
+				<p
+					class="text-xl text-olive-850 dark:text-olive-350 font-medium mb-6 leading-relaxed"
+				>
+					Freelance AI-native marketer and senior engineer
+					specializing in automated growth engines, software
+					development, and the Power Platform.
+				</p>
+
+				<div
+					class="space-y-6 text-base text-olive-700 dark:text-olive-400 leading-relaxed"
+				>
+					<p>
+						Currently, I work as a Senior Power Platform Technical
+						Consultant at Capgemini. I am passionate about
+						technology and how it can be leveraged to drive business
+						transformation, automate tedious tasks, and create
+						software that makes people's lives easier.
+					</p>
+					<p>
+						This site serves as my personal marketing testbed and
+						blog where I explore the intersection of AI, automation,
+						and modern marketing strategies.
+					</p>
+
+					<h2
+						class="text-xl font-bold tracking-tight text-olive-950 dark:text-white pt-4"
+					>
+						About Me
+					</h2>
+					<ul class="list-disc pl-5 space-y-2">
+						<li>
+							Passionate about technology and its impact on
+							business growth
+						</li>
+						<li>
+							Avid reader of sci-fi, marketing case studies, and
+							practical engineering blogs
+						</li>
+						<li>Enjoy hiking and exploring the outdoors</li>
+						<li>
+							Always seeking new challenges and opportunities for
+							growth
+						</li>
+						<li>
+							Advocate for work-life balance and mental health
+							awareness
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
 </Base>
-
-<style>
-	.empty-state {
-		text-align: center;
-		padding: var(--spacing-5xl) var(--spacing-lg);
-		max-width: var(--max-width);
-		margin: 0 auto;
-	}
-
-	.empty-state h1 {
-		margin-bottom: var(--spacing-md);
-	}
-
-	.empty-state p {
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-xl);
-	}
-</style>

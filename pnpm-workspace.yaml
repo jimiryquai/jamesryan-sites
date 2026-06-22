@@ -1,7 +1,6 @@
 packages:
   - apps/*
   - packages/*
-  - ../emdash-plugin-code-block-pro
 
 allowBuilds:
   better-sqlite3: false
@@ -19,3 +18,4 @@ minimumReleaseAgeExclude:
 
 patchedDependencies:
   '@emdash-cms/admin': patches/@emdash-cms__admin.patch
+  emdash@0.14.0: patches/emdash@0.14.0.patch

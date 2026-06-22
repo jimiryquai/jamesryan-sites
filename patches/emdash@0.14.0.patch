@@ -1,0 +1,39 @@
+diff --git a/src/components/EmDashImage.astro b/src/components/EmDashImage.astro
+index 710c58974dfa4b71c9bd05dd060a6248b18f1765..b9d2c1a5da52b8147e5ab9a53e2828f56f5ea051 100644
+--- a/src/components/EmDashImage.astro
++++ b/src/components/EmDashImage.astro
+@@ -21,6 +21,7 @@ import type { HTMLAttributes } from "astro/types";
+ import type { ImageEmbed } from "../media/types.js";
+ import { getMediaProvider } from "../media/provider-loader.js";
+ import { buildRenderMediaUrl } from "../media/url.js";
++import { getImage } from "astro:assets";
+ // Standard responsive breakpoints
+ const BREAKPOINTS = [640, 750, 828, 960, 1080, 1280, 1600, 1920];
+ 
+@@ -99,7 +100,25 @@ if (img) {
+ 
+ 	if (providerId === "local" || img.src) {
+ 		// Local provider or direct src URL
+-		src = img.src || buildLocalImageUrl(img);
++		const rawSrc = img.src || buildLocalImageUrl(img);
++		try {
++			const maxWidth = finalWidth || img.width || 1200;
++			const targetWidths = BREAKPOINTS.filter((w) => w <= maxWidth);
++			const optimized = await getImage({
++				src: rawSrc,
++				width: finalWidth || 1200,
++				height: finalHeight || 750,
++				widths: targetWidths,
++				sizes: sizes || (finalWidth ? `(min-width: ${finalWidth}px) ${finalWidth}px, 100vw` : "100vw"),
++				format: "webp",
++			});
++			src = optimized.src;
++			srcset = optimized.srcSet.attribute;
++			sizes = optimized.attributes.sizes;
++		} catch (e) {
++			console.error("[EmDashImage] Failed to optimize local image with Astro:", e);
++			src = rawSrc;
++		}
+ 	} else {
+ 		// External provider
+ 		try {

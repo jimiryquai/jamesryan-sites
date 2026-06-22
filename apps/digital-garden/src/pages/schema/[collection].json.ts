@@ -24,7 +24,7 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 	// Build common site entities
 	const personImagePiece = buildImageObject({
 		id: ids.personImage,
-		url: `${siteUrl}/images/avatar.jpg`,
+		url: `${siteUrl}/images/avatar.webp`,
 		width: 400,
 		height: 400,
 	}, ids);

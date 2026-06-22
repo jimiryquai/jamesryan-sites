@@ -1,0 +1,515 @@
+---
+import { highlightCode } from "../utils/highlighter.js";
+import { parseLineHighlights } from "../utils/parseLineHighlights.js";
+import { DEFAULT_THEME } from "../constants.js";
+
+function escapeHtml(str: string): string {
+	return str
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#39;");
+}
+
+interface CodeBlockProNode {
+	_type: "code-block-pro";
+	_key?: string;
+	code: string;
+	language?: string;
+	theme?: string;
+	filename?: string;
+	lineNumbers?: boolean | string;
+	startingLineNumber?: string;
+	lineHighlights?: string;
+	copyButton?: boolean | string;
+	maxHeight?: string;
+}
+
+const node: CodeBlockProNode = Astro.props.node;
+const {
+	code = "",
+	language = "text",
+	theme = DEFAULT_THEME,
+	filename,
+	lineNumbers = false,
+	startingLineNumber,
+	lineHighlights = "",
+	copyButton = true,
+	maxHeight,
+} = node;
+
+const highlightedLineNumbers = parseLineHighlights(lineHighlights);
+
+// Strip trailing newline to avoid an empty last line in Shiki output
+const trimmedCode = code.replace(/\n$/, "");
+const codeForShiki = trimmedCode || " ";
+
+// Generate highlighted HTML via Shiki (JS engine — no WASM)
+// Wrapped in try/catch to fall back to raw code if Shiki fails
+let highlightedHtml: string;
+try {
+	highlightedHtml = await highlightCode(codeForShiki, language || "text", theme || "github-dark");
+} catch (err) {
+	console.error("[code-block-pro] Shiki highlighting failed:", err);
+	highlightedHtml = `<pre class="shiki" style="background-color:#24292e;color:#e1e4e8"><code>${escapeHtml(trimmedCode)}</code></pre>`;
+}
+
+// Extract background-color and color from Shiki output to match wrapper theme
+let themeBg = "#24292e";
+let themeFg = "#e1e4e8";
+
+const bgMatch = highlightedHtml.match(/background-color:\s*([^;"]+)/);
+if (bgMatch) {
+	themeBg = bgMatch[1].trim();
+}
+const fgMatch = highlightedHtml.match(/(?<!-)color:\s*([^;"]+)/);
+if (fgMatch) {
+	themeFg = fgMatch[1].trim();
+}
+
+// Strip the inline style attribute from the <pre> tag to avoid using CSS !important hacks
+highlightedHtml = highlightedHtml.replace(
+	/<pre([^>]*)\sstyle="[^"]*"\s*([^>]*)>/,
+	(match, before, after) => `<pre${before}${after}>`
+);
+
+// Post-process: add cbp-highlighted class to highlighted line spans.
+// Shiki outputs each line as <span class="line">...</span>.
+// We match each occurrence and add our class for highlighted lines.
+if (highlightedLineNumbers.size > 0) {
+	let lineIdx = 0;
+	highlightedHtml = highlightedHtml.replace(/<span class="line"/g, (match) => {
+		lineIdx++;
+		if (highlightedLineNumbers.has(lineIdx)) {
+			return '<span class="line cbp-highlighted"';
+		}
+		return match;
+	});
+}
+
+// Post-process: add custom starting line number if enabled and startNumber != 1
+const startNumber = parseInt(String(startingLineNumber ?? "1"), 10) || 1;
+if (lineNumbers && startNumber !== 1) {
+	highlightedHtml = highlightedHtml.replace(
+		/<code([^>]*)>/g,
+		(match, attrs) => {
+			if (attrs.includes("style=")) {
+				return `<code${attrs.replace(/style=["']([^"']*)["']/, `style="$1;counter-reset:cbp-line ${startNumber - 1}"`)}>`;
+			}
+			return `<code${attrs} style="counter-reset:cbp-line ${startNumber - 1}">`;
+		}
+	);
+}
+
+const hasFilename = !!filename;
+const hasLineNumbers = lineNumbers === true || lineNumbers === "true";
+const hasCopyButton = copyButton !== false && copyButton !== "false";
+
+// Compute a label for the language badge
+const langLabel = language && language !== "text" ? language : "";
+
+// Header is shown if we have filename, language badge, OR a copy button
+const showHeader = hasFilename || !!langLabel || hasCopyButton;
+
+// Determine if the background is light or dark to style components responsively
+function isThemeDark(color: string): boolean {
+	const c = color.trim().toLowerCase();
+	if (c.startsWith("#")) {
+		const hex = c.substring(1);
+		let r = 0, g = 0, b = 0;
+		if (hex.length === 3) {
+			r = parseInt(hex[0] + hex[0], 16);
+			g = parseInt(hex[1] + hex[1], 16);
+			b = parseInt(hex[2] + hex[2], 16);
+		} else if (hex.length === 6) {
+			r = parseInt(hex.substring(0, 2), 16);
+			g = parseInt(hex.substring(2, 4), 16);
+			b = parseInt(hex.substring(4, 6), 16);
+		} else {
+			return true;
+		}
+		return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+	}
+	if (c.startsWith("rgb")) {
+		const matches = c.match(/\d+/g);
+		if (matches && matches.length >= 3) {
+			const r = parseInt(matches[0], 10);
+			const g = parseInt(matches[1], 10);
+			const b = parseInt(matches[2], 10);
+			return (r * 299 + g * 587 + b * 114) / 1000 < 128;
+		}
+	}
+	if (c === "white" || c === "lightyellow" || c === "ivory" || c === "snow") return false;
+	return true;
+}
+
+const isDark = isThemeDark(themeBg);
+---
+
+<div
+	class:list={["cbp-wrapper", showHeader && "cbp-has-header", isDark ? "cbp-theme-dark" : "cbp-theme-light"]}
+	style={`--cbp-theme-bg: ${themeBg}; --cbp-theme-fg: ${themeFg};`}
+>
+	{showHeader && (
+		<div class="cbp-header">
+			<div class="cbp-header-left">
+				{langLabel && <span class="cbp-lang-badge">{langLabel}</span>}
+				{hasFilename && <span class="cbp-filename">{filename}</span>}
+			</div>
+			<div class="cbp-header-right">
+				{hasCopyButton && (
+					<button
+						class="cbp-copy-btn"
+						title="Copy code"
+						aria-label="Copy code to clipboard"
+						data-code={trimmedCode}
+					>
+						<svg
+							class="cbp-icon-copy"
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+							<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+						</svg>
+						<svg
+							class="cbp-icon-check"
+							xmlns="http://www.w3.org/2000/svg"
+							width="16"
+							height="16"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<polyline points="20 6 9 17 4 12"></polyline>
+						</svg>
+					</button>
+				)}
+			</div>
+		</div>
+	)}
+	<div
+		class:list={["cbp-body", hasLineNumbers && "cbp-has-line-numbers"]}
+	>
+		<div
+			class="cbp-scroll"
+			style={maxHeight ? `max-height:${maxHeight}` : undefined}
+		>
+			<Fragment set:html={highlightedHtml} />
+		</div>
+	</div>
+</div>
+
+<style is:global>
+	/* ================================================================
+	   Code Block Pro — full-featured code renderer
+	   All selectors prefixed with .cbp- to avoid collisions.
+	   Using `is:global` because Shiki HTML is injected via set:html
+	   and won't receive Astro's scoping data attributes.
+	   ================================================================ */
+
+	.cbp-wrapper {
+		--cbp-radius: 12px;
+		border-radius: var(--cbp-radius);
+		overflow: hidden;
+		margin: 0.5rem 0;
+		font-size: 0.875em;
+		line-height: 1.5;
+		background: var(--cbp-theme-bg, #24292e);
+		color: var(--cbp-theme-fg, #e1e4e8);
+		border: 1px solid rgba(127, 127, 127, 0.15);
+		box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -4px rgba(0, 0, 0, 0.15);
+
+		/* Safe WCAG fallback values */
+		--cbp-line-number-color: rgba(127, 127, 127, 0.5);
+		--cbp-header-bg: rgba(0, 0, 0, 0.1);
+		--cbp-header-border: rgba(127, 127, 127, 0.15);
+		--cbp-badge-fg: rgba(127, 127, 127, 0.7);
+		--cbp-filename-fg: rgba(127, 127, 127, 0.75);
+		--cbp-btn-bg: rgba(127, 127, 127, 0.05);
+		--cbp-btn-border: rgba(127, 127, 127, 0.15);
+		--cbp-btn-fg: rgba(127, 127, 127, 0.75);
+		--cbp-btn-hover-bg: rgba(127, 127, 127, 0.12);
+		--cbp-btn-hover-border: rgba(127, 127, 127, 0.3);
+		--cbp-btn-hover-fg: inherit;
+
+		/* Scrollbar customization variables */
+		--cbp-scrollbar-track: rgba(127, 127, 127, 0.05);
+		--cbp-scrollbar-thumb: rgba(127, 127, 127, 0.3);
+		--cbp-scrollbar-thumb-hover: rgba(127, 127, 127, 0.45);
+	}
+
+	.cbp-wrapper.cbp-theme-dark {
+		--cbp-line-number-color: rgba(255, 255, 255, 0.5);
+		--cbp-header-bg: rgba(0, 0, 0, 0.22);
+		--cbp-header-border: rgba(255, 255, 255, 0.1);
+		--cbp-badge-fg: rgba(255, 255, 255, 0.65);
+		--cbp-filename-fg: rgba(255, 255, 255, 0.75);
+		--cbp-btn-bg: rgba(255, 255, 255, 0.05);
+		--cbp-btn-border: rgba(255, 255, 255, 0.15);
+		--cbp-btn-fg: rgba(255, 255, 255, 0.8);
+		--cbp-btn-hover-bg: rgba(255, 255, 255, 0.12);
+		--cbp-btn-hover-border: rgba(255, 255, 255, 0.3);
+		--cbp-btn-hover-fg: #ffffff;
+
+		--cbp-scrollbar-track: rgba(0, 0, 0, 0.22);
+		--cbp-scrollbar-thumb: rgba(255, 255, 255, 0.25);
+		--cbp-scrollbar-thumb-hover: rgba(255, 255, 255, 0.4);
+	}
+
+	.cbp-wrapper.cbp-theme-light {
+		--cbp-line-number-color: rgba(0, 0, 0, 0.5);
+		--cbp-header-bg: rgba(0, 0, 0, 0.04);
+		--cbp-header-border: rgba(0, 0, 0, 0.08);
+		--cbp-badge-fg: rgba(0, 0, 0, 0.7);
+		--cbp-filename-fg: rgba(0, 0, 0, 0.7);
+		--cbp-btn-bg: rgba(0, 0, 0, 0.03);
+		--cbp-btn-border: rgba(0, 0, 0, 0.12);
+		--cbp-btn-fg: rgba(0, 0, 0, 0.7);
+		--cbp-btn-hover-bg: rgba(0, 0, 0, 0.08);
+		--cbp-btn-hover-border: rgba(0, 0, 0, 0.25);
+		--cbp-btn-hover-fg: rgba(0, 0, 0, 0.95);
+
+		--cbp-scrollbar-track: rgba(0, 0, 0, 0.04);
+		--cbp-scrollbar-thumb: rgba(0, 0, 0, 0.2);
+		--cbp-scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+	}
+
+	/* ---- Header (filename tab & toolbar) ---- */
+	.cbp-wrapper .cbp-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75em;
+		padding: 0.4em 1em;
+		background: var(--cbp-header-bg);
+		border-bottom: 1px solid var(--cbp-header-border);
+		min-height: 2.5em;
+		box-sizing: border-box;
+		color: inherit;
+	}
+
+	.cbp-wrapper .cbp-header-left {
+		display: flex;
+		align-items: center;
+		gap: 0.75em;
+		min-width: 0;
+	}
+
+	.cbp-wrapper .cbp-header-right {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.cbp-wrapper .cbp-filename {
+		font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+			"Liberation Mono", monospace;
+		font-size: 0.8em;
+		color: var(--cbp-filename-fg);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.cbp-wrapper .cbp-lang-badge {
+		font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+			"Liberation Mono", monospace;
+		font-size: 0.75em;
+		color: var(--cbp-badge-fg);
+		text-transform: uppercase;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		flex-shrink: 0;
+		background: transparent !important;
+		padding: 0 !important;
+		border: none !important;
+		border-radius: 0 !important;
+	}
+
+	/* ---- Body & scroll container ---- */
+	.cbp-wrapper .cbp-body {
+		position: relative;
+	}
+
+	.cbp-wrapper .cbp-scroll {
+		overflow: auto;
+		scrollbar-width: thin;
+		scrollbar-color: var(--cbp-scrollbar-thumb) var(--cbp-scrollbar-track);
+	}
+
+	/* Custom scrollbar styling for WebKit browsers */
+	.cbp-wrapper .cbp-scroll::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	.cbp-wrapper .cbp-scroll::-webkit-scrollbar-track {
+		background: var(--cbp-scrollbar-track);
+		border-radius: 4px;
+	}
+
+	.cbp-wrapper .cbp-scroll::-webkit-scrollbar-thumb {
+		background: var(--cbp-scrollbar-thumb);
+		border-radius: 4px;
+		border: 2px solid transparent;
+		background-clip: padding-box;
+	}
+
+	.cbp-wrapper .cbp-scroll::-webkit-scrollbar-thumb:hover {
+		background: var(--cbp-scrollbar-thumb-hover);
+		border: 2px solid transparent;
+		background-clip: padding-box;
+	}
+
+	.cbp-wrapper .cbp-scroll > pre {
+		margin: 0 !important;
+		padding: 0.5rem 0 !important;
+		border: none !important;
+		border-radius: 0 !important;
+		background: transparent !important;
+		min-width: 100%;
+		box-sizing: border-box;
+		color: inherit;
+	}
+
+	.cbp-wrapper .cbp-scroll > pre code {
+		display: grid;
+		min-width: 100%;
+		background: transparent !important;
+		padding: 0 !important;
+		border: none !important;
+		border-radius: 0 !important;
+		color: var(--cbp-theme-fg) !important;
+	}
+
+	.cbp-wrapper .cbp-scroll > pre code span:not([style]) {
+		color: var(--cbp-theme-fg);
+	}
+
+	.cbp-wrapper .cbp-scroll > pre code .line {
+		display: block;
+		min-height: 1.5em;
+		line-height: 1.5;
+		padding: 0 1.5em;
+		transition: background-color 0.2s ease, opacity 0.2s ease;
+	}
+
+	.cbp-wrapper .cbp-scroll > pre code .line:hover {
+		background: rgba(255, 255, 255, 0.03);
+	}
+
+	.cbp-wrapper .cbp-scroll > pre code .line:hover::before {
+		opacity: 0.8;
+	}
+
+	/* ---- Line numbers (CSS counter approach) ---- */
+	.cbp-body.cbp-has-line-numbers .cbp-scroll > pre code {
+		counter-reset: cbp-line;
+	}
+
+	.cbp-body.cbp-has-line-numbers .cbp-scroll > pre code .line {
+		counter-increment: cbp-line;
+		position: relative;
+		padding-left: 3.5em;
+	}
+
+	.cbp-body.cbp-has-line-numbers .cbp-scroll > pre code .line::before {
+		content: counter(cbp-line);
+		position: absolute;
+		left: 1.5em;
+		width: 1.5em;
+		text-align: right;
+		user-select: none;
+		-webkit-user-select: none;
+		font-size: 0.85em;
+		speak: never;
+		pointer-events: none;
+		transition: color 0.2s ease;
+		color: var(--cbp-line-number-color);
+	}
+
+	/* ---- Highlighted lines ---- */
+	.cbp-wrapper .cbp-scroll > pre code .line.cbp-highlighted {
+		background: rgba(99, 102, 241, 0.08); /* Soft premium indigo */
+		box-shadow: inset 4px 0 0 0 #6366f1; /* Left accent indigo line */
+	}
+
+	/* ---- Copy button ---- */
+	.cbp-wrapper .cbp-copy-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 2.25em;
+		height: 2.25em;
+		padding: 0;
+		background: var(--cbp-btn-bg);
+		border: 1px solid var(--cbp-btn-border);
+		color: var(--cbp-btn-fg);
+		border-radius: 6px;
+		cursor: pointer;
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cbp-wrapper .cbp-copy-btn:focus-visible {
+		outline: 2px solid #6366f1;
+		outline-offset: 2px;
+	}
+
+	.cbp-wrapper .cbp-copy-btn:hover {
+		background: var(--cbp-btn-hover-bg);
+		border-color: var(--cbp-btn-hover-border);
+		color: var(--cbp-btn-hover-fg);
+		transform: scale(1.05);
+	}
+
+	.cbp-wrapper .cbp-copy-btn:active {
+		transform: scale(0.95);
+	}
+
+	.cbp-wrapper .cbp-icon-check {
+		display: none;
+	}
+
+	.cbp-wrapper .cbp-copy-btn.cbp-copied .cbp-icon-copy {
+		display: none;
+	}
+
+	.cbp-wrapper .cbp-copy-btn.cbp-copied .cbp-icon-check {
+		display: block;
+		color: #4ade80;
+	}
+</style>
+
+<script>
+	// Copy-to-clipboard handler — delegated so it works for all instances.
+	document.addEventListener("click", (e: MouseEvent) => {
+		const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".cbp-copy-btn");
+		if (!btn) return;
+
+		const raw = btn.getAttribute("data-code") ?? "";
+		// Decode HTML entities that Astro may have encoded in the attribute
+		const decoded = raw
+			.replace(/&amp;/g, "&")
+			.replace(/&lt;/g, "<")
+			.replace(/&gt;/g, ">")
+			.replace(/&quot;/g, '"')
+			.replace(/&#39;/g, "'");
+
+		navigator.clipboard.writeText(decoded).then(() => {
+			btn.classList.add("cbp-copied");
+			setTimeout(() => btn.classList.remove("cbp-copied"), 2000);
+		});
+	});
+</script>

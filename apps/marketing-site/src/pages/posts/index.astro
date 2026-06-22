@@ -87,13 +87,13 @@ function formatDate(date: Date | null | undefined) {
 			) : (
 				<div class="space-y-24">
 					{/* Header / Intro */}
-					<div class="max-w-2xl">
-						<p class="text-sm font-semibold tracking-widest uppercase text-olive-600 dark:text-olive-400">Our Blog</p>
+					<div class="max-w-2xl font-sans">
+						<p class="text-sm font-semibold tracking-widest uppercase text-olive-600 dark:text-olive-400">Blog</p>
 						<h1 class="mt-4 text-5xl sm:text-6xl font-display tracking-tight text-olive-950 dark:text-white">
-							Stories from the team
+							Insights & Ideas
 						</h1>
 						<p class="mt-4 text-lg text-olive-750 dark:text-olive-455">
-							{siteTagline || "Thoughts, stories, and ideas from the Oatmeal creators."}
+							{siteTagline || "Thoughts on the Power Platform, automation, and AI-native marketing."}
 						</p>
 					</div>
 
@@ -101,10 +101,11 @@ function formatDate(date: Date | null | undefined) {
 					{featuredPost && (
 						<section class="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 							<div class="lg:col-span-7 aspect-[16/10] w-full overflow-hidden rounded-3xl bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5">
-								<a href={`/blog/${featuredPost.id}`} class="block w-full h-full">
+								<a href={`/posts/${featuredPost.id}`} class="block w-full h-full">
 									<Image 
 										image={featuredPost.data.featured_image} 
 										class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+										style="width: 100%; height: 100%; object-fit: cover;"
 									/>
 								</a>
 							</div>
@@ -146,7 +147,7 @@ function formatDate(date: Date | null | undefined) {
 									</span>
 								</div>
 
-								<a href={`/blog/${featuredPost.id}`} class="block group-hover:opacity-90">
+								<a href={`/posts/${featuredPost.id}`} class="block group-hover:opacity-90">
 									<h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-olive-950 dark:text-white leading-tight group-hover:text-olive-700 dark:group-hover:text-olive-300 transition-colors duration-150">
 										{featuredPost.data.title}
 									</h2>
@@ -181,7 +182,7 @@ function formatDate(date: Date | null | undefined) {
 								<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400">Latest Stories</h2>
 								{hasMorePosts && (
 									<a 
-										href="/blog" 
+										href="/posts" 
 										class="text-sm font-medium text-olive-900 dark:text-white hover:text-olive-700 dark:hover:text-olive-300 transition-colors duration-150"
 									>
 										View all posts &rarr;
@@ -194,7 +195,7 @@ function formatDate(date: Date | null | undefined) {
 										title={post.data.title ?? "Untitled"}
 										excerpt={post.data.excerpt}
 										featuredImage={post.data.featured_image}
-										href={`/blog/${post.id}`}
+										href={`/posts/${post.id}`}
 										date={post.data.publishedAt ?? undefined}
 										readingTime={getReadingTime(post.data.content)}
 										tags={tags}

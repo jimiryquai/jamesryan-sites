@@ -15,6 +15,7 @@ import {
 	CommentForm,
 	WidgetArea,
 } from "emdash/ui";
+import { getImage } from "astro:assets";
 import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
@@ -54,13 +55,30 @@ function getImageUrl(img: unknown): string | undefined {
 	return undefined;
 }
 const featuredImageUrl = getImageUrl(post.data.featured_image);
+
+let preloadedImageUrl = "";
+if (post.data.featured_image) {
+	try {
+		const rawSrc = post.data.featured_image.src || `/_emdash/api/media/file/${post.data.featured_image.id}`;
+		const optimized = await getImage({
+			src: rawSrc,
+			width: post.data.featured_image.width || 1200,
+			height: post.data.featured_image.height || 750,
+			format: "webp",
+		});
+		preloadedImageUrl = optimized.src;
+	} catch (e) {
+		console.error("Failed to generate preload image URL in [slug].astro:", e);
+		preloadedImageUrl = post.data.featured_image.src || `/_emdash/api/media/file/${post.data.featured_image.id}`;
+	}
+}
 const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
 
 // Generate SEO meta from content
 const seo = getSeoMeta(post, {
 	siteTitle,
 	siteUrl: Astro.url.origin,
-	path: `/blog/${slug}`,
+	path: `/posts/${slug}`,
 	defaultOgImage: featuredImageUrl,
 });
 
@@ -107,12 +125,21 @@ const publishDate =
 	modifiedTime={post.data.updatedAt.toISOString()}
 	content={{ collection: "posts", id: post.data.id, slug }}
 >
+	{preloadedImageUrl && (
+		<link 
+			rel="preload" 
+			as="image" 
+			href={preloadedImageUrl} 
+			fetchpriority="high"
+			slot="links" 
+		/>
+	)}
 	<article class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16">
 		{/* Hero: Full-width featured image */}
 		{
 			post.data.featured_image && (
 				<div class="mb-12 rounded-3xl overflow-hidden bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5 max-h-[500px]" {...post.edit.featured_image}>
-					<Image image={post.data.featured_image} class="w-full h-full object-cover" />
+					<Image image={post.data.featured_image} class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
 				</div>
 			)
 		}
@@ -266,7 +293,7 @@ const publishDate =
 									title={p.data.title}
 									excerpt={p.data.excerpt}
 									featuredImage={p.data.featured_image}
-									href={`/blog/${p.id}`}
+									href={`/posts/${p.id}`}
 									date={p.data.publishedAt ?? undefined}
 									readingTime={getReadingTime(p.data.content)}
 									tags={postTags.map((t) => ({ slug: t.slug, label: t.label }))}
