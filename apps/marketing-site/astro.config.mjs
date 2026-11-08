@@ -14,7 +14,7 @@ export default defineConfig({
 	output: "server",
 	adapter: cloudflare({ 
 		imageService: "passthrough",
-		inspectorPort: process.argv.includes("dev") ? 9229 : undefined 
+		inspectorPort: process.argv.includes("dev") ? 9229 : false 
 	}),
 	server: {
 		port: 4321,
