@@ -14,6 +14,7 @@ permissions:
 concurrency:
   group: deploy-sites
   cancel-in-progress: false
+  queue: max
 
 env:
   ASTRO_TELEMETRY_DISABLED: "1"

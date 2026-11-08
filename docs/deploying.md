@@ -24,10 +24,10 @@ CI on the current master commit to produce a fresh staging run. It checks out
 that recorded commit, builds it again and deploys only jamesryan.dev. The garden
 has no production promotion.
 
-Deployments are serialized. A newer pending deployment can replace an older
-pending run under GitHub Actions concurrency rules; inspect Actions if a run
-is skipped or cancelled. A newer push can also make an older completed CI run
-stale, in which case staging rejects it.
+Deployments are serialized with a queue of up to 100 pending runs. A newer
+push can make an older completed CI run stale, in which case staging rejects
+it rather than replacing newer code with older code. Inspect Actions if a
+run is skipped or cancelled.
 
 EmDash's default `auto` mode applies ordinary core migrations on the first
 request after deployment, and the workflow then runs `emdash migrate --check`
