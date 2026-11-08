@@ -16,8 +16,9 @@ the commit only if all checks pass. Posts are discovered from each sitemap;
 each staging site needs a published post.
 
 To promote, open Actions > Deploy > Run workflow, select `master`, and approve
-the `production` environment deployment. Inspect the latest staging run and
-its commit before approval. Promotion fails closed if the latest staging run
+the `production` environment deployment. Inspect the staged commit and run
+shown in the workflow summary before approval. Promotion verifies the run has
+not changed while awaiting approval and fails closed if the latest staging run
 is incomplete or failed or its commit artifact has expired (90 days); rerun
 CI on the current master commit to produce a fresh staging run. It checks out
 that recorded commit, builds it again and deploys only jamesryan.dev. The garden

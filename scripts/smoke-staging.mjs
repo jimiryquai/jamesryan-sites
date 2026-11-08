@@ -10,7 +10,7 @@ for (const host of hosts) {
   async function check(path) {
     const url = new URL(path, origin);
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      const response = await fetch(url, { redirect: "manual", signal: AbortSignal.timeout(15000) });
       console.log(`${response.status} ${url}`);
       if (response.status !== 200 || new URL(response.url).origin !== origin) failed = true;
       return response;
@@ -20,7 +20,7 @@ for (const host of hosts) {
       return null;
     }
   }
-  for (const path of ["/", "/_emdash/admin", "/robots.txt", "/llms.txt"]) await check(path);
+  for (const path of ["/", "/_emdash/admin/login", "/robots.txt", "/llms.txt"]) await check(path);
   const sitemap = await check("/sitemap.xml");
   const xml = sitemap?.status === 200 ? await sitemap.text() : "";
   const locations = [...xml.matchAll(/<loc>\s*([^<]+)\s*<\/loc>/g)];

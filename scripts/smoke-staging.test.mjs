@@ -25,8 +25,27 @@ test("smoke checks the post from the sitemap and fails on a missing endpoint", a
     child.stderr.on("data", data => output += data);
     const [code] = await once(child, "close");
     assert.equal(code, 1, output);
-    assert.deepEqual(paths.sort(), ["/", "/_emdash/admin", "/llms.txt", "/posts/example", "/robots.txt", "/sitemap.xml"].sort());
+    assert.deepEqual(paths.sort(), ["/", "/_emdash/admin/login", "/llms.txt", "/posts/example", "/robots.txt", "/sitemap.xml"].sort());
     assert.match(output, /404.*\/llms\.txt/);
+  } finally {
+    server.close();
+  }
+});
+
+test("smoke checks reject a redirect to a healthy page", async () => {
+  const server = createServer((request, response) => {
+    if (request.url === "/sitemap.xml") {
+      response.end("<urlset><url><loc>https://example.com/posts/example</loc></url></urlset>");
+    } else if (request.url === "/posts/example") {
+      response.writeHead(302, { location: "/" }).end();
+    } else response.end("ok");
+  });
+  server.listen(0, "127.0.0.1");
+  await once(server, "listening");
+  try {
+    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
+    const [code] = await once(child, "close");
+    assert.equal(code, 1);
   } finally {
     server.close();
   }
