@@ -71,7 +71,7 @@ async function main(origin) {
       }
     }
     for (const href of extractAnchorHrefs(html)) {
-      if (!href.startsWith("/") && !href.startsWith(location.origin + "/")) continue;
+      if (!href || href.startsWith("#")) continue;
       const target = new URL(href.replaceAll("&amp;", "&"), location);
       if (target.origin !== location.origin) continue;
       const local = new URL(target.pathname + target.search, origin);

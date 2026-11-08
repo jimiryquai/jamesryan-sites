@@ -66,6 +66,12 @@ test("an internal link redirecting to a missing page fails", async () => {
   assert.match(output, /\/link.*internal link.*\/redirect-to-missing/i);
 });
 
+test("a broken relative internal link fails", async () => {
+  const { code, output } = await checkPage("/link", `<title>A clear and descriptive page title</title><meta name="description" content="A useful description of the page that is long enough to meet the validator's minimum length."><h1>Heading</h1><a href="missing">Missing</a>`);
+  assert.equal(code, 1, output);
+  assert.match(output, /\/link.*internal link.*missing/i);
+});
+
 test("duplicate metadata across sitemap pages fails", async () => {
   const html = `<title>A clear and descriptive page title</title><meta name="description" content="A useful description of the page that is long enough to meet the validator's minimum length."><h1>Heading</h1>`;
   const server = createServer((request, response) => {
