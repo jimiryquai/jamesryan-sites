@@ -1,39 +1,25 @@
 import { renderLlmsTxt } from "@jdevalk/astro-seo-graph";
-import {
-	getEmDashCollection,
-	getSiteSettingsWithCacheHint,
-	type CacheHint,
-} from "emdash";
-
-type RequestCache = { enabled: boolean; set: (hint: CacheHint) => void };
+import { getSiteSettingsWithCacheHint } from "emdash";
+import { getPublishedEntries, type RequestCache } from "./content-query.ts";
+import { getContentPath } from "./content-url.ts";
 
 async function getPublishedLlmsSections(origin: string, cache: RequestCache) {
 	const sections = [];
 
 	for (const collection of ["pages", "posts"] as const) {
 		const links = [];
-		let cursor: string | undefined;
-		do {
-			const result = await getEmDashCollection(collection, {
-				status: "published",
-				limit: 100,
-				cursor,
+		const entries = await getPublishedEntries(collection, cache);
+		for (const entry of entries) {
+			const path = getContentPath(collection, entry.id);
+			const description = "excerpt" in entry.data && typeof entry.data.excerpt === "string"
+				? entry.data.excerpt
+				: undefined;
+			links.push({
+				title: entry.data.title,
+				url: new URL(path, origin).href,
+				description,
 			});
-			if (result.error) throw result.error;
-			if (cache.enabled) cache.set(result.cacheHint);
-			for (const entry of result.entries) {
-				const path = `/${collection}/${encodeURIComponent(entry.id)}`;
-				const description = "excerpt" in entry.data && typeof entry.data.excerpt === "string"
-					? entry.data.excerpt
-					: undefined;
-				links.push({
-					title: entry.data.title,
-					url: new URL(path, origin).href,
-					description,
-				});
-			}
-			cursor = result.nextCursor;
-		} while (cursor);
+		}
 		sections.push({ name: collection === "pages" ? "Pages" : "Posts", links });
 	}
 

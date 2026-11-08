@@ -1,14 +1,14 @@
 import type { APIRoute } from "astro";
-import { getEmDashCollection } from "emdash";
+import { getContentPath, getPublishedEntries } from "@jamesryan/cms-helpers";
 
-export const GET: APIRoute = async ({ site, url }) => {
+export const GET: APIRoute = async ({ site, url, cache }) => {
 	const siteUrl = site?.toString().replace(/\/$/, "") || url.origin;
 
 	// Fetch dynamic content from EmDash collections
-	const [pagesResult, postsResult, projectsResult] = await Promise.all([
-		getEmDashCollection("pages", { limit: 100 }),
-		getEmDashCollection("posts", { limit: 100 }),
-		getEmDashCollection("projects", { limit: 100 }),
+	const [pages, posts, projects] = await Promise.all([
+		getPublishedEntries("pages", cache),
+		getPublishedEntries("posts", cache),
+		getPublishedEntries("projects", cache),
 	]);
 
 	const urls: string[] = [];
@@ -18,31 +18,18 @@ export const GET: APIRoute = async ({ site, url }) => {
 	urls.push(`${siteUrl}/projects`);
 
 	// Add dynamic pages
-	if (pagesResult?.entries) {
-		for (const page of pagesResult.entries) {
-			const slug = page.id; // entry.id is the slug (URL path representation)
-			if (slug === "home") {
-				urls.push(`${siteUrl}/`);
-			} else if (["about", "pricing", "privacy-policy"].includes(slug)) {
-				urls.push(`${siteUrl}/${slug}`);
-			} else {
-				urls.push(`${siteUrl}/pages/${slug}`);
-			}
-		}
+	for (const page of pages) {
+		urls.push(new URL(getContentPath("pages", page.id), siteUrl).href);
 	}
 
 	// Add blog posts
-	if (postsResult?.entries) {
-		for (const post of postsResult.entries) {
-			urls.push(`${siteUrl}/posts/${post.id}`);
-		}
+	for (const post of posts) {
+		urls.push(new URL(getContentPath("posts", post.id), siteUrl).href);
 	}
 
 	// Add projects
-	if (projectsResult?.entries) {
-		for (const project of projectsResult.entries) {
-			urls.push(`${siteUrl}/projects/${project.id}`);
-		}
+	for (const project of projects) {
+		urls.push(new URL(getContentPath("projects", project.id), siteUrl).href);
 	}
 
 	// Build sitemap XML

@@ -3,7 +3,10 @@ import { mock, test } from "node:test";
 
 const entries = {
 	pages: [
+		{ id: "home", status: "published", data: { title: "Home" } },
 		{ id: "about", status: "published", data: { title: "About" } },
+		{ id: "privacy-policy", status: "published", data: { title: "Privacy" } },
+		{ id: "custom", status: "published", data: { title: "Custom" } },
 		{ id: "draft", status: "draft", data: { title: "Secret draft" } },
 	],
 	posts: Array.from({ length: 101 }, (_, index) => ({
@@ -44,7 +47,10 @@ test("llms.txt lists published pages and every page of posts, not drafts", async
 	assert.equal(response.status, 200);
 	assert.match(response.headers.get("content-type"), /^text\/plain/);
 	assert.match(text, /^# Example\n\n> A test site/m);
-	assert.match(text, /\[About\]\(https:\/\/staging\.example\/pages\/about\)/);
+	assert.match(text, /\[Home\]\(https:\/\/staging\.example\/\)/);
+	assert.match(text, /\[About\]\(https:\/\/staging\.example\/about\)/);
+	assert.match(text, /\[Privacy\]\(https:\/\/staging\.example\/privacy-policy\)/);
+	assert.match(text, /\[Custom\]\(https:\/\/staging\.example\/pages\/custom\)/);
 	assert.match(text, /\[Post 101\]\(https:\/\/staging\.example\/posts\/post-101\): An excerpt/);
 	assert.doesNotMatch(text, /Secret draft|\/pages\/draft/);
 	assert.deepEqual(new Set(hints), new Set(["settings", "pages", "posts"]));
