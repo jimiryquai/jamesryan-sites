@@ -21,12 +21,15 @@ The repo hasn't been touched since July 2026. Before the content flywheel starts
 4. **Deploys go through GitHub Actions** for both sites. PRs run install, typecheck, build and tests. A merge to `master` deploys to staging and runs checks against it. Production is a manual `workflow_dispatch` that promotes what's on staging. Staging gets its own KV namespace (today it shares production's).
 5. **One olive palette.** The olive scale in `tailwind.css` is the brand. The template's indigo and pink tokens in `theme.css` and `globals.css` are deleted. Target WCAG 2.2 AA in light and dark modes, enforced by axe and a contrast check in the staging pipeline. A failing olive shade gets a lightness change with the hue unchanged, shown to James before and after.
 6. **SEO** means the packages: upgrade, drop the `entrypoint`/`adminEntry` workaround in `astro.config.mjs` if it's no longer needed, and generate `llms.txt` from real pages and posts, not a hand-written list (it currently lists the template's `/pricing`). The `astro-seo-graph` validators run in the pipeline. No SEO skill.
-7. **Publishing path:** an agent creates a **draft** through EmDash's MCP with a scoped token. James reviews it and publishes in the admin; agents never publish. Proved on staging and production, with code blocks, Mermaid, images, SEO fields and comments all checked, and documented in the repo so people and agents follow the same steps. It is carried into the blueprint later.
+7. **Publishing path:** an agent creates a **draft** through EmDash's MCP with a scoped token. James reviews it and publishes in the admin; agents never publish. Proved on staging and production, with code blocks, images, SEO fields and comments all checked, and documented in the repo so people and agents follow the same steps. It is carried into the blueprint later.
 8. **Both plugins are public on npm.** James approves each first `npm publish`.
 9. **The codebase review runs after the upgrade**, across this repo and both plugin repos, against `~/Repos/Workspace/building/agent-workflow/docs/design-principles.md`. Its findings become tickets.
 10. **Housekeeping:** remove the Lighthouse reports, `debug_save.sh`, the root `package-lock.json` (pnpm is the package manager), the copy's `sandbox.db` and lockfiles, and the Z.ai MCP wrapper skills and the pi `agent-browser` symlink (machine tooling, not project knowledge). Refresh EmDash's own skills from 1.4. Rewrite the README for this repo, not the template.
 
 ## Out of scope (next projects, in order)
+
+Diagrams (Mermaid or otherwise) are out of the baseline (James, 2026-11-08): Code Block Pro only highlights Mermaid source, and rendered diagrams belong to the parked `emdash-plugin-diagrams` project.
+
 
 1. **jamesryan.dev blueprint.** A reusable site from .dev, including the page builder (`marketing-blocks`, which reads from collections rather than hard-coded text): compare it with upstream's v1.3.0 marketing template and expand it with Tailwind Plus layouts. It gets its own grilling.
 2. **Garden content model** for jamesryan.me.
