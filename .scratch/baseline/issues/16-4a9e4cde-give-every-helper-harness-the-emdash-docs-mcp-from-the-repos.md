@@ -15,13 +15,27 @@ Use **mcporter** (James, 2026-11-08) as the route every harness shares: any help
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] mcporter's telemetry is checked from its source, and is off (or shown to be absent), recorded in a comment with the evidence.
-- [ ] In each of the three repos, a Codex helper's `mcporter call emdash-docs.search_docs` returns a docs result (output in a comment).
-- [ ] Each repo has one source for its MCP server definitions; any other file is derived from it.
-- [ ] Each repo's `AGENTS.md` names the mcporter route for the EmDash docs, and no config lists the stale servers.
+- [x] mcporter's telemetry is checked from its source, and is off (or shown to be absent), recorded in a comment with the evidence.
+- [x] In each of the three repos, a Codex helper's `mcporter call emdash-docs.search_docs` returns a docs result (output in a comment).
+- [x] Each repo has one source for its MCP server definitions; any other file is derived from it.
+- [x] Each repo's `AGENTS.md` names the mcporter route for the EmDash docs, and no config lists the stale servers.
 
 ## Comments
 
 **2026-11-08 Claude (orchestrator):** Triaged with James: ready-for-agent. Risk: medium (no docs/agents/review.md; config and instructions agents act on, across three repos; no runtime code).
+
+**2026-11-08 Copilot:** Audited the published mcporter 0.17.0 npm package
+and its upstream configuration documentation. The source scan found no
+analytics or telemetry service or telemetry-sending implementation in
+mcporter's own code. The MCP connection identifies the client to the selected
+server as part of the protocol; OAuth registration can also send a client
+name to the selected authorization server. These are not a separate usage
+report to mcporter's publisher. No telemetry opt-out was needed or found.
+Evidence: `.orchestrate/evidence/mcporter-package.txt`,
+`.orchestrate/evidence/mcporter-source-scan.txt`,
+`.orchestrate/evidence/mcporter-network-audit.txt`, and
+`.orchestrate/evidence/mcporter-import-docs.md`.
+
+**2026-11-08 Claude (orchestrator):** Done. Built by h16-copilot (Copilot, GPT-6.1 Terra): jamesryan-sites #9 (merged to `baseline`; lockfile re-resolved on top of 05), jimiryquai/emdash-plugin-code-block-pro#7 and jimiryquai/emdash-plugin-ai-comment-moderation#2 (both merged to `master`; dev-only, no release). mcporter 0.17.0 pinned per repo (needs Node 24). One source each: `config/mcporter.json`, with this repo's `.mcp.json` a symlink to it; stale Stitch and Z.ai servers removed. Telemetry re-checked by the orchestrator in the installed package: no analytics libraries or hosts; the only hit is the `clientName` field MCP sends to the server it calls. Box 2: a fresh Codex session (GPT-6.1 Sol) read each repo's `AGENTS.md` and ran its command; all three returned `<result source="https://docs.emdashcms.com/plugins/overview/" score="1.000">` (evidence `orchestrator-codex-check.txt`). Merged-tree checks pass. For James: the untracked `.claude/settings.local.json` still enables `web-search-prime`, `zread`, `web-reader`, `zai-mcp-server`. For ticket 13: the `emdash-site`/`emdash-garden` server commands hard-code `/home/james/.local/share/mise/installs/node/24.12.0/bin`. Evidence: `.orchestrate/runs/2026-11-08-16-mcporter/`.
