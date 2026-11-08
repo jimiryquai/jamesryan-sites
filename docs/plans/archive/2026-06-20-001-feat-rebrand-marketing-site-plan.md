@@ -3,8 +3,10 @@ title: Rebrand marketing-site from Oatmeal to James Ryan & deploy to staging
 type: feat
 status: active
 date: 2026-06-20
-origin: docs/plans/monorepo-migration.md
+origin: docs/plans/archive/monorepo-migration.md
 ---
+
+> **Archived 2026-11-08.** Shipped: the site is James Ryan with posts and projects routes and was deployed to staging; the template's leftover pages (`home-01..03` and similar) remain, for baseline ticket 13.
 
 # Rebrand marketing-site from Oatmeal to James Ryan & deploy to staging
 
@@ -125,10 +127,10 @@ This plan rebrands the marketing site to "James Ryan — AI-native marketer & en
 
 ## Sources & References
 
-- **Origin document**: [monorepo-migration.md](../../docs/plans/monorepo-migration.md)
+- **Origin document**: [monorepo-migration.md](./monorepo-migration.md)
 - **Old blog seed**: [seed.json](file:///home/james/Repos/astro-blog/seed/seed.json) — 6 posts, taxonomies, settings
 - **Old blog wrangler**: [wrangler.jsonc](file:///home/james/Repos/astro-blog/wrangler.jsonc) — real D1/R2/KV IDs
-- **Existing posts listing pattern**: [posts/index.astro](../../apps/marketing-site/src/pages/posts/index.astro) — featured post + grid layout (reusable for homepage)
+- **Existing posts listing pattern**: [posts/index.astro](../../../apps/marketing-site/src/pages/posts/index.astro) — featured post + grid layout (reusable for homepage)
 - **Learning: Seed media syntax**: [emdash-seed-image-fields-use-media-syntax.md](file:///home/james/Repos/astro-blog/.learnings/emdash/emdash-seed-image-fields-use-media-syntax.md)
 - **Learning: Local dev seeding workflow**: [emdash-seeding-with-cloudflare-d1-r2-local-dev-workflow.md](file:///home/james/Repos/astro-blog/.learnings/emdash/emdash-seeding-with-cloudflare-d1-r2-local-dev-workflow.md)
-- **Flexible blocks brainstorm**: [flexible-blocks-brainstorm.md](../../docs/plans/flexible-blocks-brainstorm.md) — future block types for the marketing site
+- **Flexible blocks brainstorm**: [flexible-blocks-brainstorm.md](./flexible-blocks-brainstorm.md) — future block types for the marketing site

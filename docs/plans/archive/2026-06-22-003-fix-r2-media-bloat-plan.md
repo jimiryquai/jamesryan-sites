@@ -5,6 +5,8 @@ status: active
 date: 2026-06-22
 ---
 
+> **Archived 2026-11-08.** Unknown: an operational fix to a sync script outside this repo, so git can't show whether it shipped; baseline ticket 07 gives each site its own staging and production resources.
+
 # Fix R2 Media Sync Bloat
 
 ## Overview
@@ -36,6 +38,6 @@ During staging deployment verification, it was discovered that 171 media files w
 5. [Verify staging website]: Visually verify staging site images are fully functional.
 
 ## Sources & References
-- Active R2 bucket config in [wrangler.jsonc](../../apps/marketing-site/wrangler.jsonc#L20-L25)
+- Active R2 bucket config in [wrangler.jsonc](../../../apps/marketing-site/wrangler.jsonc#L20-L25)
 - Local R2 state files: `apps/marketing-site/.wrangler/state/v3/r2/`
 - Current media sync script: [/home/james/.gemini/antigravity-ide/brain/11a6d531-c333-46c9-b23a-6909d01d6572/scratch/upload_local_r2_to_staging.py](file:///home/james/.gemini/antigravity-ide/brain/11a6d531-c333-46c9-b23a-6909d01d6572/scratch/upload_local_r2_to_staging.py)
