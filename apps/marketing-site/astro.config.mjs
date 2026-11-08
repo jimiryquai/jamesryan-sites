@@ -13,7 +13,6 @@ export default defineConfig({
 	site: "https://jamesryan.dev",
 	output: "server",
 	adapter: cloudflare({ 
-		imageService: "passthrough",
 		inspectorPort: process.argv.includes("dev") ? 9229 : false 
 	}),
 	server: {
@@ -43,28 +42,15 @@ export default defineConfig({
 			},
 		},
 		ssr: {
-			noExternal: [],
 			optimizeDeps: {
-				// Pre-bundle so it isn't discovered mid-render, which would trigger
-				// a Vite dep re-optimization and break in-flight worker imports
-				// under the Cloudflare dev runner (workerd).
+				// EmDash owns its core dependencies; these app dependencies still
+				// trigger worker reloads when first discovered during a render.
 				include: [
 					"astro-iconset/components",
-					"emdash/middleware",
-					"emdash/middleware/redirect",
-					"emdash/middleware/setup",
-					"emdash/middleware/auth",
-					"emdash/middleware/request-context",
-					"emdash/media/local-runtime",
-					"@emdash-cms/cloudflare/db/d1",
-					"@emdash-cms/cloudflare/storage/r2",
-					"emdash/ui",
-					"emdash/runtime",
-					"emdash/routes/PluginRegistry",
-					"astro/zod",
-					"emdash/page",
+					"@jdevalk/astro-seo-graph",
 					"@jdevalk/seo-graph-core",
 					"clsx/lite",
+					"workers-og",
 				],
 			},
 		},
@@ -157,6 +143,7 @@ export default defineConfig({
 			mcp: true,
 			plugins: [
 				(() => {
+					// SEO 0.12's descriptor paths are stripped by EmDash 1.4's definePlugin.
 					const seo = seoPlugin();
 					seo.entrypoint = new URL("./node_modules/@jdevalk/emdash-plugin-seo/src/index.ts", import.meta.url).href;
 					seo.adminEntry = new URL("./node_modules/@jdevalk/emdash-plugin-seo/src/admin.tsx", import.meta.url).href;

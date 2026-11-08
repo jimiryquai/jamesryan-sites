@@ -8,6 +8,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "emdash": "^0.14.0"
+    "emdash": "1.4.0"
   }
 }
