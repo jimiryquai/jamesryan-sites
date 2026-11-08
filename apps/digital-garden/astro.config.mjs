@@ -12,7 +12,7 @@ import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
 export default defineConfig({
 	site: "https://garden.oatmeal.dev",
 	output: "server",
-	adapter: cloudflare({ inspectorPort: process.argv.includes("dev") ? 9230 : undefined }),
+	adapter: cloudflare({ inspectorPort: process.argv.includes("dev") ? 9230 : false }),
 	server: {
 		port: 4322,
 	},
