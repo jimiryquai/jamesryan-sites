@@ -47,7 +47,7 @@ jobs:
       - run: pnpm --filter marketing-site exec wrangler deploy --env staging
       - run: pnpm --filter digital-garden exec wrangler deploy --env staging
       - name: Smoke test and trigger automatic D1 migrations
-        run: node scripts/smoke-staging.mjs https://staging.jamesryan.dev https://staging.jamesryan.me
+        run: node scripts/smoke-staging.mjs https://staging.jamesryan.dev --posts=optional https://staging.jamesryan.me
       - name: Verify D1 migrations
         run: |
           pnpm --filter marketing-site exec emdash migrate --check --wrangler-config wrangler.jsonc --wrangler-env staging
@@ -56,7 +56,7 @@ jobs:
         env:
           STAGED_SHA: ${{ github.event.workflow_run.head_sha }}
         run: printf '%s\n' "$STAGED_SHA" > staged-sha.txt
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: staged-sha
           path: staged-sha.txt

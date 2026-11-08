@@ -10,10 +10,11 @@ After CI succeeds for a push to `master`, the Deploy workflow builds with
 `CLOUDFLARE_ENV=staging` and deploys both sites to staging. This build setting
 is essential: Astro generates Wrangler's deployment configuration at build
 time, and passing `--env staging` to Wrangler alone otherwise retains
-production bindings. The workflow requests each staging home page, post,
-admin login, robots, sitemap and llms file, verifies migrations, and records
-the commit only if all checks pass. Posts are discovered from each sitemap;
-each staging site needs a published post.
+production bindings. The workflow requests each staging home page, admin login,
+robots, sitemap and llms file, verifies migrations, and records the commit only
+if all checks pass. Posts are discovered from each sitemap: marketing requires
+a published post; the garden checks one if available and otherwise logs
+`no posts yet`.
 
 To promote, open Actions > Deploy > Run workflow, select `master`, and approve
 the `production` environment deployment. Inspect the staged commit and run
