@@ -201,6 +201,9 @@ importers:
 
   packages/cms-helpers:
     dependencies:
+      '@jdevalk/astro-seo-graph':
+        specifier: 2.2.0
+        version: 2.2.0(astro@6.4.8(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(yaml@2.9.0))(typescript@6.0.3)
       emdash:
         specifier: 1.4.0
         version: 1.4.0(@astrojs/react@5.0.5(@types/node@25.9.1)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(yaml@2.9.0))(@atcute/cbor@2.3.8(@atcute/cid@2.5.0))(@atcute/cid@2.5.0)(@atcute/identity@2.0.2(@atcute/lexicons@2.1.1)(typescript@6.0.3))(@floating-ui/dom@1.7.6)(@tiptap/extensions@3.23.5(@tiptap/core@3.23.5(@tiptap/pm@3.23.5))(@tiptap/pm@3.23.5))(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(astro@6.4.8(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.4)(yaml@2.9.0))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(typescript@6.0.3)

@@ -59,10 +59,6 @@ export default defineConfig({
 			validateInternalLinks: {
 				skip: (href) => href.startsWith("/api/") || href.startsWith("/_emdash/"),
 			},
-			llmsTxt: {
-				title: "Oatmeal Digital Garden",
-				siteUrl: site,
-			},
 			markdownAlternate: true,
 		}),
 

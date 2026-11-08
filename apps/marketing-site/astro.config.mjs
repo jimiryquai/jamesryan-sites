@@ -63,49 +63,6 @@ export default defineConfig({
 			validateInternalLinks: {
 				skip: (href) => href.startsWith("/api/") || href.startsWith("/_emdash/"),
 			},
-			llmsTxt: {
-				title: "James Ryan",
-				siteUrl: site,
-				summary: "James Ryan - Senior Marketer & Full-Stack AI Engineer portfolio, featuring case studies on marketing orchestration, custom plugins, and developer tool integrations.",
-				details: "This site presents case studies, technical deep-dives, blog posts, and resources regarding modern AI engineering, CMS solutions (like EmDash), and marketing infrastructure.",
-				sections: [
-					{
-						name: "Main Pages",
-						links: [
-							{
-								url: new URL("/", site).href,
-								title: "Home",
-								description: "Introduction, core principles, featured case studies, and latest articles."
-							},
-							{
-								url: new URL("/about", site).href,
-								title: "About",
-								description: "Details on background, skill set, and experience in engineering and marketing."
-							},
-							{
-								url: new URL("/contact", site).href,
-								title: "Contact",
-								description: "Get in touch for consultations, speaking engagements, or collaborations."
-							},
-							{
-								url: new URL("/pricing", site).href,
-								title: "Pricing & Services",
-								description: "Service offerings, consulting models, and package plans."
-							}
-						]
-					},
-					{
-						name: "Blog & Articles",
-						links: [
-							{
-								url: new URL("/posts", site).href,
-								title: "All Articles",
-								description: "Archive of all published writing, thoughts, and technical deep-dives."
-							}
-						]
-					}
-				]
-			},
 			markdownAlternate: true,
 		}),
 
