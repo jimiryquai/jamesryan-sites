@@ -9,8 +9,11 @@ import seoPlugin from "@jdevalk/emdash-plugin-seo";
 import seoGraph from "@jdevalk/astro-seo-graph/integration";
 import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
 
+const site = "https://jamesryan.dev";
+const hostname = new URL(site).hostname;
+
 export default defineConfig({
-	site: "https://jamesryan.dev",
+	site,
 	output: "server",
 	adapter: cloudflare({ 
 		inspectorPort: process.argv.includes("dev") ? 9229 : false 
@@ -21,11 +24,11 @@ export default defineConfig({
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
-		domains: ["jamesryan.dev", "staging.jamesryan.dev", "localhost"],
+		domains: [hostname, `staging.${hostname}`, "localhost"],
 		remotePatterns: [
 			{
 				protocol: "https",
-				hostname: "**.jamesryan.dev",
+				hostname: `**.${hostname}`,
 			},
 		],
 	},
@@ -62,7 +65,7 @@ export default defineConfig({
 			},
 			llmsTxt: {
 				title: "James Ryan",
-				siteUrl: "https://jamesryan.dev",
+				siteUrl: site,
 				summary: "James Ryan - Senior Marketer & Full-Stack AI Engineer portfolio, featuring case studies on marketing orchestration, custom plugins, and developer tool integrations.",
 				details: "This site presents case studies, technical deep-dives, blog posts, and resources regarding modern AI engineering, CMS solutions (like EmDash), and marketing infrastructure.",
 				sections: [
@@ -70,22 +73,22 @@ export default defineConfig({
 						name: "Main Pages",
 						links: [
 							{
-								url: "https://jamesryan.dev/",
+								url: new URL("/", site).href,
 								title: "Home",
 								description: "Introduction, core principles, featured case studies, and latest articles."
 							},
 							{
-								url: "https://jamesryan.dev/about",
+								url: new URL("/about", site).href,
 								title: "About",
 								description: "Details on background, skill set, and experience in engineering and marketing."
 							},
 							{
-								url: "https://jamesryan.dev/contact",
+								url: new URL("/contact", site).href,
 								title: "Contact",
 								description: "Get in touch for consultations, speaking engagements, or collaborations."
 							},
 							{
-								url: "https://jamesryan.dev/pricing",
+								url: new URL("/pricing", site).href,
 								title: "Pricing & Services",
 								description: "Service offerings, consulting models, and package plans."
 							}
@@ -95,7 +98,7 @@ export default defineConfig({
 						name: "Blog & Articles",
 						links: [
 							{
-								url: "https://jamesryan.dev/posts",
+								url: new URL("/posts", site).href,
 								title: "All Articles",
 								description: "Archive of all published writing, thoughts, and technical deep-dives."
 							}
