@@ -15,7 +15,7 @@ Use **mcporter** (James, 2026-11-08) as the route every harness shares: any help
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** in progress
 
 - [ ] mcporter's telemetry is checked from its source, and is off (or shown to be absent), recorded in a comment with the evidence.
 - [ ] In each of the three repos, a Codex helper's `mcporter call emdash-docs.search_docs` returns a docs result (output in a comment).
@@ -23,3 +23,5 @@ Use **mcporter** (James, 2026-11-08) as the route every harness shares: any help
 - [ ] Each repo's `AGENTS.md` names the mcporter route for the EmDash docs, and no config lists the stale servers.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Triaged with James: ready-for-agent. Risk: medium (no docs/agents/review.md; config and instructions agents act on, across three repos; no runtime code).
