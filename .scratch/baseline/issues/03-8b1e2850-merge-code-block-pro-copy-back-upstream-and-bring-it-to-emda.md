@@ -8,7 +8,7 @@ Work in `../emdash-plugin-code-block-pro` (its own repo). Bring over what the co
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `diff -r` of `src/` between the copy and upstream shows only intentional 1.4 changes.
 - [ ] Tests and lint pass in the plugin repo's CI.
@@ -16,3 +16,5 @@ Work in `../emdash-plugin-code-block-pro` (its own repo). Bring over what the co
 - [ ] Status set to `needs James` for the publish approval.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: high (no docs/agents/review.md; release PR in another repo leading to a public npm publish, beyond this repo).

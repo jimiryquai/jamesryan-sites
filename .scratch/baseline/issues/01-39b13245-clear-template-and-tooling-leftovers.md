@@ -8,10 +8,12 @@ Delete `apps/marketing-site/lighthouse-report*.report.{html,json}`, `apps/market
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] None of the listed files are tracked (`git ls-files` proves it).
 - [ ] `.agents/skills` holds only EmDash skills and `emdash-mcp`.
 - [ ] `pnpm install --frozen-lockfile` still succeeds.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: medium (no docs/agents/review.md, default tier; deletes tracked files and edits .gitignore only).

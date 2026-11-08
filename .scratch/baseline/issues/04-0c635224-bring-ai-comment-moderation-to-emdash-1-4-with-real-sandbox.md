@@ -8,10 +8,12 @@ Work in `../emdash-plugin-ai-comment-moderation`. Bring it to EmDash 1.4's sandb
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] Integration tests exercise the real sandbox path (or the e2e script exists and is documented, with the reason recorded).
 - [ ] Peer range is `^1.4.0`; tests pass in CI.
 - [ ] Release PR ready; status `needs James` for publish.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: high (no docs/agents/review.md; release PR in another repo leading to a public npm publish, and sandbox capabilities with a network call to Workers AI).
