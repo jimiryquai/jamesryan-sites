@@ -15,3 +15,5 @@ Add `.github/workflows/ci.yml`: on PR and push to `master`, run `pnpm install --
 - [ ] The workflow sends no telemetry (Astro telemetry disabled with `ASTRO_TELEMETRY_DISABLED=1`, Wrangler with `WRANGLER_SEND_METRICS=false`).
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Found while checking 01: on a fresh checkout of `baseline` (before 01) the root `pnpm typecheck` and `pnpm build` fail: `--filter ...` is an invalid selector (`Unsupported package selector`). Per package (`pnpm -r --workspace-concurrency=1`): marketing-site `astro check` fails `Hero.astro:71 Property 'centered' does not exist` (the local checkout passes thanks to gitignored generated state), and the digital-garden build fails `ENOENT … apps/digital-garden/src/icons/` (an empty folder git does not track). Run in parallel, both apps also fight over inspector port 9229 (`EADDRINUSE`). A green CI run needs all four fixed.
