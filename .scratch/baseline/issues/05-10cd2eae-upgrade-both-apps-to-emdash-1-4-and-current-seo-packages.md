@@ -8,7 +8,7 @@ Upgrade both apps to `emdash`, `@emdash-cms/admin` and `@emdash-cms/cloudflare` 
 
 **Blocked by:** 02-008a2b07.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] Both apps build, typecheck and run `pnpm dev` with the admin loading and existing content rendering (posts, projects, code blocks with Mermaid).
 - [ ] The local D1 migration runs cleanly on a copy of the staging data.
@@ -16,3 +16,5 @@ Upgrade both apps to `emdash`, `@emdash-cms/admin` and `@emdash-cms/cloudflare` 
 - [ ] CI is green.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: high (no docs/agents/review.md; upgrades the CMS core of both sites and runs D1 migrations).
