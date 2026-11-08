@@ -9,8 +9,11 @@ import seoPlugin from "@jdevalk/emdash-plugin-seo";
 import seoGraph from "@jdevalk/astro-seo-graph/integration";
 import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
 
+const site = "https://jamesryan.me";
+const hostname = new URL(site).hostname;
+
 export default defineConfig({
-	site: "https://garden.oatmeal.dev",
+	site,
 	output: "server",
 	adapter: cloudflare({ inspectorPort: process.argv.includes("dev") ? 9230 : false }),
 	server: {
@@ -22,6 +25,8 @@ export default defineConfig({
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
+		domains: [hostname, `staging.${hostname}`, "localhost"],
+		remotePatterns: [{ protocol: "https", hostname: `**.${hostname}` }],
 	},
 	vite: {
 		plugins: [tailwind()],
@@ -61,7 +66,7 @@ export default defineConfig({
 			},
 			llmsTxt: {
 				title: "Oatmeal Digital Garden",
-				siteUrl: "https://garden.oatmeal.dev",
+				siteUrl: site,
 			},
 			markdownAlternate: true,
 		}),
