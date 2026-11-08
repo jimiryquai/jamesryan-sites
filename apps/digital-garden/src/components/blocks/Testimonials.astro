@@ -2,7 +2,7 @@
 import TestimonialThreeColumnGrid from "@jamesryan/ui/components/sections/TestimonialThreeColumnGrid.astro";
 import Testimonial from "@jamesryan/ui/components/sections/Testimonial.astro";
 import TestimonialTwoColumnWithLargePhoto from "@jamesryan/ui/components/sections/TestimonialTwoColumnWithLargePhoto.astro";
-import { getEmDashEntry, getEmDashCollection } from "emdash";
+import { getServiceEntries } from "@jamesryan/cms-helpers";
 import { Image } from "emdash/ui";
 
 interface TestimonialItem {
@@ -28,20 +28,16 @@ const { _key, headline, testimonials = [], serviceSlug } = node;
 let testimonialsData = testimonials;
 
 if (serviceSlug) {
-	const { entry: service } = await getEmDashEntry("services", serviceSlug);
-	if (service) {
-		const { entries } = await getEmDashCollection("testimonials", {
-			where: { service: service.data.id as string },
-		});
-		if (entries && entries.length > 0) {
-			testimonialsData = entries.map((entry) => ({
-				quote: String(entry.data.quote ?? ""),
-				author: String(entry.data.author ?? ""),
-				role: entry.data.role ? String(entry.data.role) : undefined,
-				company: entry.data.company ? String(entry.data.company) : undefined,
-				avatar: entry.data.avatar || undefined,
-			}));
-		}
+	const { entries, cacheHint } = await getServiceEntries("testimonials", serviceSlug);
+	if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (entries && entries.length > 0) {
+		testimonialsData = entries.map((entry) => ({
+			quote: String(entry.data.quote ?? ""),
+			author: String(entry.data.author ?? ""),
+			role: entry.data.role ? String(entry.data.role) : undefined,
+			company: entry.data.company ? String(entry.data.company) : undefined,
+			avatar: entry.data.avatar || undefined,
+		}));
 	}
 }
 

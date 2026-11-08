@@ -1,7 +1,7 @@
 ---
 import TeamFourColumnGrid from "@jamesryan/ui/components/sections/TeamFourColumnGrid.astro";
 import TeamMember from "@jamesryan/ui/components/sections/TeamMember.astro";
-import { getEmDashEntry, getEmDashCollection } from "emdash";
+import { getServiceEntries } from "@jamesryan/cms-helpers";
 import { Image } from "emdash/ui";
 
 interface MemberItem {
@@ -26,18 +26,14 @@ const { _key, headline, subheadline, members = [], serviceSlug } = node;
 let membersData = members;
 
 if (serviceSlug) {
-	const { entry: service } = await getEmDashEntry("services", serviceSlug);
-	if (service) {
-		const { entries } = await getEmDashCollection("team", {
-			where: { service: service.data.id as string },
-		});
-		if (entries && entries.length > 0) {
-			membersData = entries.map((entry) => ({
-				name: String(entry.data.name ?? ""),
-				byline: String(entry.data.role ?? ""),
-				img: entry.data.image,
-			}));
-		}
+	const { entries, cacheHint } = await getServiceEntries("team", serviceSlug);
+	if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (entries && entries.length > 0) {
+		membersData = entries.map((entry) => ({
+			name: String(entry.data.name ?? ""),
+			byline: String(entry.data.role ?? ""),
+			img: entry.data.image,
+		}));
 	}
 }
 ---
