@@ -13,9 +13,9 @@ Make the validators check rendered pages and fail the required CI check:
 3. Fix the existing findings at their source (templates, or seed content), never by excluding pages or rules. If a finding is a false positive, say why in the commit and the ticket.
 4. Keep it inside `.github/workflows/ci.yml`'s required "Typecheck, build and test" check (or a second required job, added to the `master` ruleset), so a PR can't merge with a failure.
 
-**Blocked by:** 10-eaea4d2b.
+**Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] CI validates the rendered pages of both apps (the log lists the pages checked, more than zero per app) and the run fails on any validator error.
 - [ ] Existing findings are fixed at their source; a clean `baseline` passes.
@@ -24,3 +24,5 @@ Make the validators check rendered pages and fail the required CI check:
 ## Comments
 
 **2026-11-08 Claude (orchestrator):** Split out of 10 because the validators only scan static output; `llms.txt` and the SEO override stay in 10. Risk when claimed: high (CI definition, and possibly the `master` ruleset).
+
+**2026-11-08 Claude (orchestrator):** Unblocked: it needs 10's merged code (PR #13), not 10's remaining staging check. Risk: high (CI definition, maybe the `master` ruleset).
