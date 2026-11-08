@@ -8,10 +8,12 @@ Rename `jimiryquai/oatmeal-olive-instrument` on GitHub (`gh repo rename`; GitHub
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent (run between sessions)
+**Status:** done
 
-- [ ] `gh repo view` shows the new name; `git remote -v` points at it.
+- [x] `gh repo view` shows the new name; `git remote -v` points at it.
 - [ ] `grep -r oatmeal-olive-instrument` (excluding `node_modules` and git history) finds nothing.
 - [ ] A new Claude Code session in the new folder loads this project's memory.
 
 ## Comments
+
+**2026-11-08 Claude:** Done. GitHub repo renamed to `jimiryquai/jamesryan-sites` (old URL redirects), remote updated, `building/CONTEXT.md` updated and committed in the Workspace repo, folder and `~/.claude/projects` memory folder moved. `.mcp.json` and `config/mcporter.json` now resolve `.env` from `git rev-parse --show-toplevel`; they pointed at the pre-Workspace path before, so `.env` never loaded. The only remaining old-path references are in `apps/marketing-site/debug_save.sh` (deleted by 01) and the copy's `docs/sandbox-plan.md` (deleted by 06). The memory-loading criterion is checked when the next session starts.
