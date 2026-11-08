@@ -50,11 +50,7 @@ if (Astro.request.method === "POST") {
 }
 
 const pageContent = page?.data.content;
-const ContactHeading = pageContent?.some((block) =>
-	block._type === "marketing.hero" ||
-	block._type === "marketing.document" ||
-	(block._type === "block" && block.style === "h1")
-) ? "h2" : "h1";
+const ContactHeading = "h2";
 ---
 
 <Base
