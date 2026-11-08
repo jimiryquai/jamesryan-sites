@@ -35,11 +35,6 @@ export default defineConfig({
 			watch: {
 				ignored: ["**/.wrangler/**"],
 			},
-			fs: {
-				allow: [
-					new URL("../../../", import.meta.url).pathname,
-				],
-			},
 		},
 		ssr: {
 			optimizeDeps: {

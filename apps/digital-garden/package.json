@@ -26,13 +26,15 @@
     "@jdevalk/astro-seo-graph": "2.2.0",
     "@jdevalk/emdash-plugin-seo": "0.12.0",
     "@jdevalk/seo-graph-core": "0.7.0",
+    "@shikijs/engine-javascript": "4.1.0",
     "astro": "6.4.8",
     "astro-iconset": "^0.0.4",
     "clsx": "^2.1.1",
     "emdash": "1.4.0",
-    "emdash-plugin-code-block-pro": "workspace:*",
+    "emdash-plugin-code-block-pro": "0.2.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "shiki": "4.1.0",
     "workers-og": "^0.0.27"
   },
   "devDependencies": {
