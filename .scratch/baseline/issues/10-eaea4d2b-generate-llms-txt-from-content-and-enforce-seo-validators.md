@@ -12,8 +12,9 @@ Replace the hand-written `llmsTxt.sections` in `apps/marketing-site/astro.config
 
 - [ ] `llms.txt` on staging lists only pages and posts that exist.
 - [ ] The override is gone, or a comment explains why it must stay.
-- [ ] A page with a missing H1 or image alt fails CI (proved on a throwaway branch).
 
 ## Comments
 
 **2026-11-08 Claude (orchestrator):** Risk: medium (no docs/agents/review.md; build-time SEO generation and CI-enforced validators).
+
+**2026-11-08 Claude (orchestrator):** Validator enforcement moved to 17-caadd917 (the package's validators only scan static HTML and both apps are SSR), along with its acceptance box "A page with a missing H1 or image alt fails CI (proved on a throwaway branch)". This ticket keeps `llms.txt` and the SEO override.
