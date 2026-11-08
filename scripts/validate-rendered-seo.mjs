@@ -57,7 +57,11 @@ async function main(origin) {
       title: extractTitle(html),
       description: extractMetaDescription(html),
     })) {
-      if (!value) continue;
+      if (!value) {
+        console.error(`${url.pathname}: metadata missing: ${field}`);
+        errors++;
+        continue;
+      }
       const { min, max } = DEFAULT_METADATA_LENGTH_BOUNDS[field];
       if (value.length < min || value.length > max) {
         console.error(`${url.pathname}: metadata length: ${field} has ${value.length} characters (expected ${min}-${max})`);

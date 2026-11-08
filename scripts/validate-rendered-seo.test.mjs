@@ -48,6 +48,18 @@ test("a clean sitemap page passes", async () => {
   assert.match(output, /1 pages checked/);
 });
 
+test("a sitemap page without a title fails with its URL and field", async () => {
+  const { code, output } = await checkPage("/missing-title", `<meta name="description" content="A useful description of the page that is long enough to meet the validator's minimum length."><h1>Heading</h1>`);
+  assert.equal(code, 1, output);
+  assert.match(output, /\/missing-title: metadata missing: title/);
+});
+
+test("a sitemap page without a description fails with its URL and field", async () => {
+  const { code, output } = await checkPage("/missing-description", "<title>A clear and descriptive page title</title><h1>Heading</h1>");
+  assert.equal(code, 1, output);
+  assert.match(output, /\/missing-description: metadata missing: description/);
+});
+
 test("short metadata fails with its URL and rule", async () => {
   const { code, output } = await checkPage("/short", "<title>Short</title><h1>Heading</h1>");
   assert.equal(code, 1, output);
