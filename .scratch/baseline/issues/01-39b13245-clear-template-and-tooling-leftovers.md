@@ -8,12 +8,14 @@ Delete `apps/marketing-site/lighthouse-report*.report.{html,json}`, `apps/market
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] None of the listed files are tracked (`git ls-files` proves it).
-- [ ] `.agents/skills` holds only EmDash skills and `emdash-mcp`.
-- [ ] `pnpm install --frozen-lockfile` still succeeds.
+- [x] None of the listed files are tracked (`git ls-files` proves it).
+- [x] `.agents/skills` holds only EmDash skills and `emdash-mcp`.
+- [x] `pnpm install --frozen-lockfile` still succeeds.
 
 ## Comments
 
 **2026-11-08 Claude (orchestrator):** Risk: medium (no docs/agents/review.md, default tier; deletes tracked files and edits .gitignore only).
+
+**2026-11-08 Claude (orchestrator):** Done in 234855d, merged to `baseline` in 0b34295. Worked by the orchestrator directly, because helpers can't launch on Linux yet (agent-workflow 22-55e812ec). `git ls-files` lists none of the removed files; `.agents/skills` holds `building-emdash-site`, `creating-plugins`, `emdash-cli` and `emdash-mcp`; `pnpm install --frozen-lockfile` passes on the merged tree. Plans moved to `docs/plans/archive/`, each with a shipped / not shipped / unknown note, and their relative links fixed. The untracked Lighthouse reports were deleted from the main checkout and are now ignored. Evidence: `.orchestrate/runs/2026-11-08-01-clear-leftovers/`.
