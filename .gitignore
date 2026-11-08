@@ -37,3 +37,8 @@ Thumbs.db
 # Logs
 *.log
 npm-debug.log*
+
+# Reports and local sandboxes
+*.report.html
+*.report.json
+sandbox.db

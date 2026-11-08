@@ -1,3 +1,5 @@
+> **Archived 2026-11-08.** Not shipped: a brainstorm; none of its block types exist. The jamesryan.dev blueprint (backlog) picks up the page builder.
+
 # Brainstorm: Custom Flexible Blocks (EmDash + Astro)
 
 This document is a brainstorm on how to leverage EmDash custom Portable Text block types to build a highly flexible, ACF-style page building experience for both **jamesryan.dev** (AI Consultancy) and **jamesryan.me** (Digital Garden).

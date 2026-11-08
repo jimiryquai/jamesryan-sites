@@ -1,3 +1,5 @@
+> **Archived 2026-11-08.** Shipped: this repo is the pnpm monorepo it describes.
+
 # Monorepo Migration Plan: jamesryan.dev & jamesryan.me
 
 This document outlines the architectural plan for refactoring the current Astro + EmDash projects into a single unified `pnpm` monorepo. This will allow sharing UI components, themes, and logic while keeping the two sites visually distinct and connected to separate database instances.

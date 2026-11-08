@@ -5,6 +5,8 @@ status: active
 date: 2026-06-22
 ---
 
+> **Archived 2026-11-08.** Shipped in the workspace copy of Code Block Pro only; baseline ticket 03 merges it upstream.
+
 # Mermaid Diagram Support in Code Block Pro
 
 ## Overview
@@ -22,7 +24,7 @@ This plan designs native support for rendering interactive vector diagrams (flow
 
 ### [Component] emdash-plugin-code-block-pro
 
-#### [MODIFY] [CodeBlockPro.astro](../../packages/emdash-plugin-code-block-pro/src/astro/CodeBlockPro.astro)
+#### [MODIFY] [CodeBlockPro.astro](../../../packages/emdash-plugin-code-block-pro/src/astro/CodeBlockPro.astro)
 Update `CodeBlockPro.astro` to detect if the block language is `mermaid`.
 * If `language === 'mermaid'`, bypass the Shiki syntax highlighting engine to avoid useless HTML token wrapping.
 * Render a wrapper container `<div class="cbp-mermaid-container font-sans text-center">` containing the raw code string inside a `<div class="mermaid">` element.
@@ -46,7 +48,7 @@ Update `CodeBlockPro.astro` to detect if the block language is `mermaid`.
 ## Implementation Units
 
 ### Unit 1: Template and Layout Detection
-* Update the destructuring parameters in [CodeBlockPro.astro](../../packages/emdash-plugin-code-block-pro/src/astro/CodeBlockPro.astro) to declare `isMermaid`.
+* Update the destructuring parameters in [CodeBlockPro.astro](../../../packages/emdash-plugin-code-block-pro/src/astro/CodeBlockPro.astro) to declare `isMermaid`.
 * Condition the container UI structure: if `isMermaid` is true, omit line-numbering and formatting, rendering instead a container structure that aligns with the visual character rules.
 
 ### Unit 2: Client-side Script Integration
