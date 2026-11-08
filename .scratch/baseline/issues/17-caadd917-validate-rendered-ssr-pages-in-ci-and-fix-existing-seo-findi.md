@@ -15,14 +15,16 @@ Make the validators check rendered pages and fail the required CI check:
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** needs James: approve or rewrite the copy in `.orchestrate/runs/2026-11-08-17-ssr-validators/copy-changes.md`, then the orchestrator applies it and merges PR #14
 
-- [ ] CI validates the rendered pages of both apps (the log lists the pages checked, more than zero per app) and the run fails on any validator error.
+- [x] CI validates the rendered pages of both apps (the log lists the pages checked, more than zero per app) and the run fails on any validator error.
 - [ ] Existing findings are fixed at their source; a clean `baseline` passes.
-- [ ] A page with a missing H1 or image alt fails CI (proved on a throwaway branch, then removed).
+- [x] A page with a missing H1 or image alt fails CI (proved on a throwaway branch, then removed).
 
 ## Comments
 
 **2026-11-08 Claude (orchestrator):** Split out of 10 because the validators only scan static output; `llms.txt` and the SEO override stay in 10. Risk when claimed: high (CI definition, and possibly the `master` ruleset).
 
 **2026-11-08 Claude (orchestrator):** Unblocked: it needs 10's merged code (PR #13), not 10's remaining staging check. Risk: high (CI definition, maybe the `master` ruleset).
+
+**2026-11-08 Claude (orchestrator):** Built by h17-copilot (Copilot, GPT-6.1 Terra), PR #14 (8b8f43e, 13c9fe0, 546a37f), CI green, not merged. `scripts/check-rendered-seo.sh` seeds an isolated local D1 per app from `seed/seed.json`, serves the built worker with `wrangler dev --local`, and `scripts/validate-rendered-seo.mjs` crawls the sitemap with astro-seo-graph's exported validators (one H1, image alt, title/description present, 30–65 and 70–200 characters, unique) plus redirect-aware internal links; it runs in the required "Typecheck, build and test" job (13 pages for jamesryan.dev, 11 for the garden). Throwaway PR #15 failed with `/contact: H1 validation: expected 1, found 0`, then was closed and its branches deleted. Fix round 1: missing title or description now fails. Box 2 waits on James: to pass the length rules the fixes rewrote user-visible copy (about 25 template strings that reach the live sites on the next deploy, several replacing CMS-settings-driven titles with hard-coded text, plus about 10 seed titles and excerpts); the full before/after table is `copy-changes.md` in the evidence folder.
