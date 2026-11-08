@@ -9,7 +9,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote http://localhost:4321/_emdash/api/mcp --header \"Authorization: Bearer $EMDASH_SITE_PAT\""
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote http://localhost:4321/_emdash/api/mcp --header \"Authorization: Bearer $EMDASH_SITE_PAT\""
       ],
       "lifecycle": "keep-alive"
     },
@@ -17,7 +17,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote http://localhost:4322/_emdash/api/mcp --header \"Authorization: Bearer $EMDASH_GARDEN_PAT\""
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote http://localhost:4322/_emdash/api/mcp --header \"Authorization: Bearer $EMDASH_GARDEN_PAT\""
       ],
       "lifecycle": "keep-alive"
     },
@@ -25,7 +25,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://stitch.googleapis.com/mcp --header \"X-Goog-Api-Key: $STITCH_API_KEY\""
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://stitch.googleapis.com/mcp --header \"X-Goog-Api-Key: $STITCH_API_KEY\""
       ],
       "lifecycle": "ephemeral"
     },
@@ -33,7 +33,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://api.z.ai/api/mcp/web_search_prime/mcp --header \"Authorization: Bearer $Z_AI\""
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://api.z.ai/api/mcp/web_search_prime/mcp --header \"Authorization: Bearer $Z_AI\""
       ],
       "lifecycle": "keep-alive"
     },
@@ -41,7 +41,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://api.z.ai/api/mcp/zread/mcp --header \"Authorization: Bearer $Z_AI\""
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://api.z.ai/api/mcp/zread/mcp --header \"Authorization: Bearer $Z_AI\""
       ],
       "lifecycle": "keep-alive"
     },
@@ -49,7 +49,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://api.z.ai/api/mcp/web_reader/mcp --header \"Authorization: Bearer $Z_AI\""
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote https://api.z.ai/api/mcp/web_reader/mcp --header \"Authorization: Bearer $Z_AI\""
       ],
       "lifecycle": "keep-alive"
     },
@@ -57,7 +57,7 @@
       "command": "sh",
       "args": [
         "-c",
-        "[ -f /home/james/Repos/oatmeal-olive-instrument/.env ] && export $(grep -v '^#' /home/james/Repos/oatmeal-olive-instrument/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; export Z_AI_API_KEY=\"$Z_AI\"; npx -y @z_ai/mcp-server"
+        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; export Z_AI_API_KEY=\"$Z_AI\"; npx -y @z_ai/mcp-server"
       ],
       "env": {
         "Z_AI_MODE": "ZAI"

@@ -125,10 +125,10 @@ This plan rebrands the marketing site to "James Ryan — AI-native marketer & en
 
 ## Sources & References
 
-- **Origin document**: [monorepo-migration.md](file:///home/james/Repos/oatmeal-olive-instrument/docs/plans/monorepo-migration.md)
+- **Origin document**: [monorepo-migration.md](../../docs/plans/monorepo-migration.md)
 - **Old blog seed**: [seed.json](file:///home/james/Repos/astro-blog/seed/seed.json) — 6 posts, taxonomies, settings
 - **Old blog wrangler**: [wrangler.jsonc](file:///home/james/Repos/astro-blog/wrangler.jsonc) — real D1/R2/KV IDs
-- **Existing posts listing pattern**: [posts/index.astro](file:///home/james/Repos/oatmeal-olive-instrument/apps/marketing-site/src/pages/posts/index.astro) — featured post + grid layout (reusable for homepage)
+- **Existing posts listing pattern**: [posts/index.astro](../../apps/marketing-site/src/pages/posts/index.astro) — featured post + grid layout (reusable for homepage)
 - **Learning: Seed media syntax**: [emdash-seed-image-fields-use-media-syntax.md](file:///home/james/Repos/astro-blog/.learnings/emdash/emdash-seed-image-fields-use-media-syntax.md)
 - **Learning: Local dev seeding workflow**: [emdash-seeding-with-cloudflare-d1-r2-local-dev-workflow.md](file:///home/james/Repos/astro-blog/.learnings/emdash/emdash-seeding-with-cloudflare-d1-r2-local-dev-workflow.md)
-- **Flexible blocks brainstorm**: [flexible-blocks-brainstorm.md](file:///home/james/Repos/oatmeal-olive-instrument/docs/plans/flexible-blocks-brainstorm.md) — future block types for the marketing site
+- **Flexible blocks brainstorm**: [flexible-blocks-brainstorm.md](../../docs/plans/flexible-blocks-brainstorm.md) — future block types for the marketing site
