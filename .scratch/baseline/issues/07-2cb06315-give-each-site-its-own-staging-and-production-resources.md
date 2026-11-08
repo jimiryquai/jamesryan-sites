@@ -8,10 +8,12 @@ jamesryan.dev: create a dedicated staging KV namespace (staging currently shares
 
 **Blocked by:** 01-39b13245.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `wrangler.jsonc` for both apps lists distinct staging and production bindings (no shared IDs).
 - [ ] Garden has no production route; jamesryan.me is unchanged.
 - [ ] Resources exist in Cloudflare (`wrangler d1 list`, `r2 bucket list`, `kv namespace list` output in a comment).
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: high (no docs/agents/review.md; creates Cloudflare resources and changes both workers' bindings and routes).

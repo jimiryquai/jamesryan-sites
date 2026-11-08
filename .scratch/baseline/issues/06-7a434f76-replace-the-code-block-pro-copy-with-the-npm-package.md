@@ -8,10 +8,12 @@ Once Code Block Pro is published, add `emdash-plugin-code-block-pro` from npm to
 
 **Blocked by:** 03-8b1e2850, 05-10cd2eae.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `packages/` no longer contains the plugin; both apps resolve it from npm.
 - [ ] Existing code blocks and Mermaid diagrams render identically (screenshot before and after).
 - [ ] CI green.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: medium (no docs/agents/review.md; swaps a dependency and deletes the workspace copy; no runtime config beyond the apps).
