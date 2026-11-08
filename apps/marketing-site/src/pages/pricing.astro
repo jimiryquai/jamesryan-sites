@@ -11,11 +11,11 @@ const pageContent = page?.data.content;
 ---
 
 <Base
-	title="Pricing"
-	description="Simple, transparent pricing. No hidden fees. No surprises."
+	title="Pricing information"
+	description="Find pricing information on this page or contact James Ryan with a question."
 >
 	{
-		pageContent ? (
+		pageContent?.length ? (
 			<MarketingBlocks value={pageContent} />
 		) : (
 			<div class="empty-state">

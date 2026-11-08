@@ -50,11 +50,12 @@ if (Astro.request.method === "POST") {
 }
 
 const pageContent = page?.data.content;
+const ContactHeading = pageContent?.length ? "h2" : "h1";
 ---
 
 <Base
-	title="Contact"
-	description="Have questions? Want a demo? We'd love to hear from you."
+	title="Contact about a project"
+	description="Contact James Ryan using the form to discuss a project or ask a question."
 >
 	{pageContent && <MarketingBlocks value={pageContent} />}
 
@@ -65,9 +66,9 @@ const pageContent = page?.data.content;
 				{/* Left Side: Contact Information */}
 				<div class="lg:col-span-5 space-y-8">
 					<div class="space-y-4">
-						<h2 class="text-3xl sm:text-4xl font-display font-semibold tracking-tight text-olive-950 dark:text-white leading-tight">
+						<ContactHeading class="text-3xl sm:text-4xl font-display font-semibold tracking-tight text-olive-950 dark:text-white leading-tight">
 							Talk to our team
-						</h2>
+						</ContactHeading>
 						<p class="text-base sm:text-lg text-olive-700 dark:text-olive-350">
 							Fill out the form and we'll be in touch within 24 hours.
 						</p>

@@ -32,3 +32,4 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm build
       - run: pnpm test
+      - run: bash scripts/check-rendered-seo.sh

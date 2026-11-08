@@ -20,7 +20,7 @@ const [{ entries: posts, cacheHint }, settings] = await Promise.all([
 	}),
 	getSiteSettings(),
 ]);
-const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
+const { siteTagline } = resolveBlogSiteIdentity(settings);
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
@@ -70,7 +70,7 @@ function formatDate(date: Date | null | undefined) {
 }
 ---
 
-<Base title={`Blog — ${siteTitle}`} description={siteTagline}>
+<Base title="Power Platform and automation articles" description="Read practical guides to Power Platform, development, automation and testing from James Ryan.">
 	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24">
 		{
 			posts.length === 0 ? (

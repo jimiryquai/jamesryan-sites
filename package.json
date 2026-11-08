@@ -13,6 +13,7 @@
     "test": "node --test scripts/*.test.mjs && pnpm -r --if-present test"
   },
   "devDependencies": {
+    "@jdevalk/astro-seo-graph": "2.2.0",
     "mcporter": "0.17.0"
   }
 }
