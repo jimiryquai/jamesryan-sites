@@ -15,6 +15,7 @@ minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - emdash
   - '@emdash-cms/*'
+  - 'emdash-plugin-code-block-pro@0.2.0'
 
 # Keep new admin extensions on the same Tiptap release as its existing editor.
 overrides:
