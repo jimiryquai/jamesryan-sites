@@ -16,6 +16,8 @@ minimumReleaseAgeExclude:
   - emdash
   - '@emdash-cms/*'
 
-patchedDependencies:
-  '@emdash-cms/admin': patches/@emdash-cms__admin.patch
-  emdash@0.14.0: patches/emdash@0.14.0.patch
+# Keep new admin extensions on the same Tiptap release as its existing editor.
+overrides:
+  '@tiptap/extension-subscript': 3.23.5
+  '@tiptap/extension-superscript': 3.23.5
+  '@astrojs/cloudflare>@cloudflare/vite-plugin': 1.39.0

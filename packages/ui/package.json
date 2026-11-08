@@ -11,13 +11,13 @@
     "./assets/*": "./src/assets/*"
   },
   "dependencies": {
-    "@jdevalk/astro-seo-graph": "^2.0.0",
-    "@jdevalk/seo-graph-core": "^0.6.2",
+    "@jdevalk/astro-seo-graph": "2.2.0",
+    "@jdevalk/seo-graph-core": "0.7.0",
     "@tailwindplus/elements": "^1.0.22",
-    "astro": "^6.3.0",
+    "astro": "6.4.8",
     "astro-iconset": "^0.0.4",
     "clsx": "^2.1.1",
-    "emdash": "^0.14.0",
+    "emdash": "1.4.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6"
   },

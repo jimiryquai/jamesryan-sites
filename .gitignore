@@ -42,3 +42,6 @@ npm-debug.log*
 *.report.html
 *.report.json
 sandbox.db
+
+# Generated EmDash migration manifests (rebuilt for each deployment)
+.emdash/
