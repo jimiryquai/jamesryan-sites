@@ -2,8 +2,6 @@
 
 A conversion-focused landing page template built with [EmDash](https://github.com/emdash-cms/emdash) and deployed on Cloudflare Workers with D1 and R2. Modular content blocks let you assemble pages from reusable sections without touching code.
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/emdash-cms/templates/tree/main/marketing-cloudflare)
-
 ![Marketing template homepage](https://raw.githubusercontent.com/emdash-cms/emdash/main/assets/templates/marketing/latest/homepage-light-desktop.jpg)
 
 ## What's Included
@@ -60,11 +58,7 @@ If you ever lose or invalidate your local passkeys, you can bypass the authentic
 
 ## Deploying
 
-```bash
-pnpm deploy
-```
-
-Or click the deploy button above to set up the project in your Cloudflare account.
+See [deployment instructions](docs/deploying.md).
 
 ## See Also
 
