@@ -8,10 +8,12 @@ Add `.github/workflows/deploy.yml`. On push to `master` after CI passes, it depl
 
 **Blocked by:** 02-008a2b07, 05-10cd2eae, 07-2cb06315.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] A merge to `master` lands on both staging sites with smoke checks green.
 - [ ] Promotion deploys exactly the staging commit to jamesryan.dev and needs James's approval.
 - [ ] There's no documented or scripted way to deploy production except promotion.
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: high (no docs/agents/review.md; CI definition, deploys and production promotion).

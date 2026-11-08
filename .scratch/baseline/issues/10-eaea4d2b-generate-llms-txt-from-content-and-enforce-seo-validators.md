@@ -8,10 +8,12 @@ Replace the hand-written `llmsTxt.sections` in `apps/marketing-site/astro.config
 
 **Blocked by:** 05-10cd2eae.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `llms.txt` on staging lists only pages and posts that exist.
 - [ ] The override is gone, or a comment explains why it must stay.
 - [ ] A page with a missing H1 or image alt fails CI (proved on a throwaway branch).
 
 ## Comments
+
+**2026-11-08 Claude (orchestrator):** Risk: medium (no docs/agents/review.md; build-time SEO generation and CI-enforced validators).
