@@ -200,11 +200,13 @@ finish() {
 
 run_wizard() {
 
-TOTAL_STAGES=3
+export WRANGLER_SEND_METRICS=false ASTRO_TELEMETRY_DISABLED=1
+TOTAL_STAGES=4
 
 banner "Cloudflare deployment secrets"
 
 stage "Cloudflare API token"
+if confirm "Configure or replace the Cloudflare API token?"; then
 open_url "https://dash.cloudflare.com/profile/api-tokens"
 step "Select Create Token, then Custom token / Get started."
 step "Add account permissions: Workers Scripts Edit, D1 Edit, Workers KV Storage Edit,"
@@ -216,8 +218,12 @@ ask_secret CLOUDFLARE_API_TOKEN "Paste the token (input hidden):"
 confirm "Write CLOUDFLARE_API_TOKEN as a GitHub Actions secret?" || exit 1
 set_secret CLOUDFLARE_API_TOKEN "$CLOUDFLARE_API_TOKEN"
 unset CLOUDFLARE_API_TOKEN
+else
+  note "Skipped Cloudflare API token."
+fi
 
 stage "Cloudflare account ID"
+if confirm "Configure or replace the Cloudflare account ID?"; then
 open_url "https://dash.cloudflare.com/"
 step "Select your account. Copy Account ID from the Workers & Pages overview."
 ask CLOUDFLARE_ACCOUNT_ID "Paste the account ID:"
@@ -225,8 +231,12 @@ ask CLOUDFLARE_ACCOUNT_ID "Paste the account ID:"
 confirm "Write CLOUDFLARE_ACCOUNT_ID as a GitHub Actions secret?" || exit 1
 set_secret CLOUDFLARE_ACCOUNT_ID "$CLOUDFLARE_ACCOUNT_ID"
 unset CLOUDFLARE_ACCOUNT_ID
+else
+  note "Skipped Cloudflare account ID."
+fi
 
 stage "Reviewed migration target fingerprints"
+if confirm "Configure or replace reviewed migration target fingerprints?"; then
 say "In Actions > Deploy > Run workflow on master, choose migration-status."
 say "Inspect each app/environment target, including its account and database UUID."
 say "Copy target.fingerprint from each status report; these are public target identities."
@@ -243,6 +253,32 @@ for app in MARKETING_SITE DIGITAL_GARDEN; do
     confirm "Set $variable to the reviewed target fingerprint?" || exit 1
     set_var "$variable" "$MIGRATION_FINGERPRINT"
   done
+done
+else
+  note "Skipped migration target fingerprints."
+fi
+
+stage "Marketing Worker encryption keys"
+say "A separate key is generated for each selected environment."
+warn "Never replace an existing key without following EmDash's key rotation procedure."
+warn "Losing a key makes encrypted plugin settings unreadable, even with a database backup."
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+for target in staging production; do
+  if ! confirm "Generate and install a NEW key for marketing $target (skip if already set)?"; then
+    note "Skipped $target encryption key."
+    continue
+  fi
+  key="$(pnpm --dir "$root/apps/marketing-site" exec emdash secrets generate)"
+  [[ "$key" == emdash_enc_v1_* ]] || { warn "Key generation failed"; exit 1; }
+  say "Save this $target key in your password manager, separately from database backups:"
+  printf '  %s\n' "$key"
+  confirm "Saved the key securely and ready to install it on $target?" || { unset key; exit 1; }
+  if [[ "$target" == staging ]]; then
+    printf '%s' "$key" | pnpm --dir "$root/apps/marketing-site" exec wrangler secret put EMDASH_ENCRYPTION_KEY --env staging
+  else
+    printf '%s' "$key" | pnpm --dir "$root/apps/marketing-site" exec wrangler secret put EMDASH_ENCRYPTION_KEY
+  fi
+  unset key
 done
 
 finish
