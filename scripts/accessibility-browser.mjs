@@ -1,7 +1,7 @@
 // Own the browser boundary: visitor theme, allowed requests and usable stylesheets.
-export async function openAccessibilityPage(browser, origin, mode) {
+export async function openAccessibilityPage(browser, origin, mode, { recordVideo } = {}) {
   origin = new URL(origin).origin;
-  const context = await browser.newContext({ colorScheme: mode, viewport: { width: 1440, height: 1000 } });
+  const context = await browser.newContext({ colorScheme: mode, viewport: { width: 1440, height: 1000 }, recordVideo });
   await context.addCookies([{ name: 'theme', value: mode, url: origin }]);
   await context.route('**/*', route => {
     const url = new URL(route.request().url());

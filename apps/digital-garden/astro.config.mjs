@@ -68,6 +68,10 @@ export default defineConfig({
 			// deployed worker bundle).
 			include: {
 				ph: [
+					"sun",
+					"moon",
+					"circle-half",
+					"check",
 					"chart-bar",
 					"check-circle",
 					"clock",

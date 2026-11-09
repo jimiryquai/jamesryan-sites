@@ -1,6 +1,15 @@
 @import 'tailwindcss';
 @import './palette.css';
 
+/* Explicit visitor choice wins over the system preference (EmDash convention). */
+@custom-variant dark {
+  &:where(.dark, .dark *) { @slot; }
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not(.light), :root:not(.light) *) { @slot; }
+  }
+}
+
+
 @theme {
   --font-display: 'Instrument Serif', serif;
   --font-sans: 'Inter', system-ui, sans-serif;

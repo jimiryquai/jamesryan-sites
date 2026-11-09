@@ -46,6 +46,22 @@ pnpm bootstrap
 pnpm dev
 ```
 
+### Tests
+
+Install the browser once before running the suite (CI does this automatically):
+
+```bash
+pnpm exec playwright install --with-deps chromium
+pnpm test
+```
+
+To record theme selection, persistence, keyboard controls and mobile layout against
+an already running, locally seeded marketing worker:
+
+```bash
+node scripts/check-theme.mjs http://127.0.0.1:14321 .scratch/theme
+```
+
 ### Admin UI & Auth Dev Bypass
 
 The admin dashboards can be accessed at:
