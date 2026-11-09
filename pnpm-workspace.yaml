@@ -1,7 +1,6 @@
 packages:
   - apps/*
   - packages/*
-  - ../emdash-plugin-code-block-pro
 
 allowBuilds:
   better-sqlite3: false
@@ -16,6 +15,10 @@ minimumReleaseAge: 1440
 minimumReleaseAgeExclude:
   - emdash
   - '@emdash-cms/*'
+  - 'emdash-plugin-code-block-pro@0.2.0'
 
-patchedDependencies:
-  '@emdash-cms/admin': patches/@emdash-cms__admin.patch
+# Keep new admin extensions on the same Tiptap release as its existing editor.
+overrides:
+  '@tiptap/extension-subscript': 3.23.5
+  '@tiptap/extension-superscript': 3.23.5
+  '@astrojs/cloudflare>@cloudflare/vite-plugin': 1.39.0

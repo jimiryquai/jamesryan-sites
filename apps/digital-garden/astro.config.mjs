@@ -9,10 +9,13 @@ import seoPlugin from "@jdevalk/emdash-plugin-seo";
 import seoGraph from "@jdevalk/astro-seo-graph/integration";
 import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
 
+const site = "https://jamesryan.me";
+const hostname = new URL(site).hostname;
+
 export default defineConfig({
-	site: "https://garden.oatmeal.dev",
+	site,
 	output: "server",
-	adapter: cloudflare({ inspectorPort: process.argv.includes("dev") ? 9230 : undefined }),
+	adapter: cloudflare({ inspectorPort: process.argv.includes("dev") ? 9230 : false }),
 	server: {
 		port: 4322,
 	},
@@ -22,6 +25,8 @@ export default defineConfig({
 	image: {
 		layout: "constrained",
 		responsiveStyles: true,
+		domains: [hostname, `staging.${hostname}`, "localhost"],
+		remotePatterns: [{ protocol: "https", hostname: `**.${hostname}` }],
 	},
 	vite: {
 		plugins: [tailwind()],
@@ -29,35 +34,17 @@ export default defineConfig({
 			watch: {
 				ignored: ["**/.wrangler/**"],
 			},
-			fs: {
-				allow: [
-					new URL("../../../", import.meta.url).pathname,
-				],
-			},
 		},
 		ssr: {
-			noExternal: [],
 			optimizeDeps: {
-				// Pre-bundle so it isn't discovered mid-render, which would trigger
-				// a Vite dep re-optimization and break in-flight worker imports
-				// under the Cloudflare dev runner (workerd).
+				// EmDash owns its core dependencies; these app dependencies still
+				// trigger worker reloads when first discovered during a render.
 				include: [
 					"astro-iconset/components",
-					"emdash/middleware",
-					"emdash/middleware/redirect",
-					"emdash/middleware/setup",
-					"emdash/middleware/auth",
-					"emdash/middleware/request-context",
-					"emdash/media/local-runtime",
-					"@emdash-cms/cloudflare/db/d1",
-					"@emdash-cms/cloudflare/storage/r2",
-					"emdash/ui",
-					"emdash/runtime",
-					"emdash/routes/PluginRegistry",
-					"astro/zod",
-					"emdash/page",
+					"@jdevalk/astro-seo-graph",
 					"@jdevalk/seo-graph-core",
 					"clsx/lite",
+					"workers-og",
 				],
 			},
 		},
@@ -71,10 +58,6 @@ export default defineConfig({
 			validateMetadataLength: true,
 			validateInternalLinks: {
 				skip: (href) => href.startsWith("/api/") || href.startsWith("/_emdash/"),
-			},
-			llmsTxt: {
-				title: "Oatmeal Digital Garden",
-				siteUrl: "https://garden.oatmeal.dev",
 			},
 			markdownAlternate: true,
 		}),
@@ -111,18 +94,13 @@ export default defineConfig({
 			mcp: true,
 			plugins: [
 				(() => {
+					// SEO 0.12's descriptor paths are stripped by EmDash 1.4's definePlugin.
 					const seo = seoPlugin();
 					seo.entrypoint = new URL("./node_modules/@jdevalk/emdash-plugin-seo/src/index.ts", import.meta.url).href;
 					seo.adminEntry = new URL("./node_modules/@jdevalk/emdash-plugin-seo/src/admin.tsx", import.meta.url).href;
 					return seo;
 				})(),
-				(() => {
-					const codeBlock = codeBlockProPlugin();
-					codeBlock.entrypoint = new URL("./node_modules/emdash-plugin-code-block-pro/src/index.ts", import.meta.url).href;
-					codeBlock.adminEntry = new URL("./node_modules/emdash-plugin-code-block-pro/src/admin.tsx", import.meta.url).href;
-					codeBlock.componentsEntry = new URL("./node_modules/emdash-plugin-code-block-pro/src/astro/index.ts", import.meta.url).href;
-					return codeBlock;
-				})(),
+				codeBlockProPlugin(),
 			],
 		}),
 	],

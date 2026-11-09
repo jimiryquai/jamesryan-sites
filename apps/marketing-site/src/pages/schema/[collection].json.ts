@@ -11,8 +11,8 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 
 	const siteUrl = site?.toString().replace(/\/$/, "") || url.origin;
 	const settings = await getSiteSettings();
-	const siteTitle = settings?.title || "Oatmeal";
-	const siteDescription = settings?.tagline || "Customer support that feels like a conversation.";
+	const siteTitle = settings?.title || "James Ryan";
+	const siteDescription = settings?.tagline || "AI-native marketer & engineer";
 
 	// Query EmDash collection
 	const { entries } = await getEmDashCollection(collection as "pages" | "posts" | "projects", { limit: 100 });
@@ -24,7 +24,7 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 	// Build common site entities
 	const personImagePiece = buildImageObject({
 		id: ids.personImage,
-		url: `${siteUrl}/images/avatar.jpg`,
+		url: `${siteUrl}/images/avatar.webp`,
 		width: 400,
 		height: 400,
 	}, ids);
@@ -59,13 +59,13 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 		]
 	});
 
-	const blogId = `${siteUrl}/blog/#blog`;
+	const blogId = `${siteUrl}/posts/#blog`;
 	const blogPiece = buildPiece<Blog>({
 		"@type": "Blog",
 		"@id": blogId,
 		name: siteTitle,
 		description: siteDescription,
-		url: `${siteUrl}/blog/`,
+		url: `${siteUrl}/posts/`,
 		publisher: { "@id": ids.person },
 		inLanguage: "en-US",
 	});
@@ -82,7 +82,7 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 	for (const entry of entries) {
 		let path = `/pages/${entry.id}`;
 		if (collection === "posts") {
-			path = `/blog/${entry.id}`;
+			path = `/posts/${entry.id}`;
 		} else if (collection === "projects") {
 			path = `/work/${entry.id}`;
 		} else if (entry.id === "home") {

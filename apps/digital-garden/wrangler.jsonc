@@ -1,19 +1,26 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "digital-garden",
+	"name": "jamesryan-me",
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "garden-db",
+			"database_name": "jamesryan-me",
+			"database_id": "7719473e-1e63-423d-a350-fbe8221a5491",
+		},
+	],
+	"kv_namespaces": [
+		{
+			"binding": "SESSION",
+			"id": "3fcef3fa51fb45c6804133c49e498f51",
 		},
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
-			"bucket_name": "garden-media",
+			"bucket_name": "jamesryan-me",
 		},
 	],
 	// Worker Loader for plugin sandboxing
@@ -22,4 +29,40 @@
 			"binding": "LOADER",
 		},
 	],
+	"routes": [],
+	"env": {
+		"staging": {
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "jamesryan-me-staging",
+					"database_id": "449e7ed9-de4d-4518-ad02-1ad8501ab2dc",
+				},
+			],
+			"kv_namespaces": [
+				{
+					"binding": "SESSION",
+					"id": "593150d3108e40e1aa09cdbc6965c679",
+				},
+			],
+			"r2_buckets": [
+				{
+					"binding": "MEDIA",
+					"bucket_name": "jamesryan-me-staging",
+				},
+			],
+			// Worker Loader for plugin sandboxing
+			"worker_loaders": [
+				{
+					"binding": "LOADER",
+				},
+			],
+			"routes": [
+				{
+					"pattern": "staging.jamesryan.me",
+					"custom_domain": true,
+				},
+			],
+		},
+	},
 }

@@ -1,13 +1,19 @@
 {
-  "name": "jamesryan-monorepo",
+  "name": "jamesryan-sites",
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "dev": "pnpm --filter marketing-site dev",
     "dev:garden": "pnpm --filter digital-garden dev",
     "dev:all": "pnpm --parallel dev",
-    "build": "pnpm --filter ... build",
-    "typecheck": "pnpm --filter ... typecheck"
+    "build": "pnpm -r --if-present build",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "node --test scripts/*.test.mjs && pnpm -r --if-present test"
+  },
+  "devDependencies": {
+    "@jdevalk/astro-seo-graph": "2.2.0",
+    "mcporter": "0.17.0"
   }
 }

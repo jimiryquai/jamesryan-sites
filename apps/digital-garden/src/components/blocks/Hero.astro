@@ -9,7 +9,7 @@ import PlainButtonLink from "@jamesryan/ui/components/elements/PlainButtonLink.a
 import SoftButtonLink from "@jamesryan/ui/components/elements/SoftButtonLink.astro";
 import ArrowNarrowRightIcon from "@jamesryan/ui/components/icons/arrow-narrow-right-icon.astro";
 import ClientLogoGrid from "@jamesryan/ui/components/sections/ClientLogoGrid.astro";
-import { getEmDashEntry, getEmDashCollection } from "emdash";
+import { getServiceEntries } from "@jamesryan/cms-helpers";
 import { Image as AstroImage } from "astro:assets";
 import Screenshot from "@jamesryan/ui/components/elements/screenshot.astro";
 
@@ -72,24 +72,20 @@ const {
 let plansData = plans;
 
 if (serviceSlug && variation === "pricing-hero-multi-tier") {
-	const { entry: service } = await getEmDashEntry("services", serviceSlug);
-	if (service) {
-		const { entries } = await getEmDashCollection("pricing", {
-			where: { service: service.data.id as string },
-		});
-		if (entries && entries.length > 0) {
-			plansData = entries.map((entry) => ({
-				name: String(entry.data.name ?? ""),
-				priceMonthly: String(entry.data.price_monthly ?? entry.data.price ?? ""),
-				priceYearly: String(entry.data.price_yearly ?? ""),
-				description: entry.data.description ? String(entry.data.description) : undefined,
-				features: entry.data.features ? String(entry.data.features) : undefined,
-				ctaLabel: entry.data.cta_label ? String(entry.data.cta_label) : undefined,
-				ctaUrl: entry.data.cta_url ? String(entry.data.cta_url) : undefined,
-				badge: entry.data.badge ? String(entry.data.badge) : undefined,
-				highlighted: entry.data.highlighted !== undefined ? Boolean(entry.data.highlighted) : undefined,
-			}));
-		}
+	const { entries, cacheHint } = await getServiceEntries("pricing", serviceSlug);
+	if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (entries && entries.length > 0) {
+		plansData = entries.map((entry) => ({
+			name: String(entry.data.name ?? ""),
+			priceMonthly: String(entry.data.price_monthly ?? entry.data.price ?? ""),
+			priceYearly: String(entry.data.price_yearly ?? ""),
+			description: entry.data.description ? String(entry.data.description) : undefined,
+			features: entry.data.features ? String(entry.data.features) : undefined,
+			ctaLabel: entry.data.cta_label ? String(entry.data.cta_label) : undefined,
+			ctaUrl: entry.data.cta_url ? String(entry.data.cta_url) : undefined,
+			badge: entry.data.badge ? String(entry.data.badge) : undefined,
+			highlighted: entry.data.highlighted !== undefined ? Boolean(entry.data.highlighted) : undefined,
+		}));
 	}
 }
 

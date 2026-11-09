@@ -2,7 +2,7 @@
 import FAQsAccordion from "@jamesryan/ui/components/sections/FAQsAccordion.astro";
 import FAQsTwoColumnAccordion from "@jamesryan/ui/components/sections/FAQsTwoColumnAccordion.astro";
 import Faq from "@jamesryan/ui/components/sections/Faq.astro";
-import { getEmDashEntry, getEmDashCollection } from "emdash";
+import { getServiceEntries } from "@jamesryan/cms-helpers";
 
 interface Props {
 	node: {
@@ -31,17 +31,13 @@ const {
 let faqItems = items;
 
 if (serviceSlug) {
-	const { entry: service } = await getEmDashEntry("services", serviceSlug);
-	if (service) {
-		const { entries } = await getEmDashCollection("faqs", {
-			where: { service: service.data.id as string },
-		});
-		if (entries && entries.length > 0) {
-			faqItems = entries.map((entry) => ({
-				question: String(entry.data.question ?? ""),
-				answer: String(entry.data.answer ?? ""),
-			}));
-		}
+	const { entries, cacheHint } = await getServiceEntries("faqs", serviceSlug);
+	if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (entries && entries.length > 0) {
+		faqItems = entries.map((entry) => ({
+			question: String(entry.data.question ?? ""),
+			answer: String(entry.data.answer ?? ""),
+		}));
 	}
 }
 

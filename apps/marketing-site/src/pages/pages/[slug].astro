@@ -1,5 +1,5 @@
 ---
-import { getEmDashEntry, decodeSlug } from "emdash";
+import { getEmDashEntry, getSeoMeta, decodeSlug } from "emdash";
 import Base from "../../layouts/Base.astro";
 import MarketingBlocks from "../../components/MarketingBlocks.astro";
 
@@ -19,10 +19,12 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const pageTitle = page.data.title;
 const pageContent = page.data.content;
+const seo = getSeoMeta(page);
 ---
 
 <Base
-	title={pageTitle}
+	title={seo.ogTitle}
+	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug }}
 >
 	{

@@ -9,9 +9,10 @@ import PlainButtonLink from "@jamesryan/ui/components/elements/PlainButtonLink.a
 import SoftButtonLink from "@jamesryan/ui/components/elements/SoftButtonLink.astro";
 import ArrowNarrowRightIcon from "@jamesryan/ui/components/icons/arrow-narrow-right-icon.astro";
 import ClientLogoGrid from "@jamesryan/ui/components/sections/ClientLogoGrid.astro";
-import { getEmDashEntry, getEmDashCollection } from "emdash";
+import { getServiceEntries } from "@jamesryan/cms-helpers";
 import { Image as AstroImage } from "astro:assets";
 import Screenshot from "@jamesryan/ui/components/elements/screenshot.astro";
+import HeroSimpleCentered from "@jamesryan/ui/components/sections/HeroSimpleCentered.astro";
 
 import screenshot1Left1670 from "@jamesryan/ui/assets/screenshots/1-left-1670-top-1408.webp";
 import screenshot1OliveLeft1670 from "@jamesryan/ui/assets/screenshots/1-color-olive-left-1670-top-1408.webp";
@@ -48,6 +49,7 @@ interface Props {
 		eyebrowUrl?: string;
 		eyebrowCta?: string;
 		serviceSlug?: string;
+		centered?: boolean | "true" | "false";
 	};
 }
 
@@ -67,29 +69,28 @@ const {
 	eyebrowUrl,
 	eyebrowCta,
 	serviceSlug,
+	centered = false,
 } = node;
+
+const isCentered = centered === true || centered === "true";
 
 let plansData = plans;
 
 if (serviceSlug && variation === "pricing-hero-multi-tier") {
-	const { entry: service } = await getEmDashEntry("services", serviceSlug);
-	if (service) {
-		const { entries } = await getEmDashCollection("pricing", {
-			where: { service: service.data.id as string },
-		});
-		if (entries && entries.length > 0) {
-			plansData = entries.map((entry) => ({
-				name: String(entry.data.name ?? ""),
-				priceMonthly: String(entry.data.price_monthly ?? entry.data.price ?? ""),
-				priceYearly: String(entry.data.price_yearly ?? ""),
-				description: entry.data.description ? String(entry.data.description) : undefined,
-				features: entry.data.features ? String(entry.data.features) : undefined,
-				ctaLabel: entry.data.cta_label ? String(entry.data.cta_label) : undefined,
-				ctaUrl: entry.data.cta_url ? String(entry.data.cta_url) : undefined,
-				badge: entry.data.badge ? String(entry.data.badge) : undefined,
-				highlighted: entry.data.highlighted !== undefined ? Boolean(entry.data.highlighted) : undefined,
-			}));
-		}
+	const { entries, cacheHint } = await getServiceEntries("pricing", serviceSlug);
+	if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (entries && entries.length > 0) {
+		plansData = entries.map((entry) => ({
+			name: String(entry.data.name ?? ""),
+			priceMonthly: String(entry.data.price_monthly ?? entry.data.price ?? ""),
+			priceYearly: String(entry.data.price_yearly ?? ""),
+			description: entry.data.description ? String(entry.data.description) : undefined,
+			features: entry.data.features ? String(entry.data.features) : undefined,
+			ctaLabel: entry.data.cta_label ? String(entry.data.cta_label) : undefined,
+			ctaUrl: entry.data.cta_url ? String(entry.data.cta_url) : undefined,
+			badge: entry.data.badge ? String(entry.data.badge) : undefined,
+			highlighted: entry.data.highlighted !== undefined ? Boolean(entry.data.highlighted) : undefined,
+		}));
 	}
 }
 
@@ -98,7 +99,41 @@ const hasCta = (primaryCtaLabel && primaryCtaUrl) || (secondaryCtaLabel && secon
 ---
 
 {
-	variation === "pricing-hero-multi-tier" && (
+	isCentered && (
+		<HeroSimpleCentered
+			id={_key || "hero"}
+			headline={headline}
+			subheadline={subheadline}
+			class="py-24 sm:py-32 lg:py-48"
+		>
+			{hasEyebrow && (
+				<AnnouncementBadge
+					slot="eyebrow"
+					href={eyebrowUrl}
+					text={eyebrowText}
+					cta={eyebrowCta}
+				/>
+			)}
+			{hasCta && (
+				<div slot="cta" class="flex items-center gap-4">
+					{primaryCtaLabel && primaryCtaUrl && (
+						<ButtonLink href={primaryCtaUrl} size="lg">
+							{primaryCtaLabel}
+						</ButtonLink>
+					)}
+					{secondaryCtaLabel && secondaryCtaUrl && (
+						<PlainButtonLink href={secondaryCtaUrl} size="lg">
+							{secondaryCtaLabel} <ArrowNarrowRightIcon />
+						</PlainButtonLink>
+					)}
+				</div>
+			)}
+		</HeroSimpleCentered>
+	)
+}
+
+{
+	!isCentered && variation === "pricing-hero-multi-tier" && (
 		<PricingHeroMultiTier id={_key || "pricing"}>
 			{hasEyebrow && (
 				<AnnouncementBadge
@@ -177,7 +212,7 @@ const hasCta = (primaryCtaLabel && primaryCtaUrl) || (secondaryCtaLabel && secon
 }
 
 {
-	variation === "left-aligned-with-photo" && (
+	!isCentered && variation === "left-aligned-with-photo" && (
 		<HeroLeftAlignedWithPhoto
 			id={_key || "hero"}
 			headline={headline}
@@ -221,7 +256,7 @@ const hasCta = (primaryCtaLabel && primaryCtaUrl) || (secondaryCtaLabel && secon
 }
 
 {
-	variation !== "pricing-hero-multi-tier" && variation !== "left-aligned-with-photo" && (
+	!isCentered && variation !== "pricing-hero-multi-tier" && variation !== "left-aligned-with-photo" && (
 		<HeroLeftAlignedWithDemo
 			id={_key || "hero"}
 			headline={headline}

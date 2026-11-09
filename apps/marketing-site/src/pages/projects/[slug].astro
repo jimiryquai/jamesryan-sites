@@ -1,7 +1,7 @@
 ---
 export const prerender = false;
 
-import { getEmDashEntry, getEmDashCollection, decodeSlug, getTermsForEntries } from "emdash";
+import { getEmDashEntry, getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
@@ -20,6 +20,7 @@ if (!project) {
 }
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+const seo = getSeoMeta(project, { defaultDescription: project.data.summary });
 
 // Related projects
 const { entries: relatedProjects } = await getEmDashCollection("projects", {
@@ -57,9 +58,10 @@ function getImageSrc(img: unknown): string | undefined {
 ---
 
 <Base
-	title={project.data.title}
-	description={project.data.summary}
+	title={seo.ogTitle}
+	description={seo.description}
 	image={getImageSrc(project.data.featured_image)}
+	content={{ collection: "projects", id: project.data.id, slug }}
 >
 	<article class="mx-auto w-full max-w-5xl px-6 lg:px-10 py-16 sm:py-24">
 		{/* Back button */}

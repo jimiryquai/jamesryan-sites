@@ -3,7 +3,7 @@ import PricingMultiTier from "@jamesryan/ui/components/sections/PricingMultiTier
 import Plan from "@jamesryan/ui/components/sections/PricingPlan.astro";
 import SoftButtonLink from "@jamesryan/ui/components/elements/SoftButtonLink.astro";
 import ButtonLink from "@jamesryan/ui/components/elements/ButtonLink.astro";
-import { getEmDashEntry, getEmDashCollection } from "emdash";
+import { getServiceEntries } from "@jamesryan/cms-helpers";
 
 interface RawPlan {
 	name: string;
@@ -32,23 +32,19 @@ const { _key, headline, plans = [], serviceSlug } = node;
 let plansData = plans;
 
 if (serviceSlug) {
-	const { entry: service } = await getEmDashEntry("services", serviceSlug);
-	if (service) {
-		const { entries } = await getEmDashCollection("pricing", {
-			where: { service: service.data.id as string },
-		});
-		if (entries && entries.length > 0) {
-			plansData = entries.map((entry) => ({
-				name: String(entry.data.name ?? ""),
-				price: String(entry.data.price ?? ""),
-				period: entry.data.period ? String(entry.data.period) : undefined,
-				description: entry.data.description ? String(entry.data.description) : undefined,
-				features: entry.data.features ? String(entry.data.features) : undefined,
-				ctaLabel: entry.data.cta_label ? String(entry.data.cta_label) : undefined,
-				ctaUrl: entry.data.cta_url ? String(entry.data.cta_url) : undefined,
-				highlighted: entry.data.highlighted !== undefined ? Boolean(entry.data.highlighted) : undefined,
-			}));
-		}
+	const { entries, cacheHint } = await getServiceEntries("pricing", serviceSlug);
+	if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+	if (entries && entries.length > 0) {
+		plansData = entries.map((entry) => ({
+			name: String(entry.data.name ?? ""),
+			price: String(entry.data.price ?? ""),
+			period: entry.data.period ? String(entry.data.period) : undefined,
+			description: entry.data.description ? String(entry.data.description) : undefined,
+			features: entry.data.features ? String(entry.data.features) : undefined,
+			ctaLabel: entry.data.cta_label ? String(entry.data.cta_label) : undefined,
+			ctaUrl: entry.data.cta_url ? String(entry.data.cta_url) : undefined,
+			highlighted: entry.data.highlighted !== undefined ? Boolean(entry.data.highlighted) : undefined,
+		}));
 	}
 }
 

@@ -1,1739 +1,2862 @@
 {
-	"$schema": "https://emdashcms.com/seed.schema.json",
-	"version": "1",
-	"meta": {
-		"name": "Oatmeal Marketing Site",
-		"description": "Replicated Oatmeal marketing site with pages powered by EmDash CMS",
-		"author": "Antigravity"
-	},
-	"settings": {
-		"title": "Oatmeal",
-		"tagline": "Customer support that feels like a conversation."
-	},
-	"collections": [
-		{
-			"slug": "pages",
-			"label": "Pages",
-			"labelSingular": "Page",
-			"supports": [
-				"drafts",
-				"revisions",
-				"seo"
-			],
-			"fields": [
-				{
-					"slug": "title",
-					"label": "Title",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "content",
-					"label": "Content",
-					"type": "portableText"
-				}
-			]
-		},
-		{
-			"slug": "services",
-			"label": "Services",
-			"labelSingular": "Service",
-			"supports": [
-				"drafts",
-				"revisions"
-			],
-			"fields": [
-				{
-					"slug": "title",
-					"label": "Title",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "description",
-					"label": "Description",
-					"type": "text"
-				}
-			]
-		},
-		{
-			"slug": "testimonials",
-			"label": "Testimonials",
-			"labelSingular": "Testimonial",
-			"supports": [
-				"drafts",
-				"revisions"
-			],
-			"fields": [
-				{
-					"slug": "quote",
-					"label": "Quote",
-					"type": "text",
-					"required": true
-				},
-				{
-					"slug": "author",
-					"label": "Author",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "role",
-					"label": "Role",
-					"type": "string"
-				},
-				{
-					"slug": "company",
-					"label": "Company",
-					"type": "string"
-				},
-				{
-					"slug": "avatar",
-					"label": "Avatar",
-					"type": "image"
-				},
-				{
-					"slug": "service",
-					"label": "Service",
-					"type": "reference",
-					"required": true,
-					"widget": "marketing-blocks:service-select",
-					"options": {
-						"collection": "services"
-					}
-				}
-			]
-		},
-		{
-			"slug": "faqs",
-			"label": "FAQs",
-			"labelSingular": "FAQ",
-			"supports": [
-				"drafts",
-				"revisions"
-			],
-			"fields": [
-				{
-					"slug": "question",
-					"label": "Question",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "answer",
-					"label": "Answer",
-					"type": "text",
-					"required": true
-				},
-				{
-					"slug": "service",
-					"label": "Service",
-					"type": "reference",
-					"required": true,
-					"widget": "marketing-blocks:service-select",
-					"options": {
-						"collection": "services"
-					}
-				}
-			]
-		},
-		{
-			"slug": "pricing",
-			"label": "Pricing Plans",
-			"labelSingular": "Pricing Plan",
-			"supports": [
-				"drafts",
-				"revisions"
-			],
-			"fields": [
-				{
-					"slug": "name",
-					"label": "Name",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "price",
-					"label": "Price",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "price_monthly",
-					"label": "Price (Monthly)",
-					"type": "string"
-				},
-				{
-					"slug": "price_yearly",
-					"label": "Price (Yearly)",
-					"type": "string"
-				},
-				{
-					"slug": "period",
-					"label": "Period",
-					"type": "string",
-					"defaultValue": "/mo"
-				},
-				{
-					"slug": "description",
-					"label": "Description",
-					"type": "text"
-				},
-				{
-					"slug": "features",
-					"label": "Features (one per line)",
-					"type": "text"
-				},
-				{
-					"slug": "cta_label",
-					"label": "CTA Label",
-					"type": "string"
-				},
-				{
-					"slug": "cta_url",
-					"label": "CTA URL",
-					"type": "string"
-				},
-				{
-					"slug": "badge",
-					"label": "Badge",
-					"type": "string"
-				},
-				{
-					"slug": "highlighted",
-					"label": "Highlighted",
-					"type": "boolean",
-					"defaultValue": false
-				},
-				{
-					"slug": "service",
-					"label": "Service",
-					"type": "reference",
-					"required": true,
-					"widget": "marketing-blocks:service-select",
-					"options": {
-						"collection": "services"
-					}
-				}
-			]
-		},
-		{
-			"slug": "team",
-			"label": "Team Members",
-			"labelSingular": "Team Member",
-			"supports": [
-				"drafts",
-				"revisions"
-			],
-			"fields": [
-				{
-					"slug": "name",
-					"label": "Name",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "role",
-					"label": "Role",
-					"type": "string",
-					"required": true
-				},
-				{
-					"slug": "image",
-					"label": "Photo",
-					"type": "image"
-				},
-				{
-					"slug": "service",
-					"label": "Service",
-					"type": "reference",
-					"required": true,
-					"widget": "marketing-blocks:service-select",
-					"options": {
-						"collection": "services"
-					}
-				}
-			]
-		},
-		{
-			"slug": "posts",
-			"label": "Posts",
-			"labelSingular": "Post",
-			"supports": [
-				"drafts",
-				"revisions",
-				"search",
-				"seo"
-			],
-			"commentsEnabled": true,
-			"fields": [
-				{
-					"slug": "title",
-					"label": "Title",
-					"type": "string",
-					"required": true,
-					"searchable": true
-				},
-				{
-					"slug": "featured_image",
-					"label": "Featured Image",
-					"type": "image"
-				},
-				{
-					"slug": "content",
-					"label": "Content",
-					"type": "portableText",
-					"searchable": true
-				},
-				{
-					"slug": "excerpt",
-					"label": "Excerpt",
-					"type": "text"
-				}
-			]
-		},
-		{
-			"slug": "projects",
-			"label": "Projects",
-			"labelSingular": "Project",
-			"supports": [
-				"drafts",
-				"revisions",
-				"search",
-				"seo"
-			],
-			"fields": [
-				{
-					"slug": "title",
-					"label": "Title",
-					"type": "string",
-					"required": true,
-					"searchable": true
-				},
-				{
-					"slug": "featured_image",
-					"label": "Featured Image",
-					"type": "image",
-					"required": true
-				},
-				{
-					"slug": "client",
-					"label": "Client",
-					"type": "string"
-				},
-				{
-					"slug": "year",
-					"label": "Year",
-					"type": "string"
-				},
-				{
-					"slug": "summary",
-					"label": "Summary",
-					"type": "text",
-					"searchable": true
-				},
-				{
-					"slug": "content",
-					"label": "Content",
-					"type": "portableText",
-					"searchable": true
-				},
-				{
-					"slug": "gallery",
-					"label": "Gallery",
-					"type": "json"
-				},
-				{
-					"slug": "url",
-					"label": "Project URL",
-					"type": "string"
-				}
-			]
-		}
-	],
-	"taxonomies": [
-		{
-			"name": "category",
-			"label": "Categories",
-			"labelSingular": "Category",
-			"hierarchical": true,
-			"collections": ["posts", "projects"],
-			"terms": [
-				{ "slug": "general", "label": "General" },
-				{ "slug": "product", "label": "Product" },
-				{ "slug": "engineering", "label": "Engineering" },
-				{ "slug": "branding", "label": "Branding" },
-				{ "slug": "web", "label": "Web Design" },
-				{ "slug": "print", "label": "Print" },
-				{ "slug": "photography", "label": "Photography" }
-			]
-		},
-		{
-			"name": "tag",
-			"label": "Tags",
-			"labelSingular": "Tag",
-			"hierarchical": false,
-			"collections": ["posts", "projects"],
-			"terms": [
-				{ "slug": "announcement", "label": "Announcement" },
-				{ "slug": "tips", "label": "Tips" },
-				{ "slug": "support", "label": "Support" },
-				{ "slug": "identity", "label": "Identity" },
-				{ "slug": "ui-ux", "label": "UI/UX" },
-				{ "slug": "development", "label": "Development" },
-				{ "slug": "art-direction", "label": "Art Direction" },
-				{ "slug": "packaging", "label": "Packaging" },
-				{ "slug": "ecommerce", "label": "E-commerce" },
-				{ "slug": "editorial", "label": "Editorial" }
-			]
-		}
-	],
-	"bylines": [
-		{
-			"id": "byline-leslie",
-			"slug": "leslie-alexander",
-			"displayName": "Leslie Alexander",
-			"bio": "Co-Founder / CEO of Oatmeal."
-		},
-		{
-			"id": "byline-michael",
-			"slug": "michael-foster",
-			"displayName": "Michael Foster",
-			"bio": "Co-Founder / CTO of Oatmeal."
-		}
-	],
-	"menus": [
-		{
-			"name": "primary",
-			"label": "Primary Navigation",
-			"items": [
-				{
-					"type": "custom",
-					"label": "Pricing",
-					"url": "/pricing"
-				},
-				{
-					"type": "custom",
-					"label": "Work",
-					"url": "/projects"
-				},
-				{
-					"type": "custom",
-					"label": "About",
-					"url": "/about"
-				},
-				{
-					"type": "custom",
-					"label": "Blog",
-					"url": "/posts"
-				}
-			]
-		},
-		{
-			"name": "footer_product",
-			"label": "Footer: Product",
-			"items": [
-				{
-					"type": "custom",
-					"label": "Features",
-					"url": "/#features"
-				},
-				{
-					"type": "custom",
-					"label": "Pricing",
-					"url": "/pricing"
-				},
-				{
-					"type": "custom",
-					"label": "Integrations",
-					"url": "#"
-				}
-			]
-		},
-		{
-			"name": "footer_company",
-			"label": "Footer: Company",
-			"items": [
-				{
-					"type": "custom",
-					"label": "About",
-					"url": "/about"
-				},
-				{
-					"type": "custom",
-					"label": "Careers",
-					"url": "#"
-				},
-				{
-					"type": "custom",
-					"label": "Blog",
-					"url": "/posts"
-				},
-				{
-					"type": "custom",
-					"label": "Press Kit",
-					"url": "#"
-				}
-			]
-		},
-		{
-			"name": "footer_resources",
-			"label": "Footer: Resources",
-			"items": [
-				{
-					"type": "custom",
-					"label": "Help Center",
-					"url": "#"
-				},
-				{
-					"type": "custom",
-					"label": "API Docs",
-					"url": "#"
-				},
-				{
-					"type": "custom",
-					"label": "Status",
-					"url": "#"
-				},
-				{
-					"type": "custom",
-					"label": "Contact",
-					"url": "#"
-				}
-			]
-		},
-		{
-			"name": "footer_legal",
-			"label": "Footer: Legal",
-			"items": [
-				{
-					"type": "custom",
-					"label": "Privacy Policy",
-					"url": "/privacy-policy"
-				},
-				{
-					"type": "custom",
-					"label": "Terms of Service",
-					"url": "#"
-				},
-				{
-					"type": "custom",
-					"label": "Security",
-					"url": "#"
-				}
-			]
-		}
-	],
-	"content": {
-		"pages": [
-			{
-				"id": "home",
-				"slug": "home",
-				"status": "published",
-				"data": {
-					"title": "Home",
-					"content": [
-						{
-							"_type": "marketing.hero",
-							"_key": "hero",
-							"variation": "left-aligned-with-demo",
-							"eyebrowText": "Oatmeal raises 80M Series A funding",
-							"eyebrowUrl": "#",
-							"eyebrowCta": "Learn more",
-							"headline": "Customer support that feels like a conversation.",
-							"subheadline": "Simplify your shared inbox, collaborate effortlessly, and give every customer a reply that feels personal — even if it was generated by a bot.",
-							"primaryCtaLabel": "Start free trial",
-							"primaryCtaUrl": "#",
-							"secondaryCtaLabel": "See how it works",
-							"secondaryCtaUrl": "#"
-						},
-						{
-							"_type": "marketing.features",
-							"_key": "features",
-							"headline": "Everything you need to deliver personal, organized, and delightful support.",
-							"subheadline": "Work smarter, reply faster, and keep every customer conversation right where it belongs — in one simple inbox.",
-							"features": [
-								{
-									"title": "Shared Inbox",
-									"description": "Keep every customer conversation in one clean, collaborative inbox. A single source of truth is much easier to ignore."
-								},
-								{
-									"title": "Inbox Agent",
-									"description": "Get valuable context without having to read through your customer's long, angry email thread."
-								}
-							]
-						},
-						{
-							"_type": "marketing.stats",
-							"_key": "stats",
-							"eyebrow": "Built for scale",
-							"headline": "The inbox powering customer conversations everywhere.",
-							"subheadline": "Oatmeal helps teams deliver personal, organized, and fast customer support across the world. From small startups to enterprise teams, we process millions of messages each month — using a massive network of low wage workers stationed around the globe.",
-							"stats": [
-								{
-									"stat": "2M+",
-									"text": "Emails manually processed every week across thousands of teams."
-								},
-								{
-									"stat": "99.98%",
-									"text": "Uptime — because your customers never stop complaining."
-								}
-							]
-						},
-						{
-							"_type": "marketing.testimonials",
-							"_key": "testimonials",
-							"headline": "What our customers are saying",
-							"testimonials": [
-								{
-									"quote": "Oatmeal has completely transformed our customer support operations. To be fair, we weren't doing any customer support at all so the bar was pretty low.",
-									"author": "Jordan Rogers",
-									"role": "Founder",
-									"company": "Anomaly",
-									"avatar": "/img/avatars/10-size-160.webp"
-								},
-								{
-									"quote": "We use Oatmeal's automation features to make cancellation requests disappear into a black hole, improving our retention rates by over 300%.",
-									"author": "Lynn Marshall",
-									"role": "Founder",
-									"company": "Pine Labs",
-									"avatar": "/img/avatars/15-size-160.webp"
-								},
-								{
-									"quote": "I've been using the spare time that Oatmeal has freed up to work not just one, but two other jobs, all while hitting my core KPIs. My bosses have no idea.",
-									"author": "Rajat Singh",
-									"role": "Head of Support",
-									"company": "Concise",
-									"avatar": "/img/avatars/13-size-160.webp"
-								},
-								{
-									"quote": "Oatmeal has given us key insights into how much our customers absolutely hate using our product and how we can improve it to stop them from leaving us.",
-									"author": "John Walters",
-									"role": "CPO",
-									"company": "Orbital",
-									"avatar": "/img/avatars/12-size-160.webp"
-								},
-								{
-									"quote": "As a solo founder, Oatmeal has been a lifesaver. It makes it look like Looply is an actual company with multiple employees, when in reality it's just me and an AI.",
-									"author": "Noah Gold",
-									"role": "CEO",
-									"company": "Looply",
-									"avatar": "/img/avatars/11-size-160.webp"
-								},
-								{
-									"quote": "Thanks to Oatmeal, we've managed to cut our support costs in half by laying off dozens of employees, while still improving response times and customer satisfaction.",
-									"author": "Mark Levinson",
-									"role": "COO",
-									"company": "Quirk",
-									"avatar": "/img/avatars/14-size-160.webp"
-								}
-							]
-						},
-						{
-							"_type": "marketing.faq",
-							"_key": "faq",
-							"variation": "two-column",
-							"headline": "Questions & Answers",
-							"items": [
-								{
-									"question": "Do I need a credit card to start the free trial?",
-									"answer": "Yes, but don't worry, you won't be charged until the trial period is over. We won't send you an email reminding you when this happens because we are really hoping you'll forget and we can keep charging you until your cards expires"
-								},
-								{
-									"question": "Can my whole team use the same inbox?",
-									"answer": "Yes, the more the merrier! Oatmeal works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
-								},
-								{
-									"question": "Is the AI agent actually a bunch of people in India?",
-									"answer": "Not just India! We have people in lots of countries around the world pretending to be an AI, including some that are currently under sanctions, so we can't legally mention them here."
-								},
-								{
-									"question": "Does Oatmeal replace my email client?",
-									"answer": "Absolutely. The idea is that we transition you away from email entirely, so you become completely dependent on our service. Like a parasite living off a host."
-								}
-							]
-						},
-						{
-							"_type": "marketing.pricing",
-							"_key": "pricing-plans",
-							"headline": "Pricing to fit your business needs.",
-							"plans": [
-								{
-									"name": "Starter",
-									"price": "$12",
-									"period": "/mo",
-									"description": "Small teams getting started with shared inboxes",
-									"features": "Shared inbox for up to 2 mailboxes\nTagging & assignment\nPrivate notes\nAutomatic replies\nEmail support",
-									"ctaLabel": "Start free trial",
-									"ctaUrl": "#"
-								},
-								{
-									"name": "Growth",
-									"price": "$49",
-									"period": "/mo",
-									"description": "Growing teams needing collaboration and insights",
-									"features": "Everything in Starter\nInbox Agent\nUnlimited mailboxes\nCollision detection\nSnippets and templates\nReporting dashboard\nSlack integration",
-									"ctaLabel": "Start free trial",
-									"ctaUrl": "#",
-									"highlighted": true
-								},
-								{
-									"name": "Pro",
-									"price": "$299",
-									"period": "/mo",
-									"description": "Support-focused organizations and larger teams",
-									"features": "Everything in Growth\nCustom roles & permissions\nAutomation engine\nAPI access\nSLA tracking\nSSO support\nSOC 2 compliance",
-									"ctaLabel": "Start free trial",
-									"ctaUrl": "#"
-								}
-							]
-						},
-						{
-							"_type": "marketing.cta",
-							"_key": "call-to-action",
-							"variation": "left-aligned",
-							"headline": "Ready to make customer support feel simple again?",
-							"subheadline": "Join hundreds of teams using Oatmeal to deliver faster, friendlier email support — using a massive network of low wage workers stationed around the globe",
-							"primaryCtaLabel": "Start free trial",
-							"primaryCtaUrl": "#",
-							"secondaryCtaLabel": "Book a demo",
-							"secondaryCtaUrl": "#"
-						}
-					]
-				}
-			},
-			{
-				"id": "about",
-				"slug": "about",
-				"status": "published",
-				"data": {
-					"title": "About Us",
-					"content": [
-						{
-							"_type": "marketing.hero",
-							"_key": "hero",
-							"variation": "left-aligned-with-photo",
-							"headline": "Your customer success is our mission.",
-							"subheadline": "We're on a mission to take the human element completely out of customer support — so your team can focus on what matters most, profitability.",
-							"photoUrl": "/img/photos/1.webp"
-						},
-						{
-							"_type": "marketing.stats",
-							"_key": "stats",
-							"eyebrow": "Built for scale",
-							"headline": "The inbox powering customer conversations everywhere.",
-							"subheadline": "Oatmeal helps teams deliver personal, organized, and fast customer support across the world. From small startups to enterprise teams, we process millions of messages each month — using a massive network of low wage workers stationed around the globe.",
-							"stats": [
-								{
-									"stat": "2M+",
-									"text": "Emails manually processed every week across thousands of teams."
-								},
-								{
-									"stat": "99.98%",
-									"text": "Uptime — because your customers never stop complaining."
-								}
-							]
-						},
-						{
-							"_type": "marketing.testimonials",
-							"_key": "testimonial",
-							"testimonials": [
-								{
-									"quote": "Ever since we started using Oatmeal, our customer satisfaction scores have skyrocketed. The personal touch that their human-AI hybrid support provides is unparalleled.",
-									"author": "Lynn Marshall",
-									"role": "Founder",
-									"company": "Pine Labs",
-									"avatar": "/img/avatars/16-h-1000-w-1400.webp"
-								}
-							]
-						},
-						{
-							"_type": "marketing.team",
-							"_key": "team",
-							"headline": "Our leadership team",
-							"subheadline": "Oatmeals's leadership team combines decades of experience in private equity, where they honed their skills in cost-cutting and maximizing shareholder value.",
-							"serviceSlug": "shared-inbox",
-							"members": [
-								{
-									"name": "Leslie Alexander",
-									"byline": "Co-Founder / CEO",
-									"img": "/img/avatars/1-h-1000-w-800.webp"
-								},
-								{
-									"name": "Michael Foster",
-									"byline": "Co-Founder / CTO",
-									"img": "/img/avatars/2-h-1000-w-800.webp"
-								},
-								{
-									"name": "Dries Vincent",
-									"byline": "Business Relations",
-									"img": "/img/avatars/7-h-1000-w-800.webp"
-								},
-								{
-									"name": "Lindsay Walton",
-									"byline": "Front-end Developer",
-									"img": "/img/avatars/4-h-1000-w-800.webp"
-								},
-								{
-									"name": "Noor Hasan",
-									"byline": "Designer",
-									"img": "/img/avatars/5-h-1000-w-800.webp"
-								},
-								{
-									"name": "Tom Cook",
-									"byline": "Director of Product",
-									"img": "/img/avatars/6-h-1000-w-800.webp"
-								},
-								{
-									"name": "Whitney Francis",
-									"byline": "Copywriter",
-									"img": "/img/avatars/8-h-1000-w-800.webp"
-								},
-								{
-									"name": "Leonard Wu",
-									"byline": "Senior Designer",
-									"img": "/img/avatars/3-h-1000-w-800.webp"
-								}
-							]
-						},
-						{
-							"_type": "marketing.cta",
-							"_key": "call-to-action",
-							"variation": "left-aligned",
-							"headline": "Have anymore questions?",
-							"subheadline": "Chat to someone on our sales team, who will make promises about our roadmap that we won't keep.",
-							"primaryCtaLabel": "Chat with us",
-							"primaryCtaUrl": "#",
-							"secondaryCtaLabel": "Book a demo",
-							"secondaryCtaUrl": "#"
-						}
-					]
-				}
-			},
-			{
-				"id": "pricing",
-				"slug": "pricing",
-				"status": "published",
-				"data": {
-					"title": "Pricing",
-					"content": [
-						{
-							"_type": "marketing.hero",
-							"_key": "pricing-hero",
-							"variation": "pricing-hero-multi-tier",
-							"headline": "Pricing",
-							"subheadline": "Simplify your shared inbox, collaborate effortlessly, and give every customer a reply that feels personal, even if it was written by a bot.",
-							"plans": [
-								{
-									"name": "Starter",
-									"priceMonthly": "$12",
-									"priceYearly": "$120",
-									"description": "Small teams getting started with shared inboxes",
-									"features": "Shared inbox for up to 2 mailboxes\nTagging & assignment\nPrivate notes\nAutomatic replies\nEmail support",
-									"ctaLabel": "Start free trial",
-									"ctaUrl": "#"
-								},
-								{
-									"name": "Growth",
-									"priceMonthly": "$49",
-									"priceYearly": "$490",
-									"description": "Growing teams needing collaboration and insights",
-									"features": "Everything in Starter\nInbox Agent\nUnlimited mailboxes\nCollision detection\nSnippets and templates\nReporting dashboard\nSlack integration",
-									"ctaLabel": "Start free trial",
-									"ctaUrl": "#",
-									"badge": "Most popular",
-									"highlighted": true
-								},
-								{
-									"name": "Pro",
-									"priceMonthly": "$299",
-									"priceYearly": "$2990",
-									"description": "Support-focused organizations and larger teams",
-									"features": "Everything in Growth\nCustom roles & permissions\nAutomation engine\nAPI access\nSLA tracking\nSSO support\nSOC 2 compliance",
-									"ctaLabel": "Start free trial",
-									"ctaUrl": "#"
-								}
-							]
-						},
-						{
-							"_type": "marketing.comparison",
-							"_key": "pricing-comparison",
-							"items": [
-								{
-									"groupName": "Collaboration",
-									"name": "Shared inboxes",
-									"starterValue": "2",
-									"growthValue": "Unlimited",
-									"proValue": "Unlimited"
-								},
-								{
-									"groupName": "Collaboration",
-									"name": "Private notes",
-									"starterValue": "true",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Collaboration",
-									"name": "Tagging & assignment",
-									"starterValue": "true",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Collaboration",
-									"name": "Collision detection",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Collaboration",
-									"name": "Real-time activity indicators",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Collaboration",
-									"name": "Internal chat",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Automation",
-									"name": "Automatic replies",
-									"starterValue": "true",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Automation",
-									"name": "Inbox Agent",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Automation",
-									"name": "Automation engine",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Automation",
-									"name": "Snippets and templates",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Automation",
-									"name": "SLA tracking",
-									"starterValue": "false",
-									"growthValue": "false",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Team Management",
-									"name": "Unlimited users",
-									"starterValue": "Up to 5",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Team Management",
-									"name": "Reporting dashboard",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Team Management",
-									"name": "Slack integration",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Team Management",
-									"name": "Roles & permissions",
-									"starterValue": "false",
-									"growthValue": "false",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Team Management",
-									"name": "SSO support",
-									"starterValue": "false",
-									"growthValue": "false",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Support",
-									"name": "Email support",
-									"starterValue": "true",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Support",
-									"name": "Priority response",
-									"starterValue": "false",
-									"growthValue": "true",
-									"proValue": "true"
-								},
-								{
-									"groupName": "Support",
-									"name": "Dedicated manager",
-									"starterValue": "false",
-									"growthValue": "false",
-									"proValue": "true"
-								}
-							]
-						},
-						{
-							"_type": "marketing.testimonials",
-							"_key": "testimonial",
-							"testimonials": [
-								{
-									"quote": "Ever since we started using Oatmeal, our customer satisfaction scores have skyrocketed. The personal touch that their human-AI hybrid support provides is unparalleled.",
-									"author": "Lynn Marshall",
-									"role": "Founder",
-									"company": "Pine Labs",
-									"avatar": "/img/avatars/16-h-1000-w-1400.webp"
-								}
-							]
-						},
-						{
-							"_type": "marketing.faq",
-							"_key": "pricing-faq",
-							"variation": "centered",
-							"headline": "Questions & Answers",
-							"items": [
-								{
-									"question": "Do I need a credit card to start the free trial?",
-									"answer": "Yes, but don't worry, you won't be charged until the trial period is over. We won't send you an email reminding you when this happens because we are really hoping you'll forget and we can keep charging you until your cards expires"
-								},
-								{
-									"question": "Can my whole team use the same inbox?",
-									"answer": "Yes, the more the merrier! Oatmeal works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice."
-								},
-								{
-									"question": "Is the AI agent actually a bunch of people in India?",
-									"answer": "Not just India! We have people in lots of countries around the world pretending to be an AI, including some that are currently under sanctions, so we can't legally mention them here."
-								},
-								{
-									"question": "Does Oatmeal replace my email client?",
-									"answer": "Absolutely. The idea is that we transition you away from email entirely, so you become completely dependent on our service. Like a parasite living off a host."
-								}
-							]
-						},
-						{
-							"_type": "marketing.cta",
-							"_key": "call-to-action",
-							"variation": "centered",
-							"headline": "Have anymore questions?",
-							"subheadline": "Chat to someone on our sales team, who will make promises about our roadmap that we won't keep.",
-							"primaryCtaLabel": "Chat with us",
-							"primaryCtaUrl": "#",
-							"secondaryCtaLabel": "Book a demo",
-							"secondaryCtaUrl": "#"
-						}
-					]
-				}
-			},
-			{
-				"id": "privacy-policy",
-				"slug": "privacy-policy",
-				"status": "published",
-				"data": {
-					"title": "Privacy Policy",
-					"content": [
-						{
-							"_type": "marketing.document",
-							"_key": "document",
-							"headline": "Privacy Policy",
-							"subheadline": "Last updated on December 19, 2025.",
-							"content": "<p>Company Inc. (\"<strong>Company</strong>,\" \"<strong>we</strong>,\" \"<strong>us</strong>,\" or \"<strong>our</strong>\") respects your privacy and is committed to protecting your personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you interact with our websites, products, or services (collectively, the \"<strong>Services</strong>\"). This policy is provided for informational purposes and is intended to be a general example only.</p><h2>Information We Collect and How We Use It</h2><p>We may collect information that you voluntarily provide to us when you interact with the Services, such as when you contact us, create an account, or otherwise communicate with us. This information may include basic personal or account details, such as your name, email address, or similar contact information.</p><p>We may also automatically collect limited technical or usage information when you use the Services. This may include information such as browser type, device or operating system details, IP address, and general usage data.</p><p>Information we collect may be used for purposes such as:</p><ul><li>Providing and maintaining the Services</li><li>Responding to inquiries and communications</li><li>Improving features and functionality</li><li>Complying with applicable legal obligations</li></ul><h2>Sharing, Retention, and Security of Information</h2><p>We do not sell your personal information. We may share information with third-party service providers who perform services on our behalf, such as hosting or technical support, and only to the extent necessary for them to perform those services. We may also disclose information if required to do so by law or in response to valid legal requests.</p><p>We retain information only for as long as reasonably necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required or permitted by law.</p><p>We take reasonable administrative, technical, and organizational measures designed to protect information from unauthorized access, use, alteration, or disclosure. However, no method of transmission over the internet or method of electronic storage is completely secure, and we cannot guarantee absolute security.</p><h2>Your Choices, Updates, and Contact Information</h2><p>You may choose not to provide certain information to us, though doing so may limit your ability to use some features of the Services. Depending on your location, you may have certain rights regarding your personal information under applicable laws.</p><p>We may update this Privacy Policy from time to time. Any changes will be reflected by updating the \"<strong>Last updated</strong>\" date at the top of this page. Continued use of the Services after any changes indicates acceptance of the updated policy.</p><p>If you have any questions about this Privacy Policy, please contact us at:</p><p><strong>Company Inc.</strong><br />Email: <a href=\"mailto:privacy@company.example\">privacy@company.example</a><br />Address: 123 Demo Street, Example City, Country</p>"
-						}
-					]
-				}
-			}
-		],
-		"services": [
-			{
-				"id": "shared-inbox",
-				"slug": "shared-inbox",
-				"status": "published",
-				"data": {
-					"title": "Shared Inbox",
-					"description": "Keep every customer conversation in one clean, collaborative inbox."
-				}
-			}
-		],
-		"testimonials": [
-			{
-				"id": "t1",
-				"slug": "jordan-rogers",
-				"status": "published",
-				"data": {
-					"quote": "Oatmeal has completely transformed our customer support operations. To be fair, we weren't doing any customer support at all so the bar was pretty low.",
-					"author": "Jordan Rogers",
-					"role": "Founder",
-					"company": "Anomaly",
-					"avatar": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/10-size-160.webp",
-							"alt": "Jordan Rogers avatar",
-							"filename": "10-size-160.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "t2",
-				"slug": "lynn-marshall",
-				"status": "published",
-				"data": {
-					"quote": "We use Oatmeal's automation features to make cancellation requests disappear into a black hole, improving our retention rates by over 300%.",
-					"author": "Lynn Marshall",
-					"role": "Founder",
-					"company": "Pine Labs",
-					"avatar": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/15-size-160.webp",
-							"alt": "Lynn Marshall avatar",
-							"filename": "15-size-160.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "t3",
-				"slug": "rajat-singh",
-				"status": "published",
-				"data": {
-					"quote": "I've been using the spare time that Oatmeal has freed up to work not just one, but two other jobs, all while hitting my core KPIs. My bosses have no idea.",
-					"author": "Rajat Singh",
-					"role": "Head of Support",
-					"company": "Concise",
-					"avatar": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/13-size-160.webp",
-							"alt": "Rajat Singh avatar",
-							"filename": "13-size-160.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "t4",
-				"slug": "john-walters",
-				"status": "published",
-				"data": {
-					"quote": "Oatmeal has given us key insights into how much our customers absolutely hate using our product and how we can improve it to stop them from leaving us.",
-					"author": "John Walters",
-					"role": "CPO",
-					"company": "Orbital",
-					"avatar": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/12-size-160.webp",
-							"alt": "John Walters avatar",
-							"filename": "12-size-160.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "t5",
-				"slug": "noah-gold",
-				"status": "published",
-				"data": {
-					"quote": "As a solo founder, Oatmeal has been a lifesaver. It makes it look like Looply is an actual company with multiple employees, when in reality it's just me and an AI.",
-					"author": "Noah Gold",
-					"role": "CEO",
-					"company": "Looply",
-					"avatar": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/11-size-160.webp",
-							"alt": "Noah Gold avatar",
-							"filename": "11-size-160.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "t6",
-				"slug": "mark-levinson",
-				"status": "published",
-				"data": {
-					"quote": "Thanks to Oatmeal, we've managed to cut our support costs in half by laying off dozens of employees, while still improving response times and customer satisfaction.",
-					"author": "Mark Levinson",
-					"role": "COO",
-					"company": "Quirk",
-					"avatar": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/14-size-160.webp",
-							"alt": "Mark Levinson avatar",
-							"filename": "14-size-160.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			}
-		],
-		"faqs": [
-			{
-				"id": "faq1",
-				"slug": "credit-card-trial",
-				"status": "published",
-				"data": {
-					"question": "Do I need a credit card to start the free trial?",
-					"answer": "Yes, but don't worry, you won't be charged until the trial period is over. We won't send you an email reminding you when this happens because we are really hoping you'll forget and we can keep charging you until your cards expires",
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "faq2",
-				"slug": "team-same-inbox",
-				"status": "published",
-				"data": {
-					"question": "Can my whole team use the same inbox?",
-					"answer": "Yes, the more the merrier! Oatmeal works best when your entire company has access. We will charge you per additional seat, but we won't tell you about this until you get your invoice.",
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "faq3",
-				"slug": "ai-agent-reality",
-				"status": "published",
-				"data": {
-					"question": "Is the AI agent actually a bunch of people in India?",
-					"answer": "Not just India! We have people in lots of countries around the world pretending to be an AI, including some that are currently under sanctions, so we can't legally mention them here.",
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "faq4",
-				"slug": "replace-email-client",
-				"status": "published",
-				"data": {
-					"question": "Does Oatmeal replace my email client?",
-					"answer": "Absolutely. The idea is that we transition you away from email entirely, so you become completely dependent on our service. Like a parasite living off a host.",
-					"service": "$ref:shared-inbox"
-				}
-			}
-		],
-		"pricing": [
-			{
-				"id": "price-starter",
-				"slug": "starter",
-				"status": "published",
-				"data": {
-					"name": "Starter",
-					"price": "$12",
-					"price_monthly": "$12",
-					"price_yearly": "$120",
-					"period": "/mo",
-					"description": "Small teams getting started with shared inboxes",
-					"features": "Shared inbox for up to 2 mailboxes\nTagging & assignment\nPrivate notes\nAutomatic replies\nEmail support",
-					"cta_label": "Start free trial",
-					"cta_url": "#",
-					"highlighted": false,
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "price-growth",
-				"slug": "growth",
-				"status": "published",
-				"data": {
-					"name": "Growth",
-					"price": "$49",
-					"price_monthly": "$49",
-					"price_yearly": "$490",
-					"period": "/mo",
-					"description": "Growing teams needing collaboration and insights",
-					"features": "Everything in Starter\nInbox Agent\nUnlimited mailboxes\nCollision detection\nSnippets and templates\nReporting dashboard\nSlack integration",
-					"cta_label": "Start free trial",
-					"cta_url": "#",
-					"badge": "Most popular",
-					"highlighted": true,
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "price-pro",
-				"slug": "pro",
-				"status": "published",
-				"data": {
-					"name": "Pro",
-					"price": "$299",
-					"price_monthly": "$299",
-					"price_yearly": "$2990",
-					"period": "/mo",
-					"description": "Support-focused organizations and larger teams",
-					"features": "Everything in Growth\nCustom roles & permissions\nAutomation engine\nAPI access\nSLA tracking\nSSO support\nSOC 2 compliance",
-					"cta_label": "Start free trial",
-					"cta_url": "#",
-					"highlighted": false,
-					"service": "$ref:shared-inbox"
-				}
-			}
-		],
-		"team": [
-			{
-				"id": "team-leslie",
-				"slug": "leslie-alexander",
-				"status": "published",
-				"data": {
-					"name": "Leslie Alexander",
-					"role": "Co-Founder / CEO",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/1-h-1000-w-800.webp",
-							"alt": "Leslie Alexander photo",
-							"filename": "1-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-michael",
-				"slug": "michael-foster",
-				"status": "published",
-				"data": {
-					"name": "Michael Foster",
-					"role": "Co-Founder / CTO",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/2-h-1000-w-800.webp",
-							"alt": "Michael Foster photo",
-							"filename": "2-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-dries",
-				"slug": "dries-vincent",
-				"status": "published",
-				"data": {
-					"name": "Dries Vincent",
-					"role": "Business Relations",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/7-h-1000-w-800.webp",
-							"alt": "Dries Vincent photo",
-							"filename": "7-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-lindsay",
-				"slug": "lindsay-walton",
-				"status": "published",
-				"data": {
-					"name": "Lindsay Walton",
-					"role": "Front-end Developer",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/4-h-1000-w-800.webp",
-							"alt": "Lindsay Walton photo",
-							"filename": "4-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-noor",
-				"slug": "noor-hasan",
-				"status": "published",
-				"data": {
-					"name": "Noor Hasan",
-					"role": "Designer",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/5-h-1000-w-800.webp",
-							"alt": "Noor Hasan photo",
-							"filename": "5-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-tom",
-				"slug": "tom-cook",
-				"status": "published",
-				"data": {
-					"name": "Tom Cook",
-					"role": "Director of Product",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/6-h-1000-w-800.webp",
-							"alt": "Tom Cook photo",
-							"filename": "6-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-whitney",
-				"slug": "whitney-francis",
-				"status": "published",
-				"data": {
-					"name": "Whitney Francis",
-					"role": "Copywriter",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/8-h-1000-w-800.webp",
-							"alt": "Whitney Francis photo",
-							"filename": "8-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			},
-			{
-				"id": "team-leonard",
-				"slug": "leonard-wu",
-				"status": "published",
-				"data": {
-					"name": "Leonard Wu",
-					"role": "Senior Designer",
-					"image": {
-						"$media": {
-							"url": "http://127.0.0.1:4321/img/avatars/3-h-1000-w-800.webp",
-							"alt": "Leonard Wu photo",
-							"filename": "3-h-1000-w-800.webp"
-						}
-					},
-					"service": "$ref:shared-inbox"
-				}
-			}
-		],
-		"posts": [
-			{
-				"id": "introducing-oatmeal",
-				"slug": "introducing-oatmeal",
-				"status": "published",
-				"data": {
-					"title": "Introducing Oatmeal",
-					"excerpt": "A first look at customer support that feels like a conversation.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1557200134-90327ee9fafa?w=1200&h=800&fit=crop",
-							"alt": "A cup of warm oatmeal next to a laptop",
-							"filename": "introducing-oatmeal.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Today we are excited to officially introduce Oatmeal, a brand new customer support platform designed for modern teams. We believe that support shouldn't feel like a clinical ticket queue; it should feel like a warm, natural conversation."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Why Oatmeal?"
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Traditional help desks treat your customers like numbers. They assign impersonal ticket IDs, send robotic auto-replies, and make it hard to maintain a human connection. Oatmeal fixes this by putting simplicity and warmth front and center."
-								}
-							]
-						}
-					]
-				},
-				"bylines": [
-					{ "byline": "byline-leslie" }
-				],
-				"taxonomies": {
-					"category": ["general"],
-					"tag": ["announcement"]
-				}
-			},
-			{
-				"id": "building-better-shared-inbox",
-				"slug": "building-better-shared-inbox",
-				"status": "published",
-				"data": {
-					"title": "Building a Better Shared Inbox",
-					"excerpt": "How we designed a collaborative workspace that keeps teams aligned without the clutter.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=1200&h=800&fit=crop",
-							"alt": "Team collaborating in front of a whiteboard",
-							"filename": "better-shared-inbox.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Shared inboxes are notorious for becoming cluttered and chaotic. When multiple people have access to the same email list, messages get missed, replies overlap, and context gets lost. Here is how we tackled these design challenges in Oatmeal."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Collision Detection is Key"
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "One of the most common issues in collaborative support is 'double replying' — two agents drafting replies to the same customer at the same time. By implementing real-time presence indicators, we ensure that you always know when a teammate is viewing or drafting a reply to a conversation."
-								}
-							]
-						}
-					]
-				},
-				"bylines": [
-					{ "byline": "byline-michael" }
-				],
-				"taxonomies": {
-					"category": ["engineering", "product"],
-					"tag": ["tips", "support"]
-				}
-			}
-		],
-		"projects": [
-			{
-				"id": "acme-identity",
-				"slug": "acme-identity",
-				"status": "published",
-				"data": {
-					"title": "Acme Brand Identity",
-					"client": "Acme Corporation",
-					"year": "2025",
-					"url": "https://acme.example.com",
-					"summary": "A complete rebranding and visual identity system for Acme Corporation, aligning their digital and physical presence.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=1200&h=800&fit=crop",
-							"alt": "Acme logo and brand guidelines on a table",
-							"filename": "acme-identity.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Acme Corporation is a leading provider of various widgets and services. They approached us with a challenge: their existing brand identity was fragmented across different products, leading to brand confusion."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [
-								{
-									"_type": "span",
-									"text": "The Solution"
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "We designed a unified design system and visual guidelines, starting with a modernized logo mark, refreshed color palette, and bespoke typography. We then expanded this system into website mockups, print materials, and physical packaging designs."
-								}
-							]
-						}
-					],
-					"gallery": [
-						{
-							"url": "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&h=600&fit=crop",
-							"alt": "Modern brand identity design showcase"
-						},
-						{
-							"url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&h=600&fit=crop",
-							"alt": "Abstract color theme patterns"
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["branding"],
-					"tag": ["identity", "art-direction"]
-				}
-			},
-			{
-				"id": "globex-ecommerce",
-				"slug": "globex-ecommerce",
-				"status": "published",
-				"data": {
-					"title": "Globex E-Commerce Platform",
-					"client": "Globex Industries",
-					"year": "2026",
-					"url": "https://globex.example.com",
-					"summary": "Designing and building a highly scalable, secure, and modern e-commerce storefront for Globex Industries.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&h=800&fit=crop",
-							"alt": "Globex storefront shown on a MacBook",
-							"filename": "globex-ecommerce.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Globex Industries needed a new e-commerce storefront to power their expanding global retail operations. The legacy platform was slow, difficult to modify, and lacked modern checkout patterns."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Development & UI/UX"
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "We designed a fully responsive UI/UX system that focuses on conversion, user feedback, and fast load times. Built using modern APIs, the new platform improved check-out speed and reduced cart abandonment significantly."
-								}
-							]
-						}
-					],
-					"gallery": [
-						{
-							"url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop",
-							"alt": "E-commerce dashboard metrics analytics"
-						},
-						{
-							"url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop",
-							"alt": "Interactive charts showing retail performance"
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["web"],
-					"tag": ["ui-ux", "development", "ecommerce"]
-				}
-			},
-			{
-				"id": "stellar-app",
-				"slug": "stellar-app",
-				"status": "published",
-				"data": {
-					"title": "Stellar Mobile Application",
-					"client": "Stellar Systems",
-					"year": "2026",
-					"summary": "A sleek mobile companion application for Stellar Systems, simplifying account management and notifications.",
-					"featured_image": {
-						"$media": {
-							"url": "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&h=800&fit=crop",
-							"alt": "Stellar application mockup on an iPhone",
-							"filename": "stellar-app.jpg"
-						}
-					},
-					"content": [
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Stellar Systems wanted to provide a mobile app for their thousands of users, giving them access to real-time telemetry, push notifications, and remote control options."
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "h2",
-							"children": [
-								{
-									"_type": "span",
-									"text": "Design & UI/UX"
-								}
-							]
-						},
-						{
-							"_type": "block",
-							"style": "normal",
-							"children": [
-								{
-									"_type": "span",
-									"text": "We crafted a cohesive user experience optimized for mobile screens. We focused on micro-animations, accessible touch targets, and offline capabilities to make the app feel quick and reliable."
-								}
-							]
-						}
-					],
-					"gallery": [
-						{
-							"url": "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800&h=600&fit=crop",
-							"alt": "Mobile design wireframes and layouts"
-						},
-						{
-							"url": "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&h=600&fit=crop",
-							"alt": "App interface screen flows mockup"
-						}
-					]
-				},
-				"taxonomies": {
-					"category": ["web"],
-					"tag": ["ui-ux", "development"]
-				}
-			}
-		]
-	}
+  "$schema": "https://emdashcms.com/seed.schema.json",
+  "version": "1",
+  "meta": {
+    "name": "Oatmeal Marketing Site",
+    "description": "Replicated Oatmeal marketing site with pages powered by EmDash CMS",
+    "author": "Antigravity"
+  },
+  "settings": {
+    "title": "James Ryan",
+    "tagline": "AI-native marketer & engineer"
+  },
+  "collections": [
+    {
+      "slug": "pages",
+      "label": "Pages",
+      "labelSingular": "Page",
+      "supports": [
+        "drafts",
+        "revisions",
+        "seo"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText"
+        }
+      ]
+    },
+    {
+      "slug": "services",
+      "label": "Services",
+      "labelSingular": "Service",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "description",
+          "label": "Description",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "slug": "testimonials",
+      "label": "Testimonials",
+      "labelSingular": "Testimonial",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "quote",
+          "label": "Quote",
+          "type": "text",
+          "required": true
+        },
+        {
+          "slug": "author",
+          "label": "Author",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "role",
+          "label": "Role",
+          "type": "string"
+        },
+        {
+          "slug": "company",
+          "label": "Company",
+          "type": "string"
+        },
+        {
+          "slug": "avatar",
+          "label": "Avatar",
+          "type": "image"
+        },
+        {
+          "slug": "service",
+          "label": "Service",
+          "type": "reference",
+          "required": true,
+          "widget": "marketing-blocks:service-select",
+          "options": {
+            "collection": "services"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "faqs",
+      "label": "FAQs",
+      "labelSingular": "FAQ",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "question",
+          "label": "Question",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "answer",
+          "label": "Answer",
+          "type": "text",
+          "required": true
+        },
+        {
+          "slug": "service",
+          "label": "Service",
+          "type": "reference",
+          "required": true,
+          "widget": "marketing-blocks:service-select",
+          "options": {
+            "collection": "services"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "pricing",
+      "label": "Pricing Plans",
+      "labelSingular": "Pricing Plan",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "price",
+          "label": "Price",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "price_monthly",
+          "label": "Price (Monthly)",
+          "type": "string"
+        },
+        {
+          "slug": "price_yearly",
+          "label": "Price (Yearly)",
+          "type": "string"
+        },
+        {
+          "slug": "period",
+          "label": "Period",
+          "type": "string",
+          "defaultValue": "/mo"
+        },
+        {
+          "slug": "description",
+          "label": "Description",
+          "type": "text"
+        },
+        {
+          "slug": "features",
+          "label": "Features (one per line)",
+          "type": "text"
+        },
+        {
+          "slug": "cta_label",
+          "label": "CTA Label",
+          "type": "string"
+        },
+        {
+          "slug": "cta_url",
+          "label": "CTA URL",
+          "type": "string"
+        },
+        {
+          "slug": "badge",
+          "label": "Badge",
+          "type": "string"
+        },
+        {
+          "slug": "highlighted",
+          "label": "Highlighted",
+          "type": "boolean",
+          "defaultValue": false
+        },
+        {
+          "slug": "service",
+          "label": "Service",
+          "type": "reference",
+          "required": true,
+          "widget": "marketing-blocks:service-select",
+          "options": {
+            "collection": "services"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "team",
+      "label": "Team Members",
+      "labelSingular": "Team Member",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "fields": [
+        {
+          "slug": "name",
+          "label": "Name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "role",
+          "label": "Role",
+          "type": "string",
+          "required": true
+        },
+        {
+          "slug": "image",
+          "label": "Photo",
+          "type": "image"
+        },
+        {
+          "slug": "service",
+          "label": "Service",
+          "type": "reference",
+          "required": true,
+          "widget": "marketing-blocks:service-select",
+          "options": {
+            "collection": "services"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "posts",
+      "label": "Posts",
+      "labelSingular": "Post",
+      "supports": [
+        "drafts",
+        "revisions",
+        "search",
+        "seo"
+      ],
+      "commentsEnabled": true,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "featured_image",
+          "label": "Featured Image",
+          "type": "image"
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "excerpt",
+          "label": "Excerpt",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "slug": "projects",
+      "label": "Projects",
+      "labelSingular": "Project",
+      "supports": [
+        "drafts",
+        "revisions",
+        "search",
+        "seo"
+      ],
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "searchable": true
+        },
+        {
+          "slug": "featured_image",
+          "label": "Featured Image",
+          "type": "image",
+          "required": true
+        },
+        {
+          "slug": "client",
+          "label": "Client",
+          "type": "string"
+        },
+        {
+          "slug": "year",
+          "label": "Year",
+          "type": "string"
+        },
+        {
+          "slug": "summary",
+          "label": "Summary",
+          "type": "text",
+          "searchable": true
+        },
+        {
+          "slug": "content",
+          "label": "Content",
+          "type": "portableText",
+          "searchable": true
+        },
+        {
+          "slug": "gallery",
+          "label": "Gallery",
+          "type": "json"
+        },
+        {
+          "slug": "url",
+          "label": "Project URL",
+          "type": "string"
+        }
+      ]
+    }
+  ],
+  "taxonomies": [
+    {
+      "name": "category",
+      "label": "Categories",
+      "labelSingular": "Category",
+      "hierarchical": true,
+      "collections": [
+        "posts",
+        "projects"
+      ],
+      "terms": [
+        {
+          "slug": "general",
+          "label": "General"
+        },
+        {
+          "slug": "product",
+          "label": "Product"
+        },
+        {
+          "slug": "engineering",
+          "label": "Engineering"
+        },
+        {
+          "slug": "branding",
+          "label": "Branding"
+        },
+        {
+          "slug": "web",
+          "label": "Web Design"
+        },
+        {
+          "slug": "print",
+          "label": "Print"
+        },
+        {
+          "slug": "photography",
+          "label": "Photography"
+        },
+        {
+          "slug": "power-platform",
+          "label": "Power Platform"
+        },
+        {
+          "slug": "dynamics-365",
+          "label": "Dynamics 365"
+        },
+        {
+          "slug": "automation",
+          "label": "Automation"
+        },
+        {
+          "slug": "power-automate",
+          "label": "Power Automate"
+        }
+      ]
+    },
+    {
+      "name": "tag",
+      "label": "Tags",
+      "labelSingular": "Tag",
+      "hierarchical": false,
+      "collections": [
+        "posts",
+        "projects"
+      ],
+      "terms": [
+        {
+          "slug": "announcement",
+          "label": "Announcement"
+        },
+        {
+          "slug": "tips",
+          "label": "Tips"
+        },
+        {
+          "slug": "support",
+          "label": "Support"
+        },
+        {
+          "slug": "identity",
+          "label": "Identity"
+        },
+        {
+          "slug": "ui-ux",
+          "label": "UI/UX"
+        },
+        {
+          "slug": "development",
+          "label": "Development"
+        },
+        {
+          "slug": "art-direction",
+          "label": "Art Direction"
+        },
+        {
+          "slug": "packaging",
+          "label": "Packaging"
+        },
+        {
+          "slug": "ecommerce",
+          "label": "E-commerce"
+        },
+        {
+          "slug": "editorial",
+          "label": "Editorial"
+        },
+        {
+          "slug": "power-automate",
+          "label": "Power Automate"
+        },
+        {
+          "slug": "power-apps",
+          "label": "Power Apps"
+        },
+        {
+          "slug": "playwright",
+          "label": "Playwright"
+        },
+        {
+          "slug": "javascript",
+          "label": "JavaScript"
+        },
+        {
+          "slug": "ai",
+          "label": "AI"
+        }
+      ]
+    }
+  ],
+  "bylines": [
+    {
+      "id": "byline-james",
+      "slug": "james-ryan",
+      "displayName": "James Ryan",
+      "bio": "AI-native marketer & engineer."
+    }
+  ],
+  "menus": [
+    {
+      "name": "primary",
+      "label": "Primary Navigation",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "type": "custom",
+          "label": "Blog",
+          "url": "/posts"
+        },
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about"
+        }
+      ]
+    },
+    {
+      "name": "footer_product",
+      "label": "Footer: Product",
+      "items": []
+    },
+    {
+      "name": "footer_company",
+      "label": "Footer: Company",
+      "items": [
+        {
+          "type": "custom",
+          "label": "About",
+          "url": "/about"
+        },
+        {
+          "type": "custom",
+          "label": "Blog",
+          "url": "/posts"
+        }
+      ]
+    },
+    {
+      "name": "footer_resources",
+      "label": "Footer: Resources",
+      "items": []
+    },
+    {
+      "name": "footer_legal",
+      "label": "Footer: Legal",
+      "items": [
+        {
+          "type": "custom",
+          "label": "Privacy Policy",
+          "url": "/privacy-policy"
+        }
+      ]
+    }
+  ],
+  "content": {
+    "pages": [
+      {
+        "id": "home",
+        "slug": "home",
+        "status": "published",
+        "data": {
+          "title": "Home",
+          "content": [
+            {
+              "_type": "marketing.hero",
+              "_key": "hero",
+              "variation": "left-aligned-with-demo",
+              "headline": "James Ryan — AI-native marketer & engineer",
+              "subheadline": "I build intelligent marketing engines and software tools that drive real growth. Bridging the gap between code and customers.",
+              "primaryCtaLabel": "View My Blog",
+              "primaryCtaUrl": "/posts",
+              "secondaryCtaLabel": "About Me",
+              "secondaryCtaUrl": "/about",
+              "centered": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "about",
+        "slug": "about",
+        "status": "published",
+        "data": {
+          "title": "About Us",
+          "content": []
+        }
+      },
+      {
+        "id": "pricing",
+        "slug": "pricing",
+        "status": "published",
+        "data": {
+          "title": "Pricing",
+          "content": []
+        }
+      },
+      {
+        "id": "privacy-policy",
+        "slug": "privacy-policy",
+        "status": "published",
+        "data": {
+          "title": "Privacy Policy",
+          "content": [
+            {
+              "_type": "marketing.document",
+              "_key": "document",
+              "headline": "Privacy Policy",
+              "subheadline": "Last updated on December 19, 2025.",
+              "content": "<p>Company Inc. (\"<strong>Company</strong>,\" \"<strong>we</strong>,\" \"<strong>us</strong>,\" or \"<strong>our</strong>\") respects your privacy and is committed to protecting your personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you interact with our websites, products, or services (collectively, the \"<strong>Services</strong>\"). This policy is provided for informational purposes and is intended to be a general example only.</p><h2>Information We Collect and How We Use It</h2><p>We may collect information that you voluntarily provide to us when you interact with the Services, such as when you contact us, create an account, or otherwise communicate with us. This information may include basic personal or account details, such as your name, email address, or similar contact information.</p><p>We may also automatically collect limited technical or usage information when you use the Services. This may include information such as browser type, device or operating system details, IP address, and general usage data.</p><p>Information we collect may be used for purposes such as:</p><ul><li>Providing and maintaining the Services</li><li>Responding to inquiries and communications</li><li>Improving features and functionality</li><li>Complying with applicable legal obligations</li></ul><h2>Sharing, Retention, and Security of Information</h2><p>We do not sell your personal information. We may share information with third-party service providers who perform services on our behalf, such as hosting or technical support, and only to the extent necessary for them to perform those services. We may also disclose information if required to do so by law or in response to valid legal requests.</p><p>We retain information only for as long as reasonably necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required or permitted by law.</p><p>We take reasonable administrative, technical, and organizational measures designed to protect information from unauthorized access, use, alteration, or disclosure. However, no method of transmission over the internet or method of electronic storage is completely secure, and we cannot guarantee absolute security.</p><h2>Your Choices, Updates, and Contact Information</h2><p>You may choose not to provide certain information to us, though doing so may limit your ability to use some features of the Services. Depending on your location, you may have certain rights regarding your personal information under applicable laws.</p><p>We may update this Privacy Policy from time to time. Any changes will be reflected by updating the \"<strong>Last updated</strong>\" date at the top of this page. Continued use of the Services after any changes indicates acceptance of the updated policy.</p><p>If you have any questions about this Privacy Policy, please contact us at:</p><p><strong>Company Inc.</strong><br />Email: <a href=\"mailto:privacy@company.example\">privacy@company.example</a><br />Address: 123 Demo Street, Example City, Country</p>"
+            }
+          ]
+        }
+      }
+    ],
+    "services": [],
+    "testimonials": [],
+    "faqs": [],
+    "pricing": [],
+    "team": [],
+    "posts": [
+      {
+        "id": "get-started-with-playwright-for-power-apps",
+        "slug": "get-started-with-playwright-for-power-apps",
+        "status": "published",
+        "publishedAt": "2025-09-09T12:00:00.000Z",
+        "data": {
+          "title": "Get Started with Playwright for Model Driven Apps",
+          "excerpt": "As a Power Platform consultant, knowing how to run automated testing can help you stand out.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What You'll Learn Today"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Today we're learning browser automation, not testing. We'll understand:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Browser lifecycle management"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "JavaScript execution bridge between Node.js and browser"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Model Driven App integration basics"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Why testing frameworks exist"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "In the next lesson we'll start to learn testing with @playwright/test."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Understanding Playwright's Architecture"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Your Computer (Node.js)          Browser (Chrome/Edge/Firefox) ┌─────────────────┐             ┌─────────────────┐ │                 │             │                 │ │  Your Script    │  Controls   │  Web Page       │ │  (TypeScript)   ├────────────►│  (MDA)          │ │                 │             │                 │ │  playwright     │             │  window.Xrm     │ │  - browser      │             │  DOM            │ │  - page         │             │  JavaScript     │ │                 │             │                 │ └─────────────────┘             └─────────────────┘      Node.js                         Browser"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Key Insight: Your test code runs in Node.js, but page.evaluate() lets you run code inside the browser."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The Code"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-get-started-with-playwright-for-power-apps-11",
+              "code": "// day1-concepts.ts import { chromium, Browser, Page, BrowserContext } from 'playwright';  declare global {     interface Window {         Xrm: any;     } }  /**  * Core Playwright Concepts with Model Driven Apps  */  // Your MDA URL - MUST include /main.aspx to load the actual app const MDA_URL = 'https://YOUR-ORG.crm.dynamics.com/main.aspx?appid=YOUR-APP-ID';  async function learnPlaywright() {     let browser: Browser | null = null;     let context: BrowserContext | null = null;     let page: Page | null = null;      try {         // 1. BROWSER LIFECYCLE: Launch → Context → Page         browser = await chromium.launch({             headless: false,             slowMo: 100,         });          context = await browser.newContext({             viewport: { width: 1920, height: 1080 }         });          page = await context.newPage();          // 2. NAVIGATION         await page.goto(D365_URL);         console.log('Navigated to:', page.url());          // 3. WAITING for JavaScript conditions         console.log('Please login manually...');         await page.waitForFunction(             () => typeof window.Xrm !== 'undefined',             { timeout: 120000 }         );         console.log('Login successful - Xrm found');          // 4. EXECUTING JAVASCRIPT - the bridge between Node.js and browser         const pageInfo = await page.evaluate(() => {             return {                 title: document.title,                 url: window.location.href,                 hasXrm: typeof window.Xrm !== 'undefined'             };         });         console.log('Page info:', pageInfo);          // 5. INTERACTING WITH MDA         const userInfo = await page.evaluate(() => {             const xrm = window.Xrm;             const context = xrm.Utility.getGlobalContext();             return {                 userName: context.userSettings.userName,                 orgName: context.organizationSettings.uniqueName,             };         });         console.log('User:', userInfo.userName);         console.log('Org:', userInfo.orgName);          // Navigate using Xrm Web API         console.log('Opening Account form...');         await page.evaluate(() => {             return window.Xrm.Navigation.openForm({                 entityName: \"account\",                 useQuickCreateForm: false             });         });          // Wait for form to load         await page.waitForFunction(             () => window.Xrm?.Page?.data !== undefined,             { timeout: 10000 }         );          // Check what form we're on         const formInfo = await page.evaluate(() => {             const xrm = window.Xrm;             return {                 entityName: xrm.Page.data.entity.getEntityName(),                 formType: xrm.Page.ui.getFormType(),             };         });         console.log('Opened form:', formInfo);          // 6. SCREENSHOT         await page.screenshot({ path: 'day1-screenshot.png' });         console.log('Screenshot saved');      } finally {         // CLEANUP: Always close resources in reverse order         if (page) await page.close();         if (context) await context.close();         if (browser) await browser.close();     } }  // Run it learnPlaywright()     .then(() => console.log('✅ Complete!'))     .catch(console.error);",
+              "language": "typescript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Core Concepts Explained"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Browser Lifecycle"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "browser → context → page → close()"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Browser: The actual browser process (Chrome, Firefox, etc.)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Context: Isolated browser session (cookies, storage)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Page: A tab within the context"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "2. The page.evaluate() Bridge"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-get-started-with-playwright-for-power-apps-19",
+              "code": "// Your Node.js code const result = await page.evaluate(() => {     // This runs in the browser     return window.someValue; }); This is THE most important concept in Playwright!",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "3. Waiting Strategies"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "❌ waitForTimeout() - Brittle, avoid"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "✅ waitForSelector() - Better, waits for elements"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "✅ waitForFunction() - Best, waits for any condition"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "4. Everything is Async"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-get-started-with-playwright-for-power-apps-25",
+              "code": "await page.goto();        // Async await page.click();       // Async await page.evaluate();    // Async Always use await with Playwright methods!",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "5. Model Driven App Integration"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A Model Driven App that is launched in a browser is just website with a window.Xrm JavaScript object. Once typeof window.Xrm !== 'undefined', you can use the Xrm Web API through Playwright."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What We're Missing"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Assertions: We're just logging, not testing"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Organization: Everything in one function"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Reusability: Copy-paste for multiple scenarios"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Standards: No structure or patterns"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Setup & Run"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "npm init -y npm install playwright typescript ts-node @types/node npx playwright install"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Update the D365 URL with your organization: const D365_URL = 'https://YOUR-ORG.crm.dynamics.com/main.aspx?appid=YOUR-APP-ID';"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Run the script: npx ts-node day1-concepts.ts"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Next Step: Real Testing"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The next post will introduce:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "@playwright/test framework (automated browser management)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "expect() assertions (real testing)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Page Object Model (organization)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "AAA pattern (structure)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Standards compliance (professional approach)"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Key Takeaway"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A Model Driven App that is launched in a browser is just website. Playwright is just Node.js controlling a browser. Everything else is patterns and frameworks!"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "You now understand what browser automation is. Next up we'll learn how to test efficiently."
+                }
+              ]
+            }
+          ],
+          "featured_image": {
+            "provider": "local",
+            "id": "01KRVBS08BEBDAZ2X10DFGBSP3",
+            "src": "/_emdash/api/media/file/01KRVBS03NJGJ8P7W37HHAF0E3.webp",
+            "alt": "Code on a computer screen representing automated browser testing",
+            "filename": "post-1.webp"
+          }
+        },
+        "taxonomies": {
+          "category": [
+            "power-platform"
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-james"
+          }
+        ]
+      },
+      {
+        "id": "how-to-create-a-reusable-in-app-notification-feature-in-power-platform-and-d365",
+        "slug": "how-to-create-a-reusable-in-app-notification-feature-in-power-platform-and-d365",
+        "status": "published",
+        "publishedAt": "2025-01-31T12:00:00.000Z",
+        "data": {
+          "title": "How to Create a Reusable In-App Notification Feature in Power Platform and D365",
+          "excerpt": "In-app notifications are a powerful way to enhance user experience in Power Platform/D365, allowing you to provide real-time feedback and alerts to your users. This guide will show you how to create a reusable notification system that any developer in your organization can easily implement.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "h1",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "How to Create a Reusable In-App Notification Feature in Power Platform and D365"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "In-app notifications are a powerful way to enhance user experience in Power Platform/D365, allowing you to provide real-time feedback and alerts to your users. This guide will show you how to create a reusable notification system that any developer in your organization can easily implement."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Overview"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Why Create a Reusable Notification System?"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "When implementing notifications in D365, you could write the notification code directly in each form or ribbon where it's needed. However, this leads to:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Duplicated code across multiple forms"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Inconsistent notification behavior"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Difficult maintenance when changes are needed"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "More time spent testing each implementation"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Instead, we'll create a reusable notification system using two files:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Code/Utils/Notifications/notificationUtils.js: A shared utility that handles all notification logic"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Code/Ribbon/userRibbon.js: An example implementation showing how to use the utility"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "This approach allows any developer to add notifications to their forms by simply:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Including the notificationUtils.js library 2. Calling our standardized notification methods"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step-by-Step Implementation"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 1: Establish Naming Conventions"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Before we start coding, let's establish a clear naming convention for our JavaScript modules. We'll use a three-part namespace structure:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "window.OrgName.ModuleName.Function;"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "This structure provides several benefits:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Organization: The root namespace (James) prevents conflicts with other solutions in the global scope"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Modularity: The second part (Utils, Ribbon) groups related functionality together, making it easier to maintain and extend"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Specificity: The final part (InAppNotifications) clearly identifies the purpose of each module, improving code readability"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Encapsulation: Each level of the namespace provides a natural boundary for related code, reducing the risk of naming collisions"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Discoverability: The hierarchical structure makes it easier for developers to find and use the functionality they need"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "For example:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "James.Utils.InAppNotifications: Our shared notification utilities"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "James.Ribbon.User: Ribbon button functionality for user notifications"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 2: Create the Notification Utility"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "First, let's create our reusable notification code in notificationUtils.js. We'll use a block scope to avoid polluting the global namespace and implement proper initialization checks:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-create-a-reusable-in-app-notification-feature-in-power-platform-and-d365-29",
+              "code": "// Initialize namespace window.James = window.James || {}; window.James.Utils = window.James.Utils || {}; window.James.Utils.InAppNotifications =   window.James.Utils.InAppNotifications || {};  // Implementation in block scope to avoid polluting global scope {   // Only initialize if core functionality is not present   if (!window.James.Utils.InAppNotifications.SendAppNotificationRequest) {     console.log(\"notificationUtils.js - Initializing InAppNotifications\");      // Define enums as immutable constants     const TOAST_TYPE = Object.freeze({       TIMED: 200000000, // Shows for 4 seconds then auto-dismisses       HIDDEN: 200000001 // Only visible in notification center     });      const ICON_TYPE = Object.freeze({       INFO: 100000000, // Blue information icon (i)       SUCCESS: 100000001, // Green checkmark       FAILURE: 100000002, // Red X       WARNING: 100000003, // Yellow warning triangle       MENTION: 100000004, // @ symbol for mentions       CUSTOM: 100000005 // Custom icon (requires IconUrl)     });      const PRIORITY = Object.freeze({       LOW: 200000000, // Low priority       NORMAL: 200000001, // Normal priority       HIGH: 200000002 // High priority     });      // Safely extend the namespace with our enums     Object.assign(window.James.Utils.InAppNotifications, {       TOAST_TYPE,       ICON_TYPE,       PRIORITY     });      // Helper function to create side pane actions     window.James.Utils.InAppNotifications.createSidePaneAction = function (       title,       paneTitle,       entityName,       recordId,       width = 400     ) {       return {         title: title,         data: {           type: \"sidepane\",           title: paneTitle,           width: width,           entityName: entityName,           recordId: recordId         }       };     };      // Helper function to create record links     window.James.Utils.InAppNotifications.createRecordLink = function (       title,       entityName,       recordId,       options = false     ) {       const useNewWindow =         typeof options === \"boolean\" ? options : (options?.newWindow ?? false);        if (options?.useSidePane) {         return window.James.Utils.InAppNotifications.createSidePaneAction(           title,           options.paneTitle || title,           entityName,           recordId,           options.width         );       }        return {         title: title,         data: {           type: \"record\",           target: useNewWindow ? \"newwindow\" : \"form\",           entityName: entityName,           recordId: recordId         }       };     };   } }",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 3: Create the User Ribbon Implementation"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Next, let's create userRibbon.js to demonstrate how to use our notification utility. We'll add proper dependency validation:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-create-a-reusable-in-app-notification-feature-in-power-platform-and-d365-32",
+              "code": "// Initialize namespace window.James = window.James || {}; window.James.Ribbon = window.James.Ribbon || {}; window.James.Ribbon.User = window.James.Ribbon.User || {};  // Implementation in block scope {   // Validate required dependencies   if (!window.James?.Utils?.InAppNotifications?.SendAppNotificationRequest) {     console.error(       \"UserRibbon.js - Required dependency 'SendAppNotificationRequest' not found\"     );     throw new Error(       \"Required dependency 'SendAppNotificationRequest' not found\"     );   }    // Validate required enums   const requiredEnums = [\"PRIORITY\", \"ICON_TYPE\", \"TOAST_TYPE\"];   for (const enumName of requiredEnums) {     if (!window.James?.Utils?.InAppNotifications?.[enumName]) {       console.error(UserRibbon.js - Required enum '${enumName}' not found);       throw new Error(Required enum '${enumName}' not found);     }   }    window.James.Ribbon.User = {     SendNotification: async function (       primaryControl,       recipientAttribute,       title,       body,       useSidePane = false     ) {       try {         // Get recipient         const recipientId = primaryControl           ?.getAttribute(recipientAttribute)           ?.getValue?.()?.[0]?.id;         if (!recipientId) {           throw new Error(\"No recipient selected\");         }          // Format recipient URL         const recipientUrl = /systemusers(${recipientId.replace(/[{}]/g, \"\")});         const recordId = primaryControl.data.entity           .getId()           .replace(/[{}]/g, \"\");         const entityName = primaryControl.data.entity.getEntityName();          // Create record link action         const actions = window.James.Utils.InAppNotifications.createRecordLink(           \"View Record\",           entityName,           recordId,           useSidePane             ? {                 useSidePane: true,                 paneTitle: \"Record Details\",                 width: 400               }             : false         );          // Create notification with markdown support         const overrideContent = {           \"@odata.type\": \"#Microsoft.Dynamics.CRM.expando\",           title: \"\" + title + \"\",           body: A new ${entityName} has been assigned to you. ${body}         };          // Send notification         const notificationRequest =           new window.James.Utils.InAppNotifications.SendAppNotificationRequest(             title,             recipientUrl,             body,             window.James.Utils.InAppNotifications.PRIORITY.HIGH,             window.James.Utils.InAppNotifications.ICON_TYPE.SUCCESS,             window.James.Utils.InAppNotifications.TOAST_TYPE.TIMED,             30,             overrideContent,             actions           );          const result = await Xrm.WebApi.online.execute(notificationRequest);         if (result.ok) {           console.log(\"Notification sent successfully\");         }       } catch (error) {         console.error(\"Error in SendNotification:\", error);         await Xrm.Navigation.openErrorDialog({ message: error.message });       }     }   }; }",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Key Improvements in This Implementation"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Immutable Enums: We use Object.freeze() to make our enum objects immutable, preventing accidental modifications."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "2. Safe Namespace Extension: We use Object.assign() to safely extend the namespace with our enums, which is cleaner and less error-prone."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "3. Proper Initialization Check: Instead of using a flag, we check for the existence of core functionality (SendAppNotificationRequest)."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "4. Dependency Validation: The ribbon code validates both the core functionality and required enums before proceeding."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "5. Block Scoping: Both files use block scoping to avoid polluting the global namespace while still exposing the necessary functionality."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "How to Use"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Create two JavaScript web resources:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "- Code/Utils/Notifications/notificationUtils.js: Contains the core notification functionality - Code/Ribbon/userRibbon.js: Contains the implementation code"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "2. Add both web resources to your form, ensuring notificationUtils.js is loaded first."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "3. Call the notification function from your ribbon button:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-create-a-reusable-in-app-notification-feature-in-power-platform-and-d365-44",
+              "code": "// Example ribbon button command James.Ribbon.User.SendNotification(   primaryControl,   \"James_recipientid\",   \"New Assignment\",   \"You have been assigned a new task.\",   true // Use side pane );",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Best Practices"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Load Order: Always load notificationUtils.js before any code that depends on it. 2. Error Handling: Use try-catch blocks and provide meaningful error messages. 3. Dependency Checks: Validate required dependencies before executing code. 4. Immutability: Use Object.freeze() for constant values like enums. 5. Namespace Protection: Use block scoping to avoid global namespace pollution. 6. Type Safety: Use JSDoc comments to document parameters and return types."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "By following these patterns, you'll create maintainable, reusable notification code that any developer in your organization can easily implement."
+                }
+              ]
+            }
+          ],
+          "featured_image": {
+            "provider": "local",
+            "id": "01KRVBTFW5J9FY2G92J0JK0KN7",
+            "src": "/_emdash/api/media/file/01KRVBTFK9QH6A1S4G1G14M282.webp",
+            "alt": "Dashboard with notification indicators on a modern application interface",
+            "filename": "post-2.webp"
+          }
+        },
+        "taxonomies": {
+          "category": [
+            "power-platform"
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-james"
+          }
+        ]
+      },
+      {
+        "id": "essential-tools-for-power-platform-consultants",
+        "slug": "essential-tools-for-power-platform-consultants",
+        "status": "published",
+        "publishedAt": "2024-01-12T12:00:00.000Z",
+        "data": {
+          "title": "Essential Tools for Power Platform Consultants",
+          "excerpt": "As a Power Platform consultant, having the right tools at your disposal can significantly enhance your productivity and efficiency.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Essential Tools for Power Platform Consultants"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "As a Power Platform consultant, having the right tools at your disposal can significantly enhance your productivity and efficiency. Two indispensable tools in this domain are the Level Up for Dynamics 365/Power Apps browser extension and XrmToolbox. This blog post will delve into these tools, highlighting their features and benefits."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Level Up for Dynamics 365/Power Apps"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The Level Up for Dynamics 365/Power Apps browser extension is a powerful tool designed to streamline and enhance the user experience for Dynamics 365 and Power Apps. Here are some key features:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Advanced Actions: This extension allows users to perform advanced or hidden actions within Dynamics 365 and Power Apps without the need for bookmarklets. This can include tasks like quickly navigating to specific records, opening forms in different modes, and more."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Ease of Use: The extension is user-friendly and integrates seamlessly with your browser, making it accessible for both developers and testers. It simplifies troubleshooting and verification processes, which are crucial for maintaining efficient workflows."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Community Support: Developed by Natraj Yegnaraman, the tool has garnered positive reviews from the community, highlighting its utility and ease of use. It is a must-have for anyone working extensively with Dynamics 365 and Power Apps."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "XrmToolbox"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "XrmToolbox is another essential tool for Power Platform consultants, especially those working with Dynamics 365. It is a Windows application that provides a suite of tools to manage and customize Dynamics 365 environments. Here are some of its standout features:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Plugin Ecosystem: XrmToolbox hosts a wide range of plugins developed by the community, catering to various needs such as data migration, form customization, and workflow management. This extensibility makes it a versatile tool for any consultant."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Ease of Installation and Use: The tool is straightforward to download and set up. Once installed, users can easily connect to their Dynamics 365 environments and start using the available plugins to perform complex tasks with minimal effort."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Community and Documentation: The tool is well-supported by a vibrant community of developers and users. Comprehensive documentation and tutorials are available, making it easier for new users to get started and for experienced users to explore advanced functionalities."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Other Notable Tools"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "While Level Up and XrmToolbox are standout tools, several other tools can further enhance your capabilities as a Power Platform consultant:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Dataverse REST Builder: This tool helps in creating and executing requests against the Dataverse Web API endpoint, simplifying API interactions for developers."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Dynamics 365 Power Pane: A helper tool designed to integrate with Dynamics CRM/365 applications, allowing manipulation of forms and other elements directly from the browser."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "D365-UI-Test-Designer: A browser extension for designing and capturing UI tests for Dynamics 365, which is crucial for ensuring the reliability and performance of customizations."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Conclusion"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "For Power Platform consultants, leveraging the right tools can make a significant difference in the efficiency and quality of their work. The Level Up for Dynamics 365/Power Apps extension and XrmToolbox are two indispensable tools that provide advanced functionalities, ease of use, and robust community support. By incorporating these tools into your workflow, you can enhance your productivity and deliver superior solutions to your clients."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Whether you are troubleshooting, customizing, or managing complex workflows, these tools will empower you to perform your tasks more effectively and efficiently."
+                }
+              ]
+            }
+          ],
+          "featured_image": {
+            "provider": "local",
+            "id": "01KRVBTH0ERZBJ78C0S90KTKDQ",
+            "src": "/_emdash/api/media/file/01KRVBTGW210BX1EYYSTJ4PKK7.webp",
+            "alt": "Developer workspace with laptop and tools",
+            "filename": "essential-tools-for-power-platform-consultants.webp"
+          }
+        },
+        "taxonomies": {
+          "category": [
+            "power-platform"
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-james"
+          }
+        ]
+      },
+      {
+        "id": "how-to-implement-a-try-catch-pattern-in-power-automate",
+        "slug": "how-to-implement-a-try-catch-pattern-in-power-automate",
+        "status": "published",
+        "publishedAt": "2024-01-12T12:00:00.000Z",
+        "data": {
+          "title": "How to implement a Try/Catch pattern in Power Automate",
+          "excerpt": "The Try-Catch-Finally pattern used in programming allows you to handle errors gracefully in Power Automate.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What is a Catch block?"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A Catch block is part of the Try-Catch-Finally pattern used in programming to handle errors gracefully. In Power Automate, the Catch block allows you to manage exceptions and errors that occur during the execution of your flow. By using a Catch block, you can ensure that your flow continues to run smoothly even when something goes wrong."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 1: Configure the Try block"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Open Power Automate and create a new flow. 2. Insert a Scope action to group the actions you want to monitor for errors and name it \"Try\". 3. Inside the Scope, add the action that might fail (it needs to involve a network request). 4. Enable Static Result (Preview) on the action and set the Status to \"Failed\". This will force an error in the \"Try\" Scope."
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-4",
+              "asset": {
+                "_ref": "img-ref-enable-static-result",
+                "url": "/images/posts/enable-static-result.png"
+              },
+              "alt": "Screenshot of Enable Static Result"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "5. Add a second Scope action below the \"Try\" Scope and name it \"Catch\"."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 2: Configure the Catch block"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Click on the ellipsis (three dots) of the \"Catch\" Scope and select Configure run after. 2. Check the boxes for has failed, is skipped and has timed out. This ensures that the Catch block runs only if the Try block fails."
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-8",
+              "asset": {
+                "_ref": "img-ref-catch-block",
+                "url": "/images/posts/catch-block.png"
+              },
+              "alt": "Screenshot of Catch Block"
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 3: Extract error details from the Try block"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Use the Filter array action to extract the error details from the result of the Try block, using result('Try') , where the status is equal to Failed @equals(item()?['status'], 'Failed')."
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-11",
+              "asset": {
+                "_ref": "img-ref-filter-array",
+                "url": "/images/posts/filter-array.png"
+              },
+              "alt": "Screenshot of Filter Array"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "2. Use the Select action to extract the following properties from the Body of the Filter array action:"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-13",
+              "asset": {
+                "_ref": "img-ref-select",
+                "url": "/images/posts/select.png"
+              },
+              "alt": "Screenshot of Select"
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-14",
+              "code": "{   \"name\": @{item()?['name']},   \"code\": @{item()?['error/code']},   \"message\": @{item()?['error/message']},   \"endTime\": @{item()?['endTime']} }",
+              "language": "json",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "3. Add a Compose action to build the flow run URL. Use the following expression:"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-16",
+              "asset": {
+                "_ref": "img-ref-compose",
+                "url": "/images/posts/compose.png"
+              },
+              "alt": "Screenshot of Compose"
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-17",
+              "code": "concat('https://make.powerautomate.com/environments/', workflow()?['tags']?['environmentName'], '/flows/', workflow()?['name'], '/runs/', workflow()?['run']?['name'])",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "4. Use the Send an email (V2) action to notify the relevant person/team/shared mailbox with the following:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Subject: @{workflow().tags.flowDisplayName} Flow Failure 2. Body:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-20",
+              "code": "<p>Hi,</p> <p>The flow <strong>@{workflow().tags.flowDisplayName}</strong> has failed.</p> <p><strong> Error Summary:</strong></p>  Run ID: @{workflow().run.name}<br /> Date and time: @{formatDateTime(parseDateTime(first(body('Select'))?['endTime']), 'dd/MM/yyyy, HH:mm')}<br /> Failed at action: @{first(body('Select'))?['name']}<br /> Code: @{first(body('Select'))?['code']}<br /> Message: @{first(body('Select'))?['message']}<br />  <p>The flow run can be accessed <a href=\"@{outputs('Compose')}\">here</a>.</p>",
+              "language": "html",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-21",
+              "asset": {
+                "_ref": "img-ref-email",
+                "url": "/images/posts/email.png"
+              },
+              "alt": "Screenshot of Email"
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 4: Test your flow"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Save and test flow. 2. Verify that the flow runs as expected and handles the error."
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-24",
+              "asset": {
+                "_ref": "img-ref-test-catch-block",
+                "url": "/images/posts/test-catch-block.png"
+              },
+              "alt": "Screenshot of Test Catch Block"
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Conclusion"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Creating a child flow to handle the Catch block in Power Automate can make your workflows more robust and easier to manage. By following these steps, you can ensure that your flows handle errors gracefully and continue to run smoothly. Happy automating!"
+                }
+              ]
+            }
+          ],
+          "featured_image": {
+            "provider": "local",
+            "id": "01KRVBTGFJ4MAAPCC404DSASFE",
+            "src": "/_emdash/api/media/file/01KRVBTG8R9V0MWWGTH6AZY73N.webp",
+            "alt": "Flowchart diagram representing error handling patterns",
+            "filename": "post-4.webp"
+          }
+        },
+        "taxonomies": {
+          "category": [
+            "power-automate",
+            "power-platform"
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-james"
+          }
+        ]
+      },
+      {
+        "id": "how-to-run-javascript-in-power-automate",
+        "slug": "how-to-run-javascript-in-power-automate",
+        "status": "published",
+        "publishedAt": "2024-01-12T12:00:00.000Z",
+        "data": {
+          "title": "How to Run JavaScript in Power Automate",
+          "excerpt": "Running inline JavaScript can be a powerful way to extend your workflows. This guide will walk you through the steps to set this up in Power Automate via a custom connector for an Azure Function.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Introduction"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Running inline JavaScript can be a powerful way to extend your workflows. This guide will walk you through the steps to set this up in Power Automate via a custom connector for an Azure Function."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 1: Create an Azure Function"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Log in to the Azure Portal: Go to Azure Portal (https://portal.azure.com). 2. Create a new Function App: Navigate to \"Create a resource\" > \"Compute\" > \"Function App\". 3. Configure your Function App: - Subscription: Choose your subscription. - Resource Group: Create a new resource group or select an existing one. - Function App name: Enter a unique name. - Runtime stack: Select \"Node.js\". - Region: Choose a region close to you. 4. Review and create: Review your settings and click \"Create\"."
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-4",
+              "asset": {
+                "_ref": "img-ref-create-function-app",
+                "url": "/images/posts/create-function-app.png"
+              },
+              "alt": "Screenshot of Create Function App"
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 2: Develop the Azure Function"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Navigate to your Function App: Once created, go to your Function App. 2. Create a new function: Click on \"Functions\" > \"Add\" > \"HTTP trigger\". 3. Configure the function: - Name: Give your function a name. - Authorization level: Choose \"Function\". 4. Write your JavaScript code: Replace the default code with this:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-run-javascript-in-power-automate-7",
+              "code": "module.exports = async function (context, req) {   context.res = {     body: {},     headers: {       \"content-type\": \"application/json\"     }   };    if (!req.body || typeof req.body !== \"string\") {     context.res.status = 400;     context.res.body = { error: \"Invalid input\" };     return;   }    try {     const result = new Function(req.body)();     context.res.body = { result };   } catch (e) {     context.res.status = 400;     context.res.body = { error: e.message };   } };",
+              "language": "javascript",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "5. Save and test: Save your function and test it using the \"Test/Run\" feature."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 3: Create a Custom Connector in Power Automate"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Log in to Power Automate: Go to Power Automate (https://flow.microsoft.com). 2. Create a new custom connector: - Navigate to \"Data\" > \"Custom connectors\" > \"New custom connector\" > \"Create from blank\". 3. Configure the custom connector: - General: Enter a name and description. - Scheme: HTTPS - Host: Enter the base URL of your API Management instance. - Security: API key"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-11",
+              "asset": {
+                "_ref": "img-ref-api-key",
+                "url": "/images/posts/api-key.png"
+              },
+              "alt": "Screenshot of Api Key"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Definition: New Action"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "- Summary: Evaluate - Description: Evaluates inline JavaScript passed as a string to the request body - Visibility: important"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Request: Import from sample"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "- Verb: POST - URL: Your function URL - Import"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-16",
+              "asset": {
+                "_ref": "img-ref-define-action",
+                "url": "/images/posts/define-action.png"
+              },
+              "alt": "Screenshot of Define Action"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Response: default > Import from sample"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "- Body: { \"result\": null }"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-19",
+              "asset": {
+                "_ref": "img-ref-define-response",
+                "url": "/images/posts/define-response.png"
+              },
+              "alt": "Screenshot of Define Response"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Swagger editor: paste the following into the parameters section of the /Evaluate path:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-run-javascript-in-power-automate-21",
+              "code": "parameters:   - name: script     in: body     required: true     schema:       type: string",
+              "language": "yaml",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "The completed swagger should look as follows:"
+                }
+              ]
+            },
+            {
+              "_type": "code-block-pro",
+              "_key": "key-how-to-run-javascript-in-power-automate-23",
+              "code": "swagger: \"2.0\" info:   title: Evaulate   description: Connects to an Azure Function   version: \"1.0\" host: <your base url> basePath: /api schemes:   - https consumes: [] produces: [] paths:   /Evaulate:     post:       responses:         default:           description: default           schema:             type: object             properties:               result:                 type: string                 description: result                 title: result       summary: Evaluate       description: Evaluates inline JavaScript passed as a string to the request body       operationId: Evaluate       x-ms-visibility: important       parameters:         - name: script           in: body           required: true           schema:             type: string definitions: {} parameters: {} responses: {} securityDefinitions:   Key:     type: apiKey     in: header     name: x-functions-key security:   - Key: [] tags: []",
+              "language": "yaml",
+              "theme": "github-dark",
+              "lineNumbers": true,
+              "copyButton": true
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Create Connector 2. Create a Connection: Add New Connection > Key > Create"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-25",
+              "asset": {
+                "_ref": "img-ref-connection",
+                "url": "/images/posts/connection.png"
+              },
+              "alt": "Screenshot of Connection"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "3. Test the connector: script > return 2+ 2 > Test operation"
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-27",
+              "asset": {
+                "_ref": "img-ref-test-connector",
+                "url": "/images/posts/test-connector.png"
+              },
+              "alt": "Screenshot of Test Connector"
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Step 4: Use the Custom Connector in a Flow"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "1. Create a new flow: Go to \"My flows\" > \"New flow\". 2. Add a trigger: Choose a trigger to start your flow. 3. Add an action: Search for your custom connector and add the action you defined. 4. Configure the action: Enter any required parameters. 5. Save and test the flow: Save your flow and test it to ensure it runs correctly."
+                }
+              ]
+            },
+            {
+              "_type": "image",
+              "_key": "key-how-to-run-javascript-in-power-automate-30",
+              "asset": {
+                "_ref": "img-ref-consume-connector",
+                "url": "/images/posts/consume-connector.png"
+              },
+              "alt": "Screenshot of Consume Connector"
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "By following these steps, you can run JavaScript via a custom connector for an Azure Function in Power Automate, enabling you to create powerful and flexible workflows."
+                }
+              ]
+            }
+          ],
+          "featured_image": {
+            "provider": "local",
+            "id": "01KRVBTHE1WGKK6CRW3E183GA5",
+            "src": "/_emdash/api/media/file/01KRVBTHCTF8ZM2HWTWSRS0EY5.webp",
+            "alt": "JavaScript code on screen representing scripting in automation workflows",
+            "filename": "post-5.webp"
+          }
+        },
+        "taxonomies": {
+          "category": [
+            "power-automate"
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-james"
+          }
+        ]
+      },
+      {
+        "id": "service-account-vs-service-principal-in-power-platform",
+        "slug": "service-account-vs-service-principal-in-power-platform",
+        "status": "published",
+        "publishedAt": "2024-01-12T12:00:00.000Z",
+        "data": {
+          "title": "Service Account vs Service Principal in Power Platform",
+          "excerpt": "Both are important for managing access and permissions, but they serve different purposes. Let's break down what each one is and how they differ.",
+          "content": [
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "When working with Power Platform or Dynamics 365, you might come across the terms \"service account\" and \"service principal.\" These two concepts are important for managing access and permissions, but they serve different purposes. Let's break down what each one is and how they differ."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What is a Service Account?"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A service account is a user account that is created to run specific services or applications. In the context of Power Platform or Dynamics 365, a service account is typically used for automated tasks, such as running workflows, integrations, or other background processes."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Key Features of a Service Account:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "User-Based: It is essentially a user account with a username and password."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Permissions: It can be assigned specific roles and permissions just like any other user."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Authentication: Uses standard user authentication methods."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Management: Managed through the user management interface in Power Platform or Dynamics 365."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "What is a Service Principal?"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "A service principal is an identity that is used by applications or services to access specific resources. It is a security identity used by applications to access resources within Azure Active Directory (AAD)."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Key Features of a Service Principal:"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Application-Based: It is tied to an application rather than a user."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Permissions: Can be granted permissions to access resources in Azure and other services."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Authentication: Uses OAuth 2.0 and other modern authentication protocols."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Management: Managed through Azure Active Directory."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h2",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Key Differences"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Purpose"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Account: Used for running automated tasks within Power Platform or Dynamics 365."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Principal: Used for applications to access resources in Azure and other services."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Authentication"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Account: Authenticates using a username and password."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Principal: Authenticates using OAuth 2.0 and other protocols."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Management"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Account: Managed within the user management interface of Power Platform or Dynamics 365."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Principal: Managed within Azure Active Directory."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "h3",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Use Cases"
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Account: Ideal for scenarios where a specific user needs to perform automated tasks."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "listItem": "bullet",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Service Principal: Ideal for scenarios where an application needs to access resources across different services."
+                }
+              ]
+            },
+            {
+              "_type": "block",
+              "style": "normal",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "Understanding the difference between a service account and a service principal is crucial for setting up secure and efficient access controls in Power Platform or Dynamics 365. By choosing the right type of identity, you can ensure that your applications and services run smoothly and securely."
+                }
+              ]
+            }
+          ],
+          "featured_image": {
+            "provider": "local",
+            "id": "01KRVBTHE1WGKK6CRW3E183GA6",
+            "src": "/_emdash/api/media/file/01KRVBTHCTF8ZM2HWTWSRS0EY6.webp",
+            "alt": "Digital security lock representing identity and access management",
+            "filename": "post-6.webp"
+          }
+        },
+        "taxonomies": {
+          "category": [
+            "power-platform"
+          ]
+        },
+        "bylines": [
+          {
+            "byline": "byline-james"
+          }
+        ]
+      }
+    ],
+    "projects": []
+  }
 }

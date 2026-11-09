@@ -7,7 +7,11 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "scripts": {
+    "test": "node --experimental-test-module-mocks --test test/*.test.mjs"
+  },
   "dependencies": {
-    "emdash": "^0.14.0"
+    "@jdevalk/astro-seo-graph": "2.2.0",
+    "emdash": "1.4.0"
   }
 }
