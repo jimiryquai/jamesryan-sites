@@ -1,14 +1,14 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 import { parseArgs } from 'node:util';
-import * as blockExports from 'emdash-plugin-page-builder/blocks';
+import { getOfferedBlocks } from '../src/components/page-builder/offered-blocks.mjs';
 
 /** The package owns definitions; this seed copy bootstraps fresh databases. */
 export function syncPageBuilderSeed({ check = false } = {}) {
   const path = new URL('../seed/seed.json', import.meta.url);
   const original = readFileSync(path, 'utf8');
   const seed = JSON.parse(original);
-  const blocks = Object.values(blockExports).filter((value) => value?.definition && value?.variants && value?.migrations);
+  const blocks = getOfferedBlocks();
   seed.blockTypes = blocks.map((block) => block.definition);
   seed.collections.find((collection) => collection.slug === 'pages').fields
     .find((field) => field.slug === 'layout').validation.allowedTypes = blocks.map((block) => block.definition.slug);

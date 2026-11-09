@@ -2798,7 +2798,7 @@ packages:
       shiki: ^4.0.0
 
   emdash-plugin-page-builder@file:.orchestrate/pkg/emdash-plugin-page-builder-0.0.0.tgz:
-    resolution: {integrity: sha512-0Dlg+r1WFGlJQ6t7krEEyyXEU4c19Hdfp4OI7Zamm4RuPLsCN0kYdI1L246+6hHNOwtNKUXBU4MeWjDVL9SwFw==, tarball: file:.orchestrate/pkg/emdash-plugin-page-builder-0.0.0.tgz}
+    resolution: {integrity: sha512-jivAuZKxFq0GAusNlwCA32FKDjWevyLIPioRk8V/xnMVnQf1trOj2nhqJY0VGyaJHmwFBXF2lquhQ/utxllKJQ==, tarball: file:.orchestrate/pkg/emdash-plugin-page-builder-0.0.0.tgz}
     version: 0.0.0
     engines: {node: '>=24'}
     hasBin: true

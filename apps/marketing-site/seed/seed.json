@@ -38,11 +38,11 @@
           "type": "blocks",
           "validation": {
             "allowedTypes": [
+              "hero",
               "cta",
               "features",
-              "hero",
-              "pricing",
-              "testimonials"
+              "testimonials",
+              "pricing"
             ]
           }
         },
@@ -2911,6 +2911,88 @@
   },
   "blockTypes": [
     {
+      "slug": "hero",
+      "label": "Hero",
+      "category": "Sections",
+      "description": "Use a hero for the opening section of a page: a heading, an optional plain-text body, an optional image, and links. Choose centered when the heading, body and links sit in a centered stack and no image is shown. Choose photo when the copy is aligned to the start and the image is a photograph shown with it. Choose demo when the copy is aligned to the start and the image is a product screenshot or interface shown as a demo. The first link is the primary action and the second is an optional quieter action. Set the eyebrow, its URL and its action together when a short linked announcement sits above the heading. Priced plans belong on the pricing block.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "centered",
+                  "photo",
+                  "demo"
+                ]
+              },
+              "defaultValue": "centered"
+            },
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "eyebrow_url",
+              "label": "Eyebrow URL",
+              "type": "url"
+            },
+            {
+              "slug": "eyebrow_action",
+              "label": "Eyebrow action",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string",
+              "required": true
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "label": "Image",
+              "type": "image",
+              "options": {
+                "darkVariant": true
+              }
+            },
+            {
+              "slug": "links",
+              "label": "Links",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string",
+                    "required": true
+                  },
+                  {
+                    "slug": "url",
+                    "label": "URL",
+                    "type": "url",
+                    "required": true
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "slug": "cta",
       "label": "Call to action",
       "category": "Sections",
@@ -3035,134 +3117,15 @@
                     "type": "string"
                   },
                   {
-                    "slug": "ctaLabel",
+                    "slug": "cta_label",
                     "label": "CTA label",
                     "type": "string"
                   },
                   {
-                    "slug": "ctaUrl",
+                    "slug": "cta_url",
                     "label": "CTA URL",
                     "type": "url"
                   }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "slug": "hero",
-      "label": "Hero",
-      "category": "Sections",
-      "description": "Use a hero for the opening section of a page: a heading, an optional plain-text body, an optional image, and links. Choose centered when the heading, body and links sit in a centered stack and no image is shown. Choose photo when the copy is aligned to the start and the image is a photograph shown with it. Choose demo when the copy is aligned to the start and the image is a product screenshot or interface shown as a demo. The first link is the primary action and the second is an optional quieter action. Set the eyebrow, its URL and its action together when a short linked announcement sits above the heading. Priced plans belong on the pricing block.",
-      "currentVersion": 1,
-      "versions": [
-        {
-          "version": 1,
-          "fields": [
-            {
-              "slug": "variant",
-              "label": "Variant",
-              "type": "select",
-              "validation": {
-                "options": [
-                  "centered",
-                  "photo",
-                  "demo"
-                ]
-              },
-              "defaultValue": "centered"
-            },
-            {
-              "slug": "eyebrow",
-              "label": "Eyebrow",
-              "type": "string"
-            },
-            {
-              "slug": "eyebrow_url",
-              "label": "Eyebrow URL",
-              "type": "url"
-            },
-            {
-              "slug": "eyebrow_action",
-              "label": "Eyebrow action",
-              "type": "string"
-            },
-            {
-              "slug": "heading",
-              "label": "Heading",
-              "type": "string",
-              "required": true
-            },
-            {
-              "slug": "body",
-              "label": "Body",
-              "type": "text"
-            },
-            {
-              "slug": "image",
-              "label": "Image",
-              "type": "image",
-              "options": {
-                "darkVariant": true
-              }
-            },
-            {
-              "slug": "links",
-              "label": "Links",
-              "type": "repeater",
-              "validation": {
-                "subFields": [
-                  {
-                    "slug": "label",
-                    "label": "Label",
-                    "type": "string",
-                    "required": true
-                  },
-                  {
-                    "slug": "url",
-                    "label": "URL",
-                    "type": "url",
-                    "required": true
-                  }
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "slug": "pricing",
-      "label": "Pricing",
-      "description": "Pricing tiers pulled from a shared pricing collection rather than written inline. Scope picks whether the tiers come from the page's group or the whole collection. Variant tiers shows several plans side by side; toggle adds a monthly and yearly billing switcher; single shows one plan beside its feature list.",
-      "currentVersion": 1,
-      "versions": [
-        {
-          "version": 1,
-          "fields": [
-            {
-              "slug": "variant",
-              "label": "Variant",
-              "type": "select",
-              "validation": {
-                "options": [
-                  "tiers",
-                  "toggle",
-                  "single"
-                ]
-              }
-            },
-            {
-              "slug": "scope",
-              "label": "Scope",
-              "type": "select",
-              "defaultValue": "all",
-              "validation": {
-                "options": [
-                  "page",
-                  "all"
                 ]
               }
             }
@@ -3210,6 +3173,43 @@
               "validation": {
                 "min": 1,
                 "max": 24
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pricing",
+      "label": "Pricing",
+      "description": "Pricing tiers pulled from a shared pricing collection rather than written inline. Scope picks whether the tiers come from the page's group or the whole collection. Variant tiers shows several plans side by side; toggle adds a monthly and yearly billing switcher; single shows one plan beside its feature list.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "tiers",
+                  "toggle",
+                  "single"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
               }
             }
           ]

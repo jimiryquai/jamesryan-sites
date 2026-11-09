@@ -16,7 +16,7 @@ interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   heading?: string; subheadline?: string; eyebrow?: string;
   variant?: 'two-column' | 'three-column' | 'three-column-demos' | 'alternating';
-  items?: { title: string; description?: string; icon?: string; image?: MediaValue; ctaLabel?: string; ctaUrl?: string }[];
+  items?: { title: string; description?: string; icon?: string; image?: MediaValue; cta_label?: string; cta_url?: string }[];
 };
 const sections = {
   'two-column': [FeaturesTwoColumnWithDemos, Feature],
@@ -33,10 +33,10 @@ const [Section, Item] = sections[value.variant ?? 'two-column'] ?? sections['two
   {(value.items ?? []).map((item) => <Item headline={item.title}>
     <div slot="subheadline">
       {item.description}
-      {compact && item.ctaLabel && item.ctaUrl && <Link href={item.ctaUrl}>{item.ctaLabel}</Link>}
+      {compact && item.cta_label && item.cta_url && <Link href={item.cta_url}>{item.cta_label}</Link>}
     </div>
     {icons[item.icon ?? ''] && <Icon slot="icon" name={`ph:${icons[item.icon ?? '']}`} class="size-4" />}
     {item.image && <Image slot="demo" image={item.image} width={1000} height={800} class="w-full h-auto" />}
-    {!compact && item.ctaLabel && item.ctaUrl && <Link slot="cta" href={item.ctaUrl}>{item.ctaLabel}</Link>}
+    {!compact && item.cta_label && item.cta_url && <Link slot="cta" href={item.cta_url}>{item.cta_label}</Link>}
   </Item>)}
 </Section>

@@ -12,7 +12,8 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro build",
     "preview": "astro preview",
     "typecheck": "node scripts/sync-page-builder-seed.mjs --check && ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro check",
-    "check": "node scripts/check-site.js"
+    "check": "node scripts/check-site.js",
+    "page-builder": "node scripts/apply-page-builder.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "13.7.0",
