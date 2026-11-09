@@ -1,12 +1,5 @@
 # Drafting posts
 
-**Staging is blocked:** on 2026-11-09 the staging agent token successfully
-published a test post despite its intended Contributor role. Its publish and
-delete restrictions have not been proven. Do not use this token for authoring
-until an administrator has corrected and independently verified its access.
-The procedure below records the staging draft creation, not a proven safe
-publishing boundary.
-
 James reviews and publishes posts in the EmDash admin. Agents prepare drafts;
 they do not publish or delete them. The staging admin is at
 `https://staging.jamesryan.dev/_emdash/admin`. Do not use staging credentials
@@ -26,11 +19,64 @@ The site schema is in `apps/marketing-site/seed/seed.json`; live deployments
 may differ. The agent token lacks `schema:read`, so check with an administrator
 if the deployed collection differs.
 
-## Create a draft once access is fixed
+## Preflight: verify the token owner
 
-From the repository root, use Node 24 and pnpm. The gitignored `.env` must
-contain `EMDASH_AGENT_STAGING_TOKEN`; never print or commit it. The following
-loads it into the process environment without putting it in the command line:
+Before any write, check the exact token in staging D1. A token created while
+signed in as an admin belongs to that admin and carries admin permissions,
+even if its name says otherwise. The earlier test used such a token and
+published unexpectedly. Staging's `/_emdash/api/auth/me` returned 403 for
+the Contributor token, so use this read-only D1 check instead.
+
+From the repository root, use Node 24, pnpm and Cloudflare credentials with
+read access to the staging D1 database. The gitignored `.env` must contain
+`EMDASH_AGENT_STAGING_TOKEN`; never print or commit it. The check hashes the
+token locally and queries only its matching record, without printing the
+token, hash or SQL. Run it before uploading media or creating a draft:
+
+```sh
+export WRANGLER_SEND_METRICS=false ASTRO_TELEMETRY_DISABLED=1
+node --env-file=.env --input-type=module <<'NODE'
+import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
+
+const token = process.env.EMDASH_AGENT_STAGING_TOKEN;
+if (!token) throw new Error("Missing staging token");
+const hash = createHash("sha256").update(token).digest("base64url");
+const sql = `SELECT u.email, u.role, t.scopes, t.expires_at
+  FROM _emdash_api_tokens t JOIN users u ON u.id = t.user_id
+  WHERE t.token_hash = '${hash}'`;
+const result = spawnSync("pnpm", [
+  "--dir", "apps/marketing-site", "exec", "wrangler", "d1", "execute",
+  "DB", "--env", "staging", "--remote", "--json", "--command", sql
+], { encoding: "utf8", env: process.env });
+if (result.status !== 0) {
+  console.error((result.stderr || result.stdout || "D1 query failed")
+    .replaceAll(token, "[REDACTED]").replaceAll(hash, "[REDACTED]"));
+  process.exit(1);
+}
+const rows = JSON.parse(result.stdout).flatMap(entry => entry.results ?? []);
+const row = rows[0];
+const scopes = row && JSON.parse(row.scopes);
+const required = ["content:read", "content:write", "media:read", "media:write"];
+const valid = rows.length === 1 && row.email === "agent@jamesryan.dev"
+  && Number(row.role) === 20 && required.every(scope => scopes.includes(scope))
+  && (!row.expires_at || Date.parse(row.expires_at) > Date.now());
+console.log(JSON.stringify({ matched: rows.length, email: row?.email,
+  role: row?.role, scopes, expiresAt: row?.expires_at,
+  preflight: valid ? "PASS" : "FAIL" }));
+if (!valid) process.exitCode = 1;
+NODE
+```
+
+Proceed only on `PASS`: one matching token, owned by the Agent Contributor
+(role 20), with all four scopes and not expired. If this check fails or D1
+access is unavailable, stop and ask an administrator to verify and fix the
+token; do not infer its role from its name or scopes.
+
+## Create a draft
+
+The following loads the token into the process environment without putting it
+in the command line:
 
 ```sh
 node --env-file=.env "$(command -v pnpm)" exec mcporter list emdash-staging-agent --schema
@@ -114,6 +160,4 @@ check the rendered post, metadata, comments and staging validators.
 
 EmDash documents role and token-scope enforcement in its
 [AI tools guide](https://docs.emdashcms.com/guides/ai-tools/) and
-[MCP reference](https://docs.emdashcms.com/reference/mcp-server/); the observed
-staging publish result contradicts the intended boundary and takes precedence
-until investigated.
+[MCP reference](https://docs.emdashcms.com/reference/mcp-server/).
