@@ -4,7 +4,7 @@
 
 **What to build:**
 
-Make the olive scale in `tailwind.css` the one palette: one token file, used everywhere. Delete the indigo and pink tokens in `src/styles/theme.css` and `globals.css` and every use of them; pick an accent from the olive design or ask James. Check every text/background pair in light and dark modes against WCAG 2.2 AA (4.5:1 body, 3:1 large text and UI). Fix failures by changing lightness, not hue. Add axe (`@axe-core/playwright` or `pa11y-ci`) plus a contrast check to the staging smoke job, failing on serious or critical issues. Apply the same to the garden. Produce before/after screenshots of the home page, a post and the admin-facing pages for James.
+Make the olive scale in `tailwind.css` the one palette: one token file, used everywhere. Delete the indigo and pink tokens in `src/styles/theme.css` and `globals.css` and every use of them; pick an accent from the olive design or ask James. Check every text/background pair in light and dark modes against WCAG 2.2 AA (4.5:1 body, 3:1 large text and UI). Fix failures by changing lightness, not hue. Add axe (`@axe-core/playwright` or `pa11y-ci`) plus a contrast check to the staging smoke job, failing on serious or critical issues. Apply the same to the garden. The comment form's fields must stand apart from the page background (a distinct fill, plus a border meeting 3:1 under WCAG 1.4.11), light and dark, with a visible focus state (James, 2026-11-09). Produce before/after screenshots of the home page, a post, the comment form and the admin-facing pages for James.
 
 **Blocked by:** 05-10cd2eae, 08-2655a1e3.
 
