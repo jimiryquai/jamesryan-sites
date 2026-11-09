@@ -85,6 +85,16 @@ jobs:
           else
             node scripts/smoke-staging.mjs --posts=optional https://staging.jamesryan.me
           fi
+      - name: Comment moderation smoke check
+        if: matrix.app == 'marketing-site'
+        env:
+          EMDASH_COMMENT_SMOKE_TOKEN: ${{ secrets.EMDASH_COMMENT_SMOKE_TOKEN }}
+        run: |
+          if [[ -z "$EMDASH_COMMENT_SMOKE_TOKEN" ]]; then
+            echo "Comment moderation smoke check skipped: EMDASH_COMMENT_SMOKE_TOKEN is not set."
+          else
+            node scripts/check-comment-moderation.mjs https://staging.jamesryan.dev
+          fi
       - name: Install accessibility browser
         if: matrix.app == 'marketing-site'
         run: pnpm exec playwright install --with-deps chromium

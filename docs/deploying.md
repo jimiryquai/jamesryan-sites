@@ -7,6 +7,38 @@ fingerprints to GitHub Actions. It does not save the token locally. The
 administrator bypass, and allow only `master`; verify this under Settings >
 Environments before promoting or recovering production.
 
+## Comment moderation
+
+The marketing site runs `emdash-plugin-ai-comment-moderation` in the Cloudflare
+sandbox. Run the deployment secrets wizard to generate a separate
+`EMDASH_ENCRYPTION_KEY` for each marketing Worker before entering plugin secrets.
+The key stage needs Wrangler authenticated to the intended Cloudflare account.
+Save each key in a password manager separately from D1 backups. Skip a target
+that already has a key: replacing it makes existing encrypted settings
+unreadable. For rotation and recovery, follow [EmDash's secrets guide](https://docs.emdashcms.com/deployment/secrets/).
+The wizard can skip its other stages when those values already exist.
+
+After deployment, configure **Cloudflare account ID**, **Workers AI API token**
+(encrypted at rest), and optionally **Workers AI model** in the moderator's
+EmDash admin settings for each environment. The API token needs Workers AI
+access. Without working AI credentials the plugin falls back to the collection's
+standard moderation policy, not spam/toxicity classification.
+
+To enable the staging moderation smoke check, create a staging EmDash personal
+access token owned by an administrator with the `admin` scope and add it as the
+GitHub Actions secret `EMDASH_COMMENT_SMOKE_TOKEN`. The admin scope is required
+for comment read and permanent deletion; the owner's role must also grant
+`comments:moderate`, `comments:delete`, and `content:read`. If the secret is
+absent, the job logs a skip. The check submits three labelled test comments,
+reads their statuses, and deletes each immediately. Failed deletion is reported
+with its comment ID and fails the job; remove it from the admin inbox. A lost
+submission response can leave a comment whose ID is unknown, so inspect the
+inbox for `Moderation smoke test` after an interrupted or failed request.
+The test uses the first published post and needs comments enabled, no closing
+date preventing submissions, and no mandatory Turnstile challenge.
+EmDash rate-limits comment submissions; repeated smoke runs within ten minutes
+can fail with 429, so wait for the window to expire before retrying.
+
 After CI succeeds for a push to `master`, Deploy runs one staging job per app:
 
 1. Build with `CLOUDFLARE_ENV=staging`.
