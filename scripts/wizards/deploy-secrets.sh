@@ -200,7 +200,7 @@ finish() {
 
 run_wizard() {
 
-TOTAL_STAGES=2
+TOTAL_STAGES=3
 
 banner "Cloudflare deployment secrets"
 
@@ -225,6 +225,25 @@ ask CLOUDFLARE_ACCOUNT_ID "Paste the account ID:"
 confirm "Write CLOUDFLARE_ACCOUNT_ID as a GitHub Actions secret?" || exit 1
 set_secret CLOUDFLARE_ACCOUNT_ID "$CLOUDFLARE_ACCOUNT_ID"
 unset CLOUDFLARE_ACCOUNT_ID
+
+stage "Reviewed migration target fingerprints"
+say "In Actions > Deploy > Run workflow on master, choose migration-status."
+say "Inspect each app/environment target, including its account and database UUID."
+say "Copy target.fingerprint from each status report; these are public target identities."
+say "Garden production is available for inspection/recovery only; it has no deploy job."
+for app in MARKETING_SITE DIGITAL_GARDEN; do
+  for target in STAGING PRODUCTION; do
+    variable="${app}_${target}_MIGRATION_FINGERPRINT"
+    ask MIGRATION_FINGERPRINT "Paste reviewed $variable (blank to skip):"
+    if [[ -z "$MIGRATION_FINGERPRINT" ]]; then
+      SKIPPED+=("GitHub variable $variable (obtain from migration-status)")
+      continue
+    fi
+    [[ "$MIGRATION_FINGERPRINT" =~ ^[a-f0-9]{64}$ ]] || { warn "Expected a SHA-256 fingerprint"; exit 1; }
+    confirm "Set $variable to the reviewed target fingerprint?" || exit 1
+    set_var "$variable" "$MIGRATION_FINGERPRINT"
+  done
+done
 
 finish
 }

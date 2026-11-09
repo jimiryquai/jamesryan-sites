@@ -93,6 +93,7 @@ export default defineConfig({
 		}),
 		emdash({
 			database: d1({ binding: "DB", session: "auto" }),
+			migrations: { runtime: "check", dev: "auto" },
 			storage: r2({ binding: "MEDIA" }),
 			sandboxRunner: sandbox(),
 			mcp: true,
