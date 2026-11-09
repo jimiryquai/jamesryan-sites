@@ -22,7 +22,7 @@ Marketing site only (the garden is out of scope). No copy changes.
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] A fresh local seed of the marketing site shows every post and page image, with its original alt text (screenshot and a list of the media rows created).
 - [ ] The seed holds no Media Library IDs that only exist in production: every image is a `$media` reference to a committed file under `seed/assets/`.
