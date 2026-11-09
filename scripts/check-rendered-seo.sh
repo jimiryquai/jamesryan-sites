@@ -23,7 +23,9 @@ if [[ "$mode" != fixture && "$mode" != --real-seed ]]; then
   exit 2
 fi
 
-for entry in marketing-site:14321:fixture; do
+# Let the OS choose a free port so simultaneous worktree checks stay isolated.
+port=$(node --input-type=module -e 'import net from "node:net"; const server = net.createServer(); server.listen(0, "127.0.0.1", () => { console.log(server.address().port); server.close(); });')
+for entry in "marketing-site:$port:fixture"; do
   IFS=: read -r app port seed_option <<< "$entry"
   state="$state_root/$app"
   cd "$root/apps/$app"
@@ -42,7 +44,31 @@ for entry in marketing-site:14321:fixture; do
   elif [[ "$mode" == fixture ]]; then
     seed="$root/apps/$app/$seed_option"
   fi
-  pnpm exec emdash seed "$seed" --database "${databases[0]}" --skip-media
+  pnpm exec emdash seed "$seed" --database "${databases[0]}" --uploads-dir "$state/uploads"
+  bucket=$(node --input-type=module -e 'import fs from "node:fs"; console.log(JSON.parse(fs.readFileSync("dist/server/wrangler.json")).r2_buckets.find(bucket => bucket.binding === "MEDIA").bucket_name)')
+  # The seed CLI writes filesystem uploads; this Worker serves media from R2.
+  while IFS=$'\t' read -r key content_type; do
+    pnpm exec wrangler r2 object put "$bucket/$key" \
+      --file "$state/uploads/$key" --content-type "$content_type" --local --persist-to "$state"
+  done < <(node --input-type=module - "${databases[0]}" <<'NODE'
+import { DatabaseSync } from 'node:sqlite';
+const db = new DatabaseSync(process.argv[2]);
+for (const row of db.prepare('SELECT storage_key, mime_type FROM media').all()) {
+  console.log(`${row.storage_key}\t${row.mime_type}`);
+}
+db.close();
+NODE
+  )
+  if [[ -n "${RENDERED_EVIDENCE_DIR:-}" ]]; then
+    mkdir -p "$RENDERED_EVIDENCE_DIR"
+    node --input-type=module - "${databases[0]}" "$RENDERED_EVIDENCE_DIR/media-rows.json" <<'NODE'
+import { DatabaseSync } from 'node:sqlite';
+import { writeFileSync } from 'node:fs';
+const db = new DatabaseSync(process.argv[2]);
+writeFileSync(process.argv[3], JSON.stringify(db.prepare('SELECT id, filename, storage_key, alt, caption, width, height FROM media').all(), null, 2));
+db.close();
+NODE
+  fi
   if [[ "$fixture" == true ]]; then
     node "$root/scripts/seo-fixture.mjs" seo "${databases[0]}"
   fi
@@ -67,6 +93,7 @@ for entry in marketing-site:14321:fixture; do
   if [[ "$fixture" == true ]]; then
     node "$root/scripts/seo-fixture.mjs" verify "http://127.0.0.1:$port" || status=1
   fi
+  node "$root/scripts/check-rendered-media.mjs" "http://127.0.0.1:$port" "$seed" "${RENDERED_EVIDENCE_DIR:-}" || status=1
   cleanup
   worker_pid=""
 done
