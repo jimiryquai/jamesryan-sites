@@ -1,3 +1,4 @@
+import { socialBackground } from "../../styles/palette";
 import type { APIRoute } from "astro";
 import { getSiteSettings } from "emdash";
 import { ImageResponse, loadGoogleFont } from "workers-og";
@@ -14,7 +15,7 @@ export const GET: APIRoute = async ({ url }) => {
 	]);
 
 	const html = `
-		<div style="display: flex; flex-direction: column; width: 1200px; height: 630px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #f472b6 100%); color: white; padding: 70px 90px; justify-content: space-between; font-family: 'Inter', sans-serif;">
+		<div style="display: flex; flex-direction: column; width: 1200px; height: 630px; background: ${socialBackground}; color: white; padding: 70px 90px; justify-content: space-between; font-family: 'Inter', sans-serif;">
 			<div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
 				<div style="font-size: 32px; font-weight: 600; opacity: 0.95; margin-bottom: 28px; text-transform: uppercase; letter-spacing: 2.5px;">
 					${siteTitle}

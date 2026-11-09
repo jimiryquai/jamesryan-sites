@@ -85,6 +85,18 @@ jobs:
           else
             node scripts/smoke-staging.mjs --posts=optional https://staging.jamesryan.me
           fi
+      - name: Install accessibility browser
+        if: matrix.app == 'marketing-site'
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Accessibility and contrast (light and dark)
+        if: matrix.app == 'marketing-site'
+        run: node scripts/check-accessibility.mjs https://staging.jamesryan.dev
+      - name: Save accessibility results
+        if: always() && matrix.app == 'marketing-site'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: marketing-accessibility
+          path: .scratch/accessibility/
       - name: Verify D1 migrations
         working-directory: apps/${{ matrix.app }}
         run: bash ../../scripts/migrate-deployment.sh "${{ matrix.app }}" staging check

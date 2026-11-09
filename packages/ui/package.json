@@ -6,6 +6,7 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
+    "./styles/palette.css": "./src/styles/palette.css",
     "./styles/globals.css": "./src/styles/globals.css",
     "./components/*": "./src/components/*",
     "./assets/*": "./src/assets/*"
