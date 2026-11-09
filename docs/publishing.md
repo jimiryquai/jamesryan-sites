@@ -37,7 +37,8 @@ node --env-file=.env "$(command -v pnpm)" exec mcporter list emdash-staging-agen
 ```
 
 Upload an image and record its returned `item.id`, `item.url`, `width` and
-`height`. Replace the filename, MIME type and alt text:
+`height`. Replace the filename, MIME type and alt text. The inline form below
+was used for the small test image:
 
 ```sh
 node --env-file=.env "$(command -v pnpm)" exec mcporter call \
@@ -45,6 +46,10 @@ node --env-file=.env "$(command -v pnpm)" exec mcporter call \
   filename:example.png "base64:$(base64 -w 0 example.png)" \
   contentType:image/png 'alt:Describe the image in context'
 ```
+
+For larger files, write the base64 to a temporary file and pass
+`base64=@/path/to/file` instead, avoiding the shell's argument-size limit;
+remove that temporary file after upload.
 
 Create `draft.json` with the following shape, substituting your own copy,
 unique slug, and the uploaded image's returned ID, URL and dimensions. The
