@@ -19,13 +19,15 @@ Ticket 04's tests set the values through the test host directly (`fixtures.plugi
 
 **Blocked by:** none.
 
-**Status:** needs James: merge jimiryquai/emdash-plugin-ai-comment-moderation#3, then create the `v2.1.0` GitHub release (publishes to npm)
+**Status:** done
 
 - [x] The plugin's manifest declares `accountId`, `apiToken` (secret) and `model`, and a sandbox test proves classification with values from the declared settings.
-- [ ] 2.1.0 is on npm with provenance.
+- [x] 2.1.0 is on npm with provenance.
 
 ## Comments
 
 **2026-11-09 Claude (orchestrator):** Created from h11-copilot's blocked report; the orchestrator confirmed it in the plugin repo (`emdash-plugin.jsonc` has no settings). Risk: high (a published package, a credential field). Ticket 11 is blocked by this.
 
 **2026-11-09 Claude (orchestrator):** Built by h19-copilot (Copilot, GPT-6.1 Terra) in herdr workspace `emdash-plugin-ai-comment-moderation`. PR #3 (42f191d) declares `accountId` (string), `apiToken` (secret) and `model` (string, default `@cf/meta/llama-3.1-8b-instruct`) under `admin.settingsSchema`, and reads them through `ctx.settings`. A new sandbox test saves the values through `updateSettings`, sees `secretsSet.apiToken: true` with no plaintext token in the response, and classifies spam with the saved token and model; it was red before the schema. The orchestrator re-ran `npm ci`, typecheck, build (2.1.0) and tests (34 pass), and every PR check is green. Box 2 waits on James's merge and release.
+
+**2026-11-09 Claude (orchestrator):** Done. James merged PR #3 and created the `v2.1.0` release; the publish workflow passed. npm `latest` = 2.1.0 with SLSA provenance (`https://slsa.dev/provenance/v1`). The orchestrator added the release notes for 2.0.0 users. Evidence: `.orchestrate/runs/2026-11-09-19-declare-settings/`.
