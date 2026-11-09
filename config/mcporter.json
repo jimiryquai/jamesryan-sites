@@ -5,6 +5,14 @@
       "url": "https://docs.emdashcms.com/mcp",
       "lifecycle": "ephemeral"
     },
+    "emdash-staging-agent": {
+      "type": "http",
+      "url": "https://staging.jamesryan.dev/_emdash/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${EMDASH_AGENT_STAGING_TOKEN}"
+      },
+      "lifecycle": "ephemeral"
+    },
     "emdash-site": {
       "command": "sh",
       "args": [
