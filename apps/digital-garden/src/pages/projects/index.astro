@@ -40,7 +40,7 @@ const projectsWithTags = sortedProjects.map((project) => ({
 <Base 
 	title={activeTag
 		? `${tags.find((t) => t.slug === activeTag)?.label || activeTag} — Work`
-		: "Selected creative projects"}
+		: "Work"}
 	description="A selection of creative projects spanning branding, web design, and development from the Oatmeal team."
 >
 	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24">
@@ -58,7 +58,7 @@ const projectsWithTags = sortedProjects.map((project) => ({
 			tags.length > 0 && (
 				<nav class="flex flex-wrap gap-2 mb-10" aria-label="Filter by tag">
 					<a
-						href="/projects"
+						href="/work"
 						class={`inline-block px-4 py-1.5 text-sm rounded-full transition-colors duration-150 ${
 							!activeTag
 								? "bg-olive-950 text-white dark:bg-white dark:text-olive-950 font-medium"
@@ -69,7 +69,7 @@ const projectsWithTags = sortedProjects.map((project) => ({
 					</a>
 					{tags.map((tag) => (
 						<a
-							href={`/projects?tag=${tag.slug}`}
+							href={`/work?tag=${tag.slug}`}
 							class={`inline-block px-4 py-1.5 text-sm rounded-full transition-colors duration-150 ${
 								activeTag === tag.slug
 									? "bg-olive-950 text-white dark:bg-white dark:text-olive-950 font-medium"
@@ -93,7 +93,7 @@ const projectsWithTags = sortedProjects.map((project) => ({
 							title={project.data.title ?? "Untitled"}
 							summary={project.data.summary}
 							featuredImage={project.data.featured_image}
-							href={`/projects/${project.id}`}
+							href={`/work/${project.id}`}
 							client={project.data.client}
 							year={project.data.year}
 							tags={projectTags}

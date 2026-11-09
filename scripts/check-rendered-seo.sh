@@ -10,12 +10,21 @@ cleanup() {
     wait "$worker_pid" 2>/dev/null || true
   fi
 }
-trap cleanup EXIT
+finish() {
+  cleanup
+  rm -rf -- "$state_root"
+}
+trap finish EXIT
 
 status=0
-for entry in marketing-site:14321 digital-garden:14322; do
-  app="${entry%:*}"
-  port="${entry#*:}"
+mode="${1:-fixture}"
+if [[ "$mode" != fixture && "$mode" != --real-seed ]]; then
+  echo "usage: bash scripts/check-rendered-seo.sh [--real-seed]" >&2
+  exit 2
+fi
+
+for entry in marketing-site:14321:fixture; do
+  IFS=: read -r app port seed_option <<< "$entry"
   state="$state_root/$app"
   cd "$root/apps/$app"
   pnpm exec wrangler d1 execute DB --local --persist-to "$state" --command 'SELECT 1'
@@ -24,7 +33,19 @@ for entry in marketing-site:14321 digital-garden:14322; do
     echo "$app: expected one local D1 database, found ${#databases[@]}" >&2
     exit 1
   fi
-  pnpm exec emdash seed seed/seed.json --database "${databases[0]}" --skip-media
+  seed="$root/apps/$app/seed/seed.json"
+  fixture=false
+  if [[ "$mode" == fixture && "$seed_option" == fixture ]]; then
+    fixture=true
+    seed="$state/fixture.json"
+    node "$root/scripts/seo-fixture.mjs" seed "$seed"
+  elif [[ "$mode" == fixture ]]; then
+    seed="$root/apps/$app/$seed_option"
+  fi
+  pnpm exec emdash seed "$seed" --database "${databases[0]}" --skip-media
+  if [[ "$fixture" == true ]]; then
+    node "$root/scripts/seo-fixture.mjs" seo "${databases[0]}"
+  fi
   ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
     --persist-to "$state" --port "$port" --inspector-port 0 &
   worker_pid=$!
@@ -43,6 +64,9 @@ for entry in marketing-site:14321 digital-garden:14322; do
   fi
   echo "Validating $app"
   node "$root/scripts/validate-rendered-seo.mjs" "http://127.0.0.1:$port" || status=1
+  if [[ "$fixture" == true ]]; then
+    node "$root/scripts/seo-fixture.mjs" verify "http://127.0.0.1:$port" || status=1
+  fi
   cleanup
   worker_pid=""
 done

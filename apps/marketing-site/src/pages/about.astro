@@ -1,5 +1,15 @@
 ---
+import { getEmDashEntry, getSeoMeta, getSiteSettings } from "emdash";
 import Base from "../layouts/Base.astro";
+import { resolveBlogSiteIdentity } from "../utils/site-identity";
+
+const [{ entry: page, cacheHint }, settings] = await Promise.all([
+	getEmDashEntry("pages", "about"),
+	getSiteSettings(),
+]);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+const { siteTitle } = resolveBlogSiteIdentity(settings);
+const seo = page ? getSeoMeta(page) : null;
 
 import LinkedInIcon from "@jamesryan/ui/components/icons/social/linkedin-icon.astro";
 import XIcon from "@jamesryan/ui/components/icons/social/x-icon.astro";
@@ -7,8 +17,9 @@ import GitHubIcon from "@jamesryan/ui/components/icons/social/github-icon.astro"
 ---
 
 <Base
-	title="About the marketer and engineer"
-	description="Meet James Ryan, a UK-based marketer and engineer working on Power Platform, software and automation."
+	title={seo?.ogTitle ?? `About — ${siteTitle}`}
+	description={page ? seo?.description : "AI-native marketer & engineer based in the UK."}
+	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 >
 	<div class="mx-auto w-full max-w-5xl px-6 lg:px-8 py-16 sm:py-24 font-sans">
 		<div

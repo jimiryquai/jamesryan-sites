@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-iconset/components";
-import { getEmDashEntry } from "emdash";
+import { getEmDashEntry, getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 
@@ -50,6 +50,7 @@ if (Astro.request.method === "POST") {
 }
 
 const pageContent = page?.data.content;
+const seo = page ? getSeoMeta(page) : null;
 const ContactHeading = pageContent?.some((block) =>
 	block._type === "marketing.hero" ||
 	block._type === "marketing.document" ||
@@ -58,8 +59,9 @@ const ContactHeading = pageContent?.some((block) =>
 ---
 
 <Base
-	title="Contact about a project"
-	description="Contact James Ryan using the form to discuss a project or ask a question."
+	title={seo?.ogTitle ?? "Contact"}
+	description={page ? seo?.description : "Have questions? Want a demo? We'd love to hear from you."}
+	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 >
 	{pageContent && <MarketingBlocks value={pageContent} />}
 

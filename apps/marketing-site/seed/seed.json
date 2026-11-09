@@ -1136,9 +1136,19 @@
         "status": "published",
         "publishedAt": "2025-01-31T12:00:00.000Z",
         "data": {
-          "title": "Reusable In-App Notifications for Power Platform",
-          "excerpt": "Create a reusable notification system for Power Platform and Dynamics 365 to provide real-time feedback and alerts.",
+          "title": "How to Create a Reusable In-App Notification Feature in Power Platform and D365",
+          "excerpt": "In-app notifications are a powerful way to enhance user experience in Power Platform/D365, allowing you to provide real-time feedback and alerts to your users. This guide will show you how to create a reusable notification system that any developer in your organization can easily implement.",
           "content": [
+            {
+              "_type": "block",
+              "style": "h1",
+              "children": [
+                {
+                  "_type": "span",
+                  "text": "How to Create a Reusable In-App Notification Feature in Power Platform and D365"
+                }
+              ]
+            },
             {
               "_type": "block",
               "style": "normal",
@@ -1883,7 +1893,7 @@
         "status": "published",
         "publishedAt": "2024-01-12T12:00:00.000Z",
         "data": {
-          "title": "Try/Catch in Power Automate",
+          "title": "How to implement a Try/Catch pattern in Power Automate",
           "excerpt": "The Try-Catch-Finally pattern used in programming allows you to handle errors gracefully in Power Automate.",
           "content": [
             {
@@ -2517,7 +2527,7 @@
         "status": "published",
         "publishedAt": "2024-01-12T12:00:00.000Z",
         "data": {
-          "title": "Power Platform: Service Account vs Principal",
+          "title": "Service Account vs Service Principal in Power Platform",
           "excerpt": "Both are important for managing access and permissions, but they serve different purposes. Let's break down what each one is and how they differ.",
           "content": [
             {

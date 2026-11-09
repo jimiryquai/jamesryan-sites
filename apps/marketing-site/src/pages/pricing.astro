@@ -1,5 +1,5 @@
 ---
-import { getEmDashEntry } from "emdash";
+import { getEmDashEntry, getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 
@@ -8,11 +8,13 @@ const { entry: page, cacheHint } = await getEmDashEntry("pages", "pricing");
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const pageContent = page?.data.content;
+const seo = page ? getSeoMeta(page) : null;
 ---
 
 <Base
-	title="Pricing information"
-	description="Find pricing information on this page or contact James Ryan with a question."
+	title={seo?.ogTitle ?? "Pricing"}
+	description={page ? seo?.description : "Simple, transparent pricing. No hidden fees. No surprises."}
+	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 >
 	{
 		pageContent?.length ? (

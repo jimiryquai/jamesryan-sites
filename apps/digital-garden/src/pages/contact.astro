@@ -50,16 +50,11 @@ if (Astro.request.method === "POST") {
 }
 
 const pageContent = page?.data.content;
-const ContactHeading = pageContent?.some((block) =>
-	block._type === "marketing.hero" ||
-	block._type === "marketing.document" ||
-	(block._type === "block" && block.style === "h1")
-) ? "h2" : "h1";
 ---
 
 <Base
-	title="Contact the Oatmeal team"
-	description="Contact the Oatmeal team using the form to ask a question or discuss a project."
+	title="Contact"
+	description="Have questions? Want a demo? We'd love to hear from you."
 >
 	{pageContent && <MarketingBlocks value={pageContent} />}
 
@@ -70,9 +65,9 @@ const ContactHeading = pageContent?.some((block) =>
 				{/* Left Side: Contact Information */}
 				<div class="lg:col-span-5 space-y-8">
 					<div class="space-y-4">
-						<ContactHeading class="text-3xl sm:text-4xl font-display font-semibold tracking-tight text-olive-950 dark:text-white leading-tight">
+						<h2 class="text-3xl sm:text-4xl font-display font-semibold tracking-tight text-olive-950 dark:text-white leading-tight">
 							Talk to our team
-						</ContactHeading>
+						</h2>
 						<p class="text-base sm:text-lg text-olive-700 dark:text-olive-350">
 							Fill out the form and we'll be in touch within 24 hours.
 						</p>

@@ -64,11 +64,11 @@ async function main(origin) {
       }
       const { min, max } = DEFAULT_METADATA_LENGTH_BOUNDS[field];
       if (value.length < min || value.length > max) {
-        console.error(`${url.pathname}: metadata length: ${field} has ${value.length} characters (expected ${min}-${max})`);
+        console.error(`${url.pathname}: metadata length: ${field} has ${value.length} characters (expected ${min}-${max}): ${JSON.stringify(value)}`);
         errors++;
       }
       if (seen[field].has(value)) {
-        console.error(`${url.pathname}: metadata uniqueness: ${field} also occurs at ${seen[field].get(value)}`);
+        console.error(`${url.pathname}: metadata uniqueness: ${field} also occurs at ${seen[field].get(value)}: ${JSON.stringify(value)}`);
         errors++;
       } else {
         seen[field].set(value, url.pathname);

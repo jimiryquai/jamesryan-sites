@@ -84,7 +84,7 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 		if (collection === "posts") {
 			path = `/blog/${entry.id}`;
 		} else if (collection === "projects") {
-			path = `/projects/${entry.id}`;
+			path = `/work/${entry.id}`;
 		} else if (entry.id === "home") {
 			path = "/";
 		} else if (["about", "pricing", "privacy-policy"].includes(entry.id)) {
