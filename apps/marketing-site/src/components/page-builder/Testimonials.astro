@@ -1,0 +1,25 @@
+---
+import type { StoredBlock, Testimonial as TestimonialShape } from 'emdash-plugin-page-builder/blocks';
+import TestimonialThreeColumnGrid from '@jamesryan/ui/components/sections/TestimonialThreeColumnGrid.astro';
+import Testimonial from '@jamesryan/ui/components/sections/Testimonial.astro';
+import TestimonialLargeQuote from '@jamesryan/ui/components/sections/TestimonialLargeQuote.astro';
+import TestimonialTwoColumnWithLargePhoto from '@jamesryan/ui/components/sections/TestimonialTwoColumnWithLargePhoto.astro';
+import { Image } from 'emdash/ui';
+interface Props { value: StoredBlock; items?: readonly unknown[] }
+const { value } = Astro.props;
+// PageBuilder resolves this block's typed source before entering the generic section boundary.
+const items = (Astro.props.items ?? []) as readonly TestimonialShape[];
+const sections = { single: TestimonialLargeQuote, split: TestimonialTwoColumnWithLargePhoto };
+const Section = value.variant === 'split' ? sections.split : sections.single;
+const visible = value.variant === 'grid' ? items : items.slice(0, 1);
+---
+{value.variant === 'grid' ? <TestimonialThreeColumnGrid id={value._key}>
+  {visible.map((item) => <Testimonial name={item.author} byline={[item.role, item.company].filter(Boolean).join(' at ')}>
+    <p slot="quote">{item.quote}</p>
+    {item.avatar && <Image slot="img" image={item.avatar} width={160} height={160} />}
+  </Testimonial>)}
+</TestimonialThreeColumnGrid> : visible.map((item) => <Section id={value._key}
+  name={item.author} byline={[item.role, item.company].filter(Boolean).join(' at ')}>
+  <p slot="quote">{item.quote}</p>
+  {item.avatar && <Image slot="img" image={item.avatar} width={1400} height={1000} class="w-full h-auto object-cover" />}
+</Section>)}

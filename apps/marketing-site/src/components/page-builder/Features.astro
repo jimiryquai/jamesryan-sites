@@ -1,0 +1,35 @@
+---
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import type { MediaValue } from 'emdash';
+import { Image } from 'emdash/ui';
+import FeaturesTwoColumnWithDemos from '@jamesryan/ui/components/sections/FeaturesTwoColumnWithDemos.astro';
+import FeaturesThreeColumn from '@jamesryan/ui/components/sections/FeaturesThreeColumn.astro';
+import FeaturesThreeColumnWithDemos from '@jamesryan/ui/components/sections/FeaturesThreeColumnWithDemos.astro';
+import FeaturesStackedAlternatingWithDemos from '@jamesryan/ui/components/sections/FeaturesStackedAlternatingWithDemos.astro';
+import Feature from '@jamesryan/ui/components/sections/Feature.astro';
+import FeatureThreeColumn from '@jamesryan/ui/components/sections/FeatureThreeColumn.astro';
+import FeatureThreeColumnWithDemos from '@jamesryan/ui/components/sections/FeatureThreeColumnWithDemos.astro';
+import StackedAlternatingFeature from '@jamesryan/ui/components/sections/StackedAlternatingFeature.astro';
+import Link from '@jamesryan/ui/components/elements/link.astro';
+interface Props { value: StoredBlock }
+const value = Astro.props.value as StoredBlock & {
+  heading?: string; subheadline?: string; eyebrow?: string;
+  variant?: 'two-column' | 'three-column' | 'three-column-demos' | 'alternating';
+  items?: { title: string; description?: string; icon?: string; image?: MediaValue; ctaLabel?: string; ctaUrl?: string }[];
+};
+const sections = {
+  'two-column': [FeaturesTwoColumnWithDemos, Feature],
+  'three-column': [FeaturesThreeColumn, FeatureThreeColumn],
+  'three-column-demos': [FeaturesThreeColumnWithDemos, FeatureThreeColumnWithDemos],
+  alternating: [FeaturesStackedAlternatingWithDemos, StackedAlternatingFeature],
+} as const;
+const [Section, Item] = sections[value.variant ?? 'two-column'] ?? sections['two-column'];
+---
+<Section id={value._key} eyebrow={value.eyebrow} headline={value.heading} subheadline={value.subheadline}>
+  {(value.items ?? []).map((item) => <Item headline={item.title}>
+    <span slot="subheadline">{item.description}</span>
+    {item.icon && <span slot="icon">{item.icon}</span>}
+    {item.image && <Image slot="demo" image={item.image} width={1000} height={800} class="w-full h-auto" />}
+    {item.ctaLabel && item.ctaUrl && <Link slot="cta" href={item.ctaUrl}>{item.ctaLabel}</Link>}
+  </Item>)}
+</Section>

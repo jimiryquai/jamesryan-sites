@@ -10,6 +10,8 @@ import {
 import { Image } from "emdash/ui";
 import { getImage } from "astro:assets";
 import Base from "../layouts/Base.astro";
+import PageLayout from "../components/page-builder/PageLayout.astro";
+import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
@@ -18,6 +20,7 @@ import { resolveBlogSiteIdentity } from "../utils/site-identity";
 const route = await getPublishedRoute("/", Astro.cache);
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
+const pageLayout = await resolvePageLayout(page);
 const { entries: posts, cacheHint: postsCacheHint } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
 	limit: 4, // 1 featured + 3 grid
@@ -32,6 +35,7 @@ const homeSeo = getContentSeo(page);
 // Combine cache hints
 if (Astro.cache?.enabled) {
 	if (postsCacheHint) Astro.cache.set(postsCacheHint);
+	if (pageLayout?.cacheHint) Astro.cache.set(pageLayout.cacheHint);
 }
 
 const visiblePosts = posts;
@@ -106,7 +110,9 @@ function formatDate(date: Date | null | undefined) {
 	)}
 
 	{
-		pageContent && pageContent.length > 0 && (
+		pageLayout ? (
+			<PageLayout value={pageLayout.layout} group={pageLayout.group} />
+		) : pageContent && pageContent.length > 0 && (
 			<MarketingBlocks value={[pageContent[0]]} />
 		)
 	}

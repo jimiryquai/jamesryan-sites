@@ -3,17 +3,27 @@ import type { PublishedEntryRoute } from "@jamesryan/cms-helpers";
 import { getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "./MarketingBlocks.astro";
+import PageLayout from "./page-builder/PageLayout.astro";
+import { resolvePageLayout } from "./page-builder/resolve-page-layout";
 
 interface Props {
 	page: Extract<PublishedEntryRoute, { collection: "pages" }>["entry"];
 }
 const { page } = Astro.props;
 const seo = getSeoMeta(page);
+const pageLayout = await resolvePageLayout(page);
+if (pageLayout?.cacheHint && Astro.cache?.enabled) Astro.cache.set(pageLayout.cacheHint);
 ---
 <Base
 	title={seo.ogTitle}
 	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	<MarketingBlocks value={page.data.content ?? []} />
+	{
+		pageLayout ? (
+			<PageLayout value={pageLayout.layout} group={pageLayout.group} />
+		) : (
+			<MarketingBlocks value={page.data.content ?? []} />
+		)
+	}
 </Base>

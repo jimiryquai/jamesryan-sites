@@ -11,7 +11,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "typecheck": "astro check",
+    "typecheck": "node scripts/sync-page-builder-seed.mjs --check && astro check",
     "check": "node scripts/check-site.js"
   },
   "dependencies": {
@@ -32,6 +32,7 @@
     "emdash": "1.4.0",
     "emdash-plugin-ai-comment-moderation": "2.1.0",
     "emdash-plugin-code-block-pro": "0.2.0",
+    "emdash-plugin-page-builder": "file:../../.orchestrate/pkg/emdash-plugin-page-builder-0.0.0.tgz",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "shiki": "4.1.0",
