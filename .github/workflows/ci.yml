@@ -31,5 +31,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm build
+      - name: Install test browser
+        run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test
       - run: bash scripts/check-rendered-seo.sh

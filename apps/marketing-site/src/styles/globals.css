@@ -4,13 +4,6 @@
 @source "../../../../packages/ui/src/**/*.ts";
 @source "../../../../packages/ui/src/**/*.tsx";
 
-/* Explicit visitor choice wins over the system preference (EmDash convention). */
-@custom-variant dark {
-  &:where(.dark, .dark *) { @slot; }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not(.light), :root:not(.light) *) { @slot; }
-  }
-}
 
 :root {
   color-scheme: light dark;
