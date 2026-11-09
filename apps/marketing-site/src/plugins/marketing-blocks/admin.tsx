@@ -49,8 +49,8 @@ export function ServiceSelect({ value, onChange, label, id, required, minimal }:
 	}, []);
 
 	const containerClass = minimal ? "" : "flex flex-col gap-1.5 w-full";
-	const labelClass = minimal ? "text-xs font-normal opacity-50" : "text-sm font-medium text-slate-700 dark:text-slate-300";
-	const selectClass = "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 disabled:opacity-50";
+	const labelClass = minimal ? "text-xs font-normal opacity-50" : "text-sm font-medium text-olive-700 dark:text-olive-300";
+	const selectClass = "w-full rounded-md border border-olive-300 bg-white px-3 py-2 text-sm text-olive-900 focus:border-olive-500 focus:outline-none focus:ring-1 focus:ring-olive-500 dark:border-olive-700 dark:bg-olive-900 dark:text-olive-100 disabled:opacity-50";
 
 	return (
 		<div className={containerClass}>

@@ -83,7 +83,7 @@ function getImageSrc(img: unknown): string | undefined {
 			<div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm">
 				{project.data.client && (
 					<div>
-						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Client</span>
+						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400 mb-1">Client</span>
 						<span class="text-olive-900 dark:text-olive-200 font-medium" {...project.edit.client}>
 							{project.data.client}
 						</span>
@@ -91,7 +91,7 @@ function getImageSrc(img: unknown): string | undefined {
 				)}
 				{project.data.year && (
 					<div>
-						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Year</span>
+						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400 mb-1">Year</span>
 						<span class="text-olive-900 dark:text-olive-200 font-medium" {...project.edit.year}>
 							{project.data.year}
 						</span>
@@ -99,7 +99,7 @@ function getImageSrc(img: unknown): string | undefined {
 				)}
 				{project.data.url && (
 					<div>
-						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Project Link</span>
+						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400 mb-1">Project Link</span>
 						<a 
 							href={project.data.url} 
 							target="_blank" 
@@ -130,7 +130,7 @@ function getImageSrc(img: unknown): string | undefined {
 		{/* Project details content */}
 		<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
 			<div class="lg:col-span-4">
-				<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-650 dark:text-olive-400 mb-4">Project Overview</h2>
+				<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-600 dark:text-olive-400 mb-4">Project Overview</h2>
 				{project.data.summary && (
 					<p class="text-lg text-olive-900 dark:text-olive-100 font-display leading-relaxed" {...project.edit.summary}>
 						{project.data.summary}

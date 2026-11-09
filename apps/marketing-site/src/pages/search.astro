@@ -37,7 +37,7 @@ const { items: results } = query
 
 		{
 			query && (
-				<p class="text-sm text-olive-650 dark:text-olive-400 mb-8 font-sans">
+				<p class="text-sm text-olive-600 dark:text-olive-400 mb-8 font-sans">
 					{results.length === 0
 						? `No results for "${query}"`
 						: `${results.length} result${results.length === 1 ? "" : "s"} for "${query}"`}
@@ -54,7 +54,7 @@ const { items: results } = query
 								href={`/posts/${result.slug ?? result.id}`}
 								class="block no-underline text-inherit"
 							>
-								<h2 class="text-2xl font-semibold tracking-tight text-olive-950 dark:text-white group-hover:text-olive-750 dark:group-hover:text-olive-350 transition-colors duration-150">
+								<h2 class="text-2xl font-semibold tracking-tight text-olive-950 dark:text-white group-hover:text-olive-700 dark:group-hover:text-olive-300 transition-colors duration-150">
 									{result.title ?? "Untitled"}
 								</h2>
 								{result.snippet && (
