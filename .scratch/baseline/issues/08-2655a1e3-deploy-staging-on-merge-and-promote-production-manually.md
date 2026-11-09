@@ -8,10 +8,10 @@ Add `.github/workflows/deploy.yml`. On push to `master` after CI passes, it depl
 
 **Blocked by:** 02-008a2b07, 05-10cd2eae, 07-2cb06315.
 
-**Status:** needs James: approve the first production promotion (box 2); the orchestrator dispatches it
+**Status:** done
 
 - [x] A merge to `master` lands on both staging sites with smoke checks green.
-- [ ] Promotion deploys exactly the staging commit to jamesryan.dev and needs James's approval.
+- [x] Promotion deploys exactly the staging commit to jamesryan.dev and needs James's approval.
 - [x] There's no documented or scripted way to deploy production except promotion.
 
 ## Comments
@@ -28,3 +28,5 @@ Add `.github/workflows/deploy.yml`. On push to `master` after CI passes, it depl
 - Deploy run 42603619880 (re-run) passed both staging jobs and `record-staging`. Two outside causes were fixed by James: Cloudflare Bot Fight Mode managed-challenged GitHub's runners (AS8075; it can't be skipped on the free plan, so it's off on both zones), and the garden's fresh database needed EmDash's first-run setup.
 
 The production fingerprint is set at the first promotion. Evidence: `.orchestrate/runs/2026-11-09-08-migrate-before-deploy/`.
+
+**2026-11-09 Claude (orchestrator):** Done. First promotion, run 42615980968: `identify-staging` resolved staging run 42603619880's commit `2c845d3`, the promotion waited for James's approval in the `production` environment, then applied 52 migrations (039 → 091) under the reviewed fingerprint (`jamesryan-emdash`, `3c250296…`, checked against `wrangler d1 list`), deployed version `8b065441`, and smoke and `--check` passed. Restore point taken first: Time Travel bookmark `00005a83-00000000-0000511e-0401ed25f6b5359377cc1a712fcea8bd`. Auto mode refuses to dispatch a production deploy, so James turned it off for this step.
