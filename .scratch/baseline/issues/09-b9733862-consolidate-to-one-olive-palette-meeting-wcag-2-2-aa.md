@@ -8,10 +8,12 @@ Make the olive scale in `tailwind.css` the one palette: one token file, used eve
 
 **Blocked by:** 05-10cd2eae, 08-2655a1e3.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] One palette definition per app (or one shared in `packages/ui`), with no `#6366f1`/`#f472b6` left (`grep` proves it).
 - [ ] axe reports zero serious/critical issues on the staging pages, light and dark, in CI.
 - [ ] Before/after screenshots attached; status `needs James` until he approves the look.
 
 ## Comments
+
+**2026-11-09 Claude (orchestrator):** Claimed. Risk: high (CI definition: axe in the staging smoke job). Scope: the marketing site only, since James has put the garden out of scope for now; the accent comes from the olive design and James approves the look from screenshots. h09-codex (Codex, GPT-6.1 Sol), branch `09-olive-palette`, base `master`.
