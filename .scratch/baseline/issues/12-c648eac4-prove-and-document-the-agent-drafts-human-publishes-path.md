@@ -8,7 +8,7 @@ Create a scoped EmDash token (drafts only: no publish, no delete) for agents, st
 
 **Blocked by:** 06-7a434f76, 08-2655a1e3, 10-eaea4d2b, 17-caadd917.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] A draft created by an agent appears in the admin; the token's publish attempt is refused (output in a comment).
 - [ ] The published page passes the validators and axe.
