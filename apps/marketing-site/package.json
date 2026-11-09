@@ -8,10 +8,10 @@
     "seed": "seed/seed.json"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro build",
     "preview": "astro preview",
-    "typecheck": "node scripts/sync-page-builder-seed.mjs --check && astro check",
+    "typecheck": "node scripts/sync-page-builder-seed.mjs --check && ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro check",
     "check": "node scripts/check-site.js"
   },
   "dependencies": {

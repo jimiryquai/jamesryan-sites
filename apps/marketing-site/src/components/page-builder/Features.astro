@@ -2,6 +2,7 @@
 import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
 import type { MediaValue } from 'emdash';
 import { Image } from 'emdash/ui';
+import { Icon } from 'astro-iconset/components';
 import FeaturesTwoColumnWithDemos from '@jamesryan/ui/components/sections/FeaturesTwoColumnWithDemos.astro';
 import FeaturesThreeColumn from '@jamesryan/ui/components/sections/FeaturesThreeColumn.astro';
 import FeaturesThreeColumnWithDemos from '@jamesryan/ui/components/sections/FeaturesThreeColumnWithDemos.astro';
@@ -23,13 +24,19 @@ const sections = {
   'three-column-demos': [FeaturesThreeColumnWithDemos, FeatureThreeColumnWithDemos],
   alternating: [FeaturesStackedAlternatingWithDemos, StackedAlternatingFeature],
 } as const;
+// Aliases accepted by the marketing editor, mapped to this site's bundled icons.
+const icons: Record<string, string> = { mail: 'envelope', zap: 'lightning', shield: 'shield-check', users: 'users-three', chart: 'chart-bar', code: 'code', globe: 'globe', heart: 'heart', star: 'star', check: 'check', lock: 'lock', clock: 'clock', cloud: 'cloud' };
+const compact = value.variant === 'three-column' || value.variant === 'three-column-demos';
 const [Section, Item] = sections[value.variant ?? 'two-column'] ?? sections['two-column'];
 ---
 <Section id={value._key} eyebrow={value.eyebrow} headline={value.heading} subheadline={value.subheadline}>
   {(value.items ?? []).map((item) => <Item headline={item.title}>
-    <span slot="subheadline">{item.description}</span>
-    {item.icon && <span slot="icon">{item.icon}</span>}
+    <div slot="subheadline">
+      {item.description}
+      {compact && item.ctaLabel && item.ctaUrl && <Link href={item.ctaUrl}>{item.ctaLabel}</Link>}
+    </div>
+    {icons[item.icon ?? ''] && <Icon slot="icon" name={`ph:${icons[item.icon ?? '']}`} class="size-4" />}
     {item.image && <Image slot="demo" image={item.image} width={1000} height={800} class="w-full h-auto" />}
-    {item.ctaLabel && item.ctaUrl && <Link slot="cta" href={item.ctaUrl}>{item.ctaLabel}</Link>}
+    {!compact && item.ctaLabel && item.ctaUrl && <Link slot="cta" href={item.ctaUrl}>{item.ctaLabel}</Link>}
   </Item>)}
 </Section>

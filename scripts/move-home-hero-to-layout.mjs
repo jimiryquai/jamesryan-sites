@@ -46,6 +46,8 @@ export function convertHome(data) {
 export async function migrateHome({ site, token, apply = false, http = fetch }) {
   const base = new URL(site);
   if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password) throw new Error('Expected an HTTP(S) site URL without embedded credentials');
+  const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(base.hostname);
+  if (base.protocol !== 'https:' && !loopback) throw new Error('HTTPS is required for non-local token requests');
   if (!token) throw new Error('EMDASH_TOKEN is required');
   async function request(path, method = 'GET', body) {
     const response = await http(new URL(path, base), {
@@ -84,9 +86,12 @@ export async function migrateHome({ site, token, apply = false, http = fetch }) 
 
 export async function main(argv, { token = process.env.EMDASH_TOKEN, http = fetch, out = console.log } = {}) {
   try {
-    const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, options: { apply: { type: 'boolean' } } });
-    if (positionals.length !== 1) throw new Error('usage: node scripts/move-home-hero-to-layout.mjs <site-url> [--apply]');
-    out(JSON.stringify(await migrateHome({ site: positionals[0], token, http, apply: values.apply }), null, 2));
+    const { values, positionals } = parseArgs({ args: argv, allowPositionals: true, options: { apply: { type: 'boolean' }, table: { type: 'boolean' } } });
+    if (positionals.length !== 1) throw new Error('usage: node scripts/move-home-hero-to-layout.mjs <site-url> [--apply] [--table]');
+    const result = await migrateHome({ site: positionals[0], token, http, apply: values.apply });
+    out(values.table
+      ? Object.entries(result).map(([key, value]) => `${key.padEnd(12)} ${typeof value === 'object' ? JSON.stringify(value) : value}`).join('\n')
+      : JSON.stringify(result, null, 2));
     return 0;
   } catch (error) {
     out(JSON.stringify({ errors: [{ message: error.message, operation: error.operation, status: error.status, code: error.code }] }, null, 2));
