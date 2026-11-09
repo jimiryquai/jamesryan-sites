@@ -21,3 +21,5 @@ Split from ticket 17 (2026-11-09). The marketing site now takes each page's, pos
 ## Comments
 
 **2026-11-09 Claude (orchestrator):** Created from ticket 17's content findings. The findings come from the seed, not the live database, so the live content may differ. Point 4 needs the validator script to accept a remote origin; it currently serves the local build. That's a small change for an agent once point 4 is near.
+
+**2026-11-09 Claude (orchestrator):** Point 4 needs no new code: `node scripts/validate-rendered-seo.mjs https://staging.jamesryan.dev` already takes a remote origin. Run on 2026-11-09 against staging (14 pages): the findings match `content-findings.md`. They are short titles on /, /contact, /projects, /privacy-policy, /pricing and /about; missing descriptions on /privacy-policy, /pricing and /about; the shared tagline on / and /posts; two post titles at 67 characters; and the notification post (2 H1s, a 92-character title, a 291-character description).

@@ -8,10 +8,10 @@ Create a scoped EmDash token (drafts only: no publish, no delete) for agents, st
 
 **Blocked by:** 06-7a434f76, 08-2655a1e3, 10-eaea4d2b, 17-caadd917.
 
-**Status:** needs James: publish the draft `[Agent test] …` (slug `agent-test-contributor-publishing-path`) in the staging admin, then the orchestrator checks the page
+**Status:** needs James: pick a real (or unlisted) post for the production repeat. Before that, a fresh agent follows `docs/publishing.md` unaided (box 3)
 
 - [x] A draft created by an agent appears in the admin; the token's publish attempt is refused (output in a comment).
-- [ ] The published page passes the validators and axe.
+- [x] The published page passes the validators and axe.
 - [ ] `docs/publishing.md` exists and a fresh agent can follow it unaided.
 
 ## Comments
@@ -24,3 +24,5 @@ Create a scoped EmDash token (drafts only: no publish, no delete) for agents, st
 - moved the published fixture to draft and the trash.
 
 The Agent account has no passkey; it's a token-only service account. Fix round 1, with the new token: the draft `agent-test-contributor-publishing-path` was created through MCP (authored by agent@jamesryan.dev). `content_publish` and `content_delete` both returned `[INSUFFICIENT_PERMISSIONS] Insufficient permissions for this operation`. `docs/publishing.md` now starts with a required check of the token's owner and role from D1. MCP: `emdash-staging-agent` in `config/mcporter.json` (mcporter HTTP, Bearer from the environment). Evidence: `.orchestrate/runs/2026-11-09-12-agent-drafts/`.
+
+**2026-11-09 Claude (orchestrator):** James published the agent's draft on staging. `https://staging.jamesryan.dev/posts/agent-test-contributor-publishing-path`: 200, title 46 characters, description 86, one H1, 4 images all with alt text, the Code Block Pro block rendered, the comment form present, and the canonical URL correct. `scripts/validate-rendered-seo.mjs https://staging.jamesryan.dev` (14 pages) reports nothing for this post; its failures are the known ticket 18 content findings. `scripts/check-accessibility.mjs https://staging.jamesryan.dev`: 0 serious or critical issues on this post, light and dark. Still to do: box 3 (a fresh agent follows the guide unaided) and the production repeat.
