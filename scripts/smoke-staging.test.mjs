@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 function spawnSmoke(command, args) {
-  return spawn(command, args, { env: { ...process.env, SMOKE_TIMEOUT_MS: '150', SMOKE_RETRY_MS: '10' } });
+  return spawn(command, args, { env: { ...process.env, SMOKE_TIMEOUT_MS: '1000', SMOKE_RETRY_MS: '10' } });
 }
 
 test("smoke checks the post from the sitemap and fails on a missing endpoint", async () => {

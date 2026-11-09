@@ -32,6 +32,7 @@ test('missing fingerprint reports reviewed variable command and never applies', 
     const result = migrate(app, env, 'apply');
     assert.equal(result.status, 1, result.stderr);
     assert.equal(result.calls.length, 1);
+    assert.equal(JSON.parse(result.stdout).error, 'Missing reviewed target fingerprint');
     assert.ok(result.calls[0].includes('--status'));
     const variable = `${app}_${env}_MIGRATION_FINGERPRINT`.toUpperCase().replaceAll('-', '_');
     assert.ok(result.stderr.includes(`gh variable set ${variable} --repo "owner/repo" --body '${'a'.repeat(64)}'`), result.stderr);

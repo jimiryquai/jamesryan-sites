@@ -51,7 +51,9 @@ async function checkTarget(target) {
     else if (target.optional) console.log(`${target.origin}: no posts yet`);
     else {
       // Retry discovery too: content may become available while the domain settles.
-      target.results.set(`${target.origin}/sitemap.xml`, { ok: false, message: `ERROR ${target.origin}: sitemap has no post URL` });
+      const message = `ERROR ${target.origin}: sitemap has no post URL`;
+      console.error(message);
+      target.results.set(`${target.origin}/sitemap.xml`, { ok: false, message });
     }
   }
   return [...target.results.values()].every(result => result.ok);
