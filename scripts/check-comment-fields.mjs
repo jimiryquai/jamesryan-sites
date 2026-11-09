@@ -1,6 +1,7 @@
 import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { openAccessibilityPage } from './accessibility-browser.mjs';
 
 export async function checkCommentFields(origin, postPath, output = '.scratch/comment-fields') {
   await mkdir(output, { recursive: true });
@@ -8,16 +9,9 @@ export async function checkCommentFields(origin, postPath, output = '.scratch/co
   const results = [];
   try {
     for (const mode of ['light', 'dark']) {
-      const context = await browser.newContext({ colorScheme: mode });
-      await context.addCookies([{ name: 'theme', value: mode, url: origin }]);
-      await context.route('**/*', route => {
-        const url = new URL(route.request().url());
-        return url.origin === new URL(origin).origin || ['data:', 'blob:', 'about:'].includes(url.protocol)
-          ? route.continue() : route.abort();
-      });
-      const page = await context.newPage();
-      const response = await page.goto(new URL(postPath, origin).href, { waitUntil: 'networkidle' });
-      if (!response?.ok()) throw new Error(`Post returned ${response?.status()}`);
+      const session = await openAccessibilityPage(browser, origin, mode);
+      const { page } = session;
+      await session.visit(postPath);
       const fields = page.locator('.article-comments .ec-comment-form-field input:visible, .article-comments .ec-comment-form-field textarea:visible');
       if (await fields.count() !== 3) throw new Error('Expected name, email and comment fields');
       for (const field of await fields.all()) {
@@ -50,10 +44,10 @@ export async function checkCommentFields(origin, postPath, output = '.scratch/co
         }, before);
         const ok = before.fill !== before.page && focus.borderPageRatio >= 3 && focus.focusPageRatio >= 3 && focus.textFillRatio >= 4.5 && focus.outlineStyle !== 'none' && parseFloat(focus.outlineWidth) >= 2;
         results.push({ mode, ...before, ...focus, ok });
-        console.log(`${mode} ${before.name}: ${ok ? 'PASS' : 'FAIL'} border/page ${focus.borderPageRatio.toFixed(2)}:1, focus/page ${focus.focusPageRatio.toFixed(2)}:1, text/fill ${focus.textFillRatio.toFixed(2)}:1`);
+        console.log(JSON.stringify({ mode, name: before.name, result: ok ? "PASS" : "FAIL", ...focus }));
       }
       await page.locator('.article-comments').screenshot({ path: `${output}/${mode}-comments.png` });
-      await context.close();
+      await session.close();
     }
   } finally {
     await browser.close();
