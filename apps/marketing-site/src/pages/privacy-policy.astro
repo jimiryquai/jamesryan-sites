@@ -1,5 +1,5 @@
 ---
-import { getEmDashEntry } from "emdash";
+import { getEmDashEntry, getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 
@@ -9,11 +9,13 @@ if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
 const pageTitle = page?.data.title || "Privacy Policy";
 const pageContent = page?.data.content;
+const seo = page ? getSeoMeta(page) : null;
 ---
 
 <Base
-	title={pageTitle}
-	description="Read our privacy policy to understand how we collect and use your data."
+	title={seo?.ogTitle ?? pageTitle}
+	description={page ? seo?.description : "Read our privacy policy to understand how we collect and use your data."}
+	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 >
 	{
 		pageContent ? (

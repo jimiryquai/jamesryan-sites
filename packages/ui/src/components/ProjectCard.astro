@@ -47,7 +47,7 @@ const { title, summary, featuredImage, href, client, year, tags } = Astro.props;
 			<div class="flex flex-wrap gap-1.5 mt-3">
 				{tags.slice(0, 3).map((tag) => (
 					<a 
-						href={`/work?tag=${tag.slug}`} 
+						href={`/projects?tag=${tag.slug}`}
 						class="inline-block px-2.5 py-0.5 text-xs text-olive-700 dark:text-olive-300 bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5 rounded-full hover:text-olive-950 dark:hover:text-white hover:bg-olive-950/5 dark:hover:bg-white/10 transition-colors duration-150"
 					>
 						{tag.label}

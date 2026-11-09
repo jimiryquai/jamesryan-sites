@@ -34,7 +34,7 @@ export const GET: APIRoute = async ({ site, url, cache }) => {
 	}
 
 	// Build sitemap XML
-	const xmlUrls = urls
+	const xmlUrls = [...new Set(urls)]
 		.map((u) => `  <url><loc>${u}</loc></url>`)
 		.join("\n");
 

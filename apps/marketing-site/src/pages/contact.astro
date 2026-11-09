@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-iconset/components";
-import { getEmDashEntry } from "emdash";
+import { getEmDashEntry, getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
 
@@ -50,11 +50,18 @@ if (Astro.request.method === "POST") {
 }
 
 const pageContent = page?.data.content;
+const seo = page ? getSeoMeta(page) : null;
+const ContactHeading = pageContent?.some((block) =>
+	block._type === "marketing.hero" ||
+	block._type === "marketing.document" ||
+	(block._type === "block" && block.style === "h1")
+) ? "h2" : "h1";
 ---
 
 <Base
-	title="Contact"
-	description="Have questions? Want a demo? We'd love to hear from you."
+	title={seo?.ogTitle ?? "Contact"}
+	description={page ? seo?.description : "Have questions? Want a demo? We'd love to hear from you."}
+	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
 >
 	{pageContent && <MarketingBlocks value={pageContent} />}
 
@@ -65,9 +72,9 @@ const pageContent = page?.data.content;
 				{/* Left Side: Contact Information */}
 				<div class="lg:col-span-5 space-y-8">
 					<div class="space-y-4">
-						<h2 class="text-3xl sm:text-4xl font-display font-semibold tracking-tight text-olive-950 dark:text-white leading-tight">
+						<ContactHeading class="text-3xl sm:text-4xl font-display font-semibold tracking-tight text-olive-950 dark:text-white leading-tight">
 							Talk to our team
-						</h2>
+						</ContactHeading>
 						<p class="text-base sm:text-lg text-olive-700 dark:text-olive-350">
 							Fill out the form and we'll be in touch within 24 hours.
 						</p>

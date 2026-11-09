@@ -49,7 +49,7 @@ function renderFragment(f: PageFragmentContribution): string {
 interface Props {
 	title?: string;
 	pageTitle?: string;
-	description?: string;
+	description?: string | null;
 	image?: string;
 	canonical?: string | null;
 	robots?: string | null;
@@ -78,6 +78,8 @@ const siteTitle = settings?.title || "Oatmeal";
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
 const siteDescription =
 	settings?.tagline || "Customer support that feels like a conversation.";
+// Null means an entry has no description; undefined uses the site default.
+const resolvedDescription = description === null ? undefined : description || siteDescription;
 const rawLogo = settings?.logo as any;
 const siteLogo = rawLogo?.url
 	? { mediaId: rawLogo.mediaId, alt: rawLogo.alt, url: rawLogo.url }
@@ -121,7 +123,7 @@ const pageCtx = createPublicPageContext({
 	pageType: type,
 	title: fullTitle,
 	pageTitle: pageTitle ?? title ?? siteTitle,
-	description: description || siteDescription,
+	description: resolvedDescription,
 	canonical: canonicalUrl,
 	image: finalOgImage,
 	seo: {
@@ -314,7 +316,7 @@ const articlePiece =
 					author: { "@id": ids.person },
 					publisher: { "@id": ids.person },
 					headline: title || pageTitle || siteTitle,
-					description: description || siteDescription,
+					description: resolvedDescription,
 					datePublished: publishedTime
 						? new Date(publishedTime)
 						: new Date(),
@@ -357,7 +359,7 @@ const headFragmentsHtml = fragments
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<Seo
 			title={fullTitle}
-			description={description || siteDescription}
+			description={resolvedDescription}
 			canonical={canonicalUrl}
 			ogType={type === "article" ? "article" : "website"}
 			ogImage={finalOgImage}
