@@ -10,7 +10,8 @@
     "dev:all": "pnpm --parallel dev",
     "build": "pnpm -r --if-present build",
     "typecheck": "pnpm -r --if-present typecheck",
-    "test": "node --test scripts/*.test.mjs && pnpm -r --if-present test"
+    "test": "node --test scripts/*.test.mjs && pnpm -r --if-present test",
+    "seed:local": "node scripts/seed-local.mjs apps/marketing-site"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.14.0",

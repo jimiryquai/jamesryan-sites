@@ -23,3 +23,6 @@ overrides:
   '@tiptap/extension-subscript': 3.23.5
   '@tiptap/extension-superscript': 3.23.5
   '@astrojs/cloudflare>@cloudflare/vite-plugin': 1.39.0
+
+patchedDependencies:
+  emdash@1.4.0: patches/emdash@1.4.0.patch

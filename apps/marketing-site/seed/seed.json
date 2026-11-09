@@ -1112,11 +1112,11 @@
             }
           ],
           "featured_image": {
-            "provider": "local",
-            "id": "01KRVBS08BEBDAZ2X10DFGBSP3",
-            "src": "/_emdash/api/media/file/01KRVBS03NJGJ8P7W37HHAF0E3.webp",
-            "alt": "Code on a computer screen representing automated browser testing",
-            "filename": "post-1.webp"
+            "$media": {
+              "file": "assets/post-1.webp",
+              "alt": "Code on a computer screen representing automated browser testing",
+              "libraryCaption": null
+            }
           }
         },
         "taxonomies": {
@@ -1631,11 +1631,11 @@
             }
           ],
           "featured_image": {
-            "provider": "local",
-            "id": "01KRVBTFW5J9FY2G92J0JK0KN7",
-            "src": "/_emdash/api/media/file/01KRVBTFK9QH6A1S4G1G14M282.webp",
-            "alt": "Dashboard with notification indicators on a modern application interface",
-            "filename": "post-2.webp"
+            "$media": {
+              "file": "assets/post-2.webp",
+              "alt": "Dashboard with notification indicators on a modern application interface",
+              "libraryCaption": null
+            }
           }
         },
         "taxonomies": {
@@ -1869,11 +1869,11 @@
             }
           ],
           "featured_image": {
-            "provider": "local",
-            "id": "01KRVBTH0ERZBJ78C0S90KTKDQ",
-            "src": "/_emdash/api/media/file/01KRVBTGW210BX1EYYSTJ4PKK7.webp",
-            "alt": "Developer workspace with laptop and tools",
-            "filename": "essential-tools-for-power-platform-consultants.webp"
+            "$media": {
+              "file": "assets/essential-tools-for-power-platform-consultants.jpg",
+              "alt": "Developer workspace with laptop and tools",
+              "libraryCaption": null
+            }
           }
         },
         "taxonomies": {
@@ -1940,8 +1940,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-4",
               "asset": {
-                "_ref": "img-ref-enable-static-result",
-                "url": "/images/posts/enable-static-result.png"
+                "$media": {
+                  "file": "assets/enable-static-result.png",
+                  "alt": "Screenshot of Enable Static Result"
+                }
               },
               "alt": "Screenshot of Enable Static Result"
             },
@@ -1979,8 +1981,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-8",
               "asset": {
-                "_ref": "img-ref-catch-block",
-                "url": "/images/posts/catch-block.png"
+                "$media": {
+                  "file": "assets/catch-block.png",
+                  "alt": "Screenshot of Catch Block"
+                }
               },
               "alt": "Screenshot of Catch Block"
             },
@@ -2008,8 +2012,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-11",
               "asset": {
-                "_ref": "img-ref-filter-array",
-                "url": "/images/posts/filter-array.png"
+                "$media": {
+                  "file": "assets/filter-array.png",
+                  "alt": "Screenshot of Filter Array"
+                }
               },
               "alt": "Screenshot of Filter Array"
             },
@@ -2027,8 +2033,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-13",
               "asset": {
-                "_ref": "img-ref-select",
-                "url": "/images/posts/select.png"
+                "$media": {
+                  "file": "assets/select.png",
+                  "alt": "Screenshot of Select"
+                }
               },
               "alt": "Screenshot of Select"
             },
@@ -2055,8 +2063,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-16",
               "asset": {
-                "_ref": "img-ref-compose",
-                "url": "/images/posts/compose.png"
+                "$media": {
+                  "file": "assets/compose.png",
+                  "alt": "Screenshot of Compose"
+                }
               },
               "alt": "Screenshot of Compose"
             },
@@ -2102,8 +2112,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-21",
               "asset": {
-                "_ref": "img-ref-email",
-                "url": "/images/posts/email.png"
+                "$media": {
+                  "file": "assets/email.png",
+                  "alt": "Screenshot of Email"
+                }
               },
               "alt": "Screenshot of Email"
             },
@@ -2131,8 +2143,10 @@
               "_type": "image",
               "_key": "key-how-to-implement-a-try-catch-pattern-in-power-automate-24",
               "asset": {
-                "_ref": "img-ref-test-catch-block",
-                "url": "/images/posts/test-catch-block.png"
+                "$media": {
+                  "file": "assets/test-catch-block.png",
+                  "alt": "Screenshot of Test Catch Block"
+                }
               },
               "alt": "Screenshot of Test Catch Block"
             },
@@ -2158,11 +2172,11 @@
             }
           ],
           "featured_image": {
-            "provider": "local",
-            "id": "01KRVBTGFJ4MAAPCC404DSASFE",
-            "src": "/_emdash/api/media/file/01KRVBTG8R9V0MWWGTH6AZY73N.webp",
-            "alt": "Flowchart diagram representing error handling patterns",
-            "filename": "post-4.webp"
+            "$media": {
+              "file": "assets/post-4.webp",
+              "alt": "Flowchart diagram representing error handling patterns",
+              "libraryCaption": null
+            }
           }
         },
         "taxonomies": {
@@ -2230,8 +2244,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-4",
               "asset": {
-                "_ref": "img-ref-create-function-app",
-                "url": "/images/posts/create-function-app.png"
+                "$media": {
+                  "file": "assets/create-function-app.png",
+                  "alt": "Screenshot of Create Function App"
+                }
               },
               "alt": "Screenshot of Create Function App"
             },
@@ -2298,8 +2314,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-11",
               "asset": {
-                "_ref": "img-ref-api-key",
-                "url": "/images/posts/api-key.png"
+                "$media": {
+                  "file": "assets/api-key.png",
+                  "alt": "Screenshot of Api Key"
+                }
               },
               "alt": "Screenshot of Api Key"
             },
@@ -2349,8 +2367,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-16",
               "asset": {
-                "_ref": "img-ref-define-action",
-                "url": "/images/posts/define-action.png"
+                "$media": {
+                  "file": "assets/define-action.png",
+                  "alt": "Screenshot of Define Action"
+                }
               },
               "alt": "Screenshot of Define Action"
             },
@@ -2379,8 +2399,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-19",
               "asset": {
-                "_ref": "img-ref-define-response",
-                "url": "/images/posts/define-response.png"
+                "$media": {
+                  "file": "assets/define-response.png",
+                  "alt": "Screenshot of Define Response"
+                }
               },
               "alt": "Screenshot of Define Response"
             },
@@ -2438,8 +2460,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-25",
               "asset": {
-                "_ref": "img-ref-connection",
-                "url": "/images/posts/connection.png"
+                "$media": {
+                  "file": "assets/connection.png",
+                  "alt": "Screenshot of Connection"
+                }
               },
               "alt": "Screenshot of Connection"
             },
@@ -2457,8 +2481,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-27",
               "asset": {
-                "_ref": "img-ref-test-connector",
-                "url": "/images/posts/test-connector.png"
+                "$media": {
+                  "file": "assets/test-connector.png",
+                  "alt": "Screenshot of Test Connector"
+                }
               },
               "alt": "Screenshot of Test Connector"
             },
@@ -2486,8 +2512,10 @@
               "_type": "image",
               "_key": "key-how-to-run-javascript-in-power-automate-30",
               "asset": {
-                "_ref": "img-ref-consume-connector",
-                "url": "/images/posts/consume-connector.png"
+                "$media": {
+                  "file": "assets/consume-connector.png",
+                  "alt": "Screenshot of Consume Connector"
+                }
               },
               "alt": "Screenshot of Consume Connector"
             },
@@ -2503,11 +2531,11 @@
             }
           ],
           "featured_image": {
-            "provider": "local",
-            "id": "01KRVBTHE1WGKK6CRW3E183GA5",
-            "src": "/_emdash/api/media/file/01KRVBTHCTF8ZM2HWTWSRS0EY5.webp",
-            "alt": "JavaScript code on screen representing scripting in automation workflows",
-            "filename": "post-5.webp"
+            "$media": {
+              "file": "assets/post-5.webp",
+              "alt": "JavaScript code on screen representing scripting in automation workflows",
+              "libraryCaption": null
+            }
           }
         },
         "taxonomies": {
@@ -2838,11 +2866,11 @@
             }
           ],
           "featured_image": {
-            "provider": "local",
-            "id": "01KRVBTHE1WGKK6CRW3E183GA6",
-            "src": "/_emdash/api/media/file/01KRVBTHCTF8ZM2HWTWSRS0EY6.webp",
-            "alt": "Digital security lock representing identity and access management",
-            "filename": "post-6.webp"
+            "$media": {
+              "file": "assets/post-6.webp",
+              "alt": "Digital security lock representing identity and access management",
+              "libraryCaption": null
+            }
           }
         },
         "taxonomies": {
