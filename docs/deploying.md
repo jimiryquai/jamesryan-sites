@@ -1,40 +1,108 @@
 # Deploying
 
-Run `scripts/wizards/deploy-secrets.sh` once from the repository root to add the
-Cloudflare account ID and scoped API token to GitHub Actions. It does not save
-the token locally. The `production` environment must require review by
-`jimiryquai`, disallow administrator bypass, and allow only the `master`
-branch; verify this under Settings > Environments before promoting.
+Run `scripts/wizards/deploy-secrets.sh` from the repository root to add the
+Cloudflare account ID, scoped D1 Edit API token, and reviewed migration target
+fingerprints to GitHub Actions. It does not save the token locally. The
+`production` environment must require review by `jimiryquai`, disallow
+administrator bypass, and allow only `master`; verify this under Settings >
+Environments before promoting or recovering production.
 
-After CI succeeds for a push to `master`, the Deploy workflow builds with
-`CLOUDFLARE_ENV=staging` and deploys both sites to staging. This build setting
-is essential: Astro generates Wrangler's deployment configuration at build
-time, and passing `--env staging` to Wrangler alone otherwise retains
-production bindings. The workflow requests each staging home page, admin login,
-robots, sitemap and llms file, verifies migrations, and records the commit only
-if all checks pass. Posts are discovered from each sitemap: marketing requires
-a published post; the garden checks one if available and otherwise logs
-`no posts yet`.
+After CI succeeds for a push to `master`, Deploy runs one staging job per app:
 
-To promote, open Actions > Deploy > Run workflow, select `master`, and approve
-the `production` environment deployment. Inspect the staged commit and run
-shown in the workflow summary before approval. Promotion verifies the run has
-not changed while awaiting approval and fails closed if the latest staging run
-is incomplete or failed or its commit artifact has expired (90 days); rerun
-CI on the current master commit to produce a fresh staging run. It checks out
-that recorded commit, builds it again and deploys only jamesryan.dev. The garden
-has no production promotion.
+1. Build with `CLOUDFLARE_ENV=staging`.
+2. Inspect D1 with `emdash migrate --status --json`.
+3. Apply with `--expected-target-fingerprint` from a reviewed Actions variable.
+4. Deploy that build with `wrangler deploy --env staging`.
+5. Smoke home, admin login, robots, sitemap, llms.txt and a sitemap post.
+6. Verify with `emdash migrate --check`.
 
-Deployments are serialized with a queue of up to 100 pending runs. A newer
-push can make an older completed CI run stale, in which case staging rejects
-it rather than replacing newer code with older code. Inspect Actions if a
-run is skipped or cancelled.
+Every migration command runs in the app directory, using that job's build
+manifest (`.emdash/migrations.json`), `--wrangler-config wrangler.jsonc`, and
+`--account-id`. Staging also passes `--wrangler-env staging`; production uses
+the top-level Wrangler configuration. No manifests are downloaded from other
+builds. `CLOUDFLARE_ENV` matters because Astro fixes deployment bindings at build
+time; passing `--env staging` only at deploy time can retain production bindings.
 
-EmDash's default `auto` mode applies ordinary core migrations on the first
-request after deployment, and the workflow then runs `emdash migrate --check`
-against each explicitly selected D1 database. Large content migrations are not
-automatic on Workers: they require a reviewed recovery point and a separate
-operator-run migration; the workflow fails rather than reporting a healthy
-site. See [EmDash Cloudflare deployment](https://docs.emdashcms.com/deployment/cloudflare/)
-and [core migrations](https://docs.emdashcms.com/deployment/core-migrations/).
-Check backup/recovery readiness before merging a change with pending migrations.
+Smoke checks share a three-minute deadline, retrying failed endpoints every
+five seconds with request timeouts of at most fifteen seconds. On failure the
+script prints each URL's last result. Marketing requires a published post;
+the garden checks one if available and otherwise logs `no posts yet`.
+`SMOKE_TIMEOUT_MS` and `SMOKE_RETRY_MS` allow shorter local test windows.
+The staged SHA artifact is written only after both apps pass all checks.
+
+Both Astro configurations set `migrations: { runtime: "check", dev: "auto" }`.
+This policy belongs in application configuration because every deployed
+environment uses the same rule. Deployed requests never apply migrations or
+acquire the migration lock; known pending migrations produce 503. Development
+keeps automatic migrations. Previously a first request could start migrations
+inside a Worker, time out, and leave a lock held indefinitely.
+
+## Reviewed target fingerprints
+
+Create these repository Actions variables (not secrets):
+
+| App | Environment | Variable |
+| --- | --- | --- |
+| marketing-site | staging | `MARKETING_SITE_STAGING_MIGRATION_FINGERPRINT` |
+| marketing-site | production | `MARKETING_SITE_PRODUCTION_MIGRATION_FINGERPRINT` |
+| digital-garden | staging | `DIGITAL_GARDEN_STAGING_MIGRATION_FINGERPRINT` |
+| digital-garden | production | `DIGITAL_GARDEN_PRODUCTION_MIGRATION_FINGERPRINT` |
+
+Use Actions > Deploy > Run workflow on `master`, select `migration-status`,
+and choose the app and target environment. This builds and reports the target
+without changing D1. Production inspection also requires environment approval.
+Review the account, environment and database UUID against the intended target
+before accepting `target.fingerprint`. The wizard accepts these printed values.
+If a deployment or recovery variable is missing, the job prints the complete
+status target and the exact `gh variable set … --repo … --body …` command, then
+fails before applying anything. A mismatched fingerprint is rejected by EmDash.
+Do not automatically accept a freshly discovered fingerprint in CI.
+Garden production is available only for migration inspection/recovery; there
+is no garden production deployment.
+
+## Promotion
+
+Open Actions > Deploy > Run workflow, select `master` and `promote`, then
+approve the `production` environment. Inspect the staged commit and run in the
+summary before approval. Promotion rejects an incomplete/failed latest staging
+run, an expired commit artifact (90 days), or a staging run changed while waiting
+for approval. Rerun CI on current master if a fresh staging run is needed.
+It checks out the recorded staging SHA and builds, inspects, migrates, deploys,
+smoke-checks, and verifies jamesryan.dev in that order. There is no direct
+production deploy script or garden production promotion.
+
+Workflow runs are queued without cancellation, and migration/deploy/recovery
+jobs share a per-app/environment concurrency group, so the same database cannot
+be migrated by overlapping Actions jobs. Stale completed CI runs are rejected.
+
+## Recover a stuck migration lock
+
+Use the Actions token; no Cloudflare token is needed on a laptop. This path can
+also recover locks left by the old runtime `auto` workers before the first
+successful deployment of runtime `check`.
+
+1. Confirm no migration job, deployment, or other `emdash migrate` command is
+   running against the target, including outside GitHub Actions.
+2. Dispatch `migration-status` on `master` with the chosen app/environment.
+   Inspect the lock id, target and applied/pending migration sets.
+3. Wait at least a minute and dispatch the same status operation again. If the
+   applied migrations are still changing, wait; do not take over an active run.
+4. Once no work is running and the migration sets are stable, dispatch
+   `recover-lock` with the same target and the observed numeric `lock_id`.
+   Review the target fingerprint variable first. Production recovery passes
+   through the `production` approval environment.
+5. The job builds, runs status again, then applies with
+   `--take-over-lock <id> --expected-target-fingerprint <reviewed value>` and
+   verifies with `--check`. EmDash rejects a changed lock id or target. A missing
+   fingerprint fails before mutation. Recovery does not deploy a Worker;
+   rerun the staging pipeline afterward and promote normally.
+
+Take-over transfers the lock directly, so an older `auto` Worker cannot race
+into a gap created by releasing it. If a pending migration fails after an
+interrupted D1 write, inspect the partially applied migration and follow
+EmDash's ambiguous-write troubleshooting before retrying. Check backup/recovery
+readiness before migrations; core migrations are forward-only.
+
+This follows EmDash's [core migration guidance](https://docs.emdashcms.com/deployment/core-migrations/):
+“Build, migrate, deploy, check”, “Configure D1 migrations in CI”, “Adopt runtime
+enforcement gradually”, and “Release a stuck migration lock”.
