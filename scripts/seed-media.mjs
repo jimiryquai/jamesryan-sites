@@ -5,12 +5,20 @@ import { pathToFileURL } from 'node:url';
 // Rows come from a read-only SELECT on the source site's media table.
 export function rewriteSeedMedia(seed, mediaRows) {
   const downloads = new Map();
+  const localFiles = new Set();
+  function collectLocalFiles(value) {
+    if (!value || typeof value !== 'object') return;
+    if (value.$media?.file) localFiles.add(value.$media.file);
+    Object.values(value).forEach(collectLocalFiles);
+  }
+  collectLocalFiles(seed);
   function media(value, metadata = {}) {
     const row = mediaRows.find(row => row.id === (value.id ?? value._ref) ||
       (value.src ?? value.url)?.endsWith(`/${row.storage_key}`));
     const url = row ? `/_emdash/api/media/file/${row.storage_key}` : value.src ?? value.url;
     if (!url) throw new Error(`No media source for ${JSON.stringify(value)}`);
     const file = `assets/${basename(row?.filename ?? new URL(url, 'https://source.invalid').pathname)}`;
+    if (localFiles.has(file)) throw new Error(`Asset already referenced by this seed: ${file}`);
     if (downloads.has(file) && downloads.get(file) !== url) {
       throw new Error(`Different media sources share ${file}`);
     }
@@ -50,7 +58,13 @@ async function main() {
     }
     const target = resolve(dirname(seedPath), file);
     await mkdir(dirname(target), { recursive: true });
-    await writeFile(target, Buffer.from(await response.arrayBuffer()));
+    const bytes = Buffer.from(await response.arrayBuffer());
+    const existing = await readFile(target).catch(error => {
+      if (error.code !== 'ENOENT') throw error;
+      return null;
+    });
+    if (existing && !existing.equals(bytes)) throw new Error(`Refusing to overwrite different image bytes: ${file}`);
+    if (!existing) await writeFile(target, bytes, { flag: 'wx' });
   }
   // Also verify files on reruns of an already rewritten seed.
   async function verify(value) {

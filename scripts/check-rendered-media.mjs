@@ -36,6 +36,7 @@ function attribute(tag, name) {
   const match = tag.match(new RegExp(`\\s${name}=(?:"([^"]*)"|'([^']*)')`, 'i'));
   return match ? decode(match[1] ?? match[2]) : null;
 }
+const report = { routes: [], images: 0, screenshots: [] };
 let images = 0;
 for (const path of paths) {
   const response = await fetch(new URL(path, origin));
@@ -56,9 +57,10 @@ for (const path of paths) {
     assert.ok(index !== -1, `${path}: missing image with original alt ${JSON.stringify(alt)}`);
     renderedAlts.splice(index, 1);
   }
-  console.log(`${path}: images loaded; ${(expected.get(path) ?? []).length} original image alt values verified`);
+  report.routes.push({ path, originalAltValuesVerified: (expected.get(path) ?? []).length });
 }
-console.log(`Rendered media passed: ${paths.size} routes, ${images} loaded images`);
+report.images = images;
+report.summary = `Rendered media passed: ${paths.size} routes, ${images} loaded images`;
 
 // Screenshots are optional local evidence; CI only needs HTTP and alt checks.
 if (evidenceDirectory) {
@@ -73,8 +75,10 @@ if (evidenceDirectory) {
       await page.goto(new URL(path, origin).href);
       await page.locator('img').evaluateAll(images => images.forEach(image => { image.loading = 'eager'; }));
       await page.waitForFunction(() => [...document.images].every(image => image.complete && image.naturalWidth > 0));
+      await page.locator('img').evaluateAll(images => Promise.all(images.map(image => image.decode())));
       await page.screenshot({ path: resolve(evidenceDirectory, `${name}.png`), fullPage: true });
-      console.log(`Screenshot saved: ${name}.png`);
+      report.screenshots.push(resolve(evidenceDirectory, `${name}.png`));
     }
   } finally { await browser.close(); }
 }
+console.log(JSON.stringify(report, null, 2));

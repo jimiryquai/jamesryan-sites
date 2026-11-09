@@ -72,6 +72,12 @@ Marketing content uses committed files in `apps/marketing-site/seed/assets/`.
 Keep `$media.file` paths relative to `seed/seed.json`; alt text and captions belong
 to each reference. The garden seed is unchanged.
 
+For a fresh development database, run `pnpm build`, `pnpm seed:local`, then
+`pnpm dev`. The seed command populates the marketing app's actual `.wrangler/state`
+D1 database and R2 bucket, returns their paths and media rows as JSON, and can be
+rerun without replacing existing content. Do this before opening the setup wizard
+or dev-bypass: Workers cannot read the seed assets from the Node filesystem.
+
 After `pnpm build`, run `bash scripts/check-rendered-seo.sh --real-seed` to apply
 the complete marketing seed to a fresh, isolated local D1 database, import its
 uploads into local R2, and check the built Worker. No staging access is needed.

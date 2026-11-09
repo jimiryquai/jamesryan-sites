@@ -29,48 +29,27 @@ for entry in "marketing-site:$port:fixture"; do
   IFS=: read -r app port seed_option <<< "$entry"
   state="$state_root/$app"
   cd "$root/apps/$app"
-  pnpm exec wrangler d1 execute DB --local --persist-to "$state" --command 'SELECT 1'
-  mapfile -t databases < <(find "$state/v3/d1" -name '*.sqlite' ! -name metadata.sqlite -type f)
-  if [[ "${#databases[@]}" != 1 ]]; then
-    echo "$app: expected one local D1 database, found ${#databases[@]}" >&2
-    exit 1
-  fi
   seed="$root/apps/$app/seed/seed.json"
   fixture=false
   if [[ "$mode" == fixture && "$seed_option" == fixture ]]; then
     fixture=true
+    mkdir -p "$state"
     seed="$state/fixture.json"
     node "$root/scripts/seo-fixture.mjs" seed "$seed"
   elif [[ "$mode" == fixture ]]; then
     seed="$root/apps/$app/$seed_option"
   fi
-  pnpm exec emdash seed "$seed" --database "${databases[0]}" --uploads-dir "$state/uploads"
-  bucket=$(node --input-type=module -e 'import fs from "node:fs"; console.log(JSON.parse(fs.readFileSync("dist/server/wrangler.json")).r2_buckets.find(bucket => bucket.binding === "MEDIA").bucket_name)')
-  # The seed CLI writes filesystem uploads; this Worker serves media from R2.
-  while IFS=$'\t' read -r key content_type; do
-    pnpm exec wrangler r2 object put "$bucket/$key" \
-      --file "$state/uploads/$key" --content-type "$content_type" --local --persist-to "$state"
-  done < <(node --input-type=module - "${databases[0]}" <<'NODE'
-import { DatabaseSync } from 'node:sqlite';
-const db = new DatabaseSync(process.argv[2]);
-for (const row of db.prepare('SELECT storage_key, mime_type FROM media').all()) {
-  console.log(`${row.storage_key}\t${row.mime_type}`);
-}
-db.close();
-NODE
-  )
+  seed_result=$(node "$root/scripts/seed-local.mjs" "$root/apps/$app" "$seed" "$state")
+  database=$(node --input-type=module -e 'console.log(JSON.parse(process.argv[1]).database)' "$seed_result")
   if [[ -n "${RENDERED_EVIDENCE_DIR:-}" ]]; then
     mkdir -p "$RENDERED_EVIDENCE_DIR"
-    node --input-type=module - "${databases[0]}" "$RENDERED_EVIDENCE_DIR/media-rows.json" <<'NODE'
-import { DatabaseSync } from 'node:sqlite';
+    node --input-type=module - "$seed_result" "$RENDERED_EVIDENCE_DIR/media-rows.json" <<'NODE'
 import { writeFileSync } from 'node:fs';
-const db = new DatabaseSync(process.argv[2]);
-writeFileSync(process.argv[3], JSON.stringify(db.prepare('SELECT id, filename, storage_key, alt, caption, width, height FROM media').all(), null, 2));
-db.close();
+writeFileSync(process.argv[3], JSON.stringify(JSON.parse(process.argv[2]).media, null, 2));
 NODE
   fi
   if [[ "$fixture" == true ]]; then
-    node "$root/scripts/seo-fixture.mjs" seo "${databases[0]}"
+    node "$root/scripts/seo-fixture.mjs" seo "$database"
   fi
   ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
     --persist-to "$state" --port "$port" --inspector-port 0 &

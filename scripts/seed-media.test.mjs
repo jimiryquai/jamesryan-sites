@@ -54,3 +54,10 @@ test('marketing seed resolves every image to a bundled asset without stored libr
   await verify(seed);
   assert.ok(files.size > 0, 'seed has no bundled media');
 });
+
+test('repairing a mixed export refuses to overwrite an existing local asset', () => {
+  assert.throws(() => rewriteSeedMedia({ content: [
+    { $media: { url: '/images/step.png', alt: 'New image' } },
+    { $media: { file: 'assets/step.png', alt: 'Existing image' } },
+  ] }, []), /already referenced/);
+});
