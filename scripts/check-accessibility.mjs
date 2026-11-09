@@ -40,6 +40,9 @@ try {
           document.body.append(proof);
         });
       }
+      if (process.env.A11Y_PROVE_THEME_FAILURE === '1' && path === '/') {
+        await page.getByRole('button', { name: 'Theme', exact: true }).evaluate(button => button.removeAttribute('aria-label'));
+      }
       const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
       const serious = results.violations.filter(issue => ['serious', 'critical'].includes(issue.impact));
       if (process.env.A11Y_PROVE_FAILURE === '1' && path === '/' && !serious.some(issue => issue.id === 'color-contrast' && issue.nodes.some(node => node.target.includes('#contrast-regression-proof')))) {
@@ -59,6 +62,28 @@ try {
       const entry = { mode, path, serious: serious.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => ({ target: node.target, failureSummary: node.failureSummary })) })), incomplete: results.incomplete.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) })) };
       summary.push(entry);
       console.log(JSON.stringify({ mode, path, seriousCriticalIssues: serious.length, violations: entry.serious }));
+      if (path === '/') {
+        if (process.env.A11Y_PROVE_THEME_FAILURE === '1' && !serious.some(issue => issue.id === 'button-name')) {
+          throw new Error('Unlabelled Theme button was not detected');
+        }
+        // The regular page scan covers the closed header; also scan its open menu.
+        await page.locator('theme-switcher > button').click();
+        await page.getByRole('menu', { name: 'Theme', exact: true }).waitFor();
+        const openResults = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+        const openSerious = openResults.violations.filter(issue => ['serious', 'critical'].includes(issue.impact));
+        failures += openSerious.length;
+        await writeFile(resolve(output, `${name}-theme-open.json`), JSON.stringify(openResults, null, 2));
+        if (process.env.A11Y_SCREENSHOTS === '1') {
+          await page.screenshot({ path: resolve(output, `${name}-theme-open.png`), fullPage: true });
+        }
+        const openEntry = { mode, path, themeMenu: 'open', serious: openSerious.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => ({ target: node.target, failureSummary: node.failureSummary })) })) };
+        summary.push(openEntry);
+        console.log(JSON.stringify({ mode, path, themeMenu: 'open', seriousCriticalIssues: openSerious.length, violations: openEntry.serious }));
+        await page.keyboard.press('Escape');
+        if (process.env.A11Y_PROVE_THEME_FAILURE === '1') {
+          await page.locator('theme-switcher > button').evaluate(button => button.setAttribute('aria-label', 'Theme'));
+        }
+      }
     }
     await session.close();
   }
