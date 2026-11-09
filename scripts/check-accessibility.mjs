@@ -24,6 +24,26 @@ const browser = await chromium.launch();
 let failures = 0;
 const summary = [];
 const pairs = [];
+
+async function scanPage(page, mode, path, themeMenu = 'closed') {
+  const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
+  const serious = results.violations.filter(issue => ['serious', 'critical'].includes(issue.impact));
+  failures += serious.length;
+  const name = `${mode}-${path.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'home'}${themeMenu === 'open' ? '-theme-open' : ''}`;
+  await writeFile(resolve(output, `${name}.json`), JSON.stringify(results, null, 2));
+  for (const result of [...results.passes, ...results.violations, ...results.incomplete].filter(result => result.id === 'color-contrast')) {
+    for (const node of result.nodes) for (const check of [...node.any, ...node.all, ...node.none]) {
+      if (check.data?.contrastRatio !== undefined) pairs.push({ mode, path, themeMenu, target: node.target, ...check.data });
+    }
+  }
+  if (process.env.A11Y_SCREENSHOTS === '1' && (path === '/' || path === '/_emdash/admin/login' || path === [...paths].find(path => path.startsWith('/posts/') && path !== '/posts/'))) {
+    await page.screenshot({ path: resolve(output, `${name}.png`), fullPage: true });
+  }
+  const entry = { mode, path, themeMenu, serious: serious.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => ({ target: node.target, failureSummary: node.failureSummary })) })), incomplete: results.incomplete.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) })) };
+  summary.push(entry);
+  console.log(JSON.stringify({ mode, path, themeMenu, seriousCriticalIssues: serious.length, violations: entry.serious }));
+  return serious;
+}
 try {
   for (const mode of ['light', 'dark']) {
     const session = await openAccessibilityPage(browser, origin, mode);
@@ -41,47 +61,29 @@ try {
         });
       }
       if (process.env.A11Y_PROVE_THEME_FAILURE === '1' && path === '/') {
-        await page.getByRole('button', { name: 'Theme', exact: true }).evaluate(button => button.removeAttribute('aria-label'));
+        await page.getByRole('button', { name: 'Theme', exact: true }).evaluate(button => {
+          button.id = 'theme-label-regression-proof';
+          button.removeAttribute('aria-label');
+        });
       }
-      const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
-      const serious = results.violations.filter(issue => ['serious', 'critical'].includes(issue.impact));
+      const serious = await scanPage(page, mode, path);
       if (process.env.A11Y_PROVE_FAILURE === '1' && path === '/' && !serious.some(issue => issue.id === 'color-contrast' && issue.nodes.some(node => node.target.includes('#contrast-regression-proof')))) {
         throw new Error('Injected contrast regression was not detected');
       }
-      failures += serious.length;
-      const name = `${mode}-${path.replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'home'}`;
-      await writeFile(resolve(output, `${name}.json`), JSON.stringify(results, null, 2));
-      for (const result of [...results.passes, ...results.violations, ...results.incomplete].filter(result => result.id === 'color-contrast')) {
-        for (const node of result.nodes) for (const check of [...node.any, ...node.all, ...node.none]) {
-          if (check.data?.contrastRatio !== undefined) pairs.push({ mode, path, target: node.target, ...check.data });
-        }
-      }
-      if (process.env.A11Y_SCREENSHOTS === '1' && (path === '/' || path === '/_emdash/admin/login' || path === [...paths].find(path => path.startsWith('/posts/') && path !== '/posts/'))) {
-        await page.screenshot({ path: resolve(output, `${name}.png`), fullPage: true });
-      }
-      const entry = { mode, path, serious: serious.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => ({ target: node.target, failureSummary: node.failureSummary })) })), incomplete: results.incomplete.map(({ id, nodes }) => ({ id, targets: nodes.map(node => node.target) })) };
-      summary.push(entry);
-      console.log(JSON.stringify({ mode, path, seriousCriticalIssues: serious.length, violations: entry.serious }));
       if (path === '/') {
-        if (process.env.A11Y_PROVE_THEME_FAILURE === '1' && !serious.some(issue => issue.id === 'button-name')) {
+        if (process.env.A11Y_PROVE_THEME_FAILURE === '1' && !serious.some(issue => issue.id === 'button-name' && issue.nodes.some(node => node.target.includes('#theme-label-regression-proof')))) {
           throw new Error('Unlabelled Theme button was not detected');
         }
         // The regular page scan covers the closed header; also scan its open menu.
         await page.locator('theme-switcher > button').click();
         await page.getByRole('menu', { name: 'Theme', exact: true }).waitFor();
-        const openResults = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
-        const openSerious = openResults.violations.filter(issue => ['serious', 'critical'].includes(issue.impact));
-        failures += openSerious.length;
-        await writeFile(resolve(output, `${name}-theme-open.json`), JSON.stringify(openResults, null, 2));
-        if (process.env.A11Y_SCREENSHOTS === '1') {
-          await page.screenshot({ path: resolve(output, `${name}-theme-open.png`), fullPage: true });
-        }
-        const openEntry = { mode, path, themeMenu: 'open', serious: openSerious.map(({ id, nodes }) => ({ id, nodes: nodes.map(node => ({ target: node.target, failureSummary: node.failureSummary })) })) };
-        summary.push(openEntry);
-        console.log(JSON.stringify({ mode, path, themeMenu: 'open', seriousCriticalIssues: openSerious.length, violations: openEntry.serious }));
+        await scanPage(page, mode, path, 'open');
         await page.keyboard.press('Escape');
         if (process.env.A11Y_PROVE_THEME_FAILURE === '1') {
-          await page.locator('theme-switcher > button').evaluate(button => button.setAttribute('aria-label', 'Theme'));
+          await page.locator('theme-switcher > button').evaluate(button => {
+            button.setAttribute('aria-label', 'Theme');
+            button.removeAttribute('id');
+          });
         }
       }
     }
