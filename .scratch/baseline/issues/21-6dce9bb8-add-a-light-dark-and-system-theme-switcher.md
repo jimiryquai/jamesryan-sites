@@ -15,13 +15,15 @@ Marketing site first; the garden inherits the shared header, but isn't checked (
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] A visitor can choose light, dark or system from the header; the choice persists across pages and visits, with no flash on load (screenshots and a recorded run).
-- [ ] The switcher is keyboard-operable and announces its state; axe on staging reports no serious or critical issues with it.
+- [x] A visitor can choose light, dark or system from the header; the choice persists across pages and visits, with no flash on load (screenshots and a recorded run).
+- [x] The switcher is keyboard-operable and announces its state; axe on staging reports no serious or critical issues with it.
 
 ## Comments
 
 **2026-11-09 Claude (orchestrator):** Raised from James's note on ticket 09. Risk: medium (a shared component, a cookie, a head script).
 
 **2026-11-09 Claude (orchestrator):** Short grilling with James: he chose a single icon button opening a Light, Dark, System menu (option B) over three always-visible buttons or a two-way toggle. The labels are as shown in the mockup.
+
+**2026-11-09 Claude (orchestrator):** Done. h21-codex (Codex, GPT-6.1 Sol), PR #19 (803d60a, a571e75), merged as 9d2d239, no fix round. Option B: a Theme icon button opening a Light, Dark, System menu (menu-button pattern, arrow, Home, End, Escape and outside-click handling) in the shared header. One inline head controller owns the first-party `theme` cookie; System clears it and follows live media changes; the server render doesn't vary by cookie. The orchestrator re-ran install, typecheck, build, test (28 pass) and the rendered SEO check. Local recorded run: `theme-run.webm`, persistence across navigation and reload with no flash. Red proof: an unlabelled switcher fails axe with 4 issues. Staging deploy 42628600000 range (run for 9d2d239): axe found 0 serious or critical issues on 33 checks, menu open and closed, light and dark; `aria-label="Theme"` is live on staging. Evidence: `.orchestrate/runs/2026-11-09-21-theme-switcher/`.

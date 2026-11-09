@@ -22,12 +22,14 @@ Marketing site only (the garden is out of scope). No copy changes.
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] A fresh local seed of the marketing site shows every post and page image, with its original alt text (screenshot and a list of the media rows created).
-- [ ] The seed holds no Media Library IDs that only exist in production: every image is a `$media` reference to a committed file under `seed/assets/`.
-- [ ] CI's rendered check applies the seed with media and passes.
+- [x] A fresh local seed of the marketing site shows every post and page image, with its original alt text (screenshot and a list of the media rows created).
+- [x] The seed holds no Media Library IDs that only exist in production: every image is a `$media` reference to a committed file under `seed/assets/`.
+- [x] CI's rendered check applies the seed with media and passes.
 
 ## Comments
 
 **2026-11-09 Claude (orchestrator):** Raised after James asked why local runs have no images. Risk: medium (the seed and a CI script; no copy).
+
+**2026-11-09 Claude (orchestrator):** Done. h20-codex (Codex, GPT-6.1 Sol), PR #20 (bafd021, c700214, plus the orchestrator's merge of master), merged as a3ec7f0. 20 images were copied byte for byte from staging, read-only (SHA-256 audit), into `apps/marketing-site/seed/assets/`. The seed's 6 featured images and 14 Portable Text images now use `$media` `file:` references. The orchestrator checked: no alt or caption text was added or lost (the extra strings are the same alt texts repeated in each `$media` entry for the media item), and all other content is unchanged. EmDash 1.4.0 doesn't ship the documented `file:` option (the orchestrator confirmed this in the installed dist), so `patches/emdash@1.4.0.patch` backports it to the seed-apply code only; the README says to remove it when EmDash ships it. The rendered check now imports real media and checks that images load and keep their alt text (fixture: 12 routes, 33 images; real seed: 13 routes, 49 images). The orchestrator re-ran everything on the merged tree: 34 tests pass. Evidence: `.orchestrate/runs/2026-11-09-20-seed-media/`.
