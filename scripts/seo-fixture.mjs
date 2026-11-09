@@ -1,4 +1,5 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
+import { dirname, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { extractTitle, extractMetaDescription } from "@jdevalk/astro-seo-graph/integration";
 
@@ -10,7 +11,7 @@ const heading = (text) => [{ _type: "block", _key: "heading", style: "h1", child
   { _type: "span", _key: "text", text },
 ] }];
 const image = {
-  $media: { url: "https://example.com/fixture.jpg", alt: "Fixture image", filename: "fixture.jpg" },
+  $media: { file: "assets/post-1.webp", alt: "Fixture image" },
 };
 const page = (slug, content = []) => ({
   id: slug, slug, status: "published", data: { title: `Fixture ${slug}`, content },
@@ -45,6 +46,8 @@ const fixtureSeo = (slug) => ({
 });
 
 function createSeed(path) {
+  mkdirSync(join(dirname(path), "assets"), { recursive: true });
+  copyFileSync(new URL("apps/marketing-site/seed/assets/post-1.webp", root), join(dirname(path), "assets/post-1.webp"));
   const seed = {
     ...original,
     settings: site,
