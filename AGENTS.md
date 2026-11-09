@@ -30,6 +30,8 @@ Agent skills are in `.agents/skills/`. Load them when working on specific tasks:
 
 ## Documentation
 
+For drafting posts and the human publishing handoff, read `docs/publishing.md`.
+
 For EmDash documentation, run `pnpm exec mcporter list emdash-docs` and
 `pnpm exec mcporter call emdash-docs.search_docs query:"your question"` from
 the repository root, rather than browsing the website. `config/mcporter.json`
