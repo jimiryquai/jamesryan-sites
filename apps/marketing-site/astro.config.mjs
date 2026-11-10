@@ -5,6 +5,7 @@ import icon from "astro-iconset";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 import tailwind from "@tailwindcss/vite";
+import pageBuilderPlugin from "emdash-plugin-page-builder/plugin";
 import seoPlugin from "@jdevalk/emdash-plugin-seo";
 import seoGraph from "@jdevalk/astro-seo-graph/integration";
 import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
@@ -112,6 +113,7 @@ export default defineConfig({
 					return seo;
 				})(),
 				codeBlockProPlugin(),
+				pageBuilderPlugin(),
 				{
 					id: "marketing-blocks",
 					version: "0.1.0",

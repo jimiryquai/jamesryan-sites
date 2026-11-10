@@ -2951,8 +2951,7 @@
             {
               "slug": "heading",
               "label": "Heading",
-              "type": "string",
-              "required": true
+              "type": "string"
             },
             {
               "slug": "body",
@@ -2976,14 +2975,12 @@
                   {
                     "slug": "label",
                     "label": "Label",
-                    "type": "string",
-                    "required": true
+                    "type": "string"
                   },
                   {
                     "slug": "url",
                     "label": "URL",
-                    "type": "url",
-                    "required": true
+                    "type": "url"
                   }
                 ]
               }
@@ -3017,8 +3014,7 @@
             {
               "slug": "heading",
               "label": "Heading",
-              "type": "string",
-              "required": true
+              "type": "string"
             },
             {
               "slug": "body",
@@ -3034,14 +3030,12 @@
                   {
                     "slug": "label",
                     "label": "Label",
-                    "type": "string",
-                    "required": true
+                    "type": "string"
                   },
                   {
                     "slug": "url",
                     "label": "URL",
-                    "type": "url",
-                    "required": true
+                    "type": "url"
                   }
                 ]
               }
@@ -3067,8 +3061,7 @@
             {
               "slug": "heading",
               "label": "Heading",
-              "type": "string",
-              "required": true
+              "type": "string"
             },
             {
               "slug": "subheadline",
@@ -3093,13 +3086,11 @@
               "label": "Items",
               "type": "repeater",
               "validation": {
-                "minItems": 1,
                 "subFields": [
                   {
                     "slug": "title",
                     "label": "Title",
-                    "type": "string",
-                    "required": true
+                    "type": "string"
                   },
                   {
                     "slug": "description",
