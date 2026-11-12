@@ -292,9 +292,52 @@ async function verify(origin, unpublished = false, database) {
     console.log("/contact: content rendered for a page without layout");
   }
   if (unpublished) {
+    const homeWithoutKeyHtml = await (await fetch(new URL("/", origin))).text();
+    for (const marker of ["um-tracker", "usermaven", "/s1/lib.js", "UMNstP14wS"]) {
+      if (homeWithoutKeyHtml.includes(marker)) {
+        throw new Error(`/: Usermaven marker ${JSON.stringify(marker)} rendered when USERMAVEN_KEY is unset`);
+      }
+    }
+    const unconfiguredScript = await fetch(new URL("/s1/lib.js", origin), { redirect: "manual" });
+    await unconfiguredScript.text();
+    const unconfiguredEvent = await fetch(new URL("/s1/api/v1/event", origin), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_type: "pageview" }),
+      redirect: "manual",
+    });
+    await unconfiguredEvent.text();
+    if (unconfiguredScript.status !== 404 || unconfiguredEvent.status !== 404) {
+      throw new Error(
+        `Usermaven proxy expected HTTP 404 when USERMAVEN_KEY is unset, got ${unconfiguredScript.status} and ${unconfiguredEvent.status}`,
+      );
+    }
+    console.log("/: Usermaven snippet absent and /s1/* HTTP 404 when USERMAVEN_KEY is unset");
     await verifyDraftPreviews(origin, database);
     return;
   }
+  const homeWithKeyHtml = await (await fetch(new URL("/", origin))).text();
+  for (const requiredMarker of [
+    "um-tracker",
+    "/s1",
+    "/s1/lib.js",
+    "UMNstP14wS",
+    "data-tracking-host",
+    "data-key",
+    'setAttribute("data-autocapture", "true")',
+    'setAttribute("data-privacy-policy", "strict")',
+    'setAttribute("data-randomize-url", "true")',
+  ]) {
+    if (!homeWithKeyHtml.includes(requiredMarker)) {
+      throw new Error(`/: Usermaven snippet missing ${JSON.stringify(requiredMarker)} when USERMAVEN_KEY is configured`);
+    }
+  }
+  for (const forbiddenHost of ["um.jamesryan.dev", "t.usermaven.com", "events.usermaven.com"]) {
+    if (homeWithKeyHtml.includes(forbiddenHost)) {
+      throw new Error(`/: Usermaven snippet must use first-party proxy path, found ${forbiddenHost}`);
+    }
+  }
+  console.log("/: Usermaven first-party proxy snippet rendered when USERMAVEN_KEY is configured");
   const listingHtml = await (await fetch(new URL("/posts", origin))).text();
   if (extractMetaDescription(listingHtml) !== description("posts collection")) {
     throw new Error("/posts: collection description was not rendered");

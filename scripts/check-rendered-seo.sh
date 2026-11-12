@@ -9,6 +9,7 @@ cleanup() {
     kill "$worker_pid" 2>/dev/null || true
     wait "$worker_pid" 2>/dev/null || true
   fi
+  rm -f -- "$root/apps/marketing-site/dist/server/wrangler.unconfigured.json"
 }
 finish() {
   cleanup
@@ -58,7 +59,17 @@ NODE
   if [[ "$fixture" == true ]]; then
     node "$root/scripts/seo-fixture.mjs" seo "$database" "$seed"
   fi
-  ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
+  wrangler_config="dist/server/wrangler.json"
+  if [[ "$seed_option" == unpublished ]]; then
+    wrangler_config="dist/server/wrangler.unconfigured.json"
+    node --input-type=module - "dist/server/wrangler.json" "$wrangler_config" <<'NODE'
+import { readFileSync, writeFileSync } from 'node:fs';
+const config = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+delete config.vars;
+writeFileSync(process.argv[3], JSON.stringify(config, null, 2));
+NODE
+  fi
+  ./node_modules/.bin/wrangler dev --config "$wrangler_config" --local \
     --persist-to "$state" --port "$port" --inspector-port 0 &
   worker_pid=$!
   ready=false

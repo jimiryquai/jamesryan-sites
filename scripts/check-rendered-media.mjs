@@ -69,6 +69,7 @@ if (evidenceDirectory) {
   try {
     await mkdir(evidenceDirectory, { recursive: true });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+    await page.route('**/s1/**', route => route.abort());
     const post = [...expected.keys()].find(path => path.startsWith('/posts/'));
     for (const [name, path] of [['home', '/'], ['post', post]]) {
       if (!path) continue;
