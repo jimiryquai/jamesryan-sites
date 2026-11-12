@@ -16,9 +16,15 @@ for (const [, loc] of (await sitemap.text()).matchAll(/<loc>\s*([^<]+)\s*<\/loc>
   const url = new URL(loc.trim());
   paths.add(url.pathname + url.search);
 }
-if (![...paths].some(path => path.startsWith('/posts/') && path !== '/posts/')) {
-  throw new Error('Sitemap must contain a published post');
-}
+const postPath = [...paths].find(path => path.startsWith('/posts/') && path !== '/posts/');
+if (!postPath) throw new Error('Sitemap must contain a published post');
+// Search for the first post's own title so result snippets (and their <mark>
+// highlights) render and get their contrast scanned, on every seeded site.
+const postHtml = await (await fetch(new URL(postPath, origin))).text();
+const postTitle = postHtml
+  .match(/<h1[^>]*>([\s\S]*?)<\/h1>/)?.[1]
+  ?.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/\s+/g, ' ').trim();
+if (postTitle) paths.add(`/search?q=${encodeURIComponent(postTitle.split(' ').slice(0, 6).join(' '))}`);
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch();
 let failures = 0;
@@ -45,10 +51,15 @@ async function scanPage(page, mode, path, themeMenu = 'closed') {
   return serious;
 }
 try {
-  for (const mode of ['light', 'dark']) {
+  for (const mode of ['light', 'dark', 'system-dark']) {
     const session = await openAccessibilityPage(browser, origin, mode);
     const { page } = session;
-    for (const path of paths) {
+    // Cookie-less system dark is verified where the class-based dark CSS lives:
+    // the post and search pages (the full sweep covers the cookie modes).
+    const modePaths = mode === 'system-dark'
+      ? [...paths].filter(path => path.startsWith('/posts/') || path.startsWith('/search'))
+      : paths;
+    for (const path of modePaths) {
       await session.visit(path);
       // Evidence-only fault injection: proves the real rendered check can reject a regression.
       if (process.env.A11Y_PROVE_FAILURE === '1' && path === '/') {
@@ -94,7 +105,6 @@ try {
   await writeFile(resolve(output, 'summary.json'), JSON.stringify(summary, null, 2));
   await writeFile(resolve(output, 'contrast-pairs.json'), JSON.stringify(pairs, null, 2));
 }
-const postPath = [...paths].find(path => path.startsWith('/posts/') && path !== '/posts/');
 const commentFieldsOk = await checkCommentFields(origin, postPath, resolve(output, 'comment-fields'));
 console.log(JSON.stringify({ seriousCriticalIssues: failures, pageModeChecks: summary.length, commentFields: commentFieldsOk ? "PASS" : "FAIL" }));
 process.exitCode = failures || !commentFieldsOk ? 1 : 0;
