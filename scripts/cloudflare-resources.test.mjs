@@ -26,3 +26,9 @@ test('garden uses its own worker with a staging domain and no production route',
   assert.deepEqual(configs[3].routes, [{ pattern: 'staging.jamesryan.me', custom_domain: true }]);
 });
 
+test('Usermaven workspace key is set only in marketing-site production vars', () => {
+  assert.equal(configs[0].vars?.USERMAVEN_KEY, 'UMNstP14wS');
+  assert.equal(configs[1].vars?.USERMAVEN_KEY, undefined);
+  assert.equal(configs[2].vars?.USERMAVEN_KEY, undefined);
+  assert.equal(configs[3].vars?.USERMAVEN_KEY, undefined);
+});

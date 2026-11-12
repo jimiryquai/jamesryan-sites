@@ -1,12 +1,16 @@
 ---
 import SharedBase from "@jamesryan/ui/components/Base.astro";
+import UsermavenAnalytics from "../components/UsermavenAnalytics.astro";
 import "../styles/globals.css";
 
 const props = Astro.props;
 ---
 <SharedBase {...props}>
 	<slot />
-	<slot name="links" slot="links" />
+	<Fragment slot="links">
+		<slot name="links" />
+		<UsermavenAnalytics />
+	</Fragment>
 	<slot name="logo" slot="logo" />
 	<slot name="actions" slot="actions" />
 	<slot name="cta" slot="cta" />
