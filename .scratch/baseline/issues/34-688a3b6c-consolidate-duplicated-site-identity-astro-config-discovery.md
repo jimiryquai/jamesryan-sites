@@ -13,7 +13,7 @@ Eliminate shallow pass-throughs and multi-file duplication across `apps/marketin
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] Zero `"Oatmeal"`, `"oatmeal.dev"`, or `"My Blog"` fallback strings remain anywhere in `apps/` or `packages/`.
 - [ ] `apps/marketing-site/astro.config.mjs` and `apps/digital-garden/astro.config.mjs` delegate shared Vite, Astro font/image, SEO graph, icon, and EmDash wiring to one shared module, specifying only per-site options (`site`, `port`, site-specific plugins, `redirectPolicy`).
@@ -21,3 +21,5 @@ Eliminate shallow pass-throughs and multi-file duplication across `apps/marketin
 - [ ] `apps/digital-garden` disables Astro/Wrangler telemetry in package scripts, drops unused `kysely`/`ulidx` devDependencies, and `pnpm typecheck` typechecks `packages/cms-helpers` and `packages/ui` alongside both apps.
 
 ## Comments
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `34-consolidate-config-routes`. Risk: medium (reversible internal consolidation of site identity fallbacks, Astro config factory, discovery route handlers, taxonomy archive template, and workspace package scripts targeting `master`, reaching staging only until manual production promotion).

@@ -15,13 +15,15 @@ Audit of non-HTML discovery feeds, JSON-LD endpoints, SSR response headers, and 
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `/rss.xml` emits normalized single-slash URLs, filters `status: "published"`, sets `cache.set(cacheHint)`, and never publicly caches draft/session responses.
-- [ ] `/schema/[collection].json` and `Base.astro` share one canonical `Person`/`Blog`/`WebSite` graph builder and use `getContentPath` from `@jamesryan/cms-helpers` (zero `/work/` or `/pages/contact` URLs), returning `404` or omitting collections with no published entries consistently with `/schemamap.xml`.
-- [ ] Related posts (`posts/[slug].astro`), related projects (`projects/[slug].astro`), and `getCollectionEntriesForService` (`service-content.ts`) filter `status: "published"` and propagate `cacheHint`.
-- [ ] Discovery/schema SSR routes emit `Access-Control-Allow-Origin: *` directly from Worker responses (verified by `scripts/check-rendered-seo.sh`), and `public/_headers` documents/targets only static assets.
+- [x] `/rss.xml` emits normalized single-slash URLs, filters `status: "published"`, sets `cache.set(cacheHint)`, and never publicly caches draft/session responses.
+- [x] `/schema/[collection].json` and `Base.astro` share one canonical `Person`/`Blog`/`WebSite` graph builder and use `getContentPath` from `@jamesryan/cms-helpers` (zero `/work/` or `/pages/contact` URLs), returning `404` or omitting collections with no published entries consistently with `/schemamap.xml`.
+- [x] Related posts (`posts/[slug].astro`), related projects (`projects/[slug].astro`), and `getCollectionEntriesForService` (`service-content.ts`) filter `status: "published"` and propagate `cacheHint`.
+- [x] Discovery/schema SSR routes emit `Access-Control-Allow-Origin: *` directly from Worker responses (verified by `scripts/check-rendered-seo.sh`), and `public/_headers` documents/targets only static assets.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `32-published-feeds-headers`. Risk: medium (reversible SSR discovery/schema/feed/cache-hint and response-header fixes targeting `master`, reaching staging only until manual production promotion).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Done. Built by `h32-codex` (`GPT-6.1-Sol`) in `aca39dc` + `55888c3` (merged in PR #44 `9474666`) with 1 cross-family review fix round (`b6ec757`, merged in PR #45 `10e4a99`) isolating published discovery queries from pending `draft_revision_id` snapshots (`runPublishedOnly`), percent-encoding `.md` route segments (`getMarkdownContentPath`), guarding `5xx` cache headers in `discoveryResponse`, and wiring `getSeoMeta` + `getOgImageUrl` on `digital-garden/src/pages/projects/[slug].astro`. Verified with `pnpm typecheck`, `pnpm build`, `pnpm test`, and `bash scripts/check-rendered-seo.sh`. Lesson compounded in `docs/lessons/emdash-published-query-draft-revision-overlay.md`; explainer written at `.scratch/explainers/32-a552c031.html`; evidence archived at `.orchestrate/runs/2026-11-12-32-published-feeds-headers/`.

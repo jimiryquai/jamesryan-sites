@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 35: Removing Dead Template Remnants, Dangling Widgets &amp; Unused Queries</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Dead Template Remnants &amp; Per-Request Footer Query Cleanup</h1>
+<p class="sub">Ticket 35 (<code>35-46c37e20</code>) · PR #42 (<code>d2db2b6</code>) · merged to <code>master</code> (staging) 2026-11-12</p>
+
+<h2>What was pruned</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 185" role="img" aria-label="Removed 4 unused D1 getMenu footer queries per SSR request in Base.astro, dangling service-select widget in seed.json, dead marketing-blocks components, broken CJS scripts, and 41 unreferenced public assets">
+<rect class="box" x="10" y="20" width="235" height="145" rx="8"/><rect class="hl" x="10" y="20" width="235" height="145" rx="8"/>
+<text x="24" y="46" font-weight="600">Runtime D1 Savings</text>
+<text x="24" y="74" style="fill:var(--ok)">✓ Dropped 4 unused <code>getMenu()</code></text>
+<text x="34" y="96">queries per SSR page render</text>
+<text x="24" y="122" style="fill:var(--ok)">✓ Dropped dangling widget</text>
+<text x="34" y="142"><code>marketing-blocks:service-select</code></text>
+
+<rect class="box" x="270" y="20" width="235" height="145" rx="8"/>
+<text x="284" y="46" font-weight="600">Dead Code &amp; Scripts</text>
+<text x="284" y="74">• Inlined 4 page-builder sections</text>
+<text x="284" y="98">• Deleted <code>src/components/blocks/*</code></text>
+<text x="284" y="122">• Deleted <code>theme.css</code> &amp; <code>TagList</code></text>
+<text x="284" y="144">• Deleted 3 broken CJS scripts</text>
+
+<rect class="box" x="530" y="20" width="220" height="145" rx="8"/>
+<text x="544" y="46" font-weight="600">Static Assets</text>
+<text x="544" y="74">• Removed 41 unreferenced</text>
+<text x="554" y="96">stock photos, avatars &amp; logos</text>
+<text x="544" y="122" style="fill:var(--ok)">✓ Kept seeded <code>favicon.svg</code></text>
+<text x="544" y="144" style="fill:var(--ok)">✓ Guarded by <code>dead-remnants.test</code></text>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Behaviour</th></tr>
+<tr><td><code>Base.astro</code> SSR queries</td><td><code>packages/ui/src/components/Base.astro</code> fetched <code>footer_product</code>, <code>footer_company</code>, <code>footer_resources</code>, and <code>footer_legal</code> on every page request without ever rendering them. Removing them saves 4 D1 lookups per uncached SSR request.</td></tr>
+<tr><td>Seed schema hygiene</td><td>Removed dangling <code>"widget": "marketing-blocks:service-select"</code> from <code>apps/marketing-site/seed/seed.json</code> and unregistered <code>apps/digital-garden/src/plugins/marketing-blocks/*</code>.</td></tr>
+<tr><td>Page-builder sections &amp; assets</td><td>Moved the 4 still-used visual renderers (<code>FAQ</code>, <code>Team</code>, <code>Stats</code>, <code>Comparison</code>) directly into <code>apps/marketing-site/src/components/page-builder/</code>, deleted the legacy <code>blocks/</code> directory, unimported <code>theme.css</code>, 3 broken CJS scripts, and 41 unreferenced <code>public/</code> files.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>Regression guard:</strong> <code>scripts/dead-remnants.test.mjs</code> runs in <code>pnpm test</code> to ensure deleted remnants and dangling widget references do not reappear.</p>
+</div>
+</main></body></html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 29: HTML Fragment Escaping, CMS Link Protocols &amp; Untrusted Surfaces</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Hardening Plugin Fragments, CMS Links &amp; Garden Surfaces</h1>
+<p class="sub">Ticket 29 (<code>29-79f19342</code>) · PR #43 (<code>9721d2d</code>) · merged to <code>master</code> (staging) 2026-11-12</p>
+
+<h2>Boundary map</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 220" role="img" aria-label="Untrusted CMS and plugin inputs pass through page-fragments.ts, toSafeExternalHttpUrl, sanitizeDocumentHtml, and getPublishedRoute before reaching HTML output">
+<rect class="box" x="10" y="20" width="220" height="180" rx="8"/>
+<text x="24" y="46" font-weight="600">Input Surfaces</text>
+<text x="24" y="72">• EmDash <code>page:fragments</code></text>
+<text x="24" y="96">• CMS <code>project.data.url</code></text>
+<text x="24" y="120">• Garden <code>marketing.document</code></text>
+<text x="24" y="144">• Garden <code>/contact</code> route</text>
+<text x="24" y="172" style="fill:var(--no)">Previously unescaped / PII log</text>
+
+<rect class="box" x="275" y="20" width="235" height="180" rx="8"/><rect class="hl" x="275" y="20" width="235" height="180" rx="8"/>
+<text x="290" y="46" font-weight="600">Shared Guards</text>
+<text x="290" y="72" style="fill:var(--ok)">✓ <code>renderPageFragments</code> (<code>body:start</code>)</text>
+<text x="290" y="96" style="fill:var(--ok)">✓ Escapes attrs &amp; <code>&lt;\/script</code></text>
+<text x="290" y="120" style="fill:var(--ok)">✓ <code>toSafeExternalHttpUrl</code> (http/s)</text>
+<text x="290" y="144" style="fill:var(--ok)">✓ <code>sanitizeDocumentHtml</code> allowlist</text>
+<text x="290" y="168" style="fill:var(--ok)">✓ <code>getPublishedRoute("/contact")</code></text>
+
+<rect class="box" x="555" y="20" width="195" height="180" rx="8"/>
+<text x="570" y="46" font-weight="600">Rendered Output</text>
+<text x="570" y="72">• <code>head</code>, <code>body:start</code>, <code>body:end</code></text>
+<text x="570" y="96">• Safe <code>&lt;a href&gt;</code> or omitted</text>
+<text x="570" y="120">• Seeded privacy HTML intact</text>
+<text x="570" y="144">• Zero PII <code>console.log</code></text>
+<text x="570" y="168">• <code>@jamesryan/ui</code> <code>astro check</code></text>
+
+<path class="arrow" d="M230 110 L273 110"/>
+<path class="arrow" d="M510 110 L553 110"/>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Behaviour</th></tr>
+<tr><td>Plugin fragments (<code>Base.astro</code>)</td><td><code>packages/ui/src/utils/page-fragments.ts</code> escapes attribute values, blocks <code>on*</code>/<code>src</code> overrides, validates external <code>src</code> URLs, escapes <code>&lt;/script</code> to <code>&lt;\/script</code> (preserving valid JS/JSON payloads while failing closed on unclosed <code>&lt;!--</code>), and wires EmDash's canonical <code>"head"</code>, <code>"body:start"</code>, and <code>"body:end"</code> placements via <code>resolveFragments</code>.</td></tr>
+<tr><td>CMS project links</td><td><code>toSafeExternalHttpUrl</code> restricts <code>project.data.url</code> in both apps to absolute <code>http:</code> / <code>https:</code> URLs, omitting <code>javascript:</code>, <code>data:</code>, or malformed links.</td></tr>
+<tr><td>Garden <code>Document.astro</code></td><td><code>sanitizeDocumentHtml</code> rebuilds only allowlisted document tags and validated <code>a[href]</code> attributes (tracking HTML5 attribute quote states and foreign self-closing tags), preserving seeded <code>privacy-policy</code> HTML byte-for-byte while discarding <code>&lt;script&gt;</code>, <code>&lt;svg&gt;</code>, and event handlers.</td></tr>
+<tr><td>Garden <code>/contact</code> &amp; <code>/404</code></td><td>Removed the template <code>POST</code> handler that logged visitor PII via <code>console.log</code> and showed <code>hello@acme.example</code>; gated <code>/contact</code> (and the <code>/404</code> CTA + <code>/sitemap.xml</code>) on <code>getPublishedRoute("/contact", Astro.cache)</code>.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>UI package typechecking:</strong> <code>packages/ui/package.json</code> now runs <code>astro check</code> during <code>pnpm typecheck</code>, catching EmDash union mismatches inside shared <code>.astro</code> and <code>.ts</code> files.</p>
+<p><strong>Future plugins using <code>page:fragments</code>:</strong> use EmDash's colon-separated <code>"body:start"</code> and <code>"body:end"</code> placements; inline scripts with unclosed <code>&lt;!--</code> HTML comments fail closed to empty output.</p>
+</div>
+</main></body></html>

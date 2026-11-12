@@ -16,6 +16,7 @@ okf_version: 0.2
 
 ## emdash
 
+* [EmDash published queries still overlay pending draft revisions during editMode and preview sessions](emdash-published-query-draft-revision-overlay.md) - Calling `getEmDashCollection` with `status: "published"` filters SQL rows by published status, but EmDash 1.5 still overlays `row.draft_revision_id` when `editMode` or `preview` is active in `getRequestContext()`.
 * [Workspace Astro UI packages need their own astro check and canonical platform unions](workspace-package-typecheck-and-emdash-placements.md) - App-level `astro check` skips workspace dependency packages resolved via `node_modules`, allowing type mismatches against EmDash unions like `PagePlacement` (`"body:start"` vs `"body-start"`) to pass CI silently.
 
 ## usermaven

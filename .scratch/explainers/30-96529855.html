@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 30: Cookie-less System Dark Mode &amp; Valid Scoped Astro Styles</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Cookie-less System Dark Mode &amp; Scoped Astro CSS</h1>
+<p class="sub">Ticket 30 (<code>30-96529855</code>) · PR #40 (<code>c8883bb</code>) · merged to <code>master</code> (staging) 2026-11-12</p>
+
+<h2>Theme state matrix</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 195" role="img" aria-label="Four theme states: light cookie, dark cookie, system-light no cookie, and system-dark no cookie; scoped Astro CSS now matches both .dark and @media prefers-color-scheme dark on :root:not(.light)">
+<rect class="box" x="10" y="20" width="220" height="155" rx="8"/>
+<text x="24" y="46" font-weight="600">Visitor State (Default)</text>
+<text x="24" y="72">• No <code>theme</code> cookie</text>
+<text x="24" y="96">• OS <code>prefers-color-scheme: dark</code></text>
+<text x="24" y="120">• <code>&lt;html&gt;</code> has neither <code>.dark</code></text>
+<text x="34" y="140">nor <code>.light</code> class</text>
+
+<rect class="box" x="275" y="20" width="235" height="155" rx="8"/><rect class="hl" x="275" y="20" width="235" height="155" rx="8"/>
+<text x="290" y="46" font-weight="600">Scoped <code>&lt;style&gt;</code> Fix</text>
+<text x="290" y="72" style="fill:var(--ok)">✓ Explicit <code>:global(.dark)</code> +</text>
+<text x="290" y="94" style="fill:var(--ok)">  <code>@media (prefers-color-scheme:dark)</code></text>
+<text x="290" y="116" style="fill:var(--ok)">  <code>:global(:root:not(.light))</code></text>
+<text x="290" y="140" style="fill:var(--ok)">✓ Valid <code>color-mix()</code> / <code>rgba()</code></text>
+
+<rect class="box" x="555" y="20" width="195" height="155" rx="8"/>
+<text x="570" y="46" font-weight="600">Browser Gate</text>
+<text x="570" y="72">• 4 modes tested in axe:</text>
+<text x="580" y="94"><code>light</code>, <code>dark</code>,</text>
+<text x="580" y="116"><code>system-light</code>, <code>system-dark</code></text>
+<text x="570" y="142" style="fill:var(--ok)">• 38 checks · 0 violations</text>
+
+<path class="arrow" d="M230 98 L273 98"/>
+<path class="arrow" d="M510 98 L553 98"/>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Behaviour</th></tr>
+<tr><td>Cookie-less <code>system-dark</code></td><td>First-time visitors on dark OSes have no <code>theme</code> cookie, so <code>&lt;html&gt;</code> has no <code>.dark</code> class. <code>posts/[slug].astro</code> and <code>search.astro</code> in both apps now pair every <code>:global(.dark)</code> rule with <code>@media (prefers-color-scheme: dark) { :global(:root:not(.light)) ... }</code> so prose, comments, and search snippets never render dark-on-dark.</td></tr>
+<tr><td>Valid CSS values</td><td>Replaced 26 invalid Tailwind slash-alpha tokens (<code>var(--color-olive-950)/10</code>) and <code>#white</code> inside plain Astro <code>&lt;style&gt;</code> blocks with valid CSS <code>color-mix(in srgb, ...)</code> / <code>#ffffff</code>, guarded by <code>scripts/astro-style-values.test.mjs</code>.</td></tr>
+<tr><td>Shiki guard</td><td>Scoped inline code rules to <code>:global(:not(pre) &gt; code)</code> so Shiki/Code Block Pro syntax highlighting inside <code>&lt;pre&gt;&lt;code&gt;</code> is untouched.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>Accessibility harness:</strong> <code>scripts/check-accessibility.mjs</code> and <code>scripts/check-comment-fields.mjs</code> now test all four theme states (including cookie-less <code>system-dark</code> and <code>/search?q=Fixture</code> <code>&lt;mark&gt;</code> highlights) automatically.</p>
+</div>
+</main></body></html>
