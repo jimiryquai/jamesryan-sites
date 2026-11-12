@@ -8,6 +8,7 @@
  */
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { pageMarkdownPath, publishedEntryPath } from "./published-path.mjs";
 
 // The page builder's shared-content block labels, and where each reads items.
 const SHARED_BLOCKS = {
@@ -18,12 +19,48 @@ const SHARED_BLOCKS = {
 };
 // The posts block's default count, mirrored from its definition.
 const POSTS_DEFAULT_COUNT = 4;
-const TOP_LEVEL_PAGES = ["about", "contact", "pricing", "privacy-policy"];
 
-const pageMarkdownPath = (slug) =>
-  slug === "home" ? "/home.md"
-    : TOP_LEVEL_PAGES.includes(slug) ? `/${slug}.md`
-      : `/pages/${encodeURIComponent(slug)}.md`;
+function textValue(value) {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function imageAlt(block) {
+  return textValue(block.alt)
+    ?? textValue(block.asset?.alt)
+    ?? textValue(block.asset?.$media?.alt)
+    ?? "";
+}
+
+/** A URL the seed itself names. Resolved media ids are not in the seed, so a
+ * `$media` file is not required byte-for-byte; the alt image marker is. */
+function stableImageUrl(block) {
+  return textValue(block.url) ?? textValue(block.src) ?? textValue(block.value)
+    ?? (typeof block.asset === "string" ? textValue(block.asset) : undefined)
+    ?? textValue(block.asset?.url) ?? textValue(block.asset?.src) ?? textValue(block.asset?.previewUrl);
+}
+
+/** Fenced code, blockquote markers and Markdown images a `.md` route must include. */
+function portableTextMarkers(content) {
+  const markers = [];
+  for (const block of content ?? []) {
+    if (!block || typeof block !== "object") continue;
+    if (block._type === "code-block-pro" || block._type === "code") {
+      const language = typeof block.language === "string" ? block.language : "";
+      const code = typeof block.code === "string" ? block.code : "";
+      const body = code.endsWith("\n") ? code : `${code}\n`;
+      markers.push(`\`\`\`${language}\n${body}\`\`\``);
+    } else if (block._type === "image") {
+      const alt = imageAlt(block);
+      const url = stableImageUrl(block);
+      if (url) markers.push(`![${alt}](${url})`);
+      else if (alt) markers.push(`![${alt}](`);
+    } else if (block._type === "block" && block.style === "blockquote") {
+      const text = (block.children ?? []).map((child) => child?.text ?? "").join("");
+      if (text) markers.push(text.split("\n").map((line) => `> ${line}`).join("\n"));
+    }
+  }
+  return markers;
+}
 
 /** The published posts a posts block reads, newest first. A fresh seed stamps
  * every published entry with its seeding time, so the collection's newest-first
@@ -53,11 +90,10 @@ function blockTexts(block, collections, pageService) {
   for (const item of data.items ?? []) texts.push(item.title, item.description, item.value, item.label);
   for (const column of data.columns ?? []) texts.push(column.label);
   for (const row of data.rows ?? []) texts.push(row.name, row.first_value, row.second_value, row.third_value);
-  // Only span text of Portable Text blocks: the package's Markdown renderer
-  // skips unknown PT block types (code blocks) by design.
   for (const pt of data.content ?? []) {
     if (pt._type === "block") for (const child of pt.children ?? []) texts.push(child.text);
   }
+  texts.push(...portableTextMarkers(data.content));
   return texts;
 }
 
@@ -105,24 +141,24 @@ async function main(origin, seedPath, evidenceDir) {
     }
   }
 
-  const post = (collections.posts ?? []).find((entry) => entry.status === "published");
-  if (post) {
+  for (const entry of collections.posts ?? []) {
+    if (entry.status !== "published") continue;
     checked++;
-    const path = `/posts/${encodeURIComponent(post.slug)}.md`;
+    const path = `${publishedEntryPath("posts", entry.slug)}.md`;
     const { response, body } = await fetchMarkdown(path);
     expect(path, response.status === 200, `HTTP ${response.status}`);
-    for (const text of envelope(post.data?.title ?? post.id)) {
+    for (const text of [...envelope(entry.data?.title ?? entry.id), ...portableTextMarkers(entry.data?.content)]) {
       expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
     }
   }
 
-  const project = (collections.projects ?? []).find((entry) => entry.status === "published");
-  if (project) {
+  for (const entry of collections.projects ?? []) {
+    if (entry.status !== "published") continue;
     checked++;
-    const path = `/projects/${encodeURIComponent(project.slug)}.md`;
+    const path = `${publishedEntryPath("projects", entry.slug)}.md`;
     const { response, body } = await fetchMarkdown(path);
     expect(path, response.status === 200, `HTTP ${response.status}`);
-    for (const text of envelope(project.data?.title ?? project.id)) {
+    for (const text of [...envelope(entry.data?.title ?? entry.id), ...portableTextMarkers(entry.data?.content)]) {
       expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
     }
   }

@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import { portableTextToMarkdown as renderPortableText } from "@jamesryan/cms-helpers";
 import { getEmDashEntry, getSiteSettings } from "emdash";
 
 export const GET: APIRoute = async ({ params }) => {
@@ -62,49 +63,11 @@ function portableTextToMarkdown(content: any[]): string {
 	let markdown = "";
 
 	for (const block of content) {
-		if (block._type === "block") {
-			const style = block.style || "normal";
-			let prefix = "";
-			let suffix = "";
-
-			if (style.startsWith("h") && style.length === 2) {
-				const level = parseInt(style[1], 10);
-				prefix = "#".repeat(level) + " ";
-				suffix = "\n";
-			}
-
-			let blockText = "";
-			if (block.children) {
-				for (const child of block.children) {
-					let text = child.text || "";
-					if (child.marks && Array.isArray(child.marks)) {
-						for (const mark of child.marks) {
-							if (mark === "strong") {
-								text = `**${text}**`;
-							} else if (mark === "em") {
-								text = `*${text}*`;
-							} else if (mark === "code") {
-								text = `\`${text}\``;
-							} else {
-								const linkDef = block.markDefs?.find((def: any) => def._key === mark);
-								if (linkDef && linkDef.href) {
-									text = `[${text}](${linkDef.href})`;
-								}
-							}
-						}
-					}
-					blockText += text;
-				}
-			}
-
-			if (block.listItem) {
-				const bullet = block.listItem === "bullet" ? "-" : "1.";
-				const indent = "  ".repeat((block.level || 1) - 1);
-				markdown += `${indent}${bullet} ${blockText}\n`;
-			} else {
-				markdown += `${prefix}${blockText}${suffix}\n\n`;
-			}
-		} else if (block._type === "marketing.hero") {
+		if (block._type === "block" || block._type === "code" || block._type === "code-block-pro" || block._type === "image") {
+			markdown += renderPortableText([block]);
+			continue;
+		}
+		if (block._type === "marketing.hero") {
 			markdown += `# ${block.headline || ""}\n\n${block.subheadline || ""}\n\n`;
 			if (block.primaryCtaLabel) {
 				markdown += `[${block.primaryCtaLabel}](${block.primaryCtaUrl || "#"})\n\n`;

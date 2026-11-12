@@ -227,6 +227,9 @@ async function verifyCodeRenderer(origin) {
     if (response.status !== 200 || !html.includes('class="cbp-copy-btn"') || !html.includes('class="shiki') || !html.includes("astro7-renderer-fixture")) {
       throw new Error(`${path}: registered Code Block Pro renderer did not render highlighted code and copy button (HTTP ${response.status})`);
     }
+    if (path.startsWith("/projects/") && (html.includes("prose-olive") || !html.includes("project-prose"))) {
+      throw new Error(`${path}: project Portable Text is missing project-prose styling`);
+    }
     console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
   }
 }
@@ -384,7 +387,21 @@ async function verify(origin, unpublished = false, database) {
   if (extractMetaDescription(listingHtml) !== description("posts collection")) {
     throw new Error("/posts: collection description was not rendered");
   }
+  if (extractTitle(listingHtml) !== `Blog — ${site.title}`) {
+    throw new Error(`/posts: title was ${JSON.stringify(extractTitle(listingHtml))}`);
+  }
+  console.log(`/posts: title ${extractTitle(listingHtml)}`);
   console.log("/posts: collection description rendered");
+  const notFound = await fetch(new URL("/this-page-is-missing", origin), { redirect: "manual" });
+  const notFoundHtml = await notFound.text();
+  if (notFound.status !== 404) throw new Error(`/404: HTTP ${notFound.status}`);
+  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", "Read the blog"]) {
+    if (!notFoundHtml.includes(text)) throw new Error(`/404: missing ${JSON.stringify(text)}`);
+  }
+  for (const banned of ["btn-primary", "btn-secondary", "--spacing-", "--font-size-", "--max-width", "var(--radius)"]) {
+    if (notFoundHtml.includes(banned)) throw new Error(`/404: still contains ${banned}`);
+  }
+  console.log("/404: olive not-found page rendered");
   const html = await (await fetch(new URL("/posts/fixture-fallback", origin))).text();
   if (extractTitle(html) !== `Fixture fallback title — ${site.title}` ||
       extractMetaDescription(html) !== description("fallback excerpt")) {
@@ -395,6 +412,9 @@ async function verify(origin, unpublished = false, database) {
   if (extractTitle(projectHtml) !== `Fixture project fallback — ${site.title}` ||
       extractMetaDescription(projectHtml) !== description("fallback project summary")) {
     throw new Error("/projects/fixture-fallback-project: entry title/summary fallback was not rendered");
+  }
+  if (projectHtml.includes("prose-olive") || !projectHtml.includes("project-prose")) {
+    throw new Error("/projects/fixture-fallback-project: Portable Text is missing project-prose styling");
   }
   console.log("/projects/fixture-fallback-project: entry title/summary fallback rendered");
 }
