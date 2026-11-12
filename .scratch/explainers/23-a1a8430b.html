@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 23: published pages only</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}.arrow{stroke:var(--mute);stroke-width:1.5;fill:none;marker-end:url(#a)}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>A page exists only when it has published content</h1>
+<p class="sub">Ticket 23-a1a8430b · PR #23 · merged to master 2927792 on 2026-11-12 · on staging, not yet on production</p>
+
+<h2>What changed</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 300" role="img" aria-label="Every route and discovery endpoint asks one module, which asks EmDash">
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" style="fill:var(--mute)"/></marker></defs>
+<rect class="box" x="10" y="20" width="230" height="170" rx="8"/>
+<text x="24" y="44" font-weight="600">Page routes</text>
+<text x="24" y="68">/ · /about · /contact · /pricing</text>
+<text x="24" y="88">/privacy-policy · /pages/[slug]</text>
+<text x="24" y="108">/posts · /posts/[slug]</text>
+<text x="24" y="128">/projects · /projects/[slug]</text>
+<text x="24" y="156" style="fill:var(--mute)">null → Astro 404 (real 404,</text>
+<text x="24" y="174" style="fill:var(--mute)">no redirect, no template copy)</text>
+<rect class="box" x="10" y="215" width="230" height="70" rx="8"/>
+<text x="24" y="240" font-weight="600">Discovery</text><text x="24" y="262">sitemap.xml · llms.txt</text>
+<rect class="box" x="300" y="60" width="230" height="190" rx="8"/><rect class="hl" x="300" y="60" width="230" height="190" rx="8"/>
+<text x="314" y="84" font-weight="600">published-routes.ts</text>
+<text x="314" y="110">getPublishedRoute(path)</text>
+<text x="314" y="128" style="fill:var(--mute)">one lookup; drafts only if</text>
+<text x="314" y="146" style="fill:var(--mute)">EmDash says this request</text>
+<text x="314" y="164" style="fill:var(--mute)">may preview them</text>
+<text x="314" y="196">getPublishedRoutes()</text>
+<text x="314" y="214" style="fill:var(--mute)">published only, for listing</text>
+<rect class="box" x="590" y="110" width="160" height="80" rx="8"/>
+<text x="604" y="140" font-weight="600">EmDash</text><text x="604" y="162">pages · posts · projects</text>
+<path class="arrow" d="M240 105 L298 120"/><path class="arrow" d="M240 250 L298 205"/><path class="arrow" d="M530 150 L588 150"/>
+</svg>
+</div>
+<p>Before this, each route decided for itself, the sitemap hard-coded <code>/projects</code>, and a missing entry fell back to template text (the "Talk to our team" form, "Add pricing content in the admin", the Company Inc. privacy boilerplate). Now one module answers "does this page exist?" and everything asks it, so the pages and the sitemap can't disagree.</p>
+
+<h2>What a visitor sees</h2>
+<table>
+<tr><th>Address</th><th>Before</th><th>Now</th></tr>
+<tr><td>A page with no published entry (<code>/contact</code> on production)</td><td class="no">200, template copy, in sitemap</td><td class="ok">404, not listed</td></tr>
+<tr><td>An unpublished page (Pricing, Privacy Policy on production)</td><td class="no">200, template copy</td><td class="ok">404, not listed</td></tr>
+<tr><td><code>/projects</code> with no published projects</td><td class="no">200, empty "Selected Work", in sitemap</td><td class="ok">404, not listed</td></tr>
+<tr><td><code>/posts</code> with no published posts</td><td class="no">200, "Create your first post"</td><td class="ok">404, not listed</td></tr>
+<tr><td>Missing post, category or tag</td><td class="no">302 redirect to /404</td><td class="ok">404 status</td></tr>
+<tr><td><code>/home-01</code>, <code>/pricing-02</code> and the other 11 template variants</td><td class="no">200</td><td class="ok">gone</td></tr>
+<tr><td>Admin preview of an unpublished draft</td><td>renders</td><td class="ok">still renders, <code>private, no-store</code></td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>To launch a page, publish its entry.</strong> Contact, Pricing and Privacy Policy appear on the site and in the sitemap the moment their entries are published, and vanish when unpublished. There's no code switch.</p>
+<p><strong>Production still runs the old code</strong> until you approve the next promotion. Today production answers 200 at <code>/pricing</code> and <code>/privacy-policy</code> with template text; after promotion they 404.</p>
+<p><strong>Posts description:</strong> <code>/posts</code> now reads the Posts collection's description (Content Types → Posts). It's empty, so the page still uses your tagline until you fill it.</p>
+<p><strong>Staging content lags production:</strong> staging still has Pricing and Privacy Policy published and the SEO fields from before ticket 18, so the SEO validator fails there on content, not code.</p>
+<p><strong>Page builder:</strong> its branch is rebasing onto this. Page templates now render through <code>PublishedPage.astro</code>, the one place to switch from Content to Layout.</p>
+</div>
+</main></body></html>
