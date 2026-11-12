@@ -28,14 +28,44 @@ Make each harness start without errors, while keeping the site servers usable wh
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] A fresh Copilot and a fresh Codex session in a worktree start with no MCP errors (pane output in a comment).
-- [ ] The config holds no machine-specific path and no unpinned package; each server's telemetry is checked and recorded.
-- [ ] `docs/` says how to reach the site's MCP (local or staging) and why.
+- [x] A fresh Copilot and a fresh Codex session in a worktree start with no MCP errors (pane output in a comment).
+- [x] The config holds no machine-specific path and no unpinned package; each server's telemetry is checked and recorded.
+- [x] `docs/` says how to reach the site's MCP (local or staging) and why.
 
 ## Comments
 
 **2026-11-09 Claude (orchestrator):** Raised after James asked about the Copilot helper's errors: "we need to find a fix for any issues as our agent workflow depends on not having any." Risk: medium (agent config across harnesses; possibly a token's scope).
 
 **2026-11-12 Claude (orchestrator):** Claimed for h22-agy (agy, Gemini 4 Carbon high; first ticket for Carbon), base `master`. Risk: medium (agent config across harnesses; no token scope widened). The orchestrator runs box 1's fresh Copilot and Codex sessions itself.
+
+**2026-11-12 Claude (orchestrator):** Done. Built by h22-agy (agy, Gemini 4 Carbon high) in 1 round, PR #24, merged to master as bce1e15 and into `baseline` as 285a1bb.
+- `.mcp.json` (`config/mcporter.json`) now holds only `emdash-docs`, with `"imports": []`.
+- `emdash-site` and `emdash-garden` moved to `config/mcporter.local.json` (`pnpm -s mcp:local`), and `emdash-staging-agent` to `config/mcporter.staging.json` (`pnpm -s mcp:staging`). All use direct HTTP, with no `mcp-remote`, no `sh -c` wrappers and no machine paths.
+- Why, per harness, with sources and the telemetry check: `docs/mcp.md`.
+- One deviation from the brief, and justified: `emdash-staging-agent` also left the always-loaded config. No harness loads `.env`, so the token is unset, and EmDash answers a 401 with an OAuth challenge. On 2026-11-09 that made Copilot open a browser login and mint an OAuth grant on James's **admin** account on staging (refresh token valid to 2027-02-07). With James's go-ahead, the orchestrator revoked it on 2026-11-12: it deleted the 2 `_emdash_oauth_tokens` rows and the "GitHub Copilot CLI" `_emdash_oauth_clients` row on staging (0 of each left) and Copilot's cached `~/.copilot/mcp-oauth-config/` files. Production has not been checked yet, because auto mode refused the read.
+- Box 1, run by the orchestrator in fresh sessions:
+
+```
+Box 1, orchestrator, 2026-11-12T10:23:29Z, fresh sessions in /home/james/Repos/Workspace/building/jamesryan-sites/.claude/worktrees/22-mcp-startup at c93f252
+== Codex v0.167.0 (/mcp)
+🔌  MCP Tools
+
+  • codex_apps: connected (157 tools)
+  • codex_tui: connected (12 tools)
+  • pencil: connected (9 tools)
+
+  Use /mcp verbose for tools and resources.
+Codex startup warnings: 1 (launcher -c flags need embedded mode; not MCP)
+== Copilot v1.0.107 (/mcp)
+ MCP                                                                                                                                     2/2 enabled
+    ◎  emdash-docs                                                                                                                       Repository
+       mcp:emdash-docs                                                                                                                   129 tokens
+    ◎  GitHub MCP Server                                                                                                                   Built-in
+```
+
+- Box 2: `mcporter list` and telemetry evidence; CI re-run locally, exit 0 (41 + 5 tests).
+- Box 3: `docs/mcp.md`, linked from AGENTS.md; `docs/publishing.md` uses `pnpm -s mcp:staging`.
+- Evidence: `.orchestrate/runs/2026-11-12-22-mcp-startup/`.
+
