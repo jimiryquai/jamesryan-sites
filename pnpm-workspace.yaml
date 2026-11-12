@@ -18,5 +18,5 @@ minimumReleaseAgeExclude:
   - emdash
   - '@emdash-cms/*'
   - 'emdash-plugin-code-block-pro@0.2.0'
-  - 'emdash-plugin-page-builder@0.5.0'
+  - 'emdash-plugin-page-builder@0.6.0'
   - 'emdash-plugin-ai-comment-moderation@2.1.0'

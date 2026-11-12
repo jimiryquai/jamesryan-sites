@@ -1,6 +1,6 @@
 import {
-  COUNT_FIELD_SLUG, isSourceResult, layoutToMarkdown, migrateBlocks, SCOPE_FIELD_SLUG,
-  type Source, type StoredBlock,
+  isSourceResult, layoutToMarkdown, migrateBlocks, resolveSourceContext,
+  type BlockType, type Source, type StoredBlock,
 } from 'emdash-plugin-page-builder/blocks';
 import type { CacheHint } from 'emdash';
 import type { Page } from '../../../emdash-env';
@@ -16,24 +16,23 @@ export interface RenderedLayoutMarkdown {
 
 /**
  * What each shared-content block's source read, keyed by that block's `_key`:
- * the items map `layoutToMarkdown` renders alongside each block. Resolves
- * scope, group and count exactly as `PageBuilder` renders them, so the
- * Markdown route serves the same items the page shows without a second query
- * per block.
+ * the items map `layoutToMarkdown` renders alongside each block. Resolves the
+ * source context exactly as `PageBuilder` renders it — scope and group, the
+ * schema-derived count default, and block-specific context such as `posts`
+ * category — so the Markdown route serves the same items the page shows
+ * without a second query per block.
  */
 async function collectLayoutSourceItems(
   layout: readonly StoredBlock[], group: string | undefined, sources: Readonly<Record<string, Source>>,
 ): Promise<{ items: Record<string, readonly unknown[]>; cacheHints: CacheHint[] }> {
   const items: Record<string, readonly unknown[]> = {};
   const cacheHints: CacheHint[] = [];
-  for (const block of migrateBlocks([...layout], getOfferedBlocks())) {
+  const blockTypes: BlockType[] = getOfferedBlocks();
+  const bySlug = new Map(blockTypes.map((blockType) => [blockType.definition.slug, blockType]));
+  for (const block of migrateBlocks([...layout], blockTypes)) {
     const source = sources[block._type];
     if (!source) continue;
-    const storedScope = block[SCOPE_FIELD_SLUG];
-    const scope = storedScope === 'page' && group !== undefined ? 'page' : 'all';
-    const storedCount = block[COUNT_FIELD_SLUG];
-    const count = typeof storedCount === 'number' && storedCount > 0 ? storedCount : undefined;
-    const result = await source({ scope, group, count });
+    const result = await source(resolveSourceContext(block, bySlug.get(block._type), group));
     const read = isSourceResult(result) ? result : { items: result };
     if (read.cacheHints) cacheHints.push(...read.cacheHints);
     items[block._key] = read.items;

@@ -14,7 +14,7 @@ function fakeSources(overrides = {}) {
     return overrides[slug] ?? [];
   };
   return {
-    sources: { pricing: recorder('pricing'), testimonials: recorder('testimonials'), faq: recorder('faq'), team: recorder('team') },
+    sources: { pricing: recorder('pricing'), testimonials: recorder('testimonials'), faq: recorder('faq'), team: recorder('team'), posts: recorder('posts') },
     calls,
   };
 }
@@ -116,6 +116,34 @@ test('source cache hints are preserved for the route to apply', async () => {
   );
   assert.match(markdown, /### Q\?/);
   assert.deepEqual(cacheHints, [{ tags: ['faqs-list'] }, { tags: ['team-list'] }, { tags: ['team-get-1'] }]);
+});
+
+test('a posts block defaults its absent count to 4 and passes its trimmed category through', async () => {
+  const { sources, calls } = fakeSources({ posts: [{ title: 'Newest', url: '/posts/newest' }] });
+  const { markdown } = await renderLayoutMarkdown(
+    [
+      { _type: 'posts', _key: 'home-posts', _version: 1, variant: 'featured-grid', category: ' engineering ' },
+      { _type: 'posts', _key: 'other-posts', _version: 1, variant: 'grid', count: 6 },
+    ],
+    undefined,
+    sources,
+  );
+  assert.deepEqual(calls.map((call) => [call.slug, call.context]), [
+    ['posts', { scope: 'all', group: undefined, count: 4, category: 'engineering' }],
+    ['posts', { scope: 'all', group: undefined, count: 6 }],
+  ]);
+  assert.equal((markdown.match(/- \[Newest\]\(\/posts\/newest\)/g) ?? []).length, 2);
+});
+
+test('a posts block heading renders and an item without a URL is skipped', async () => {
+  const { sources } = fakeSources({ posts: [{ title: 'Newest', url: '/posts/newest' }, { title: 'No URL' }] });
+  const { markdown } = await renderLayoutMarkdown(
+    [{ _type: 'posts', _key: 'home-posts', _version: 1, heading: 'From the blog' }],
+    undefined,
+    sources,
+  );
+  assert.match(markdown, /## From the blog/);
+  assert.doesNotMatch(markdown, /No URL/);
 });
 
 test('source results carrying cache hints still yield their items', async () => {

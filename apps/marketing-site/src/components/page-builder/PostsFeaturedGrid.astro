@@ -1,0 +1,134 @@
+---
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import { markdownText } from 'emdash-plugin-page-builder/blocks';
+import { Image } from 'emdash/ui';
+import PostCard from '@jamesryan/ui/components/PostCard.astro';
+import { cardBylines, type SitePost } from './sources';
+interface Props { value: StoredBlock; items?: readonly unknown[] }
+const value = Astro.props.value as StoredBlock & { heading?: string };
+// PageBuilder resolves this block's typed source before entering the generic section boundary.
+const posts = (Astro.props.items ?? []) as readonly SitePost[];
+// The first post with an image is featured; the rest sit in the card grid.
+// Without a block heading, the section's own default label shows.
+const heading = markdownText(value.heading) ?? 'Recent Posts';
+const featured = posts.find((post) => post.image) ?? posts[0];
+const grid = posts.filter((post) => post !== featured);
+
+function formatDate(date: Date | string | undefined) {
+	if (date === undefined) return null;
+	const value = typeof date === 'string' ? new Date(date) : date;
+	return value.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+---
+{
+	posts.length > 0 && (
+		<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 pb-24 sm:pb-32 -mt-8 sm:-mt-12">
+			<div class="space-y-24">
+				{/* Featured Post */}
+				{featured && (
+					<section class="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+						<div class="lg:col-span-7 aspect-[16/10] w-full overflow-hidden rounded-3xl bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5">
+							<a href={featured.url} class="block w-full h-full">
+								<Image
+									image={featured.image}
+									class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+									style="width: 100%; height: 100%; object-fit: cover;"
+									loading="eager"
+									fetchpriority="high"
+								/>
+							</a>
+						</div>
+						<div class="lg:col-span-5 flex flex-col justify-center">
+							<div class="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-olive-600 dark:text-olive-400 mb-4">
+								{(featured.bylines?.length ?? 0) > 0 && (
+									<>
+										<div class="flex items-center gap-1.5 whitespace-nowrap">
+											{featured.bylines!.slice(0, 2).map((credit, index) => (
+												<span class="inline-flex items-center gap-1.5">
+													{index > 0 && <span class="text-olive-400 dark:text-olive-600">,</span>}
+													{credit.byline.avatarMediaId && (
+														<img
+															src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
+															alt={credit.byline.displayName}
+															class="w-5 h-5 rounded-full object-cover"
+														/>
+													)}
+													<span class="font-medium text-olive-700 dark:text-olive-300">
+														{credit.byline.displayName}
+													</span>
+												</span>
+											))}
+											{featured.bylines!.length > 2 && (
+												<span class="text-xs text-olive-500 dark:text-olive-400 ml-0.5">
+													+{featured.bylines!.length - 2}
+												</span>
+											)}
+										</div>
+										<span class="w-1 h-1 rounded-full bg-olive-300 dark:bg-olive-700" />
+									</>
+								)}
+								{formatDate(featured.date) && <time>{formatDate(featured.date)}</time>}
+								<span class="w-1 h-1 rounded-full bg-olive-300 dark:bg-olive-700" />
+								<span>{featured.readingTime} min read</span>
+							</div>
+
+							<a href={featured.url} class="block group-hover:opacity-90">
+								<h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-olive-950 dark:text-white leading-tight group-hover:text-olive-700 dark:group-hover:text-olive-300 transition-colors duration-150">
+									{featured.title}
+								</h2>
+							</a>
+
+							{featured.excerpt && (
+								<p class="mt-4 text-base sm:text-lg text-olive-700 dark:text-olive-400 leading-relaxed font-sans">
+									{featured.excerpt}
+								</p>
+							)}
+
+							{(featured.tags?.length ?? 0) > 0 && (
+								<div class="mt-6 flex flex-wrap gap-2">
+									{featured.tags!.map((tag) => (
+										<a
+											href={`/tag/${tag.slug}`}
+											class="inline-block px-3 py-1 text-xs text-olive-700 dark:text-olive-300 bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5 rounded-full hover:text-olive-950 dark:hover:text-white hover:bg-olive-950/5 dark:hover:bg-white/10 transition-colors duration-150"
+										>
+											{tag.label}
+										</a>
+									))}
+								</div>
+							)}
+						</div>
+					</section>
+				)}
+
+				{/* Latest Posts Grid */}
+				{grid.length > 0 && (
+					<section class="border-t border-olive-950/10 dark:border-white/10 pt-16 font-sans">
+						<div class="flex justify-between items-baseline mb-12">
+							<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400">{heading}</h2>
+							<a
+								href="/posts"
+								class="text-sm font-medium text-olive-900 dark:text-white hover:text-olive-700 dark:hover:text-olive-300 transition-colors duration-150"
+							>
+								View all posts &rarr;
+							</a>
+						</div>
+						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+							{grid.map((post) => (
+								<PostCard
+									title={post.title}
+									excerpt={post.excerpt}
+									featuredImage={post.image}
+									href={post.url}
+									date={post.date ? new Date(post.date) : undefined}
+									readingTime={post.readingTime}
+									tags={post.tags ? [...post.tags] : undefined}
+									bylines={cardBylines(post)}
+								/>
+							))}
+						</div>
+					</section>
+				)}
+			</div>
+		</div>
+	)
+}
