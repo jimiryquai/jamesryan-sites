@@ -4,7 +4,5 @@ import { socialBackground } from "../../styles/palette";
 
 export const GET: APIRoute = ({ url, cache }) =>
 	getOgSiteImage({ url, cache }, {
-		defaultTitle: "Digital Garden",
-		defaultDescription: "",
 		socialBackground,
 	});

@@ -1,3 +1,4 @@
+import { resolveSiteIdentity } from "./site-identity.ts";
 import { renderLlmsTxt } from "@jdevalk/astro-seo-graph";
 import { getSiteSettingsWithCacheHint } from "emdash";
 import { getPublishedEntries, type RequestCache } from "./content-query.ts";
@@ -19,7 +20,7 @@ async function getGardenSections(origin: string, cache: RequestCache) {
 			const path = getContentPath(collection, entry.id);
 			const description = getExcerpt(entry.data);
 			links.push({
-				title: entry.data.title,
+				title: typeof entry.data.title === "string" ? entry.data.title : "Untitled",
 				url: new URL(path, origin).href,
 				description,
 			});
@@ -52,7 +53,7 @@ async function respond(origin: string, cache: RequestCache, sectionsPromise: Pro
 		]);
 		if (cache.enabled) cache.set(cacheHint);
 		return new Response(renderLlmsTxt({
-			title: settings.title || "Site",
+			title: resolveSiteIdentity(settings).siteTitle,
 			summary: settings.tagline || undefined,
 			sections,
 		}), { headers: { "Content-Type": "text/plain; charset=utf-8" } });

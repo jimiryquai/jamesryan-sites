@@ -1,0 +1,50 @@
+---
+import type { AstroComponentFactory } from "astro/runtime/server/index.js";
+import PostCard from "./PostCard.astro";
+import { getReadingTime } from "@jamesryan/cms-helpers";
+import type { getTaxonomyArchive } from "@jamesryan/cms-helpers/taxonomy-archive";
+
+interface Props {
+  taxonomy: "category" | "tag";
+  layout: AstroComponentFactory;
+  archive: NonNullable<Awaited<ReturnType<typeof getTaxonomyArchive>>>;
+}
+const { taxonomy, layout: Base, archive } = Astro.props;
+const label = taxonomy === "category" ? "Category" : "Tag";
+const { term, posts: filteredPosts } = archive;
+---
+
+<Base title={taxonomy === "category" ? `Category: ${term.label}` : `Posts tagged "${term.label}"`} description={`Browse published posts ${taxonomy === "category" ? "in the category" : "tagged with"} ${term.label}, including notes, essays, and software experiments.`}>
+	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24">
+		<header class="mb-12 border-b border-olive-950/10 dark:border-white/10 pb-8">
+			<span class="block text-xs font-semibold tracking-widest uppercase text-olive-600 dark:text-olive-400 mb-2">{label}</span>
+			<h1 class="text-4xl sm:text-5xl font-display tracking-tight text-olive-950 dark:text-white">
+				{taxonomy === "tag" ? "#" : ""}{term.label}
+			</h1>
+			<p class="mt-2 text-sm text-olive-600 dark:text-olive-400">
+				{filteredPosts.length} {filteredPosts.length === 1 ? "post" : "posts"}
+			</p>
+		</header>
+
+		{
+			filteredPosts.length === 0 ? (
+				<p class="text-lg text-olive-600 dark:text-olive-400">{taxonomy === "category" ? "No posts in this category yet." : "No posts with this tag yet."}</p>
+			) : (
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+					{filteredPosts.map(({ post, tags, bylines }) => (
+						<PostCard
+							title={post.data.title ?? "Untitled"}
+							excerpt={post.data.excerpt}
+							featuredImage={post.data.featured_image}
+							href={`/posts/${post.id}`}
+							date={post.data.publishedAt ?? undefined}
+							readingTime={getReadingTime(post.data.content)}
+							tags={tags.map((t) => ({ slug: t.slug, label: t.label }))}
+							bylines={bylines}
+						/>
+					))}
+				</div>
+			)
+		}
+	</div>
+</Base>

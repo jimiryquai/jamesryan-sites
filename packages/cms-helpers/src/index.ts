@@ -9,3 +9,4 @@ export * from "./portable-text-markdown.ts";
 export * from "./safe-html.ts";
 export * from "./discovery-response.ts";
 export * from "./schema-collections.ts";
+export * from "./site-identity.ts";

@@ -3,6 +3,7 @@ export const prerender = false;
 
 import {
 	getEmDashCollection,
+	getCollectionInfo,
 	getTaxonomyTerms,
 	getTermsForEntries,
 } from "emdash";
@@ -15,13 +16,14 @@ if (route?.kind !== "archive") return Astro.rewrite("/404");
 
 const activeTag = Astro.url.searchParams.get("tag");
 
-const [{ entries: sortedProjects, cacheHint }, tags] = await Promise.all([
+const [{ entries: sortedProjects, cacheHint }, tags, collection] = await Promise.all([
 	getEmDashCollection("projects", {
 		status: "published",
 		orderBy: { published_at: "desc" },
 		...(activeTag ? { where: { tag: activeTag } } : {}),
 	}),
 	getTaxonomyTerms("tag"),
+	getCollectionInfo("projects"),
 ]);
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
@@ -46,7 +48,7 @@ const projectsWithTags = sortedProjects.map((project) => ({
 	title={activeTag
 		? `${tags.find((t) => t.slug === activeTag)?.label || activeTag} — Work`
 		: "Work"}
-	description="A selection of creative projects spanning branding, web design, and development from the Oatmeal team."
+	description={collection?.description || "A selection of creative projects spanning branding, web design, and development."}
 >
 	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24">
 		<header class="mb-12 border-b border-olive-950/10 dark:border-white/10 pb-8">

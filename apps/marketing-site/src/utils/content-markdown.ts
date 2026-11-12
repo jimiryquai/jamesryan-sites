@@ -1,3 +1,4 @@
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
 import { getPublishedRoute, getMarkdownContentPath, portableTextToMarkdown, discoveryResponse } from "@jamesryan/cms-helpers";
 import { getSiteSettingsWithCacheHint } from "emdash";
@@ -13,7 +14,7 @@ import { sources } from "../components/page-builder/sources";
  * Shared by /[...slug].md and the /posts, /projects and /pages .md endpoints,
  * which pass the full content path in `params.slug`.
  */
-export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
+export const getContentMarkdown: APIRoute = async ({ params, cache, site, url }) => {
 	// getPublishedRoute owns the URL mapping, published-only visibility and
 	// authorized previews (docs/published-routes.md). `home` is the .md
 	// spelling of the root page's `/` path.
@@ -46,7 +47,7 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 
 	const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 	if (cache?.enabled) cache.set(settingsHint);
-	const siteTitle = settings?.title || "James Ryan";
+	const siteTitle = resolveSiteIdentity(settings, { site, requestUrl: url }).siteTitle;
 
 	const fullMarkdown = `# ${title}
 *Published on ${siteTitle}*

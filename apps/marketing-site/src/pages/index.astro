@@ -5,13 +5,13 @@ import Base from "../layouts/Base.astro";
 import PageLayout from "../components/page-builder/PageLayout.astro";
 import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
 import { resolveFeaturedPostPreload } from "../components/page-builder/featured-post-preload";
-import { resolveBlogSiteIdentity } from "../utils/site-identity";
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 
 const route = await getPublishedRoute("/", Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
 const pageLayout = resolvePageLayout(page);
-const { siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
+const { siteTagline } = resolveSiteIdentity(await getSiteSettings(), { site: Astro.site, requestUrl: Astro.url });
 
 const pageTitle = page.data.title;
 const seo = getSeoMeta(page);
@@ -26,7 +26,7 @@ const preloadedImageUrl = pageLayout
 
 <Base
 	title={homeSeo?.title ? seo?.ogTitle : (pageTitle !== "Home" ? pageTitle : undefined)}
-	description={seo?.description ?? (siteTagline || "AI-native marketer & engineer")}
+	description={seo?.description ?? siteTagline}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
 	{preloadedImageUrl && (

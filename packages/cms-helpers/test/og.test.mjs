@@ -37,7 +37,7 @@ mock.module("emdash", { namedExports: {
 mock.module("workers-og", { namedExports: { ImageResponse: FakeImageResponse } });
 const { getOgEntryImage, getOgSiteImage, ogFontData } = await import("../src/og.ts");
 
-const options = { defaultTitle: "James Ryan", defaultDescription: "", socialBackground: "linear-gradient(135deg, #21221b 0%, #3e4034 50%, #5b5e4c 100%)" };
+const options = { defaultTitle: "James Ryan", socialBackground: "linear-gradient(135deg, #21221b 0%, #3e4034 50%, #5b5e4c 100%)" };
 const request = (slug, overrides = {}) => ({
 	params: { slug },
 	url: new URL(slug ? `https://example.com/og/${slug}.png` : "https://example.com/og/default.png"),
@@ -183,7 +183,7 @@ test("the site card falls back to app defaults and omits the description cleanly
 	settings = {};
 	try {
 		rendered.length = 0;
-		const response = await getOgSiteImage(request(undefined), { ...options, defaultDescription: "" });
+		const response = await getOgSiteImage(request(undefined), options);
 		assert.equal(response.status, 200);
 		const { element } = rendered[0];
 		const cardText = texts(element);
