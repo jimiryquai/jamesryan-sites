@@ -20,10 +20,12 @@ const project = route.entry;
 const seo = getSeoMeta(project, { defaultDescription: project.data.summary });
 
 // Related projects
-const { entries: relatedProjects } = await getEmDashCollection("projects", {
+const { entries: relatedProjects, cacheHint: relatedHint } = await getEmDashCollection("projects", {
+	status: "published",
 	orderBy: { published_at: "desc" },
 	limit: 3,
 });
+if (Astro.cache?.enabled) Astro.cache.set(relatedHint);
 const otherProjects = relatedProjects.filter((p) => p.id !== project.id).slice(0, 2);
 
 // Single batched query for tags on related projects

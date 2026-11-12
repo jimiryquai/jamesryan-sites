@@ -21,7 +21,7 @@ test('page builder owns marketing rendering and retired modules are absent', () 
 
 test('shared layout only queries the menu it renders', () => {
   const base = read('packages/ui/src/components/Base.astro');
-  assert.deepEqual([...base.matchAll(/\bgetMenu\s*\(\s*['"]([^'"]+)['"]/g)].map((match) => match[1]), ['primary']);
+  assert.deepEqual([...base.matchAll(/\bgetMenu(?:WithCacheHint)?\s*\(\s*['"]([^'"]+)['"]/g)].map((match) => match[1]), ['primary']);
 });
 
 test('app layouts forward only supported named slots', () => {

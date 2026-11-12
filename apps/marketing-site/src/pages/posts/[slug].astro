@@ -5,7 +5,7 @@ import {
 	getTermsForEntries,
 	getSeoMeta,
 	decodeSlug,
-	getSiteSettings,
+	getSiteSettingsWithCacheHint,
 } from "emdash";
 import {
 	Image,
@@ -66,7 +66,9 @@ if (post.data.featured_image) {
 		preloadedImageUrl = post.data.featured_image.src || `/_emdash/api/media/file/${post.data.featured_image.id}`;
 	}
 }
-const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
+const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
+if (Astro.cache?.enabled) Astro.cache.set(settingsHint);
+const { siteTitle } = resolveBlogSiteIdentity(settings);
 
 // Generate SEO meta from content
 const seo = getSeoMeta(post, {
@@ -79,13 +81,15 @@ const seo = getSeoMeta(post, {
 const bylines = post.data.bylines ?? [];
 const readingTime = getReadingTime(post.data.content);
 
-const [tags, { entries: recentPosts }] = await Promise.all([
+const [tags, { entries: recentPosts, cacheHint: relatedHint }] = await Promise.all([
 	getEntryTerms("posts", post.data.id, "tag"),
 	getEmDashCollection("posts", {
+		status: "published",
 		orderBy: { published_at: "desc" },
 		limit: 4,
 	}),
 ]);
+if (Astro.cache?.enabled) Astro.cache.set(relatedHint);
 const otherPosts = recentPosts.filter((p) => p.id !== post.id).slice(0, 3);
 
 const otherTagsByEntry = await getTermsForEntries(

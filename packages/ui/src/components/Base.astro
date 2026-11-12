@@ -1,20 +1,17 @@
 ---
 import {
-	getMenu,
-	getSiteSettings,
+	getMenuWithCacheHint,
+	getSiteSettingsWithCacheHint,
 } from "emdash";
 import Seo from "@jdevalk/astro-seo-graph/Seo.astro";
 import {
-	makeIds,
 	buildWebPage,
 	buildArticle,
-	buildWebSite,
 	buildBreadcrumbList,
 	buildImageObject,
-	buildPiece,
 	assembleGraph,
 } from "@jdevalk/seo-graph-core";
-import type { Person, Blog } from "schema-dts";
+import { buildSiteGraph } from "../utils/seo-graph.ts";
 import { createPublicPageContext, getPageRuntime } from "emdash/page";
 import ThemeSwitcher from "./ThemeSwitcher.astro";
 import themeScript from "./theme-init.js?raw";
@@ -50,14 +47,18 @@ const {
 	content,
 	hideHeaderFooter = false,
 } = Astro.props;
-const settings = hideHeaderFooter ? null : await getSiteSettings();
+const settingsResult = hideHeaderFooter ? null : await getSiteSettingsWithCacheHint();
+const settings = settingsResult?.data;
+if (settingsResult && Astro.cache?.enabled) Astro.cache.set(settingsResult.cacheHint);
 const siteTitle = settings?.title || "Oatmeal";
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
 const siteDescription =
 	settings?.tagline || "Customer support that feels like a conversation.";
 // Null means an entry has no description; undefined uses the site default.
 const resolvedDescription = description === null ? undefined : description || siteDescription;
-const primaryMenu = hideHeaderFooter ? null : await getMenu("primary");
+const menuResult = hideHeaderFooter ? null : await getMenuWithCacheHint("primary");
+const primaryMenu = menuResult?.data;
+if (menuResult && Astro.cache?.enabled) Astro.cache.set(menuResult.cacheHint);
 
 // Generate dynamic OG Image URL
 const siteUrl = Astro.site?.origin || "https://oatmeal.dev";
@@ -71,7 +72,7 @@ if (content) {
 	} else if (content.collection === "projects") {
 		prefix = "projects";
 	}
-	ogImageUrl = `${siteUrl}/og/${prefix}/${content.id}.png`;
+	ogImageUrl = `${siteUrl}/og/${prefix}/${content.slug || content.id}.png`;
 }
 const finalOgImage = image || ogImageUrl;
 
@@ -144,69 +145,7 @@ if (faviconUrl) {
 }
 
 // Generate the JSON-LD schema graph
-const ids = makeIds({ siteUrl });
-
-const personImagePiece = buildImageObject(
-	{
-		id: ids.personImage,
-		url: `${siteUrl}/images/avatar.webp`,
-		width: 400,
-		height: 400,
-	},
-	ids,
-);
-
-const personPiece = buildPiece<Person>({
-	"@type": "Person",
-	"@id": ids.person,
-	name: "James Ryan",
-	givenName: "James",
-	familyName: "Ryan",
-	url: `${siteUrl}/about`,
-	image: { "@id": ids.personImage },
-	sameAs: [
-		"https://www.linkedin.com/in/jimiryquai/",
-		"https://www.x.com/jimiryquai",
-	],
-	jobTitle: "Senior Power Platform Technical Consultant",
-	worksFor: {
-		"@type": "EmployeeRole",
-		roleName: "Senior Power Platform Technical Consultant",
-		worksFor: {
-			"@type": "Organization",
-			name: "Capgemini",
-			url: "https://www.capgemini.com/",
-		},
-	},
-	knowsAbout: [
-		"Power Platform",
-		"Software Development",
-		"Cloud Computing",
-		"Data Modeling",
-	],
-});
-
-const blogId = `${siteUrl}/posts/#blog`;
-const blogPiece = buildPiece<Blog>({
-	"@type": "Blog",
-	"@id": blogId,
-	name: siteTitle,
-	description: siteDescription,
-	url: `${siteUrl}/posts/`,
-	publisher: { "@id": ids.person },
-	inLanguage: "en-US",
-});
-
-const websitePiece = buildWebSite(
-	{
-		url: siteUrl,
-		name: siteTitle,
-		description: siteDescription,
-		publisher: { "@id": ids.person },
-		inLanguage: "en-US",
-	},
-	ids,
-);
+const { ids, blogId, pieces: sitePieces } = buildSiteGraph(siteUrl, siteTitle, siteDescription);
 
 const segments = Astro.url.pathname.split("/").filter(Boolean);
 const breadcrumbItems = [{ name: "Home", url: siteUrl }];
@@ -291,10 +230,7 @@ const articlePiece =
 		: null;
 
 const pieces: any[] = [
-	personPiece,
-	personImagePiece,
-	blogPiece,
-	websitePiece,
+	...sitePieces,
 	webPagePiece,
 	breadcrumbPiece,
 ];

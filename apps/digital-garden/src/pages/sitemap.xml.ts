@@ -1,8 +1,9 @@
+import { discoveryResponse } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
 import { getContentPath, getPublishedEntries } from "@jamesryan/cms-helpers";
 
 export const GET: APIRoute = async ({ site, url, cache }) => {
-	const siteUrl = site?.toString().replace(/\/$/, "") || url.origin;
+	const siteUrl = (site?.toString() || url.origin).replace(/\/+$/, "");
 
 	// Fetch dynamic content from EmDash collections
 	const [pages, posts, projects] = await Promise.all([
@@ -41,10 +42,10 @@ export const GET: APIRoute = async ({ site, url, cache }) => {
 ${xmlUrls}
 </urlset>`;
 
-	return new Response(sitemapXml, {
+	return discoveryResponse(new Response(sitemapXml, {
 		headers: {
 			"Content-Type": "application/xml; charset=utf-8",
 			"Cache-Control": "public, max-age=3600, s-maxage=3600",
 		},
-	});
+	}), cache);
 };

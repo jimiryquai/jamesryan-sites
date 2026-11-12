@@ -27,11 +27,11 @@ export async function getServiceEntries<T extends ServiceCollection>(
 		}
 	}
 
-	if (service.entry) {
+	if (service.entry?.data.status === "published") {
 		const serviceId = service.entry.data.id;
 		let cursor: string | undefined;
 		do {
-			const page = await getEmDashCollection<T>(collection, { limit: 50, cursor });
+			const page = await getEmDashCollection<T>(collection, { status: "published", limit: 50, cursor });
 			if (page.error) throw page.error;
 			collectHint(page.cacheHint);
 			// EmDash 1.4 has no reverse-reference collection filter. Read each

@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getPublishedRoute, portableTextToMarkdown } from "@jamesryan/cms-helpers";
-import { getRequestContext, getSiteSettings } from "emdash";
+import { getRequestContext, getSiteSettingsWithCacheHint } from "emdash";
 import { mergeCacheHints } from "emdash-plugin-page-builder/blocks";
 import { renderLayoutMarkdown } from "../components/page-builder/layout-markdown";
 import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
@@ -44,7 +44,8 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 		contentMarkdown = portableTextToMarkdown(entry.data.content || []);
 	}
 
-	const settings = await getSiteSettings();
+	const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
+	if (cache?.enabled) cache.set(settingsHint);
 	const siteTitle = settings?.title || "James Ryan";
 
 	const fullMarkdown = `# ${title}
