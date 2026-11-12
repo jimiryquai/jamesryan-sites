@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getPublishedRoute } from "@jamesryan/cms-helpers";
+import { getPublishedRoute, portableTextToMarkdown } from "@jamesryan/cms-helpers";
 import { getRequestContext, getSiteSettings } from "emdash";
 import { mergeCacheHints } from "emdash-plugin-page-builder/blocks";
 import { renderLayoutMarkdown } from "../components/page-builder/layout-markdown";
@@ -67,57 +67,3 @@ ${contentMarkdown}
 		},
 	});
 };
-
-function portableTextToMarkdown(content: any[]): string {
-	if (!Array.isArray(content)) return "";
-
-	let markdown = "";
-
-	for (const block of content) {
-		if (block._type === "block") {
-			const style = block.style || "normal";
-			let prefix = "";
-			let suffix = "";
-
-			if (style.startsWith("h") && style.length === 2) {
-				const level = parseInt(style[1], 10);
-				prefix = "#".repeat(level) + " ";
-				suffix = "\n";
-			}
-
-			let blockText = "";
-			if (block.children) {
-				for (const child of block.children) {
-					let text = child.text || "";
-					if (child.marks && Array.isArray(child.marks)) {
-						for (const mark of child.marks) {
-							if (mark === "strong") {
-								text = `**${text}**`;
-							} else if (mark === "em") {
-								text = `*${text}*`;
-							} else if (mark === "code") {
-								text = `\`${text}\``;
-							} else {
-								const linkDef = block.markDefs?.find((def: any) => def._key === mark);
-								if (linkDef && linkDef.href) {
-									text = `[${text}](${linkDef.href})`;
-								}
-							}
-						}
-					}
-					blockText += text;
-				}
-			}
-
-			if (block.listItem) {
-				const bullet = block.listItem === "bullet" ? "-" : "1.";
-				const indent = "  ".repeat((block.level || 1) - 1);
-				markdown += `${indent}${bullet} ${blockText}\n`;
-			} else {
-				markdown += `${prefix}${blockText}${suffix}\n\n`;
-			}
-		}
-	}
-
-	return markdown;
-}

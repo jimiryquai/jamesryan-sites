@@ -8,6 +8,7 @@
  */
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { pageMarkdownPath, publishedEntryPath } from "./published-path.mjs";
 
 // The page builder's shared-content block labels, and where each reads items.
 const SHARED_BLOCKS = {
@@ -18,12 +19,125 @@ const SHARED_BLOCKS = {
 };
 // The posts block's default count, mirrored from its definition.
 const POSTS_DEFAULT_COUNT = 4;
-const TOP_LEVEL_PAGES = ["about", "contact", "pricing", "privacy-policy"];
 
-const pageMarkdownPath = (slug) =>
-  slug === "home" ? "/home.md"
-    : TOP_LEVEL_PAGES.includes(slug) ? `/${slug}.md`
-      : `/pages/${encodeURIComponent(slug)}.md`;
+function textValue(value) {
+  return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function imageAlt(block) {
+  return textValue(block.alt)
+    ?? textValue(block.asset?.alt)
+    ?? textValue(block.asset?.$media?.alt)
+    ?? "";
+}
+
+/** A URL the seed itself names. Resolved media ids are not in the seed, so a
+ * `$media` file is not required byte-for-byte; the alt image marker is. */
+function stableImageUrl(block) {
+  return textValue(block.url) ?? textValue(block.src) ?? textValue(block.value)
+    ?? (typeof block.asset === "string" ? textValue(block.asset) : undefined)
+    ?? textValue(block.asset?.url) ?? textValue(block.asset?.src) ?? textValue(block.asset?.previewUrl);
+}
+
+function fenceLanguage(language) {
+  if (typeof language !== "string") return "";
+  return language.trim().split(/\s+/)[0]?.replace(/[\u0000-\u001F\u007F`]/g, "") ?? "";
+}
+
+function backtickFence(code) {
+  const runs = code.match(/`+/g) ?? [];
+  const longest = runs.reduce((max, run) => Math.max(max, run.length), 0);
+  return "`".repeat(Math.max(3, longest + 1));
+}
+
+function escapeAlt(value) {
+  return value.replace(/\r\n?/g, "\n").replace(/\n+/g, " ").replace(/[\\[\]]/g, "\\$&");
+}
+
+function formatDestination(url) {
+  if (/[\s()]/.test(url)) return `<${url.replaceAll(">", "%3E")}>`;
+  return url;
+}
+
+function isSafeUrl(url) {
+  if (typeof url !== "string" || /[\u0000-\u001F\u007F]/.test(url)) return false;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.startsWith("//") || /^\/[/\\]/.test(trimmed)) return false;
+  if (trimmed.startsWith("#") || trimmed.startsWith("/")) return true;
+  const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(trimmed);
+  if (!scheme) return true;
+  return ["http", "https", "mailto", "tel"].includes(scheme[1].toLowerCase());
+}
+
+function wrapCode(text) {
+  if (!text.includes("`")) return `\`${text}\``;
+  return `${backtickFence(text)} ${text} ${backtickFence(text)}`;
+}
+
+/** Inline marks for a blockquote, kept local so a renderer regression cannot satisfy itself. */
+function markedSpan(text, marks, markDefs) {
+  let value = text;
+  const applied = Array.isArray(marks) ? marks : [];
+  if (applied.includes("code")) value = wrapCode(value);
+  if (applied.includes("em")) value = `*${value}*`;
+  if (applied.includes("strong")) value = `**${value}**`;
+  for (const mark of applied) {
+    if (typeof mark !== "string" || mark === "strong" || mark === "em" || mark === "code") continue;
+    const link = (markDefs ?? []).find((def) => def?._key === mark && typeof def.href === "string");
+    if (link && isSafeUrl(link.href)) value = `[${value}](${formatDestination(link.href)})`;
+  }
+  return value;
+}
+
+function blockquoteMarker(block) {
+  const children = block.children ?? [];
+  const raw = children.map((child) => child?.text ?? "").join("");
+  if (!raw.trim()) return "";
+  const text = children.map((child) => markedSpan(typeof child?.text === "string" ? child.text : "", child?.marks, block.markDefs)).join("");
+  const quoted = (text.trim() ? text : raw).split("\n").map((line) => `> ${line}`).join("\n");
+  return quoted.trim() ? quoted : `> ${raw.trim()}`;
+}
+
+/** A non-empty Markdown image, including an empty alt. */
+function imageMarker(alt, url) {
+  const escaped = escapeAlt(alt);
+  if (url) return `![${escaped}](${formatDestination(url)})`;
+  const pattern = escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`!\\[${pattern}\\]\\([^)\\s][^)]*\\)`);
+}
+
+/** Fenced code, blockquote markers and Markdown images a `.md` route must include. */
+function portableTextMarkers(content) {
+  const markers = [];
+  for (const block of content ?? []) {
+    if (!block || typeof block !== "object") continue;
+    if (block._type === "code-block-pro" || block._type === "code") {
+      const code = typeof block.code === "string" ? block.code : "";
+      const fence = backtickFence(code);
+      const body = code.endsWith("\n") ? code : `${code}\n`;
+      markers.push(`${fence}${fenceLanguage(block.language)}\n${body}${fence}`);
+    } else if (block._type === "image") {
+      markers.push(imageMarker(imageAlt(block), stableImageUrl(block)));
+    } else if (block._type === "block" && block.style === "blockquote") {
+      const quoted = blockquoteMarker(block);
+      if (quoted) markers.push(quoted);
+    }
+  }
+  return markers;
+}
+
+/** Paragraph and heading text. Blockquotes are checked as `> ` lines. */
+function plainBlockTexts(content) {
+  const texts = [];
+  for (const block of content ?? []) {
+    if (!block || block._type !== "block" || block.style === "blockquote") continue;
+    for (const child of block.children ?? []) {
+      const text = typeof child?.text === "string" ? child.text.trim() : "";
+      if (text) texts.push(text);
+    }
+  }
+  return texts;
+}
 
 /** The published posts a posts block reads, newest first. A fresh seed stamps
  * every published entry with its seeding time, so the collection's newest-first
@@ -53,11 +167,12 @@ function blockTexts(block, collections, pageService) {
   for (const item of data.items ?? []) texts.push(item.title, item.description, item.value, item.label);
   for (const column of data.columns ?? []) texts.push(column.label);
   for (const row of data.rows ?? []) texts.push(row.name, row.first_value, row.second_value, row.third_value);
-  // Only span text of Portable Text blocks: the package's Markdown renderer
-  // skips unknown PT block types (code blocks) by design.
   for (const pt of data.content ?? []) {
-    if (pt._type === "block") for (const child of pt.children ?? []) texts.push(child.text);
+    if (pt._type === "block" && pt.style !== "blockquote") {
+      for (const child of pt.children ?? []) texts.push(child.text);
+    }
   }
+  texts.push(...portableTextMarkers(data.content));
   return texts;
 }
 
@@ -80,6 +195,11 @@ async function main(origin, seedPath, evidenceDir) {
       errors++;
     }
   };
+  const expectMarker = (path, body, marker) => {
+    const ok = marker instanceof RegExp ? marker.test(body) : body.includes(`${marker}`);
+    const shown = marker instanceof RegExp ? marker.toString() : marker;
+    expect(path, ok, `markdown is missing ${JSON.stringify(shown)}`);
+  };
 
   for (const entry of collections.pages ?? []) {
     const path = pageMarkdownPath(entry.slug);
@@ -98,32 +218,32 @@ async function main(origin, seedPath, evidenceDir) {
     for (const text of envelope(title)) expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
     for (const block of entry.data?.layout ?? []) {
       for (const text of blockTexts(block, collections, entry.data?.service)) {
-        if (text !== undefined && text !== null && `${text}`.length > 0) {
-          expect(path, body.includes(`${text}`), `markdown is missing ${JSON.stringify(`${text}`)}`);
+        if (text instanceof RegExp || (text !== undefined && text !== null && `${text}`.length > 0)) {
+          expectMarker(path, body, text);
         }
       }
     }
   }
 
-  const post = (collections.posts ?? []).find((entry) => entry.status === "published");
-  if (post) {
+  for (const entry of collections.posts ?? []) {
+    if (entry.status !== "published") continue;
     checked++;
-    const path = `/posts/${encodeURIComponent(post.slug)}.md`;
+    const path = `${publishedEntryPath("posts", entry.slug)}.md`;
     const { response, body } = await fetchMarkdown(path);
     expect(path, response.status === 200, `HTTP ${response.status}`);
-    for (const text of envelope(post.data?.title ?? post.id)) {
-      expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
+    for (const text of [...envelope(entry.data?.title ?? entry.id), ...plainBlockTexts(entry.data?.content), ...portableTextMarkers(entry.data?.content)]) {
+      expectMarker(path, body, text);
     }
   }
 
-  const project = (collections.projects ?? []).find((entry) => entry.status === "published");
-  if (project) {
+  for (const entry of collections.projects ?? []) {
+    if (entry.status !== "published") continue;
     checked++;
-    const path = `/projects/${encodeURIComponent(project.slug)}.md`;
+    const path = `${publishedEntryPath("projects", entry.slug)}.md`;
     const { response, body } = await fetchMarkdown(path);
     expect(path, response.status === 200, `HTTP ${response.status}`);
-    for (const text of envelope(project.data?.title ?? project.id)) {
-      expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
+    for (const text of [...envelope(entry.data?.title ?? entry.id), ...plainBlockTexts(entry.data?.content), ...portableTextMarkers(entry.data?.content)]) {
+      expectMarker(path, body, text);
     }
   }
 
