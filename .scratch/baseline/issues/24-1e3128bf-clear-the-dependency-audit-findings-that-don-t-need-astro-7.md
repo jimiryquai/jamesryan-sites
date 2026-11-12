@@ -17,7 +17,7 @@ Out of scope: Astro, `@astrojs/cloudflare` and EmDash major or minor upgrades (t
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `pnpm audit` on the branch shows no critical or high finding except those that need Astro 7 or have no patched release, each listed with its reason (audit output before and after in a comment).
 - [ ] CI passes, and staging after deploy passes the smoke, rendered SEO and accessibility checks (output in a comment).
