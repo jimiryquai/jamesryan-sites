@@ -14,7 +14,7 @@ James asked whether to use Usermaven's Cloudflare Workers proxy (https://usermav
    - Don't add `Access-Control-Allow-Origin: *`; the script is same-origin now. Responses aren't cached by the site's route cache.
 2. **The snippet:** one component in the marketing site's base layout, the old site's attributes, with `data-tracking-host` and `src` pointing at the proxy path. The workspace key is per-deployment config (a Wrangler `vars` entry, public by design): production sets it; **staging leaves it unset, and then no snippet renders and the proxy route returns 404**, so staging never pollutes the production workspace. Keep the garden out of scope.
 3. **No telemetry for our tools, analytics is James's choice for his site:** keep `data-privacy-policy="strict"` (cookieless), as before. Check whether the privacy policy or a consent banner needs anything, and list it for James; don't write copy.
-4. **MCP for checking:** Usermaven has an official remote MCP server, `https://mcp.usermaven.com/mcp` (OAuth). Add it to an on-request mcporter config (for example `config/mcporter.usermaven.json` with `pnpm -s mcp:usermaven`, as ticket 22 did for staging), never to `.mcp.json`, because an OAuth server in the always-loaded config makes harnesses open browser logins (ticket 22). Record its telemetry check in `docs/mcp.md`.
+4. **MCP for checking:** already done at user scope (`~/.mcporter/mcporter.json`, server `usermaven`, set up by the agent-workflow session 2026-11-12); this ticket adds no repo config for it.
 5. Tests: the endpoint's header allowlist (cookie and authorization stripped, IP forwarded), the path mapping, and 404 when unconfigured; the rendered check asserts the snippet is absent without a key and present with one.
 
 **Blocked by:** none.

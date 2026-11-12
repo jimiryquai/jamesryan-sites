@@ -12,7 +12,7 @@ James wants Cloudflare's agent tooling (2026-11-12, https://github.com/cloudflar
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `pnpm -s mcp:cloudflare` reaches the Cloudflare MCP server from an on-request config; with no cached grant it fails with the sign-in command instead of opening a browser (test, and the output in a comment).
 - [ ] `docs/mcp.md` covers scopes, the grant's cache and revocation, and the telemetry check; `.mcp.json` is unchanged.
