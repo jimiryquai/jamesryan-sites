@@ -8,11 +8,10 @@ Read on 2026-11-12: [Astro 7 migration guide](https://docs.astro.build/en/guides
 [EmDash release-specific rollout instructions](https://docs.emdashcms.com/deployment/updating/#fixed-plugin-storage-uniqueness).
 EmDash references were read through the documentation MCP.
 
-Both apps and shared packages use Astro 7.4.10 and EmDash 1.5.0. Both apps use
-Cloudflare adapter 14.4.7 and React integration 7.1.7. Astro 7.4.11 was still
-inside the workspace's 24-hour release-age window when versions were selected.
-The page builder moves to 0.3.0, which supports Astro 7.2.8 and later.
-See [dependency overrides](dependency-overrides.md) for removed pins and audit findings.
+Both apps and shared packages use Astro 7 and EmDash 1.5; both apps use
+Cloudflare adapter 14. Exact dependency versions live in each `package.json`
+and the shared lockfile. See [dependency overrides](dependency-overrides.md)
+for the remaining audit findings.
 
 ## Compatibility decisions
 
@@ -40,45 +39,21 @@ See [dependency overrides](dependency-overrides.md) for removed pins and audit f
 
 ## Migration rollout
 
-The new migration-set fingerprint is the same for both apps:
-
-```text
-36ade5111fb27ab5a825b90e4bb60c3d7129d75e12a34f71d9b67d5cf2a5fc1b
-```
-
 EmDash 1.5 adds migrations 092–097: plugin KV options, orphan menu repair,
 media-usage URL reindexing, plugin unique-index scope, revision kind/editors,
 and co-editing room storage. Co-editing remains off by default; no room
 bindings or feature opt-in are added.
 
-**Before allowing the existing pre-deploy migration pipeline to run, inspect
-tracked plugin storage unique indexes.** Migration 095 has a special rollout
-requirement wherever these exist, including indexes from removed plugins.
-The ordinary migrate-before-deploy sequence is unsuitable for that case:
-older builds can recreate the old constraints. Follow upstream's maintenance
-sequence: route traffic outside the app to maintenance, pause scheduled and
-queued invocations, drain old invocations, deploy only the upgraded Worker in
-`check` mode, apply and check migrations, then reopen traffic and scheduled work.
-The upgrade does not itself establish that maintenance window or inspect remote D1.
+When a database has tracked plugin storage unique indexes, including indexes
+from removed plugins, migration 095 requires a maintenance rollout. The ordinary
+migrate-before-deploy sequence is unsuitable for that case: older builds can
+recreate the old constraints. Follow [EmDash's maintenance instructions](https://docs.emdashcms.com/deployment/updating/#fixed-plugin-storage-uniqueness):
+route traffic outside the app to maintenance, pause scheduled and queued work,
+drain old invocations, deploy only the upgraded Worker in `check` mode, apply
+and check migrations, then reopen traffic and scheduled work.
 
-D1 **target** fingerprints are separate from the migration-set fingerprint.
+D1 target fingerprints are separate from the migration-set fingerprint.
 EmDash hashes only the account ID and database UUID, so upgrading EmDash does
-not change them. These were calculated offline from the installed 1.5 target
-algorithm, the repository's Wrangler configurations and ticket 07's recorded
-account ID. The first three match existing GitHub variables; garden production
-has no variable. They require remote status review before accepting any missing
-variable; no remote D1 command or variable mutation was run here.
-
-| Actions variable | Target fingerprint |
-| --- | --- |
-| `MARKETING_SITE_STAGING_MIGRATION_FINGERPRINT` | `89d4110ac8397c0fbcbc24f8ea4f4cfca0cc73dc83f35325ce18191aa0a99630` |
-| `MARKETING_SITE_PRODUCTION_MIGRATION_FINGERPRINT` | `3553f9774e1eacfc5da6fe60ecbbf6ce67ce96a8a20c0d7da050acaff9b77b77` |
-| `DIGITAL_GARDEN_STAGING_MIGRATION_FINGERPRINT` | `7784ec3673ef52ea3273bbd86878e842b864bf85b6c7c5a77727dc99036443b4` |
-| `DIGITAL_GARDEN_PRODUCTION_MIGRATION_FINGERPRINT` | `7e410b725704a08d07930858e35dc188611c4555115f3e973cea87709f41f134` |
-
-The deployment wrapper has no local mode. Its status invocation stops before
-any network access without `CLOUDFLARE_ACCOUNT_ID`; both that outcome and its
-isolated CLI-boundary tests are recorded in ticket 25's evidence. Local seed
-imports execute the installed migrations against disposable SQLite/D1 databases.
-Staging deployment and all staging smoke/SEO/media/accessibility checks remain
-the orchestrator's handoff.
+not change a target's identity. For the authoritative variable names and the
+status-review procedure, see [Reviewed target fingerprints](deploying.md#reviewed-target-fingerprints).
+Each build emits its migration-set identity in `.emdash/migrations.json`.

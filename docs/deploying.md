@@ -39,9 +39,6 @@ date preventing submissions, and no mandatory Turnstile challenge.
 EmDash rate-limits comment submissions; repeated smoke runs within ten minutes
 can fail with 429, so wait for the window to expire before retrying.
 
-Before merging the Astro 7 / EmDash 1.5 upgrade, review its
-[migration 095 maintenance requirement and target identities](astro-7-upgrade.md#migration-rollout).
-
 After CI succeeds for a push to `master`, Deploy runs one staging job per app:
 
 1. Build with `CLOUDFLARE_ENV=staging`.

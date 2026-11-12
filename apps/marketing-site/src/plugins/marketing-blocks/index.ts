@@ -17,8 +17,8 @@
  * - There is no media picker element in the editor's plugin-block modal yet,
  *   so image fields (avatars, hero images) are URL strings entered by hand.
  *
- * Site-side rendering still goes through MarketingBlocks.astro --
- * componentsEntry auto-wiring is a separate cleanup.
+ * These template blocks render through MarketingBlocks.astro. Native plugins
+ * such as Code Block Pro register componentsEntry for automatic Portable Text rendering.
  */
 
 import { definePlugin } from "emdash";
