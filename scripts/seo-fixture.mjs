@@ -237,7 +237,7 @@ async function verifyUsermaven(origin, unconfigured) {
   }
   const homeHtml = await (await fetch(new URL("/", origin))).text();
   if (unconfigured) {
-    for (const marker of ["um-tracker", "usermaven", USERMAVEN_SCRIPT_PATH, configuredUsermavenKey]) {
+    for (const marker of ["um-tracker", "usermaven", "data-form-tracking", USERMAVEN_SCRIPT_PATH, configuredUsermavenKey]) {
       if (homeHtml.includes(marker)) {
         throw new Error(`/: Usermaven marker ${JSON.stringify(marker)} rendered when USERMAVEN_KEY is unset`);
       }
@@ -268,6 +268,7 @@ async function verifyUsermaven(origin, unconfigured) {
     "data-tracking-host",
     "data-key",
     'setAttribute("data-autocapture", "true")',
+    'setAttribute("data-form-tracking", "tagged")',
     'setAttribute("data-privacy-policy", "strict")',
     'setAttribute("data-randomize-url", "true")',
   ]) {
