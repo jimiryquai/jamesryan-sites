@@ -14,13 +14,21 @@ const heading = (text) => [{ _type: "block", _key: "heading", style: "h1", child
 const image = {
   $media: { file: "assets/post-1.webp", alt: "Fixture image" },
 };
-const page = (slug, content = heading(`Fixture ${slug} heading`)) => ({
-  id: slug, slug, status: "published", data: { title: `Fixture ${slug}`, content },
+const layoutHero = (slug) => [{
+  _type: "hero", _key: `layout-${slug}`, _version: 1, variant: "centered",
+  heading: `Fixture ${slug} layout heading`, body: `Fixture ${slug} layout body`, links: [],
+}];
+const page = (slug, content = heading(`Fixture ${slug} heading`), layout) => ({
+  id: slug, slug, status: "published",
+  data: { title: `Fixture ${slug}`, content, ...(layout ? { layout } : {}) },
 });
 const entries = {
   pages: [
     page("home", [{ _type: "marketing.hero", _key: "hero", headline: "Fixture home heading" }]),
-    page("about"), page("contact"), page("pricing"),
+    page("about"), page("contact"),
+    // A page with a published layout renders it in place of its Portable Text
+    // content; the same entry goes draft in the unpublished state and must 404.
+    page("pricing", heading("Fixture pricing heading"), layoutHero("pricing")),
     page("privacy-policy", heading("Fixture privacy heading")),
     page("fixture-page", heading("Fixture custom heading")),
     { ...page("fixture-draft"), status: "draft" },
@@ -190,6 +198,18 @@ async function verify(origin, unpublished = false, database) {
       throw new Error(`${path}: fixture SEO fields were not rendered`);
     }
     console.log(`${path}: fixture SEO fields rendered`);
+  }
+  if (!unpublished) {
+    const layoutHtml = await (await fetch(new URL("/pricing", origin))).text();
+    if (!layoutHtml.includes("Fixture pricing layout heading") || layoutHtml.includes("Fixture pricing heading")) {
+      throw new Error("/pricing: a published layout was not rendered in place of content");
+    }
+    console.log("/pricing: published layout rendered in place of content");
+    const contentHtml = await (await fetch(new URL("/contact", origin))).text();
+    if (!contentHtml.includes("Fixture contact heading")) {
+      throw new Error("/contact: content fallback was not rendered for a page without layout");
+    }
+    console.log("/contact: content rendered for a page without layout");
   }
   if (unpublished) {
     await verifyDraftPreviews(origin, database);

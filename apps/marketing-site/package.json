@@ -8,11 +8,12 @@
     "seed": "seed/seed.json"
   },
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro build",
     "preview": "astro preview",
-    "typecheck": "astro check",
-    "check": "node scripts/check-site.js"
+    "typecheck": "node scripts/sync-page-builder-seed.mjs --check && ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro check",
+    "check": "node scripts/check-site.js",
+    "page-builder": "node scripts/apply-page-builder.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "13.7.0",
@@ -32,6 +33,7 @@
     "emdash": "1.4.0",
     "emdash-plugin-ai-comment-moderation": "2.1.0",
     "emdash-plugin-code-block-pro": "0.2.0",
+    "emdash-plugin-page-builder": "0.2.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "shiki": "4.1.0",

@@ -1,0 +1,15 @@
+---
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import CallToActionSimple from '@jamesryan/ui/components/sections/CallToActionSimple.astro';
+import CallToActionSimpleCentered from '@jamesryan/ui/components/sections/CallToActionSimpleCentered.astro';
+import Actions from './Actions.astro';
+interface Props { value: StoredBlock }
+const value = Astro.props.value as StoredBlock & {
+  heading?: string; body?: string; variant?: 'start' | 'centered'; links?: { label: string; url: string }[];
+};
+const sections = { start: CallToActionSimple, centered: CallToActionSimpleCentered };
+const Section = sections[value.variant ?? 'start'] ?? sections.start;
+---
+<Section id={value._key} headline={value.heading} subheadline={value.body}>
+  <Actions slot="cta" links={value.links} />
+</Section>

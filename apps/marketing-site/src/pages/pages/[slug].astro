@@ -6,7 +6,7 @@ import PublishedPage from "../../components/PublishedPage.astro";
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
 
-const route = await getPublishedRoute(`/pages/${encodeURIComponent(slug)}`, Astro.cache);
+const route = await getPublishedRoute(`/pages/${encodeURIComponent(slug)}`, Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
 ---
