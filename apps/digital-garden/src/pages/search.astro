@@ -24,7 +24,7 @@ const { items: results } = query
 				name="q"
 				value={query}
 				placeholder="Search posts..."
-				class="flex-1 px-5 py-3 bg-white dark:bg-white/5 border border-olive-950/10 dark:border-white/10 rounded-full text-olive-950 dark:text-white placeholder-olive-400 focus:outline-none focus:border-olive-900 dark:focus:border-white transition-colors duration-150"
+				class="flex-1 px-5 py-3 bg-white dark:bg-white/5 border border-olive-500 dark:border-olive-400 rounded-full text-olive-950 dark:text-white placeholder-olive-500 dark:placeholder-olive-400 focus:outline-none focus:border-olive-900 dark:focus:border-white transition-colors duration-150"
 				autofocus
 			/>
 			<button 
@@ -58,7 +58,7 @@ const { items: results } = query
 									{result.title ?? "Untitled"}
 								</h2>
 								{result.snippet && (
-									<p class="text-base text-olive-700 dark:text-olive-400 leading-relaxed mt-2" set:html={result.snippet} />
+									<p class="result-snippet text-base text-olive-700 dark:text-olive-400 leading-relaxed mt-2" set:html={result.snippet} />
 								)}
 							</a>
 						</li>
@@ -82,5 +82,13 @@ const { items: results } = query
 	:global(.dark) .result-snippet :global(mark) {
 		background: var(--color-olive-800);
 		color: #fff;
+	}
+	/* System dark (no theme cookie) leaves <html> classless; cover it like
+	   Tailwind's dark variant does. */
+	@media (prefers-color-scheme: dark) {
+		:global(:root:not(.light)) .result-snippet :global(mark) {
+			background: var(--color-olive-800);
+			color: #fff;
+		}
 	}
 </style>
