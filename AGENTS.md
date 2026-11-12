@@ -83,7 +83,7 @@ Site settings have `title` and `tagline`. Title renders in the header; tagline i
 
 ## Page builder
 
-Pages are built from `emdash-plugin-page-builder` blocks in the `layout` field; the old Portable Text `content` field is retired from the schema and the templates. Rendering goes through `src/components/page-builder/PageLayout.astro`; the visual sections live in `src/components/blocks/`.
+Pages are built from `emdash-plugin-page-builder` blocks in the `layout` field; the old Portable Text `content` field is retired from the schema and the templates. Rendering goes through `src/components/page-builder/PageLayout.astro`; the visual sections also live in `src/components/page-builder/`.
 
 - The offered block list is `src/components/page-builder/offered-blocks.json`; regenerate the seed's `blockTypes` and `allowedTypes` from it with `node apps/marketing-site/scripts/sync-page-builder-seed.mjs` (typecheck runs it with `--check`).
 - Apply the offered definitions to a live site with `pnpm --filter marketing-site page-builder` (wraps the `emdash-page-builder` CLI; needs `EMDASH_TOKEN`).

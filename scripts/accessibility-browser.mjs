@@ -1,8 +1,12 @@
 // Own the browser boundary: visitor theme, allowed requests and usable stylesheets.
 export async function openAccessibilityPage(browser, origin, mode, { recordVideo } = {}) {
   origin = new URL(origin).origin;
-  const context = await browser.newContext({ colorScheme: mode, viewport: { width: 1440, height: 1000 }, recordVideo });
-  await context.addCookies([{ name: 'theme', value: mode, url: origin }]);
+  // "system-*" modes emulate a cookie-less visitor: theme-init.js leaves <html>
+  // without .light/.dark, so only the emulated OS preference can turn the page dark.
+  const system = mode.startsWith('system-');
+  const colorScheme = system ? mode.slice('system-'.length) : mode;
+  const context = await browser.newContext({ colorScheme, viewport: { width: 1440, height: 1000 }, recordVideo });
+  if (!system) await context.addCookies([{ name: 'theme', value: mode, url: origin }]);
   await context.route('**/*', route => {
     const url = new URL(route.request().url());
     return url.origin === origin || ['data:', 'blob:', 'about:'].includes(url.protocol)

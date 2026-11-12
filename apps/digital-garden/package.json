@@ -11,8 +11,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "typecheck": "astro check",
-    "check": "node scripts/check-site.js"
+    "typecheck": "astro check"
   },
   "dependencies": {
     "@astrojs/cloudflare": "14.4.7",

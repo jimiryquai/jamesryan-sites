@@ -20,6 +20,13 @@ absence from this content map does not change whether those routes can render.
 The garden retains its previous discovery behavior through `getGardenLlmsTxt`
 until its backlog item is implemented.
 
+The `/og/*` image routes follow the same rule: `@jamesryan/cms-helpers/og`
+maps the `/og/<collection>/<slug>.png` prefixes Base.astro emits (posts,
+projects, pages), renders published entries only for anonymous requests
+(verified previews and edit mode render drafts with `private, no-store`), and
+404s unknown prefixes, missing slugs and non-published entries with bounded
+caching — never `immutable`.
+
 For the Posts archive's metadata source, see [Posts description](posts-description.md).
 
 EmDash 1.5 entry cache hints carry invalidation tags, including for previews;
