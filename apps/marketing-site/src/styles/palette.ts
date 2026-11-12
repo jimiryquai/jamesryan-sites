@@ -1,4 +1,5 @@
 import palette from "@jamesryan/ui/styles/palette.css?raw";
 
-// Satori requires an sRGB colour; olive-950 is stored in that form in the palette.
-export const socialBackground = palette.match(/--color-olive-950:\s*(#[0-9a-f]{6})/i)![1];
+// Satori needs sRGB values and a plain background-image, so the shared social
+// gradient is stored in that form in the palette.
+export const socialBackground = palette.match(/--social-background:\s*(linear-gradient\([^;]+\));/i)![1];

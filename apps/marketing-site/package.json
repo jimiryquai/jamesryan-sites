@@ -13,7 +13,6 @@
     "preview": "astro preview",
     "typecheck": "node scripts/sync-page-builder-seed.mjs --check && ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false astro check",
     "test": "node --test scripts/*.test.mjs test/*.test.mjs",
-    "check": "node scripts/check-site.js",
     "page-builder": "node scripts/apply-page-builder.mjs"
   },
   "dependencies": {

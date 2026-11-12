@@ -1,15 +1,12 @@
 ---
 import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
-import MarketingStats from '../blocks/Stats.astro';
+import StatsWithGraph from '@jamesryan/ui/components/sections/StatsWithGraph.astro';
+import Stat from '@jamesryan/ui/components/sections/Stat.astro';
 interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   eyebrow?: string; heading?: string; body?: string; items?: { value?: string; label?: string }[];
 };
 ---
-<MarketingStats node={{
-  _key: value._key,
-  eyebrow: value.eyebrow,
-  headline: value.heading,
-  subheadline: value.body,
-  stats: (value.items ?? []).map((item) => ({ stat: item.value ?? '', text: item.label ?? '' })),
-}} />
+<StatsWithGraph id={value._key || 'stats'} eyebrow={value.eyebrow} headline={value.heading} subheadline={value.body}>
+  {(value.items ?? []).map((item) => <Stat stat={item.value ?? ''} text={item.label ?? ''} />)}
+</StatsWithGraph>
