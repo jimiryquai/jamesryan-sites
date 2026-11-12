@@ -1,0 +1,23 @@
+{
+  "imports": [],
+  "mcpServers": {
+    "emdash-site": {
+      "type": "http",
+      "url": "http://localhost:4321/_emdash/api/mcp",
+      "description": "Requires local marketing-site dev server on port 4321 (pnpm dev)",
+      "headers": {
+        "Authorization": "Bearer ${EMDASH_SITE_PAT:-}"
+      },
+      "lifecycle": "ephemeral"
+    },
+    "emdash-garden": {
+      "type": "http",
+      "url": "http://localhost:4322/_emdash/api/mcp",
+      "description": "Requires local digital-garden dev server on port 4322 (pnpm dev:garden)",
+      "headers": {
+        "Authorization": "Bearer ${EMDASH_GARDEN_PAT:-}"
+      },
+      "lifecycle": "ephemeral"
+    }
+  }
+}
