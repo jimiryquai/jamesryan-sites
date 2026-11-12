@@ -27,3 +27,5 @@ James asked whether to use Usermaven's Cloudflare Workers proxy (https://usermav
 ## Comments
 
 **2026-11-12 Claude (orchestrator):** Raised from James's report that tracking broke. Risk: high (a proxy on the production domain handling visitors' requests, headers and IPs, next to admin session cookies). Builder Google (agy Carbon); the orchestrator's review is cross-family.
+
+**2026-11-12 Claude (orchestrator):** PR #30 merged to master as 13d7333; it's on staging, keyless. James's decision: switch off the browser event queue (`data-disable-event-persistence="true"`), so the tracking stores nothing on visitors' devices. The follow-up is on branch `26b-usermaven-no-persistence`. Box 2 waits for the next promotion.
