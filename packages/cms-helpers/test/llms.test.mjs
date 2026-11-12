@@ -20,6 +20,8 @@ const entries = {
 
 mock.module("emdash", {
 	namedExports: {
+    getRequestContext: () => undefined,
+    runWithContext: (_context, fn) => fn(),
 		async getEmDashEntry() { throw new Error("Discovery must not hydrate individual entries"); },
 		async getSiteSettingsWithCacheHint() {
 			return { data: { title: "Example", tagline: "A test site" }, cacheHint: { tags: ["settings"] } };

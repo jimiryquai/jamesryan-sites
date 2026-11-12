@@ -1,7 +1,7 @@
 ---
 export const prerender = false;
 
-import { getEmDashCollection, decodeSlug, getTermsForEntries } from "emdash";
+import { getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
 import { Image, PortableText } from "emdash/ui";
 import { toSafeExternalHttpUrl, getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
@@ -16,6 +16,7 @@ if (!slug) {
 const route = await getPublishedRoute(`/projects/${encodeURIComponent(slug)}`, Astro.cache);
 if (route?.kind !== "entry" || route.collection !== "projects") return Astro.rewrite("/404");
 const project = route.entry;
+const seo = getSeoMeta(project, { defaultDescription: project.data.summary });
 
 // Related projects
 const { entries: relatedProjects, cacheHint: relatedHint } = await getEmDashCollection("projects", {
@@ -76,8 +77,11 @@ function getImageSrc(img: unknown): string | undefined {
 ---
 
 <Base
-	title={project.data.title}
-	description={project.data.summary}
+	title={seo.title}
+	description={seo.description}
+	canonical={seo.canonical}
+	robots={seo.robots}
+	content={{ collection: "projects", id: project.data.id, slug }}
 	image={getImageSrc(project.data.featured_image)}
 >
 	<article class="mx-auto w-full max-w-5xl px-6 lg:px-10 py-16 sm:py-24">

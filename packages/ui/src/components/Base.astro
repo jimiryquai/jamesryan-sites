@@ -11,6 +11,7 @@ import {
 	buildImageObject,
 	assembleGraph,
 } from "@jdevalk/seo-graph-core";
+import { getOgImageUrl, type OgContent } from "../utils/og-image.ts";
 import { buildSiteGraph } from "../utils/seo-graph.ts";
 import { createPublicPageContext, getPageRuntime } from "emdash/page";
 import ThemeSwitcher from "./ThemeSwitcher.astro";
@@ -30,7 +31,7 @@ interface Props {
 	type?: string;
 	publishedTime?: string | null;
 	modifiedTime?: string | null;
-	content?: { collection: string; id: string; slug?: string | null };
+	content?: OgContent;
 	hideHeaderFooter?: boolean;
 }
 
@@ -64,16 +65,7 @@ if (menuResult && Astro.cache?.enabled) Astro.cache.set(menuResult.cacheHint);
 const siteUrl = Astro.site?.origin || "https://oatmeal.dev";
 const canonicalUrl =
 	canonical || new URL(Astro.url.pathname, siteUrl).toString();
-let ogImageUrl = `${siteUrl}/og/default.png`;
-if (content) {
-	let prefix = "pages";
-	if (content.collection === "posts") {
-		prefix = "posts";
-	} else if (content.collection === "projects") {
-		prefix = "projects";
-	}
-	ogImageUrl = `${siteUrl}/og/${prefix}/${content.slug || content.id}.png`;
-}
+const ogImageUrl = getOgImageUrl(siteUrl, content);
 const finalOgImage = image || ogImageUrl;
 
 const pageCtx = createPublicPageContext({

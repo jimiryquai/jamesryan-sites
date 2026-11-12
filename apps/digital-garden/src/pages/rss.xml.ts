@@ -1,4 +1,4 @@
-import { getContentPath, discoveryResponse } from "@jamesryan/cms-helpers";
+import { getContentPath, discoveryResponse, runPublishedOnly } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
 import { getEmDashCollection, getSiteSettingsWithCacheHint } from "emdash";
 
@@ -6,17 +6,18 @@ import { resolveBlogSiteIdentity } from "../utils/site-identity.ts";
 
 export const GET: APIRoute = async ({ site, url, cache }) => {
 	const siteUrl = (site?.toString() || url.origin).replace(/\/+$/, "");
-	const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
-	if (cache?.enabled) cache.set(settingsHint);
-	const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
-
-	const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
-		status: "published",
-		orderBy: { published_at: "desc" },
-		limit: 20,
-	});
-
-	if (cache?.enabled) cache.set(cacheHint);
+	const [settingsResult, postsResult] = await runPublishedOnly(() => Promise.all([
+		getSiteSettingsWithCacheHint(),
+		getEmDashCollection("posts", {
+			status: "published", orderBy: { published_at: "desc" }, limit: 20,
+		}),
+	]));
+	if (cache?.enabled) {
+		cache.set(settingsResult.cacheHint);
+		cache.set(postsResult.cacheHint);
+	}
+	const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settingsResult.data);
+	const posts = postsResult.entries;
 
 	const items = posts
 		.map((post) => {
