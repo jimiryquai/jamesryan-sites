@@ -1,0 +1,51 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { toSafeExternalHttpUrl } from '../src/safe-html.ts';
+
+test('external project links accept only absolute HTTP URLs without controls', () => {
+  assert.equal(toSafeExternalHttpUrl(' https://example.com/work?q=1 '), 'https://example.com/work?q=1');
+  assert.equal(toSafeExternalHttpUrl('http://example.com'), 'http://example.com/');
+  for (const value of ['javascript:alert(1)', 'data:text/html,x', 'vbscript:x', 'mailto:a@b.c', 'file:///tmp/x', '//example.com', '/work', '', null, {}, 'https://exam\nple.com', '\thttps://example.com']) {
+    assert.equal(toSafeExternalHttpUrl(value), null, String(value));
+  }
+});
+
+import { sanitizeDocumentHtml } from '../src/safe-html.ts';
+import { readFileSync } from 'node:fs';
+
+test('document sanitizer preserves the seeded privacy policy and safe document vocabulary', () => {
+ const seed = JSON.parse(readFileSync(new URL('../../../apps/digital-garden/seed/seed.json', import.meta.url)));
+ const documents = JSON.stringify(seed).match(/privacy@company.example/);
+ assert.ok(documents);
+ function visit(value) {
+  if (!value || typeof value !== 'object') return;
+  if (value._type === 'marketing.document') assert.equal(sanitizeDocumentHtml(value.content), value.content);
+  for (const child of Object.values(value)) visit(child);
+ }
+ visit(seed);
+ const html = '<h1>Title</h1><p>Text &amp; <strong>bold</strong><br /><a href="mailto:privacy@company.example">Email</a></p>';
+ assert.equal(sanitizeDocumentHtml(html), html);
+});
+
+test('document sanitizer removes active containers, comments, unknown tags and event attributes', () => {
+ assert.equal(sanitizeDocumentHtml('<script>alert(1)</script><style>bad</style><iframe>bad</iframe><object>bad</object><svg><a>bad</a></svg><math>bad</math><!--bad--><form><p onclick="bad()">Good</p><input></form><img src=x onerror=bad()><embed src=x><b style="color:red">Bold</b>'), '<p>Good</p><b>Bold</b>');
+});
+
+test('document hrefs accept only safe schemes or local destinations after entity decoding', () => {
+ for (const href of ['javascript:alert(1)', 'jav&#x61;script:alert(1)', 'java&#10;script:alert(1)', 'javascript&colon;alert(1)', 'data:text/html,x', '//evil.test', '/\\evil.test', '&sol;&sol;evil.test', 'relative', 'file:///tmp/a']) {
+  assert.equal(sanitizeDocumentHtml(`<a href="${href}" onclick="bad()" target="_blank">Link</a>`), '<a>Link</a>', href);
+ }
+ for (const href of ['https://example.com', 'http://example.com', 'mailto:a@b.c', 'tel:+123', '#part', '/path']) {
+  assert.equal(sanitizeDocumentHtml(`<a href="${href}">Link</a>`), `<a href="${href}">Link</a>`);
+ }
+ assert.equal(sanitizeDocumentHtml('<a href="/find?q=&quot;&amp;&lt;&gt;">Find</a>'), '<a href="/find?q=&quot;&amp;&lt;&gt;">Find</a>');
+});
+
+test('malformed document markup fails closed and cannot smuggle attributes or tags', () => {
+ for (const html of ['<a href="/good" title=">" onclick="bad()">Link</a>', '<a href="/good" href="javascript:bad()">Link</a>']) {
+  assert.equal(sanitizeDocumentHtml(html), '<a href="/good">Link</a>');
+ }
+ assert.equal(sanitizeDocumentHtml('<p>Safe</p><script>unclosed'), '<p>Safe</p>');
+ assert.equal(sanitizeDocumentHtml('<p>Safe</p><a href="unterminated'), '<p>Safe</p>');
+ assert.equal(sanitizeDocumentHtml('Text < 3 &amp; fine'), 'Text &lt; 3 &amp; fine');
+});

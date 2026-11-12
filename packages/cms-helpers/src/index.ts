@@ -6,3 +6,4 @@ export * from "./content-query.ts";
 export * from "./published-routes.ts";
 export * from "./public-collections.ts";
 export * from "./portable-text-markdown.ts";
+export * from "./safe-html.ts";

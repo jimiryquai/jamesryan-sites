@@ -2,7 +2,6 @@
 import {
 	getMenu,
 	getSiteSettings,
-	type PageFragmentContribution,
 } from "emdash";
 import Seo from "@jdevalk/astro-seo-graph/Seo.astro";
 import {
@@ -22,24 +21,7 @@ import themeScript from "./theme-init.js?raw";
 import NavbarLink from "./sections/NavbarLink.astro";
 import FooterLink from "./sections/FooterLink.astro";
 
-function renderFragment(f: PageFragmentContribution): string {
-	if (f.kind === "html") {
-		return f.html;
-	} else if (f.kind === "inline-script") {
-		const attrs = Object.entries(f.attributes || {})
-			.map(([k, v]) => `${k}="${v}"`)
-			.join(" ");
-		return `<script ${attrs}>${f.code}</script>`;
-	} else if (f.kind === "external-script") {
-		const attrs = Object.entries(f.attributes || {})
-			.map(([k, v]) => `${k}="${v}"`)
-			.join(" ");
-		const asyncAttr = f.async ? "async" : "";
-		const deferAttr = f.defer ? "defer" : "";
-		return `<script src="${f.src}" ${asyncAttr} ${deferAttr} ${attrs}></script>`;
-	}
-	return "";
-}
+import { renderPageFragments } from "../utils/page-fragments.ts";
 
 interface Props {
 	title?: string;
@@ -321,11 +303,7 @@ if (articlePiece) pieces.push(articlePiece);
 
 const graph = assembleGraph(pieces, { warnOnDanglingReferences: true });
 
-// Collect head fragments from plugins
-const headFragmentsHtml = fragments
-	.filter((f) => f.placement === "head")
-	.map(renderFragment)
-	.join("\n");
+const fragmentHtml = renderPageFragments(fragments);
 ---
 
 <!doctype html>
@@ -345,13 +323,14 @@ const headFragmentsHtml = fragments
 			extraLinks={extraLinks}
 			extraMeta={extraMeta}
 		/>
-		<Fragment set:html={headFragmentsHtml} />
+		<Fragment set:html={fragmentHtml.head} />
 		<slot name="links" />
 		<script is:inline set:html={themeScript} />
 	</head>
 	<body
 		class="flex flex-col min-h-screen bg-olive-100 text-olive-950 antialiased dark:bg-olive-950 dark:text-white transition-colors duration-200"
 	>
+		<Fragment set:html={fragmentHtml["body-start"]} />
 		{
 			!hideHeaderFooter && (
 				<header
@@ -402,5 +381,6 @@ const headFragmentsHtml = fragments
 				</footer>
 			)
 		}
+		<Fragment set:html={fragmentHtml["body-end"]} />
 	</body>
 </html>
