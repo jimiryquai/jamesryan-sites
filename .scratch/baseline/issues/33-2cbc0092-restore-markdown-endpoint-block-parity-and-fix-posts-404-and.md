@@ -14,13 +14,15 @@ Fix five concrete rendering and agent-native parity defects in `apps/marketing-s
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `/posts/<slug>.md` and `/projects/<slug>.md` include fenced `code-block-pro` code blocks (with language tag), `> ` blockquotes, and Markdown images, verified by `scripts/check-rendered-markdown.mjs`.
-- [ ] `/posts` renders `<title>Blog — <siteTitle></title>` without repeating `<siteTitle>`.
-- [ ] `/404` renders styled typography and action buttons using `@jamesryan/ui` olive classes with zero references to removed `--spacing-*`, `--font-size-*`, `--max-width`, `--radius`, or `.btn*` selectors.
-- [ ] `/projects/<slug>` Portable Text body has explicit olive typography styling in light, explicit dark, and system-dark modes without relying on uninstalled `@tailwindcss/typography`, and `check-rendered-markdown.mjs` + `check-rendered-media.mjs` derive page paths from `@jamesryan/cms-helpers`.
+- [x] `/posts/<slug>.md` and `/projects/<slug>.md` include fenced `code-block-pro` code blocks (with language tag), `> ` blockquotes, and Markdown images, verified by `scripts/check-rendered-markdown.mjs`.
+- [x] `/posts` renders `<title>Blog — <siteTitle></title>` without repeating `<siteTitle>`.
+- [x] `/404` renders styled typography and action buttons using `@jamesryan/ui` olive classes with zero references to removed `--spacing-*`, `--font-size-*`, `--max-width`, `--radius`, or `.btn*` selectors.
+- [x] `/projects/<slug>` Portable Text body has explicit olive typography styling in light, explicit dark, and system-dark modes without relying on uninstalled `@tailwindcss/typography`, and `check-rendered-markdown.mjs` + `check-rendered-media.mjs` derive page paths from `@jamesryan/cms-helpers`.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `h33-grok` (`grok-4.7`, branch `33-markdown-and-routes`). Risk: medium (reversible PR to `master`; preserves existing user-visible copy word-for-word).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Closed via PR #41 (`b3dc9e4` on `master`, source `da2af42` / `7b4fcdd` built by `h33-grok` `grok-4.7`, cross-family Spec + Standards `PASS` after Fix Round 2 verified `.project-prose` cascade contrast across 8 Chromium runs, non-circular `.md` blockquote/image checks, `/posts` + `/404` checks, and runtime-validated `Visual Gallery`).
