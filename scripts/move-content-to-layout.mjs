@@ -147,8 +147,22 @@ function convertLinks(block, prefixes) {
 }
 
 /** The wire error shape every failure is reported in, page-level or run-level. */
-function shapeError(error, page) {
+export function shapeError(error, page) {
 	return { message: error.message, operation: error.operation, status: error.status, code: error.code, ...(page ? { page } : {}) };
+}
+
+/** A service-slug-to-id resolver as the shared-content scoping needs it. */
+export function makeServiceResolver(request) {
+	const cache = new Map();
+	return async (slug) => {
+		if (!cache.has(slug)) {
+			const result = await request(`/_emdash/api/content/services/${encodeURIComponent(slug)}`);
+			const id = result.item?.data?.id;
+			if (!id) throw new Error(`service "${slug}" not found`);
+			cache.set(slug, id);
+		}
+		return cache.get(slug);
+	};
 }
 
 /**
@@ -579,7 +593,7 @@ function trimSpans(spans) {
 }
 
 /** Guard the destination the way the home script did: tokens never leave HTTPS. */
-function guardDestination(site, token) {
+export function guardDestination(site, token) {
 	const base = new URL(site);
 	if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password) throw new Error('Expected an HTTP(S) site URL without embedded credentials');
 	const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(base.hostname);
@@ -623,16 +637,7 @@ export async function migratePages({ site, token, apply = false, page, http = fe
 		} while (cursor);
 	}
 
-	const serviceCache = new Map();
-	const resolveService = async (slug) => {
-		if (!serviceCache.has(slug)) {
-			const result = await request(`/_emdash/api/content/services/${encodeURIComponent(slug)}`);
-			const id = result.item?.data?.id;
-			if (!id) throw new Error(`service "${slug}" not found`);
-			serviceCache.set(slug, id);
-		}
-		return serviceCache.get(slug);
-	};
+	const resolveService = makeServiceResolver(request);
 
 	const pages = [];
 	const errors = [];

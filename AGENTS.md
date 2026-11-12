@@ -75,31 +75,21 @@ When editing content routes or discovery endpoints, follow [published-route rule
 
 ## Schema
 
-- `pages` collection: `title`, `content` (Portable Text containing marketing blocks).
+- `pages` collection: `title`, `layout` (page-builder blocks), optional `service` reference that scopes shared-content blocks (testimonials, pricing, faqs, team).
 - No taxonomies.
 - Four menus: `primary`, `footer_product`, `footer_company`, `footer_support`.
 
 Site settings have `title` and `tagline`. Title renders in the header; tagline is used in the footer / metadata.
 
-## Marketing blocks
+## Page builder
 
-This template ships a local plugin at `src/plugins/marketing-blocks/` that registers five Portable Text block types. Editors insert them in the admin's Portable Text editor; they render via `src/components/blocks/{Hero,Features,Testimonials,Pricing,FAQ}.astro` (dispatched from `MarketingBlocks.astro`).
+Pages are built from `emdash-plugin-page-builder` blocks in the `layout` field; the old Portable Text `content` field is retired from the schema and the templates. Rendering goes through `src/components/page-builder/PageLayout.astro`; the visual sections live in `src/components/blocks/`.
 
-| Block                    | Fields                                                                                                                             |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `marketing.hero`         | `headline`, `subheadline`, `primaryCtaLabel`, `primaryCtaUrl`, `secondaryCtaLabel`, `secondaryCtaUrl`, `centered` (toggle)         |
-| `marketing.features`     | `headline`, `subheadline`, repeater of `{ icon, title, description }`                                                              |
-| `marketing.testimonials` | `headline`, repeater of `{ quote, author, role, company, avatar (URL) }`                                                           |
-| `marketing.pricing`      | `headline`, repeater of `{ name, price, period, description, features (newline-separated string), ctaLabel, ctaUrl, highlighted }` |
-| `marketing.faq`          | `headline`, repeater of `{ question, answer }`                                                                                     |
-
-Constraints worth remembering:
-
-- Block Kit has no nested object element, so a CTA's `{ label, url }` is flattened to sibling fields like `primaryCtaLabel` + `primaryCtaUrl`. The renderer reads the flat keys -- don't try to nest them.
-- Repeater sub-fields are scalar only. Lists-of-strings (e.g. pricing features) are a single multiline text field, split on newline at render time.
-- There is no media-picker element in the plugin block modal yet, so where image fields exist they are URL strings entered by hand (testimonial `avatar`). Use real URLs, not placeholders.
-- The `marketing.hero` block has no image field in the editor schema. The hero renderer falls back to the bundled `/hero-visual.svg` illustration when no image is set. To customise the hero artwork, swap `/hero-visual.svg` in `public/` or extend the plugin schema with an image field (and update `Hero.astro` accordingly).
-- Icons in the Features block come from a fixed set: `zap, shield, users, chart, code, globe, heart, star, check, lock, clock, cloud`. Pick from that list.
+- The offered block list is `src/components/page-builder/offered-blocks.json`; regenerate the seed's `blockTypes` and `allowedTypes` from it with `node apps/marketing-site/scripts/sync-page-builder-seed.mjs` (typecheck runs it with `--check`).
+- Apply the offered definitions to a live site with `pnpm --filter marketing-site page-builder` (wraps the `emdash-page-builder` CLI; needs `EMDASH_TOKEN`).
+- Shared-content blocks (testimonials, pricing, faqs, team) read the matching collections scoped by the page's `service` reference; inline blocks (hero, cta, features, stats, comparison, prose) carry their own data.
+- The plugin's publish policy blocks publishing a layout whose blocks miss required fields; block schema fields stay optional and the policy enforces on publish.
+- Moving legacy Portable Text content into `layout` and retiring the old field are scripted: `scripts/move-content-to-layout.mjs` and `scripts/retire-pages-content.mjs` (plan by default, `--apply` to write).
 
 ## Visual character
 
@@ -135,8 +125,7 @@ To re-brand, the highest-leverage moves are:
 
 1. Change `--color-primary` and `--color-accent` to the brand pair.
 2. Update the site title (logo wordmark) and tagline.
-3. Replace the hero illustration URL.
-4. Edit hero `headline` and `subheadline` blocks to specific, concrete copy.
+3. Edit the home hero block's `heading` and `body` to specific, concrete copy.
 
 ## What not to do
 
@@ -145,4 +134,4 @@ To re-brand, the highest-leverage moves are:
 - Don't use icon and stock photo combos that fight each other. Pick illustration _or_ photography, not both.
 - Don't enable the gradient on every interactive element. The CTA gradient is the signal; if it's on every button, it stops signalling.
 - Don't add a hero block followed immediately by another hero block. One hero, then features / testimonials / pricing / FAQ in some order.
-- Don't replace the `marketing.pricing` block with a hand-coded table. The block is the data shape downstream renderers expect.
+- Don't replace the `pricing` block with a hand-coded table. The block is the data shape downstream renderers expect.
