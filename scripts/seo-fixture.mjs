@@ -87,9 +87,9 @@ const entries = {
     { ...page("fixture-draft"), status: "draft" },
   ],
   posts: [
-    { id: "fixture-post", slug: "fixture-post", status: "published", publishedAt: "2026-10-02T09:00:00.000Z",
+    { id: "fixture-post", slug: "fixture-post", status: "published",
       data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
-    { id: "fixture-fallback", slug: "fixture-fallback", status: "published", publishedAt: "2026-10-01T09:00:00.000Z",
+    { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [

@@ -24,9 +24,17 @@ const faqShape = (data: Faq): FaqShape => ({ question: data.question, answer: da
 const teamShape = (data: Team): TeamMemberShape => ({ name: data.name, role: data.role, image: data.image ?? undefined });
 
 /** The collections the page builder may read from this site. */
-type ShapeCollection = 'pricing' | 'testimonials' | 'faqs' | 'team';
+type ShapeCollection = 'pricing' | 'testimonials' | 'faqs' | 'team' | 'posts';
 
 type ListFilter = Parameters<QueryApi['list']>[1];
+
+async function rawList(collection: ShapeCollection, filter: ListFilter | undefined): Promise<QueryListResult> {
+  const result = await getEmDashCollection(collection, filter);
+  if (result.error) throw result.error;
+  // The package's query boundary carries data as a record; the shape functions
+  // keep their typed results until this one boundary.
+  return result as unknown as QueryListResult;
+}
 async function listShaped<C extends ShapeCollection, S extends object>(
   collection: C, filter: ListFilter | undefined, shape: (data: InferCollectionData<C>) => S,
 ): Promise<QueryListResult> {
@@ -134,7 +142,7 @@ export type SiteQuery = QueryApi & TermsQuery;
 
 const siteQuery: SiteQuery = {
   async list(collection, filter) {
-    if (collection === 'posts') return listPostsWithTags(siteQuery, filter);
+    if (collection === 'posts') return rawList('posts', filter);
     if (collection === 'pricing') return listShaped('pricing', filter, pricingShape);
     if (collection === 'testimonials') return listShaped('testimonials', filter, testimonialShape);
     if (collection === 'faqs') return listShaped('faqs', filter, faqShape);

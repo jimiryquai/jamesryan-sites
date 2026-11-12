@@ -25,24 +25,17 @@ const pageMarkdownPath = (slug) =>
     : TOP_LEVEL_PAGES.includes(slug) ? `/${slug}.md`
       : `/pages/${encodeURIComponent(slug)}.md`;
 
-/** The published posts a posts block reads, newest first: the seed's order
- * under `published_at` desc with the seeder's monotonic ids breaking ties. */
+/** The published posts a posts block reads, newest first. A fresh seed stamps
+ * every published entry with its seeding time, so the collection's newest-first
+ * order (`published_at` desc, monotonic ids desc) is the seed's array order
+ * reversed. */
 function postsBlockTexts(block, collections) {
-  const published = (collections.posts ?? [])
-    .map((entry, index) => ({ entry, index }))
-    .filter(({ entry }) => entry.status === "published");
-  published.sort((a, b) =>
-    time(b.entry.publishedAt) - time(a.entry.publishedAt) || b.index - a.index);
+  const published = (collections.posts ?? []).filter((entry) => entry.status === "published");
   const count = typeof block.count === "number" && block.count > 0 ? block.count : POSTS_DEFAULT_COUNT;
-  return published.slice(0, count).map(({ entry }) => {
+  return published.slice().reverse().slice(0, count).map((entry) => {
     const slug = entry.slug ?? entry.id;
     return `- [${entry.data?.title ?? entry.id}](/posts/${slug})`;
   });
-}
-
-function time(value) {
-  const parsed = value === undefined ? NaN : new Date(value).getTime();
-  return Number.isNaN(parsed) ? 0 : parsed;
 }
 
 /** Plain text a reader should find in the Markdown for one layout block. */

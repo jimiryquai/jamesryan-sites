@@ -40,9 +40,9 @@ const seed = {
       { id: "fixture-draft", slug: "fixture-draft", status: "draft", data: { title: "Fixture draft" } },
     ],
     posts: [
-      { id: "fixture-post", slug: "fixture-post", status: "published", publishedAt: "2026-10-02T09:00:00.000Z", data: { title: "Fixture post heading", content: [] } },
-      { id: "fixture-older", slug: "fixture-older", status: "published", publishedAt: "2026-10-01T09:00:00.000Z", data: { title: "Older fixture post", content: [] } },
-      { id: "fixture-draft-post", slug: "fixture-draft-post", status: "draft", publishedAt: "2026-10-03T09:00:00.000Z", data: { title: "Draft fixture post", content: [] } },
+      { id: "fixture-post", slug: "fixture-post", status: "published", data: { title: "Fixture post heading", content: [] } },
+      { id: "fixture-older", slug: "fixture-older", status: "published", data: { title: "Older fixture post", content: [] } },
+      { id: "fixture-draft-post", slug: "fixture-draft-post", status: "draft", data: { title: "Draft fixture post", content: [] } },
     ],
     projects: [
       { id: "fixture-project", slug: "fixture-project", status: "published", data: { title: "Fixture project heading", content: [] } },
@@ -62,9 +62,9 @@ Fixture home layout body
 
 - [Read the posts](/posts)
 
-- [Fixture post heading](/posts/fixture-post)
-
 - [Older fixture post](/posts/fixture-older)
+
+- [Fixture post heading](/posts/fixture-post)
 `;
 const cleanPrivacy = `# Fixture privacy-policy
 *Published on Fixture Marketing Testing*
@@ -153,10 +153,10 @@ test("a page whose markdown lost its layout content fails naming the missing tex
 
 test("a posts block whose markdown lost its post links fails naming the missing link", async () => {
   const { code, output } = await check({
-    "/home.md": { body: cleanHome.replace("- [Older fixture post](/posts/fixture-older)\n", "") },
+    "/home.md": { body: cleanHome.replace("- [Fixture post heading](/posts/fixture-post)\n", "") },
   });
   assert.equal(code, 1, output);
-  assert.match(output, /\/home\.md.*- \[Older fixture post\]\(\/posts\/fixture-older\)/);
+  assert.match(output, /\/home\.md.*- \[Fixture post heading\]\(\/posts\/fixture-post\)/);
 });
 
 test("a shared-content block without its seed items fails naming the item text", async () => {
