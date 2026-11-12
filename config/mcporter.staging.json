@@ -1,0 +1,13 @@
+{
+  "imports": [],
+  "mcpServers": {
+    "emdash-staging-agent": {
+      "type": "http",
+      "url": "https://staging.jamesryan.dev/_emdash/api/mcp",
+      "headers": {
+        "Authorization": "Bearer ${EMDASH_AGENT_STAGING_TOKEN}"
+      },
+      "lifecycle": "ephemeral"
+    }
+  }
+}

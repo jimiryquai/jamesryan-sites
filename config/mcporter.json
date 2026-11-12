@@ -1,33 +1,10 @@
 {
+  "imports": [],
   "mcpServers": {
     "emdash-docs": {
       "type": "http",
       "url": "https://docs.emdashcms.com/mcp",
       "lifecycle": "ephemeral"
-    },
-    "emdash-staging-agent": {
-      "type": "http",
-      "url": "https://staging.jamesryan.dev/_emdash/api/mcp",
-      "headers": {
-        "Authorization": "Bearer ${EMDASH_AGENT_STAGING_TOKEN}"
-      },
-      "lifecycle": "ephemeral"
-    },
-    "emdash-site": {
-      "command": "sh",
-      "args": [
-        "-c",
-        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote http://localhost:4321/_emdash/api/mcp --header \"Authorization: Bearer $EMDASH_SITE_PAT\""
-      ],
-      "lifecycle": "keep-alive"
-    },
-    "emdash-garden": {
-      "command": "sh",
-      "args": [
-        "-c",
-        "[ -f $(git rev-parse --show-toplevel)/.env ] && export $(grep -v '^#' $(git rev-parse --show-toplevel)/.env | xargs) || true; export PATH=\"/home/james/.local/share/mise/installs/node/24.12.0/bin:$PATH\"; npx -y mcp-remote http://localhost:4322/_emdash/api/mcp --header \"Authorization: Bearer $EMDASH_GARDEN_PAT\""
-      ],
-      "lifecycle": "keep-alive"
     }
   }
 }
