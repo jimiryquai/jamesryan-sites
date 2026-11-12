@@ -1,7 +1,15 @@
 import assert from "node:assert/strict";
 import { access } from "node:fs/promises";
 import { test } from "node:test";
-import { USERMAVEN_PROXY_PATH, proxyUsermavenRequest } from "../src/utils/usermaven.ts";
+import {
+	USERMAVEN_PROXY_PATH,
+	USERMAVEN_SCRIPT_PATH,
+	proxyUsermavenRequest,
+} from "../src/utils/usermaven.ts";
+
+const ORIGIN = "https://jamesryan.dev";
+const SCRIPT_URL = `${ORIGIN}${USERMAVEN_SCRIPT_PATH}`;
+const EVENT_URL = `${ORIGIN}${USERMAVEN_PROXY_PATH}/api/v1/event`;
 
 function createCache(enabled = false) {
 	const calls = [];
@@ -25,7 +33,7 @@ test("proxy returns 404 without contacting upstream when USERMAVEN_KEY is unset 
 	for (const key of [undefined, "", "   "]) {
 		const enabledCache = createCache(true);
 		const getRes = await proxyUsermavenRequest({
-			request: new Request("https://jamesryan.dev/s1/lib.js"),
+			request: new Request(SCRIPT_URL),
 			cache: enabledCache,
 			key,
 			fetchImpl: rejectUpstreamFetch,
@@ -36,7 +44,7 @@ test("proxy returns 404 without contacting upstream when USERMAVEN_KEY is unset 
 
 		const disabledCache = createCache(false);
 		const postRes = await proxyUsermavenRequest({
-			request: new Request("https://jamesryan.dev/s1/api/v1/event?token=UMNstP14wS", {
+			request: new Request(`${EVENT_URL}?token=UMNstP14wS`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ event_type: "pageview" }),
@@ -50,7 +58,7 @@ test("proxy returns 404 without contacting upstream when USERMAVEN_KEY is unset 
 	}
 });
 
-test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths to events.usermaven.com", async () => {
+test("proxy maps lib.js to t.usermaven.com and strips prefix for event paths to events.usermaven.com", async () => {
 	const upstreamCalls = [];
 	async function fakeUpstream(input, init = {}) {
 		const url = new URL(typeof input === "string" ? input : input.toString());
@@ -63,6 +71,9 @@ test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths
 			body: bodyText,
 		});
 		if (url.origin === "https://t.usermaven.com" && url.pathname === "/lib.js") {
+			if (url.searchParams.get("fail") === "1") {
+				return new Response("Unavailable", { status: 503 });
+			}
 			return new Response("window.usermaven=function(){};", {
 				status: 200,
 				headers: {
@@ -86,7 +97,7 @@ test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths
 
 	const scriptCache = createCache(true);
 	const scriptRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/lib.js?v=1"),
+		request: new Request(`${SCRIPT_URL}?v=1`),
 		cache: scriptCache,
 		key: "UMNstP14wS",
 		fetchImpl: fakeUpstream,
@@ -94,7 +105,7 @@ test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths
 	assert.equal(scriptRes.status, 200);
 	assert.equal(await scriptRes.text(), "window.usermaven=function(){};");
 	assert.equal(scriptRes.headers.get("content-type"), "application/javascript");
-	assert.equal(scriptRes.headers.get("cache-control"), "no-store");
+	assert.equal(scriptRes.headers.get("cache-control"), "private, max-age=3600");
 	assert.equal(scriptRes.headers.get("access-control-allow-origin"), null);
 	assert.equal(scriptRes.headers.get("set-cookie"), null);
 	assert.equal(scriptRes.headers.get("content-encoding"), null);
@@ -102,11 +113,19 @@ test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths
 	assert.equal(upstreamCalls[0].url, "https://t.usermaven.com/lib.js?v=1");
 	assert.equal(upstreamCalls[0].method, "GET");
 
+	const failedScriptRes = await proxyUsermavenRequest({
+		request: new Request(`${SCRIPT_URL}?fail=1`),
+		key: "UMNstP14wS",
+		fetchImpl: fakeUpstream,
+	});
+	assert.equal(failedScriptRes.status, 503);
+	assert.equal(failedScriptRes.headers.get("cache-control"), "no-store");
+
 	const payload = JSON.stringify([{ event_type: "pageview", api_key: "UMNstP14wS" }]);
 	const eventCache = createCache(true);
 	const eventRes = await proxyUsermavenRequest({
 		request: new Request(
-			"https://jamesryan.dev/s1/api.k9x2m1?p_a7b3=UMNstP14wS&cookie_policy=strict&ip_policy=strict",
+			`${ORIGIN}${USERMAVEN_PROXY_PATH}/api.k9x2m1?p_a7b3=UMNstP14wS&cookie_policy=strict&ip_policy=strict`,
 			{
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -125,14 +144,14 @@ test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths
 	assert.equal(eventRes.headers.get("set-cookie"), null);
 	assert.deepEqual(eventCache.calls, [false]);
 	assert.equal(
-		upstreamCalls[1].url,
+		upstreamCalls[2].url,
 		"https://events.usermaven.com/api.k9x2m1?p_a7b3=UMNstP14wS&cookie_policy=strict&ip_policy=strict",
 	);
-	assert.equal(upstreamCalls[1].method, "POST");
-	assert.equal(upstreamCalls[1].body, payload);
+	assert.equal(upstreamCalls[2].method, "POST");
+	assert.equal(upstreamCalls[2].body, payload);
 
 	const standardEventRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/api/v1/event?token=UMNstP14wS", {
+		request: new Request(`${EVENT_URL}?token=UMNstP14wS`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: payload,
@@ -141,7 +160,7 @@ test("proxy maps /s1/lib.js to t.usermaven.com and strips prefix for event paths
 		fetchImpl: fakeUpstream,
 	});
 	assert.equal(standardEventRes.status, 200);
-	assert.equal(upstreamCalls[2].url, "https://events.usermaven.com/api/v1/event?token=UMNstP14wS");
+	assert.equal(upstreamCalls[3].url, "https://events.usermaven.com/api/v1/event?token=UMNstP14wS");
 });
 
 test("proxy forwards only allowlisted headers, strips EmDash session cookies and Authorization, and maps CF-Connecting-IP to X-Forwarded-For", async () => {
@@ -156,7 +175,7 @@ test("proxy forwards only allowlisted headers, strips EmDash session cookies and
 	}
 
 	const eventRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/api/v1/event?token=UMNstP14wS", {
+		request: new Request(`${EVENT_URL}?token=UMNstP14wS`, {
 			method: "POST",
 			headers: {
 				Cookie: "emdash_session=admin-secret-session-ulid; theme=dark",
@@ -166,7 +185,7 @@ test("proxy forwards only allowlisted headers, strips EmDash session cookies and
 				"CF-Ray": "89abcdef01234567-LHR",
 				"X-Forwarded-For": "198.51.100.99",
 				"X-Real-IP": "198.51.100.98",
-				Origin: "https://jamesryan.dev",
+				Origin: ORIGIN,
 				"X-Admin-Debug": "do-not-forward",
 				"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36",
 				Referer: "https://jamesryan.dev/posts/example",
@@ -190,7 +209,7 @@ test("proxy forwards only allowlisted headers, strips EmDash session cookies and
 	});
 
 	const scriptRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/lib.js", {
+		request: new Request(SCRIPT_URL, {
 			headers: {
 				Cookie: "emdash_session=admin-secret-session-ulid",
 				Authorization: "Bearer emdash_pat_secret_token",
@@ -213,10 +232,10 @@ test("proxy rejects path confusion and disallowed HTTP methods, handles upstream
 	await access(new URL(`../src/pages${USERMAVEN_PROXY_PATH}/[...path].ts`, import.meta.url));
 
 	for (const badUrl of [
-		"https://jamesryan.dev/s1//evil.example/pwn",
-		"https://jamesryan.dev/s1/%2f%2fevil.example/pwn",
-		"https://jamesryan.dev/s1/%252e%252e/admin",
-		"https://jamesryan.dev/s1/%E0%A4%A",
+		`${ORIGIN}${USERMAVEN_PROXY_PATH}//evil.example/pwn`,
+		`${ORIGIN}${USERMAVEN_PROXY_PATH}/%2f%2fevil.example/pwn`,
+		`${ORIGIN}${USERMAVEN_PROXY_PATH}/%252e%252e/admin`,
+		`${ORIGIN}${USERMAVEN_PROXY_PATH}/%E0%A4%A`,
 	]) {
 		const res = await proxyUsermavenRequest({
 			request: new Request(badUrl),
@@ -228,17 +247,17 @@ test("proxy rejects path confusion and disallowed HTTP methods, handles upstream
 	}
 
 	const outsidePrefixRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/%2e%2e/_emdash/admin"),
+		request: new Request(`${ORIGIN}${USERMAVEN_PROXY_PATH}/%2e%2e/_emdash/admin`),
 		key: "UMNstP14wS",
 		fetchImpl: rejectUpstreamFetch,
 	});
 	assert.equal(outsidePrefixRes.status, 404);
 
-	for (const [method, url] of [
-		["POST", "https://jamesryan.dev/s1/lib.js"],
-		["DELETE", "https://jamesryan.dev/s1/api/v1/event"],
-		["PUT", "https://jamesryan.dev/s1/api/v1/event"],
-		["OPTIONS", "https://jamesryan.dev/s1/api/v1/event"],
+	for (const [method, url, expectedAllow] of [
+		["POST", SCRIPT_URL, "GET, HEAD"],
+		["DELETE", EVENT_URL, "GET, HEAD, POST"],
+		["PUT", EVENT_URL, "GET, HEAD, POST"],
+		["OPTIONS", EVENT_URL, "GET, HEAD, POST"],
 	]) {
 		const res = await proxyUsermavenRequest({
 			request: new Request(url, { method }),
@@ -246,11 +265,12 @@ test("proxy rejects path confusion and disallowed HTTP methods, handles upstream
 			fetchImpl: rejectUpstreamFetch,
 		});
 		assert.equal(res.status, 405, `${method} ${url} should return 405`);
+		assert.equal(res.headers.get("allow"), expectedAllow);
 		assert.equal(res.headers.get("cache-control"), "no-store");
 	}
 
 	const gatewayErrorRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/lib.js"),
+		request: new Request(SCRIPT_URL),
 		key: "UMNstP14wS",
 		fetchImpl: async () => {
 			throw new Error("internal socket details 10.0.0.5");
@@ -270,7 +290,7 @@ test("proxy rejects path confusion and disallowed HTTP methods, handles upstream
 		},
 	});
 	const oversizedRes = await proxyUsermavenRequest({
-		request: new Request("https://jamesryan.dev/s1/api/v1/event", {
+		request: new Request(EVENT_URL, {
 			method: "POST",
 			body: oversizedBody,
 			duplex: "half",
@@ -281,4 +301,3 @@ test("proxy rejects path confusion and disallowed HTTP methods, handles upstream
 	assert.equal(oversizedRes.status, 404);
 	assert.equal(cancelledOversized, true);
 });
-

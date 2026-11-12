@@ -1,7 +1,13 @@
 export const USERMAVEN_PROXY_PATH = "/s1";
+export const USERMAVEN_SCRIPT_UPSTREAM_PATH = "/lib.js";
+export const USERMAVEN_SCRIPT_PATH = `${USERMAVEN_PROXY_PATH}${USERMAVEN_SCRIPT_UPSTREAM_PATH}`;
 
+// Subdirectory proxy mapping: `/lib.js` -> `t.usermaven.com`, all other paths ->
+// `events.usermaven.com` with the proxy prefix stripped
+// (https://usermaven.com/docs/articles/cloudflare-workers-proxy-1efbfffa, read 2026-11-12).
 const SCRIPT_ORIGIN = "https://t.usermaven.com";
 const EVENTS_ORIGIN = "https://events.usermaven.com";
+const SCRIPT_BROWSER_CACHE_CONTROL = "private, max-age=3600";
 
 // Usermaven's HTTP event API enriches geolocation, device, and referrer data
 // from `x-forwarded-for`, `user-agent`, and `referer`
@@ -17,6 +23,7 @@ const FORWARDED_REQUEST_HEADERS = [
 
 const SCRIPT_METHODS = new Set(["GET", "HEAD"]);
 const EVENT_METHODS = new Set(["GET", "HEAD", "POST"]);
+const MAX_DISCARD_BYTES = 16_384;
 
 export interface ProxyCache {
 	readonly enabled: boolean;
@@ -40,13 +47,14 @@ export function normalizeUsermavenKey(rawKey?: string): string | undefined {
 	return trimmed ? trimmed : undefined;
 }
 
-function noStoreResponse(
+function buildProxyResponse(
 	body: BodyInit | null,
 	status: number,
+	cacheControl: string,
 	extraHeaders?: Record<string, string>,
 ): Response {
 	const headers = new Headers({
-		"Cache-Control": "no-store",
+		"Cache-Control": cacheControl,
 		...extraHeaders,
 	});
 	return new Response(body, {
@@ -90,7 +98,7 @@ function resolveUpstreamTarget(requestUrl: URL): ResolvedTarget {
 		return { kind: "bad-request" };
 	}
 
-	const isScript = strippedPath === "/lib.js";
+	const isScript = strippedPath === USERMAVEN_SCRIPT_UPSTREAM_PATH;
 	const targetOrigin = isScript ? SCRIPT_ORIGIN : EVENTS_ORIGIN;
 	const upstreamUrl = new URL(targetOrigin);
 	upstreamUrl.pathname = strippedPath;
@@ -123,8 +131,6 @@ function buildUpstreamHeaders(incomingHeaders: Headers): Headers {
 	return headers;
 }
 
-const MAX_DISCARD_BYTES = 16_384;
-
 async function discardRequestBody(request: Request): Promise<void> {
 	if (!request.body) {
 		return;
@@ -147,38 +153,46 @@ async function discardRequestBody(request: Request): Promise<void> {
 	}
 }
 
+async function rejectRequest(
+	request: Request,
+	body: string,
+	status: number,
+	extraHeaders?: Record<string, string>,
+): Promise<Response> {
+	await discardRequestBody(request);
+	return buildProxyResponse(body, status, "no-store", extraHeaders);
+}
+
 export async function proxyUsermavenRequest({
 	request,
 	cache,
 	key,
 	fetchImpl = fetch,
 }: ProxyUsermavenOptions): Promise<Response> {
+	// Opt out of Astro's route cache (https://docs.emdashcms.com/deployment/route-caching/, read 2026-11-12).
 	if (cache?.enabled) {
 		cache.set(false);
 	}
 
 	const configuredKey = normalizeUsermavenKey(key);
 	if (!configuredKey) {
-		await discardRequestBody(request);
-		return noStoreResponse("Not found", 404);
+		return rejectRequest(request, "Not found", 404);
 	}
 
 	const target = resolveUpstreamTarget(new URL(request.url));
 	if (target.kind === "not-found") {
-		await discardRequestBody(request);
-		return noStoreResponse("Not found", 404);
+		return rejectRequest(request, "Not found", 404);
 	}
 	if (target.kind === "bad-request") {
-		await discardRequestBody(request);
-		return noStoreResponse("Bad request", 400);
+		return rejectRequest(request, "Bad request", 400);
 	}
 
 	const method = request.method.toUpperCase();
 	const allowedMethods = target.isScript ? SCRIPT_METHODS : EVENT_METHODS;
 	if (!allowedMethods.has(method)) {
-		await discardRequestBody(request);
-		const allowHeader = target.isScript ? "GET, HEAD" : "GET, HEAD, POST";
-		return noStoreResponse("Method not allowed", 405, { Allow: allowHeader });
+		return rejectRequest(request, "Method not allowed", 405, {
+			Allow: [...allowedMethods].join(", "),
+		});
 	}
 
 	const body = method === "GET" || method === "HEAD" ? undefined : await request.arrayBuffer();
@@ -190,10 +204,17 @@ export async function proxyUsermavenRequest({
 			body,
 		});
 	} catch {
-		return noStoreResponse("Bad gateway", 502);
+		return buildProxyResponse("Bad gateway", 502, "no-store");
 	}
 
 	const contentType = upstreamResponse.headers.get("content-type");
 	const extraHeaders = contentType ? { "Content-Type": contentType } : undefined;
-	return noStoreResponse(upstreamResponse.body, upstreamResponse.status, extraHeaders);
+	const cacheControl =
+		target.isScript && upstreamResponse.ok ? SCRIPT_BROWSER_CACHE_CONTROL : "no-store";
+	return buildProxyResponse(
+		upstreamResponse.body,
+		upstreamResponse.status,
+		cacheControl,
+		extraHeaders,
+	);
 }

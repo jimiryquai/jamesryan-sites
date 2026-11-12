@@ -2,9 +2,17 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
 import { DatabaseSync } from "node:sqlite";
+import { fileURLToPath } from "node:url";
 import { extractTitle, extractMetaDescription } from "@jdevalk/astro-seo-graph/integration";
+import { USERMAVEN_PROXY_PATH, USERMAVEN_SCRIPT_PATH } from "../apps/marketing-site/src/utils/usermaven.ts";
 
 const root = new URL("../", import.meta.url);
+const marketingRequire = createRequire(new URL("../apps/marketing-site/package.json", import.meta.url));
+const { unstable_readConfig: readWranglerConfig } = marketingRequire("wrangler");
+const configuredUsermavenKey = readWranglerConfig(
+  { config: fileURLToPath(new URL("apps/marketing-site/wrangler.jsonc", root)) },
+  { hideWarnings: true },
+).vars?.USERMAVEN_KEY;
 const original = JSON.parse(readFileSync(new URL("apps/marketing-site/seed/seed.json", root)));
 const description = (name) =>
   `Fixture ${name} metadata description for verifying the rendered SEO validation pipeline.`;
@@ -208,6 +216,57 @@ async function verifyCodeRenderer(origin) {
   }
 }
 
+async function verifyUsermaven(origin, unconfigured) {
+  if (!configuredUsermavenKey) {
+    throw new Error("apps/marketing-site/wrangler.jsonc is missing production vars.USERMAVEN_KEY");
+  }
+  const homeHtml = await (await fetch(new URL("/", origin))).text();
+  if (unconfigured) {
+    for (const marker of ["um-tracker", "usermaven", USERMAVEN_SCRIPT_PATH, configuredUsermavenKey]) {
+      if (homeHtml.includes(marker)) {
+        throw new Error(`/: Usermaven marker ${JSON.stringify(marker)} rendered when USERMAVEN_KEY is unset`);
+      }
+    }
+    const unconfiguredScript = await fetch(new URL(USERMAVEN_SCRIPT_PATH, origin), { redirect: "manual" });
+    await unconfiguredScript.text();
+    const unconfiguredEvent = await fetch(new URL(`${USERMAVEN_PROXY_PATH}/api/v1/event`, origin), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_type: "pageview" }),
+      redirect: "manual",
+    });
+    await unconfiguredEvent.text();
+    if (unconfiguredScript.status !== 404 || unconfiguredEvent.status !== 404) {
+      throw new Error(
+        `Usermaven proxy expected HTTP 404 when USERMAVEN_KEY is unset, got ${unconfiguredScript.status} and ${unconfiguredEvent.status}`,
+      );
+    }
+    console.log(`/: Usermaven snippet absent and ${USERMAVEN_PROXY_PATH}/* HTTP 404 when USERMAVEN_KEY is unset`);
+    return;
+  }
+  for (const requiredMarker of [
+    "um-tracker",
+    USERMAVEN_PROXY_PATH,
+    USERMAVEN_SCRIPT_PATH,
+    configuredUsermavenKey,
+    "data-tracking-host",
+    "data-key",
+    'setAttribute("data-autocapture", "true")',
+    'setAttribute("data-privacy-policy", "strict")',
+    'setAttribute("data-randomize-url", "true")',
+  ]) {
+    if (!homeHtml.includes(requiredMarker)) {
+      throw new Error(`/: Usermaven snippet missing ${JSON.stringify(requiredMarker)} when USERMAVEN_KEY is configured`);
+    }
+  }
+  for (const forbiddenHost of ["um.jamesryan.dev", "t.usermaven.com", "events.usermaven.com"]) {
+    if (homeHtml.includes(forbiddenHost)) {
+      throw new Error(`/: Usermaven snippet must use first-party proxy path, found ${forbiddenHost}`);
+    }
+  }
+  console.log("/: Usermaven first-party proxy snippet rendered when USERMAVEN_KEY is configured");
+}
+
 async function verify(origin, unpublished = false, database) {
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
@@ -292,52 +351,11 @@ async function verify(origin, unpublished = false, database) {
     console.log("/contact: content rendered for a page without layout");
   }
   if (unpublished) {
-    const homeWithoutKeyHtml = await (await fetch(new URL("/", origin))).text();
-    for (const marker of ["um-tracker", "usermaven", "/s1/lib.js", "UMNstP14wS"]) {
-      if (homeWithoutKeyHtml.includes(marker)) {
-        throw new Error(`/: Usermaven marker ${JSON.stringify(marker)} rendered when USERMAVEN_KEY is unset`);
-      }
-    }
-    const unconfiguredScript = await fetch(new URL("/s1/lib.js", origin), { redirect: "manual" });
-    await unconfiguredScript.text();
-    const unconfiguredEvent = await fetch(new URL("/s1/api/v1/event", origin), {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event_type: "pageview" }),
-      redirect: "manual",
-    });
-    await unconfiguredEvent.text();
-    if (unconfiguredScript.status !== 404 || unconfiguredEvent.status !== 404) {
-      throw new Error(
-        `Usermaven proxy expected HTTP 404 when USERMAVEN_KEY is unset, got ${unconfiguredScript.status} and ${unconfiguredEvent.status}`,
-      );
-    }
-    console.log("/: Usermaven snippet absent and /s1/* HTTP 404 when USERMAVEN_KEY is unset");
+    await verifyUsermaven(origin, true);
     await verifyDraftPreviews(origin, database);
     return;
   }
-  const homeWithKeyHtml = await (await fetch(new URL("/", origin))).text();
-  for (const requiredMarker of [
-    "um-tracker",
-    "/s1",
-    "/s1/lib.js",
-    "UMNstP14wS",
-    "data-tracking-host",
-    "data-key",
-    'setAttribute("data-autocapture", "true")',
-    'setAttribute("data-privacy-policy", "strict")',
-    'setAttribute("data-randomize-url", "true")',
-  ]) {
-    if (!homeWithKeyHtml.includes(requiredMarker)) {
-      throw new Error(`/: Usermaven snippet missing ${JSON.stringify(requiredMarker)} when USERMAVEN_KEY is configured`);
-    }
-  }
-  for (const forbiddenHost of ["um.jamesryan.dev", "t.usermaven.com", "events.usermaven.com"]) {
-    if (homeWithKeyHtml.includes(forbiddenHost)) {
-      throw new Error(`/: Usermaven snippet must use first-party proxy path, found ${forbiddenHost}`);
-    }
-  }
-  console.log("/: Usermaven first-party proxy snippet rendered when USERMAVEN_KEY is configured");
+  await verifyUsermaven(origin, false);
   const listingHtml = await (await fetch(new URL("/posts", origin))).text();
   if (extractMetaDescription(listingHtml) !== description("posts collection")) {
     throw new Error("/posts: collection description was not rendered");

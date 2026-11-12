@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { USERMAVEN_PROXY_PATH } from '../apps/marketing-site/src/utils/usermaven.ts';
 
 const [origin, seedPath, evidenceDirectory] = process.argv.slice(2);
 if (!origin || !seedPath) throw new Error('Usage: node scripts/check-rendered-media.mjs <origin> <seed.json> [screenshots-directory]');
@@ -69,7 +70,7 @@ if (evidenceDirectory) {
   try {
     await mkdir(evidenceDirectory, { recursive: true });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-    await page.route('**/s1/**', route => route.abort());
+    await page.route(`**${USERMAVEN_PROXY_PATH}/**`, route => route.abort());
     const post = [...expected.keys()].find(path => path.startsWith('/posts/'));
     for (const [name, path] of [['home', '/'], ['post', post]]) {
       if (!path) continue;
