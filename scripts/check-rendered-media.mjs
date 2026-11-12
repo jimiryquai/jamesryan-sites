@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile, mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { USERMAVEN_PROXY_PATH } from '../apps/marketing-site/src/utils/usermaven.ts';
+import { publishedEntryPath } from './published-path.mjs';
 
 const [origin, seedPath, evidenceDirectory] = process.argv.slice(2);
 if (!origin || !seedPath) throw new Error('Usage: node scripts/check-rendered-media.mjs <origin> <seed.json> [screenshots-directory]');
@@ -20,7 +21,7 @@ for (const [collection, entries] of Object.entries(seed.content)) {
     if (entry.status !== 'published') continue;
     const alts = imageAlts(entry.data);
     if (!alts.length) continue;
-    const path = collection === 'pages' ? (entry.slug === 'home' ? '/' : `/${entry.slug}`) : `/${collection}/${entry.slug}`;
+    const path = publishedEntryPath(collection, entry.slug);
     expected.set(path, alts);
     paths.add(path);
   }

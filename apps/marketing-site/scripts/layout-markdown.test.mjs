@@ -146,6 +146,24 @@ test('a posts block heading renders and an item without a URL is skipped', async
   assert.doesNotMatch(markdown, /No URL/);
 });
 
+test('a prose block keeps fenced code, blockquotes and images', async () => {
+  const { markdown } = await renderLayoutMarkdown([{
+    _type: 'prose', _key: 'policy', _version: 1, variant: 'centered',
+    heading: 'Privacy Policy',
+    body: 'Last updated on December 19, 2025.',
+    content: [
+      { _type: 'block', style: 'blockquote', children: [{ _type: 'span', text: 'Quoted policy line' }] },
+      { _type: 'code', code: 'fixture privacy-policy prose code block', language: 'js' },
+      { _type: 'image', alt: 'Policy diagram', url: 'https://cdn.example/policy.png' },
+    ],
+  }], undefined);
+  assert.match(markdown, /## Privacy Policy/);
+  assert.match(markdown, /Last updated on December 19, 2025\./);
+  assert.match(markdown, /> Quoted policy line/);
+  assert.match(markdown, /```js\nfixture privacy-policy prose code block\n```/);
+  assert.match(markdown, /!\[Policy diagram\]\(https:\/\/cdn\.example\/policy\.png\)/);
+});
+
 test('source results carrying cache hints still yield their items', async () => {
   const sources = {
     faq: async () => ({ items: [{ question: 'Q?', answer: 'A.' }], cacheHints: [{ tags: ['faqs'] }] }),

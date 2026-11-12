@@ -1,90 +1,25 @@
 ---
 import Base from "../layouts/Base.astro";
 import FuzzyRedirect from "@jdevalk/astro-seo-graph/FuzzyRedirect.astro";
+import Container from "@jamesryan/ui/components/elements/container.astro";
+import Eyebrow from "@jamesryan/ui/components/elements/eyebrow.astro";
+import Heading from "@jamesryan/ui/components/elements/heading.astro";
+import Text from "@jamesryan/ui/components/elements/text.astro";
+import ButtonLink from "@jamesryan/ui/components/elements/ButtonLink.astro";
+import PlainButtonLink from "@jamesryan/ui/components/elements/PlainButtonLink.astro";
 ---
 
 <Base title="Page not found">
-	<div class="not-found">
-		<div class="not-found-code">404</div>
-		<h1>Page not found</h1>
-		<p>The page you're looking for doesn't exist or has been moved.</p>
-		<div class="fuzzy-redirect-container">
+	<Container class="py-24 text-center">
+		<Eyebrow class="!font-display !text-8xl/none !tracking-tight !text-olive-500 dark:!text-olive-400">404</Eyebrow>
+		<Heading class="mt-6">Page not found</Heading>
+		<Text size="lg" class="mx-auto mt-4 max-w-xl">The page you're looking for doesn't exist or has been moved.</Text>
+		<div class="mx-auto mt-8 inline-block rounded-2xl border border-olive-950/10 bg-olive-50 px-6 py-4 text-olive-950 has-[#fuzzy-redirect:empty]:hidden dark:border-white/10 dark:bg-olive-900 dark:text-olive-100 [&_a]:font-medium [&_a]:text-olive-950 [&_a]:underline dark:[&_a]:text-white">
 			<FuzzyRedirect sitemapUrl="/sitemap.xml" />
 		</div>
-		<div class="not-found-actions">
-			<a href="/" class="btn btn-primary btn-lg">Go home</a>
-			<a href="/contact" class="btn btn-secondary btn-lg">Contact us</a>
+		<div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+			<ButtonLink href="/" size="lg">Go home</ButtonLink>
+			<PlainButtonLink href="/contact" size="lg">Contact us</PlainButtonLink>
 		</div>
-	</div>
+	</Container>
 </Base>
-
-<style>
-	.not-found {
-		text-align: center;
-		padding: var(--spacing-5xl) var(--spacing-lg);
-		max-width: var(--max-width);
-		margin: 0 auto;
-	}
-
-	.not-found-code {
-		font-size: 10rem;
-		font-weight: 800;
-		line-height: 1;
-		letter-spacing: -0.05em;
-		background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		opacity: 0.3;
-		margin-bottom: var(--spacing-lg);
-	}
-
-	.not-found h1 {
-		font-size: var(--font-size-3xl);
-		margin-bottom: var(--spacing-md);
-	}
-
-	.not-found p {
-		font-size: var(--font-size-lg);
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-lg);
-	}
-
-	.fuzzy-redirect-container {
-		margin-bottom: var(--spacing-2xl);
-		padding: var(--spacing-md) var(--spacing-lg);
-		background-color: var(--color-surface, #ffffff);
-		border: 1px solid var(--color-border, #e5e7eb);
-		border-radius: var(--radius);
-		display: inline-block;
-		font-size: var(--font-size-base);
-		color: var(--color-text);
-	}
-
-	.fuzzy-redirect-container :global(a) {
-		color: var(--color-primary);
-		font-weight: 600;
-		text-decoration: underline;
-	}
-
-	.not-found-actions {
-		display: flex;
-		gap: var(--spacing-md);
-		justify-content: center;
-		flex-wrap: wrap;
-	}
-
-	@media (max-width: 480px) {
-		.not-found-code {
-			font-size: 6rem;
-		}
-
-		.not-found-actions {
-			flex-direction: column;
-		}
-
-		.not-found-actions .btn {
-			width: 100%;
-		}
-	}
-</style>
