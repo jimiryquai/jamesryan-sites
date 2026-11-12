@@ -8,6 +8,7 @@
  */
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { portableTextToMarkdown } from "@jamesryan/cms-helpers";
 import { pageMarkdownPath, publishedEntryPath } from "./published-path.mjs";
 
 // The page builder's shared-content block labels, and where each reads items.
@@ -39,27 +40,63 @@ function stableImageUrl(block) {
     ?? textValue(block.asset?.url) ?? textValue(block.asset?.src) ?? textValue(block.asset?.previewUrl);
 }
 
+function fenceLanguage(language) {
+  if (typeof language !== "string") return "";
+  return language.trim().split(/\s+/)[0]?.replace(/[\u0000-\u001F\u007F`]/g, "") ?? "";
+}
+
+function backtickFence(code) {
+  const runs = code.match(/`+/g) ?? [];
+  const longest = runs.reduce((max, run) => Math.max(max, run.length), 0);
+  return "`".repeat(Math.max(3, longest + 1));
+}
+
+function escapeAlt(value) {
+  return value.replace(/\r\n?/g, "\n").replace(/\n+/g, " ").replace(/[\\[\]]/g, "\\$&");
+}
+
+function formatDestination(url) {
+  if (/[\s()]/.test(url)) return `<${url.replaceAll(">", "%3E")}>`;
+  return url;
+}
+
+/** A non-empty Markdown image, including an empty alt. */
+function imageMarker(alt, url) {
+  const escaped = escapeAlt(alt);
+  if (url) return `![${escaped}](${formatDestination(url)})`;
+  const pattern = escaped.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`!\\[${pattern}\\]\\([^)\\s][^)]*\\)`);
+}
+
 /** Fenced code, blockquote markers and Markdown images a `.md` route must include. */
 function portableTextMarkers(content) {
   const markers = [];
   for (const block of content ?? []) {
     if (!block || typeof block !== "object") continue;
     if (block._type === "code-block-pro" || block._type === "code") {
-      const language = typeof block.language === "string" ? block.language : "";
       const code = typeof block.code === "string" ? block.code : "";
+      const fence = backtickFence(code);
       const body = code.endsWith("\n") ? code : `${code}\n`;
-      markers.push(`\`\`\`${language}\n${body}\`\`\``);
+      markers.push(`${fence}${fenceLanguage(block.language)}\n${body}${fence}`);
     } else if (block._type === "image") {
-      const alt = imageAlt(block);
-      const url = stableImageUrl(block);
-      if (url) markers.push(`![${alt}](${url})`);
-      else if (alt) markers.push(`![${alt}](`);
+      markers.push(imageMarker(imageAlt(block), stableImageUrl(block)));
     } else if (block._type === "block" && block.style === "blockquote") {
-      const text = (block.children ?? []).map((child) => child?.text ?? "").join("");
-      if (text) markers.push(text.split("\n").map((line) => `> ${line}`).join("\n"));
+      const quoted = portableTextToMarkdown([block]).replace(/\n+$/, "");
+      if (quoted) markers.push(quoted);
     }
   }
   return markers;
+}
+
+/** Paragraph and heading text. Blockquotes are checked as `> ` lines. */
+function plainBlockTexts(content) {
+  const texts = [];
+  for (const block of content ?? []) {
+    if (!block || block._type !== "block" || block.style === "blockquote") continue;
+    const text = (block.children ?? []).map((child) => child?.text ?? "").join("");
+    if (text) texts.push(text);
+  }
+  return texts;
 }
 
 /** The published posts a posts block reads, newest first. A fresh seed stamps
@@ -91,7 +128,9 @@ function blockTexts(block, collections, pageService) {
   for (const column of data.columns ?? []) texts.push(column.label);
   for (const row of data.rows ?? []) texts.push(row.name, row.first_value, row.second_value, row.third_value);
   for (const pt of data.content ?? []) {
-    if (pt._type === "block") for (const child of pt.children ?? []) texts.push(child.text);
+    if (pt._type === "block" && pt.style !== "blockquote") {
+      for (const child of pt.children ?? []) texts.push(child.text);
+    }
   }
   texts.push(...portableTextMarkers(data.content));
   return texts;
@@ -116,6 +155,11 @@ async function main(origin, seedPath, evidenceDir) {
       errors++;
     }
   };
+  const expectMarker = (path, body, marker) => {
+    const ok = marker instanceof RegExp ? marker.test(body) : body.includes(`${marker}`);
+    const shown = marker instanceof RegExp ? marker.toString() : marker;
+    expect(path, ok, `markdown is missing ${JSON.stringify(shown)}`);
+  };
 
   for (const entry of collections.pages ?? []) {
     const path = pageMarkdownPath(entry.slug);
@@ -134,8 +178,8 @@ async function main(origin, seedPath, evidenceDir) {
     for (const text of envelope(title)) expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
     for (const block of entry.data?.layout ?? []) {
       for (const text of blockTexts(block, collections, entry.data?.service)) {
-        if (text !== undefined && text !== null && `${text}`.length > 0) {
-          expect(path, body.includes(`${text}`), `markdown is missing ${JSON.stringify(`${text}`)}`);
+        if (text instanceof RegExp || (text !== undefined && text !== null && `${text}`.length > 0)) {
+          expectMarker(path, body, text);
         }
       }
     }
@@ -147,8 +191,8 @@ async function main(origin, seedPath, evidenceDir) {
     const path = `${publishedEntryPath("posts", entry.slug)}.md`;
     const { response, body } = await fetchMarkdown(path);
     expect(path, response.status === 200, `HTTP ${response.status}`);
-    for (const text of [...envelope(entry.data?.title ?? entry.id), ...portableTextMarkers(entry.data?.content)]) {
-      expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
+    for (const text of [...envelope(entry.data?.title ?? entry.id), ...plainBlockTexts(entry.data?.content), ...portableTextMarkers(entry.data?.content)]) {
+      expectMarker(path, body, text);
     }
   }
 
@@ -158,8 +202,8 @@ async function main(origin, seedPath, evidenceDir) {
     const path = `${publishedEntryPath("projects", entry.slug)}.md`;
     const { response, body } = await fetchMarkdown(path);
     expect(path, response.status === 200, `HTTP ${response.status}`);
-    for (const text of [...envelope(entry.data?.title ?? entry.id), ...portableTextMarkers(entry.data?.content)]) {
-      expect(path, body.includes(text), `markdown is missing ${JSON.stringify(text)}`);
+    for (const text of [...envelope(entry.data?.title ?? entry.id), ...plainBlockTexts(entry.data?.content), ...portableTextMarkers(entry.data?.content)]) {
+      expectMarker(path, body, text);
     }
   }
 

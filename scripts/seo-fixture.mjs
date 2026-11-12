@@ -41,7 +41,13 @@ const layoutNewBlocks = (slug) => [
   { _type: "prose", _key: `layout-${slug}-prose`, _version: 1, variant: "centered",
     heading: `Fixture ${slug} prose heading`, body: `Fixture ${slug} prose body`,
     content: [...paragraph(`${slug}-prose-p`, `Fixture ${slug} prose paragraph.`),
-      { _type: "code", _key: `${slug}-prose-code`, code: `fixture ${slug} prose code block`, language: "js" }] },
+      { _type: "block", _key: `${slug}-prose-quote`, style: "blockquote", children: [
+        { _type: "span", _key: `${slug}-prose-quote-span`, text: "Fixture quoted line one\nFixture quoted line two" },
+      ] },
+      { _type: "code", _key: `${slug}-prose-code`, code: `fixture ${slug} prose code block`, language: "js" },
+      { _type: "image", _key: `${slug}-prose-image`, alt: "Fixture diagram", asset: {
+        $media: { file: "assets/post-1.webp", alt: "Fixture diagram" },
+      } }] },
   { _type: "faq", _key: `layout-${slug}-faq`, _version: 1, variant: "two-column", scope: "all" },
   { _type: "stats", _key: `layout-${slug}-stats`, _version: 1, variant: "graph",
     eyebrow: `Fixture ${slug} stats eyebrow`, heading: `Fixture ${slug} stats heading`, body: `Fixture ${slug} stats body`,
@@ -71,6 +77,15 @@ const codeBlock = [{
   _type: "code-block-pro", _key: "upgrade-code", code: 'console.log("astro7-renderer-fixture");',
   language: "javascript", copyButton: true,
 }];
+const quotedBlock = {
+  _type: "block", _key: "fixture-quote", style: "blockquote",
+  children: [{ _type: "span", _key: "fixture-quote-span", text: "Fixture quoted line one\nFixture quoted line two" }],
+};
+const diagramBlock = {
+  _type: "image", _key: "fixture-diagram", alt: "Fixture diagram",
+  asset: { $media: { file: "assets/post-1.webp", alt: "Fixture diagram" } },
+};
+const richContent = [...codeBlock, quotedBlock, diagramBlock];
 const entries = {
   pages: [
     page("home", layoutHome),
@@ -88,13 +103,13 @@ const entries = {
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
+      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: richContent, featured_image: image } },
     { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading", summary: description("project summary"), content: codeBlock, featured_image: image } },
+      data: { title: "Fixture project heading", summary: description("project summary"), content: richContent, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
   ],
@@ -210,17 +225,37 @@ function createGardenCodeSeed(path) {
   const seed = JSON.parse(readFileSync(new URL("apps/digital-garden/seed/seed.json", root)));
   seed.content = {
     posts: [{ id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture garden post", content: codeBlock } }],
+      data: { title: "Fixture garden post", content: richContent } }],
     projects: [{ id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture garden project", content: codeBlock } }],
+      data: { title: "Fixture garden project", content: richContent } }],
   };
   seed.bylines = [];
   seed.menus = seed.menus.map(menu => ({ ...menu, items: [] }));
-  mkdirSync(dirname(path), { recursive: true });
+  mkdirSync(join(dirname(path), "assets"), { recursive: true });
+  copyFileSync(new URL("apps/marketing-site/seed/assets/post-1.webp", root), join(dirname(path), "assets/post-1.webp"));
   writeFileSync(path, JSON.stringify(seed));
 }
 
-async function verifyCodeRenderer(origin) {
+const NOT_FOUND_BANNED = [
+  "btn-primary", "btn-secondary", "btn-lg", "not-found", "--spacing-", "--font-size-",
+  "--max-width", "var(--radius)", "--color-primary", "--color-accent",
+  "!text-olive-300", "dark:!text-olive-600",
+];
+
+async function verifyNotFound(origin, secondLink) {
+  const notFound = await fetch(new URL("/this-page-is-missing", origin), { redirect: "manual" });
+  const notFoundHtml = await notFound.text();
+  if (notFound.status !== 404) throw new Error(`/404: HTTP ${notFound.status}`);
+  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", secondLink]) {
+    if (!notFoundHtml.includes(text)) throw new Error(`/404: missing ${JSON.stringify(text)}`);
+  }
+  for (const banned of NOT_FOUND_BANNED) {
+    if (notFoundHtml.includes(banned)) throw new Error(`/404: still contains ${banned}`);
+  }
+  console.log("/404: olive not-found page rendered");
+}
+
+async function verifyCodeRenderer(origin, notFoundLink) {
   for (const path of ["/posts/fixture-post", "/projects/fixture-project"]) {
     const response = await fetch(new URL(path, origin), { redirect: "manual" });
     const html = await response.text();
@@ -232,6 +267,7 @@ async function verifyCodeRenderer(origin) {
     }
     console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
   }
+  if (notFoundLink) await verifyNotFound(origin, notFoundLink);
 }
 
 async function verifyUsermaven(origin, unconfigured) {
@@ -392,16 +428,7 @@ async function verify(origin, unpublished = false, database) {
   }
   console.log(`/posts: title ${extractTitle(listingHtml)}`);
   console.log("/posts: collection description rendered");
-  const notFound = await fetch(new URL("/this-page-is-missing", origin), { redirect: "manual" });
-  const notFoundHtml = await notFound.text();
-  if (notFound.status !== 404) throw new Error(`/404: HTTP ${notFound.status}`);
-  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", "Read the blog"]) {
-    if (!notFoundHtml.includes(text)) throw new Error(`/404: missing ${JSON.stringify(text)}`);
-  }
-  for (const banned of ["btn-primary", "btn-secondary", "--spacing-", "--font-size-", "--max-width", "var(--radius)"]) {
-    if (notFoundHtml.includes(banned)) throw new Error(`/404: still contains ${banned}`);
-  }
-  console.log("/404: olive not-found page rendered");
+  await verifyNotFound(origin, "Read the blog");
   const html = await (await fetch(new URL("/posts/fixture-fallback", origin))).text();
   if (extractTitle(html) !== `Fixture fallback title — ${site.title}` ||
       extractMetaDescription(html) !== description("fallback excerpt")) {
@@ -423,7 +450,7 @@ const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
-else if (action === "verify-code") await verifyCodeRenderer(value);
+else if (action === "verify-code") await verifyCodeRenderer(value, "Contact us");
 else if (action === "seo") applySeo(value, seedPath);
 else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished", seedPath);
 else throw new Error(`Unknown fixture action: ${action}`);

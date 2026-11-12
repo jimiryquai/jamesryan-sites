@@ -33,6 +33,31 @@
     font-size: 1.125rem;
     line-height: 1.8;
     color: var(--color-olive-800);
+
+    @variant dark {
+      color: var(--color-olive-200);
+      :where(h1),
+      :where(h2),
+      :where(h3),
+      :where(h4),
+      :where(h5),
+      :where(h6),
+      :where(a),
+      :where(code) { color: #fff; }
+      :where(blockquote) {
+        border-left-color: var(--color-olive-600);
+        background: color-mix(in srgb, white 5%, transparent);
+        color: var(--color-olive-100);
+      }
+      :where(pre) {
+        border-color: color-mix(in srgb, white 10%, transparent);
+        background: color-mix(in srgb, white 5%, transparent);
+      }
+      :where(code) { background: color-mix(in srgb, white 10%, transparent); }
+      :where(pre code) { background: none; color: inherit; }
+      :where(img) { border-color: color-mix(in srgb, white 10%, transparent); }
+      :where(hr) { border-top-color: color-mix(in srgb, white 10%, transparent); }
+    }
   }
   .project-prose :where(p) { margin-bottom: 1.5rem; }
   .project-prose :where(h1),
@@ -132,28 +157,17 @@
     border-radius: 1rem;
     border: 1px solid color-mix(in srgb, var(--color-olive-950) 10%, transparent);
   }
-  @variant dark {
-    .project-prose { color: var(--color-olive-200); }
-    .project-prose :where(h1),
-    .project-prose :where(h2),
-    .project-prose :where(h3),
-    .project-prose :where(h4),
-    .project-prose :where(h5),
-    .project-prose :where(h6),
-    .project-prose :where(a),
-    .project-prose :where(code) { color: #fff; }
-    .project-prose :where(blockquote) {
-      border-left-color: var(--color-olive-600);
-      background: color-mix(in srgb, white 5%, transparent);
-      color: var(--color-olive-100);
-    }
-    .project-prose :where(pre) {
-      border-color: color-mix(in srgb, white 10%, transparent);
-      background: color-mix(in srgb, white 5%, transparent);
-    }
-    .project-prose :where(code) { background: color-mix(in srgb, white 10%, transparent); }
-    .project-prose :where(pre code) { background: none; color: inherit; }
-    .project-prose :where(img) { border-color: color-mix(in srgb, white 10%, transparent); }
+  .project-prose :where(hr) {
+    margin: 3rem 0;
+    border: none;
+    border-top: 1px solid color-mix(in srgb, var(--color-olive-950) 10%, transparent);
+  }
+  .project-prose .cbp-theme-dark code span[style*="color:#6A737D"] {
+    color: var(--color-olive-400) !important;
+  }
+  .project-prose .cbp-wrapper .line.cbp-highlighted {
+    background: color-mix(in srgb, var(--color-olive-400) 12%, transparent);
+    box-shadow: inset 4px 0 0 0 var(--color-olive-400);
   }
 }
 

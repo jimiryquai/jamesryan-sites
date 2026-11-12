@@ -33,9 +33,10 @@ const seed = {
           title: "Fixture privacy-policy",
           layout: [
             { _type: "prose", _key: "layout-privacy-policy-prose", _version: 1, heading: "Fixture privacy-policy prose heading", body: "", content: [
-              { _type: "block", style: "blockquote", children: [{ _type: "span", text: "Fixture quoted policy" }] },
+              { _type: "block", style: "blockquote", children: [{ _type: "span", text: "Line 1\nLine 2", marks: ["strong"] }] },
               { _type: "code", code: "fixture privacy-policy prose code block", language: "js" },
               { _type: "image", alt: "Fixture policy diagram", url: "https://cdn.example/policy.png" },
+              { _type: "image", alt: "", asset: { $media: { file: "assets/empty-alt.png" } } },
             ] },
             { _type: "faq", _key: "layout-privacy-policy-faq", _version: 1, variant: "two-column", scope: "all" },
           ],
@@ -45,6 +46,8 @@ const seed = {
     ],
     posts: [
       { id: "fixture-post", slug: "fixture-post", status: "published", data: { title: "Fixture post heading", content: [
+        { _type: "block", style: "h2", children: [{ _type: "span", text: "Fixture post section" }] },
+        { _type: "block", style: "normal", children: [{ _type: "span", text: "Fixture post paragraph" }] },
         { _type: "code-block-pro", code: 'console.log("astro7-renderer-fixture");', language: "javascript" },
         { _type: "block", style: "blockquote", children: [{ _type: "span", text: "Fixture post quote" }] },
         { _type: "image", alt: "Fixture post diagram", src: "/images/post.png" },
@@ -54,7 +57,7 @@ const seed = {
     ],
     projects: [
       { id: "fixture-project", slug: "fixture-project", status: "published", data: { title: "Fixture project heading", content: [
-        { _type: "code", code: "fixture project code", language: "ts" },
+        { _type: "code", code: "```\nfixture project code\n```", language: "ts" },
       ] } },
     ],
     faqs: [
@@ -82,11 +85,14 @@ const cleanPrivacy = `# Fixture privacy-policy
 
 ## Fixture privacy-policy prose heading
 
-> Fixture quoted policy
+> **Line 1
+> Line 2**
 
 ${fence("js", "fixture privacy-policy prose code block")}
 
 ![Fixture policy diagram](https://cdn.example/policy.png)
+
+![](assets/empty-alt.png)
 
 ## FAQ
 
@@ -96,6 +102,10 @@ Fixture FAQ answer
 `;
 const cleanPost = `# Fixture post heading
 *Published on Fixture Marketing Testing*
+
+## Fixture post section
+
+Fixture post paragraph
 
 ${fence("javascript", 'console.log("astro7-renderer-fixture");')}
 
@@ -109,7 +119,7 @@ const cleanOlder = `# Older fixture post
 const cleanProject = `# Fixture project heading
 *Published on Fixture Marketing Testing*
 
-${fence("ts", "fixture project code")}
+${"````" + "ts\n```\nfixture project code\n```\n````"}
 `;
 const responses = {
   "/home.md": { body: cleanHome },
@@ -232,10 +242,15 @@ test("a post markdown route that lost its fenced code fails naming the fence", a
 
 test("a prose block that lost its image and blockquote fails naming them", async () => {
   const { code, output } = await check({
-    "/privacy-policy.md": { body: cleanPrivacy.replace("> Fixture quoted policy\n", "").replace("![Fixture policy diagram](https://cdn.example/policy.png)\n", "") },
+    "/privacy-policy.md": {
+      body: cleanPrivacy
+        .replace("> **Line 1\n> Line 2**\n", "Line 1\nLine 2\n")
+        .replace("![](assets/empty-alt.png)", "![]()"),
+    },
   });
   assert.equal(code, 1, output);
-  assert.match(output, /\/privacy-policy\.md.*> Fixture quoted policy/);
+  assert.match(output, /\/privacy-policy\.md.*> \*\*Line 1/);
+  assert.match(output, /\/privacy-policy\.md: markdown is missing "\/!/);
 });
 
 test("a project markdown route that 404s fails under the real URL mapping", async () => {
