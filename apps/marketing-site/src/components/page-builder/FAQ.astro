@@ -1,0 +1,14 @@
+---
+import type { Faq as FaqShape, StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import MarketingFAQ from '../blocks/FAQ.astro';
+interface Props { value: StoredBlock; items?: readonly unknown[] }
+const value = Astro.props.value as StoredBlock & { variant?: 'two-column' | 'centered' };
+// PageBuilder resolves this block's typed source before entering the generic section boundary.
+const items = (Astro.props.items ?? []) as readonly FaqShape[];
+// The block has no headline fields; the marketing component's own default heading shows.
+---
+<MarketingFAQ node={{
+  _key: value._key,
+  variation: value.variant === 'centered' ? 'centered' : 'two-column',
+  items: items.map((item) => ({ question: item.question, answer: item.answer })),
+}} />
