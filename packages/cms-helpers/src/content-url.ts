@@ -10,6 +10,12 @@ export function getContentPath(collection: PublicCollection, slug: string): stri
 	return `/${collection}/${encodeURIComponent(slug)}`;
 }
 
+/** Astro supplies decoded .md params; the content route map takes encoded paths. */
+export function getMarkdownContentPath(slug?: string): string {
+	if (!slug || slug === "home") return "/";
+	return `/${slug.split("/").map((part) => encodeURIComponent(part)).join("/")}`;
+}
+
 /** Inverse of getContentPath; rejects aliases and malformed encodings. */
 export function resolveContentPath(path: string): { collection: PublicCollection; slug: string } | null {
 	if (path === "/") return { collection: "pages", slug: "home" };

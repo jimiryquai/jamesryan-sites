@@ -128,6 +128,7 @@ for (const collection of ["posts", "projects"]) {
     data: { title: "UNPUBLISHED fixture secret", content: [] } });
 }
 delete entries.posts.find(entry => entry.slug === "fixture-fallback").data.featured_image;
+delete entries.projects.find(entry => entry.slug === "fixture-fallback-project").data.featured_image;
 const site = {
   title: "Fixture Marketing Testing",
   tagline: description("listing"),
@@ -228,7 +229,7 @@ async function verifyDraftPreviews(origin, database, garden = false) {
         const text = await sessionResponse.text();
         if (sessionResponse.headers.get("cache-control") !== "private, no-store" ||
             sessionResponse.headers.get("access-control-allow-origin") !== "*" ||
-            (collection === "posts" && text.includes(`/posts/${slug}`))) {
+            text.includes(path)) {
           throw new Error(`${endpoint}: verified preview cache, CORS or discovery isolation failed`);
         }
       }
@@ -263,6 +264,79 @@ async function verifyDraftPreviews(origin, database, garden = false) {
   } finally {
     db.close();
   }
+}
+
+// A published SQL row can have an unpublished pending revision. A verified
+// preview must render that revision, while discovery must keep the live row.
+async function verifyPublishedRevisions(origin, database) {
+  await fetch(new URL("/?_preview=invalid", origin), { redirect: "manual" });
+  const db = new DatabaseSync(database);
+  try {
+    const secret = JSON.parse(db.prepare("SELECT value FROM options WHERE name = ?").get("emdash:preview_secret").value);
+    const require = createRequire(new URL("../apps/marketing-site/package.json", import.meta.url));
+    const { generatePreviewToken, buildPreviewUrl } = await import(require.resolve("emdash"));
+    for (const collection of ["pages", "posts", "projects"]) {
+      const row = db.prepare(`SELECT id, slug FROM ec_${collection} WHERE status = 'published' ORDER BY slug LIMIT 1`).get();
+      if (!row) continue;
+      const marker = `UNPUBLISHED REVISION LEAK ${collection}`;
+      const draftSlug = `revision-only-${collection}`;
+      const revisionId = `fixture-pending-${collection}`;
+      const snapshot = { _slug: draftSlug, title: marker, excerpt: marker, summary: marker, content: [], layout: [] };
+      db.prepare("INSERT INTO revisions (id, collection, entry_id, data) VALUES (?, ?, ?, ?)").run(revisionId, collection, row.id, JSON.stringify(snapshot));
+      db.prepare(`UPDATE ec_${collection} SET draft_revision_id = ? WHERE id = ?`).run(revisionId, row.id);
+      try {
+        const path = collection === "pages" && ["home", "about", "contact", "pricing", "privacy-policy"].includes(row.slug)
+          ? row.slug === "home" ? "/home" : `/${row.slug}` : `/${collection}/${encodeURIComponent(row.slug)}`;
+        const token = await generatePreviewToken({ contentId: `${collection}:${row.id}`, secret });
+        const missingPath = collection === "pages" ? "/posts/missing.md" : "/pages/missing.md";
+        const missing = await fetch(buildPreviewUrl({ path: missingPath, token, baseUrl: origin }));
+        if (missing.status !== 404 || missing.headers.get("cache-control") !== "private, no-store" || missing.headers.get("access-control-allow-origin") !== "*") {
+          throw new Error(`${missingPath}: session Markdown 404 must retain private/CORS response policy`);
+        }
+        const preview = await fetch(buildPreviewUrl({ path: `${path}.md`, token, baseUrl: origin }));
+        if (preview.status !== 200 || !(await preview.text()).includes(marker)) throw new Error(`${collection}: pending revision fixture did not render in an authorized preview`);
+        for (const endpoint of ["/rss.xml", "/schema/posts.json", "/schema/projects.json", "/schema/pages.json", "/sitemap.xml", "/llms.txt", "/schemamap.xml", "/.well-known/api-catalog"]) {
+          const response = await fetch(buildPreviewUrl({ path: endpoint, token, baseUrl: origin }));
+          const text = await response.text();
+          if (![200, 404].includes(response.status) || response.headers.get("cache-control") !== "private, no-store" ||
+              response.headers.get("access-control-allow-origin") !== "*" || text.includes(marker) || text.includes(draftSlug)) {
+            throw new Error(`${endpoint}: ${collection} published row leaked a pending revision or lost private/CORS headers`);
+          }
+        }
+        console.log(`${collection}: pending draft revision renders in verified Markdown preview; all discovery endpoints retain live title/slug and private, no-store`);
+      } finally {
+        db.prepare(`UPDATE ec_${collection} SET draft_revision_id = NULL WHERE id = ?`).run(row.id);
+        db.prepare("DELETE FROM revisions WHERE id = ?").run(revisionId);
+      }
+    }
+  } finally { db.close(); }
+}
+
+async function verifyEncodedMarkdown(origin, database, garden = false) {
+  const db = new DatabaseSync(database);
+  try {
+    for (const collection of ["posts", "projects", "pages"]) {
+      const row = db.prepare(`SELECT id, slug FROM ec_${collection} WHERE status = 'published' ORDER BY slug LIMIT 1`).get();
+      if (!row) continue;
+      for (const slug of ["a post", "café 東京"]) {
+        db.prepare(`UPDATE ec_${collection} SET slug = ? WHERE id = ?`).run(slug, row.id);
+        try {
+          const path = `/${collection}/${encodeURIComponent(slug)}`;
+          const markdown = await fetch(new URL(`${path}.md`, origin));
+          if (markdown.status !== 200 || !markdown.headers.get("content-type")?.startsWith("text/markdown")) {
+            throw new Error(`${path}.md: decoded space/UTF-8 slug failed to resolve as Markdown (HTTP ${markdown.status})`);
+          }
+          if (garden && collection !== "pages") {
+            const html = await (await fetch(new URL(path, origin))).text();
+            if (!html.includes(`/og${path}.png`)) throw new Error(`${path}: fallback OG URL must encode decoded slug`);
+          }
+          console.log(`${path}.md: HTTP 200 text/markdown; decoded space/UTF-8 slug resolved${garden && collection !== "pages" ? "; encoded OG fallback" : ""}`);
+        } finally {
+          db.prepare(`UPDATE ec_${collection} SET slug = ? WHERE id = ?`).run(row.slug, row.id);
+        }
+      }
+    }
+  } finally { db.close(); }
 }
 
 function createGardenCodeSeed(path) {
@@ -481,15 +555,19 @@ async function verifyDiscovery(origin, { unpublished = false, garden = false } =
       const html = await (await fetch(new URL(path, origin))).text();
       if (html.includes("UNPUBLISHED fixture secret")) throw new Error(`${path}: draft leaked through related content`);
     }
-    const fallback = garden ? "/posts/fixture-post" : "/posts/fixture-fallback";
-    const html = await (await fetch(new URL(fallback, origin))).text();
-    if (!html.includes(`/og${fallback}.png`)) throw new Error(`${fallback}: fallback OG URL does not use the slug`);
+    const fallbacks = garden ? ["/posts/fixture-post", "/projects/fixture-project"] : ["/posts/fixture-fallback", "/projects/fixture-fallback-project"];
+    for (const fallback of fallbacks) {
+      const html = await (await fetch(new URL(fallback, origin))).text();
+      if (!html.includes(`/og${fallback}.png`)) throw new Error(`${fallback}: fallback OG URL does not use the slug`);
+    }
     console.log("Related posts/projects: no draft content; fallback OG URL uses the slug");
   }
 }
 
 async function verify(origin, unpublished = false, database) {
   await verifyDiscovery(origin, { unpublished });
+  await verifyPublishedRevisions(origin, database);
+  await verifyEncodedMarkdown(origin, database);
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
     "/privacy-policy": "privacy-policy", "/pages/fixture-page": "fixture-page",
@@ -624,6 +702,8 @@ if (action === "seed" || action === "seed-unpublished") createSeed(value, action
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
 else if (action === "verify-code") {
   await verifyDiscovery(value, { garden: true });
+  await verifyPublishedRevisions(value, seedPath);
+  await verifyEncodedMarkdown(value, seedPath, true);
   await verifyDraftPreviews(value, seedPath, true);
   await verifyCodeRenderer(value);
   await verifyUntrustedSurfaces(value, true);

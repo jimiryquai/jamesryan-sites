@@ -25,3 +25,20 @@ for (const session of [{ editMode: true }, { preview: { entryId: "draft" } }]) {
     } finally { context = undefined; }
   });
 }
+
+for (const status of [500, 503]) {
+  for (const session of [undefined, { editMode: true }]) {
+    test(`HTTP ${status} never enters a shared cache (${session ? "session" : "anonymous"})`, async () => {
+      context = session;
+      try {
+        const hints = [];
+        const response = discoveryResponse(new Response("Transient database failure", { status }), { set: hint => hints.push(hint) });
+        assert.equal(response.status, status);
+        assert.equal(await response.text(), "Transient database failure");
+        assert.equal(response.headers.get("Cache-Control"), "no-store");
+        assert.equal(response.headers.get("Access-Control-Allow-Origin"), "*");
+        assert.deepEqual(hints, [false]);
+      } finally { context = undefined; }
+    });
+  }
+}
