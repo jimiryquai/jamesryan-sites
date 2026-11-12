@@ -15,8 +15,10 @@ Prepare drafts only. Field rules, the token-owner preflight, and the handoff to 
 
 ## Names the calls use
 
-- Page body field: `layout` (page-builder blocks).
-- Post taxonomies: `category` and `tag`.
+On marketing-site (`emdash-site`):
+
+- Page body field: `layout` (page-builder blocks). For `emdash-garden`, read that app's seed before writing page fields.
+- Post taxonomies: `category` and `tag` (both apps).
 - Public post archive: `/posts`.
 
 List local posts once [docs/mcp.md](../../../docs/mcp.md) says the dev server is ready:
@@ -25,18 +27,17 @@ List local posts once [docs/mcp.md](../../../docs/mcp.md) says the dev server is
 pnpm -s mcp:local call emdash-site.content_list collection:posts
 ```
 
-Create a page draft with `layout` and leave status unset. Post body, SEO, and media arguments stay in [docs/publishing.md](../../../docs/publishing.md).
+Create a marketing-site page draft with `layout` and leave status unset. Post body, SEO, and media arguments stay in [docs/publishing.md](../../../docs/publishing.md).
 
 ```sh
 pnpm -s mcp:local call emdash-site.content_create collection:pages slug:example 'data:{"title":"Example","layout":[]}'
 ```
 
-Point a menu item at the post archive, and read taxonomy terms by their seed names:
+Read taxonomy terms by their seed names:
 
 ```sh
-pnpm -s mcp:local call emdash-site.menu_set_items menuName:primary 'items:[{"label":"Posts","url":"/posts"}]'
 pnpm -s mcp:local call emdash-site.taxonomy_list_terms taxonomy:category
 pnpm -s mcp:local call emdash-site.taxonomy_list_terms taxonomy:tag
 ```
 
-Before a local write, call `schema_get` for that collection when the token includes schema read. The staging contributor token may not; follow [docs/publishing.md](../../../docs/publishing.md).
+Before a local write, call `schema_get` for that collection when the token includes schema read.
