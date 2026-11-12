@@ -15,7 +15,7 @@ function escapeHtmlAttribute(value: string): string {
 
 const documentTags = new Set("p h1 h2 h3 h4 h5 h6 ul ol li strong b em i code pre blockquote br hr a".split(" "));
 const nestedContainers = new Set("svg math object template".split(" "));
-const discardedContainers = new Set([...nestedContainers, ..."script style iframe textarea xmp plaintext noscript".split(" ")]);
+const discardedContainers = new Set([...nestedContainers, ..."script style iframe textarea xmp plaintext noscript title noembed noframes".split(" ")]);
 
 function safeDocumentHref(raw: string): string | null {
 	// Decode URL-relevant entities before checking. Unknown entities fail closed.
@@ -40,15 +40,36 @@ function safeDocumentHref(raw: string): string | null {
 	} catch { return null; }
 }
 
-function tagEnd(content: string, start: number): number {
+function scanTag(content: string, start: number): { end: number; selfClosing: boolean } {
+	let state: "before-name" | "name" | "after-name" | "before-value" | "unquoted" | "quoted" | "self-closing" = "before-name";
 	let quote = "";
 	for (let index = start; index < content.length; index++) {
 		const character = content[index];
-		if (quote) { if (character === quote) quote = ""; }
-		else if (character === '"' || character === "'") quote = character;
-		else if (character === ">") return index;
+		if (state === "quoted") {
+			if (character === quote) state = "before-name";
+			continue;
+		}
+		if (character === ">") return { end: index, selfClosing: state === "self-closing" };
+		const whitespace = /[\t\n\f\r ]/.test(character);
+		if (state === "before-value") {
+			if (whitespace) continue;
+			if (character === '"' || character === "'") { state = "quoted"; quote = character; }
+			else state = "unquoted";
+		} else if (state === "unquoted") {
+			if (whitespace) state = "before-name";
+		} else {
+			if (state === "self-closing") state = "before-name";
+			if (whitespace) { if (state === "name") state = "after-name"; }
+			else if (character === "/") state = "self-closing";
+			else if (character === "=" && (state === "name" || state === "after-name")) state = "before-value";
+			else state = "name";
+		}
 	}
-	return content.length;
+	return { end: content.length, selfClosing: false };
+}
+
+function isForeignSelfClosing(tag: string, selfClosing: boolean): boolean {
+	return selfClosing && (tag === "svg" || tag === "math");
 }
 
 function discardContainer(content: string, cursor: number, tag: string): number {
@@ -59,7 +80,7 @@ function discardContainer(content: string, cursor: number, tag: string): number 
 		const close = new RegExp(`</${tag}(?=[\\s/>])`, "gi");
 		close.lastIndex = cursor;
 		const match = close.exec(content);
-		return match ? Math.min(tagEnd(content, close.lastIndex) + 1, content.length) : content.length;
+		return match ? Math.min(scanTag(content, close.lastIndex).end + 1, content.length) : content.length;
 	}
 	let depth = 1;
 	while (cursor < content.length) {
@@ -72,9 +93,10 @@ function discardContainer(content: string, cursor: number, tag: string): number 
 		}
 		const token = /^<(\/?)([a-z][a-z0-9]*)(?=[\s/>])/i.exec(content.slice(next));
 		if (!token) { cursor = next + 1; continue; }
-		const end = tagEnd(content, next + token[0].length);
+		const { end, selfClosing } = scanTag(content, next + token[0].length);
 		cursor = Math.min(end + 1, content.length);
 		const name = token[2].toLowerCase();
+		if (isForeignSelfClosing(name, selfClosing) && !token[1]) continue;
 		if (name === tag) {
 			depth += token[1] ? -1 : 1;
 			if (depth === 0) return cursor;
@@ -104,14 +126,14 @@ export function sanitizeDocumentHtml(content: string): string {
 		}
 		const start = /^<(\/?)([a-z][a-z0-9]*)(?=[\s/>])/i.exec(content.slice(cursor));
 		if (!start) { output += "&lt;"; cursor++; continue; }
-		const end = tagEnd(content, cursor + start[0].length);
+		const { end, selfClosing: tokenSelfClosing } = scanTag(content, cursor + start[0].length);
 		if (end === content.length) break;
 		const tag = start[2].toLowerCase();
 		const closing = start[1] === "/";
 		const attributes = content.slice(cursor + start[0].length, end);
 		cursor = end + 1;
 		if (discardedContainers.has(tag) && !closing) {
-			cursor = discardContainer(content, cursor, tag);
+			if (!isForeignSelfClosing(tag, tokenSelfClosing)) cursor = discardContainer(content, cursor, tag);
 			continue;
 		}
 		if (!documentTags.has(tag)) continue;

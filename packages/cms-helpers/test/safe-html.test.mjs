@@ -62,3 +62,26 @@ test('discarded container boundaries ignore comments, attributes and raw-text ch
   assert.equal(sanitizeDocumentHtml(`<svg>${inner}<p>Discard</p></svg><p>Keep</p>`), '<p>Keep</p>');
  }
 });
+
+test('HTML attribute quotes only open at the start of an attribute value', () => {
+ assert.equal(sanitizeDocumentHtml("<template><p x=a'b><span y='></template>'></span><p>LEAKED</p></template>"), '');
+ assert.equal(sanitizeDocumentHtml("<p x=a'b>Body</p>"), '<p>Body</p>');
+});
+
+test('title and legacy raw-text containers hide their complete contents', () => {
+ for (const tag of ['title', 'noembed', 'noframes']) {
+  assert.equal(sanitizeDocumentHtml(`<${tag}>Hidden</${tag}><p>Visible</p>`), '<p>Visible</p>');
+  assert.equal(sanitizeDocumentHtml(`<template><${tag}></template></${tag}><p>LEAKED</p></template>`), '');
+ }
+});
+
+test('only foreign containers honor an actual self-closing token', () => {
+ assert.equal(sanitizeDocumentHtml('<svg viewBox="0 0 10 10" /><p>Body</p>'), '<p>Body</p>');
+ assert.equal(sanitizeDocumentHtml('<math /><p>Body</p>'), '<p>Body</p>');
+ assert.equal(sanitizeDocumentHtml('<svg><svg /><p>Hidden</p></svg><p>Body</p>'), '<p>Body</p>');
+ assert.equal(sanitizeDocumentHtml('<svg><math /><p>Hidden</p></svg><p>Body</p>'), '<p>Body</p>');
+ for (const tag of ['script', 'iframe', 'template']) {
+  assert.equal(sanitizeDocumentHtml(`<${tag} src="x" /><p>Hidden</p></${tag}><p>After</p>`), '<p>After</p>');
+ }
+ assert.equal(sanitizeDocumentHtml('<svg attr=value/><p>Hidden</p></svg><p>After</p>'), '<p>After</p>');
+});

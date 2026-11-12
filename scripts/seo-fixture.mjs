@@ -269,9 +269,10 @@ async function verifyNotFound(origin, secondLink) {
   const notFound = await fetch(new URL("/this-page-is-missing", origin), { redirect: "manual" });
   const notFoundHtml = await notFound.text();
   if (notFound.status !== 404) throw new Error(`/404: HTTP ${notFound.status}`);
-  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", secondLink]) {
+  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", ...(secondLink ? [secondLink] : [])]) {
     if (!notFoundHtml.includes(text)) throw new Error(`/404: missing ${JSON.stringify(text)}`);
   }
+  if (!secondLink && notFoundHtml.includes('href="/contact"')) throw new Error("/404: dead contact link rendered");
   for (const banned of NOT_FOUND_BANNED) {
     if (notFoundHtml.includes(banned)) throw new Error(`/404: still contains ${banned}`);
   }
@@ -314,7 +315,7 @@ async function verifyCodeRenderer(origin, notFoundLink) {
     }
     console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
   }
-  if (notFoundLink) await verifyNotFound(origin, notFoundLink);
+  await verifyNotFound(origin, notFoundLink);
 }
 
 async function verifyUntrustedSurfaces(origin, garden = false) {
@@ -528,7 +529,7 @@ if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
 else if (action === "verify-code") {
-  await verifyCodeRenderer(value, "Contact us");
+  await verifyCodeRenderer(value);
   await verifyUntrustedSurfaces(value, true);
   await verifyOgImages(value,
     ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png"],

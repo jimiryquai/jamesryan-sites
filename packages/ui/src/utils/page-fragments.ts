@@ -1,4 +1,5 @@
-import type { PageFragmentContribution } from "emdash";
+import { resolveFragments } from "emdash/page";
+import type { PageFragmentContribution, PagePlacement } from "emdash";
 
 function escapeAttribute(value: string): string {
 	return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -26,19 +27,22 @@ export function renderFragment(fragment: PageFragmentContribution): string {
 	if (fragment.kind === "html") return fragment.html;
 	const attrs = scriptAttributes(fragment.attributes);
 	if (fragment.kind === "inline-script") {
-		// Arbitrary JavaScript cannot safely be rewritten without parsing it. Reject
-		// HTML raw-text transitions (including double-escaped script states) instead.
-		if (/<\/script|<!--|<script/i.test(fragment.code)) return "";
-		return `<script${attrs}>${fragment.code}</script>`;
+		// Unclosed HTML comments can leave HTML's script tokenizer double-escaped.
+		let cursor = 0;
+		while ((cursor = fragment.code.indexOf("<!--", cursor)) !== -1) {
+			const end = fragment.code.indexOf("-->", cursor + 4);
+			if (end === -1) return "";
+			cursor = end + 3;
+		}
+		const code = fragment.code.replace(/<\/(script)/gi, "<\\/$1");
+		return `<script${attrs}>${code}</script>`;
 	}
 	if (!safeScriptSource(fragment.src)) return "";
 	return `<script src="${escapeAttribute(fragment.src)}"${fragment.async ? " async" : ""}${fragment.defer ? " defer" : ""}${attrs}></script>`;
 }
 
-export function renderPageFragments(fragments: PageFragmentContribution[]): Record<"head" | "body-start" | "body-end", string> {
-	const groups: Record<"head" | "body-start" | "body-end", string[]> = { head: [], "body-start": [], "body-end": [] };
-	for (const fragment of fragments) {
-		if (Object.hasOwn(groups, fragment.placement)) groups[fragment.placement].push(renderFragment(fragment));
-	}
-	return { head: groups.head.join("\n"), "body-start": groups["body-start"].join("\n"), "body-end": groups["body-end"].join("\n") };
+export function renderPageFragments(fragments: PageFragmentContribution[]): Record<PagePlacement, string> {
+	const renderPlacement = (placement: PagePlacement) => resolveFragments(fragments, placement)
+		.map(renderFragment).filter(Boolean).join("\n");
+	return { head: renderPlacement("head"), "body:start": renderPlacement("body:start"), "body:end": renderPlacement("body:end") };
 }

@@ -274,7 +274,7 @@ const articlePiece =
 					author: { "@id": ids.person },
 					publisher: { "@id": ids.person },
 					headline: title || pageTitle || siteTitle,
-					description: resolvedDescription,
+					description: resolvedDescription || "",
 					datePublished: publishedTime
 						? new Date(publishedTime)
 						: new Date(),
@@ -330,7 +330,7 @@ const fragmentHtml = renderPageFragments(fragments);
 	<body
 		class="flex flex-col min-h-screen bg-olive-100 text-olive-950 antialiased dark:bg-olive-950 dark:text-white transition-colors duration-200"
 	>
-		<Fragment set:html={fragmentHtml["body-start"]} />
+		<Fragment set:html={fragmentHtml["body:start"]} />
 		{
 			!hideHeaderFooter && (
 				<header
@@ -381,6 +381,6 @@ const fragmentHtml = renderPageFragments(fragments);
 				</footer>
 			)
 		}
-		<Fragment set:html={fragmentHtml["body-end"]} />
+		<Fragment set:html={fragmentHtml["body:end"]} />
 	</body>
 </html>

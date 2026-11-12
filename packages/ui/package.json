@@ -26,6 +26,7 @@
     "schema-dts": "^2.0.0"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "ASTRO_TELEMETRY_DISABLED=1 astro check"
   }
 }

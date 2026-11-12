@@ -1,4 +1,6 @@
 ---
+import { getSeoMeta, getSiteSettings } from "emdash";
+import { resolveBlogSiteIdentity } from "../utils/site-identity";
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "../components/MarketingBlocks.astro";
@@ -6,8 +8,17 @@ import MarketingBlocks from "../components/MarketingBlocks.astro";
 const route = await getPublishedRoute("/contact", Astro.cache);
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
+const { siteTitle } = resolveBlogSiteIdentity(await getSiteSettings());
+const seo = getSeoMeta(page, { siteTitle, siteUrl: Astro.url.origin, path: "/contact" });
 ---
 
-<Base title={page.data.title}>
+<Base
+	title={seo.title}
+	pageTitle={seo.ogTitle}
+	description={seo.description}
+	canonical={seo.canonical}
+	robots={seo.robots}
+	content={{ collection: "pages", id: page.data.id, slug: page.id }}
+>
 	{page.data.content && <MarketingBlocks value={page.data.content} />}
 </Base>
