@@ -1,6 +1,5 @@
 ---
 import {
-	getEmDashEntry,
 	getEmDashCollection,
 	getEntryTerms,
 	getTermsForEntries,
@@ -15,6 +14,7 @@ import {
 } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
 import { getImage } from "astro:assets";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
@@ -24,16 +24,12 @@ import { blockComponents } from "emdash-plugin-code-block-pro/astro";
 const slug = decodeSlug(Astro.params.slug);
 
 if (!slug) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
-const { entry: post, cacheHint } = await getEmDashEntry("posts", slug);
-
-if (!post) {
-	return Astro.redirect("/404");
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+const route = await getPublishedRoute(`/posts/${encodeURIComponent(slug)}`, Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "posts") return Astro.rewrite("/404");
+const post = route.entry;
 
 // Get featured image URL for OG fallback
 function getImageUrl(img: unknown): string | undefined {

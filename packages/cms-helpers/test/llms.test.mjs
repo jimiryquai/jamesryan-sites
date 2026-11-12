@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { mock, test } from "node:test";
 
 const entries = {
+	projects: [{ id: "project", status: "published", data: { title: "Launched project" } }],
 	pages: [
 		{ id: "home", status: "published", data: { title: "Home" } },
 		{ id: "about", status: "published", data: { title: "About" } },
@@ -19,6 +20,7 @@ const entries = {
 
 mock.module("emdash", {
 	namedExports: {
+		async getEmDashEntry() { throw new Error("Discovery must not hydrate individual entries"); },
 		async getSiteSettingsWithCacheHint() {
 			return { data: { title: "Example", tagline: "A test site" }, cacheHint: { tags: ["settings"] } };
 		},
@@ -35,11 +37,12 @@ mock.module("emdash", {
 	},
 });
 
-const { getLlmsTxt } = await import("../src/llms.ts");
+const { getLlmsTxt, getGardenLlmsTxt } = await import("../src/llms.ts");
 
-test("llms.txt lists published pages and every page of posts, not drafts", async () => {
+for (const [name, render] of [["marketing", getLlmsTxt], ["garden", getGardenLlmsTxt]]) {
+test(`${name} llms.txt lists published pages and every page of posts, not drafts`, async () => {
 	const hints = [];
-	const response = await getLlmsTxt("https://staging.example", {
+	const response = await render("https://staging.example", {
 		enabled: true,
 		set: (hint) => hints.push(...hint.tags),
 	});
@@ -55,5 +58,12 @@ test("llms.txt lists published pages and every page of posts, not drafts", async
 	assert.match(text, /\[Custom\]\(https:\/\/staging\.example\/pages\/custom\)/);
 	assert.match(text, /\[Post 101\]\(https:\/\/staging\.example\/posts\/post-101\): An excerpt/);
 	assert.doesNotMatch(text, /Secret draft|\/pages\/draft/);
-	assert.deepEqual(new Set(hints), new Set(["settings", "pages", "posts"]));
+	if (name === "marketing") {
+		assert.match(text, /\[Work\]\(https:\/\/staging\.example\/projects\)/);
+		assert.match(text, /\[Launched project\]\(https:\/\/staging\.example\/projects\/project\)/);
+	} else {
+		assert.doesNotMatch(text, /Launched project|https:\/\/staging\.example\/projects/);
+	}
+	assert.deepEqual(new Set(hints), new Set(["settings", "pages", "posts", ...(name === "marketing" ? ["projects"] : [])]));
 });
+}

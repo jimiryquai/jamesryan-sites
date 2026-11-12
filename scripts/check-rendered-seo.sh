@@ -25,17 +25,21 @@ fi
 
 # Let the OS choose a free port so simultaneous worktree checks stay isolated.
 port=$(node --input-type=module -e 'import net from "node:net"; const server = net.createServer(); server.listen(0, "127.0.0.1", () => { console.log(server.address().port); server.close(); });')
-for entry in "marketing-site:$port:fixture"; do
+entries=("marketing-site:$port:fixture")
+if [[ "$mode" == fixture ]]; then entries+=("marketing-site:$port:unpublished"); fi
+for entry in "${entries[@]}"; do
   IFS=: read -r app port seed_option <<< "$entry"
-  state="$state_root/$app"
+  state="$state_root/$app-$seed_option"
   cd "$root/apps/$app"
   seed="$root/apps/$app/seed/seed.json"
   fixture=false
-  if [[ "$mode" == fixture && "$seed_option" == fixture ]]; then
+  if [[ "$mode" == fixture && ( "$seed_option" == fixture || "$seed_option" == unpublished ) ]]; then
     fixture=true
     mkdir -p "$state"
     seed="$state/fixture.json"
-    node "$root/scripts/seo-fixture.mjs" seed "$seed"
+    seed_action=seed
+    if [[ "$seed_option" == unpublished ]]; then seed_action=seed-unpublished; fi
+    node "$root/scripts/seo-fixture.mjs" "$seed_action" "$seed"
   elif [[ "$mode" == fixture ]]; then
     seed="$root/apps/$app/$seed_option"
   fi
@@ -49,7 +53,7 @@ writeFileSync(process.argv[3], JSON.stringify(JSON.parse(process.argv[2]).media,
 NODE
   fi
   if [[ "$fixture" == true ]]; then
-    node "$root/scripts/seo-fixture.mjs" seo "$database"
+    node "$root/scripts/seo-fixture.mjs" seo "$database" "$seed"
   fi
   ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
     --persist-to "$state" --port "$port" --inspector-port 0 &
@@ -70,7 +74,9 @@ NODE
   echo "Validating $app"
   node "$root/scripts/validate-rendered-seo.mjs" "http://127.0.0.1:$port" || status=1
   if [[ "$fixture" == true ]]; then
-    node "$root/scripts/seo-fixture.mjs" verify "http://127.0.0.1:$port" || status=1
+    verify_action=verify
+    if [[ "$seed_option" == unpublished ]]; then verify_action=verify-unpublished; fi
+    node "$root/scripts/seo-fixture.mjs" "$verify_action" "http://127.0.0.1:$port" "$database" || status=1
   fi
   node "$root/scripts/check-rendered-media.mjs" "http://127.0.0.1:$port" "$seed" "${RENDERED_EVIDENCE_DIR:-}" || status=1
   cleanup

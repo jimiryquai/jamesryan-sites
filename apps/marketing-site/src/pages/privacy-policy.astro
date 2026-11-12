@@ -1,51 +1,9 @@
 ---
-import { getEmDashEntry, getSeoMeta } from "emdash";
-import Base from "../layouts/Base.astro";
-import MarketingBlocks from "../components/MarketingBlocks.astro";
+import PublishedPage from "../components/PublishedPage.astro";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 
-const { entry: page, cacheHint } = await getEmDashEntry("pages", "privacy-policy");
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const pageTitle = page?.data.title || "Privacy Policy";
-const pageContent = page?.data.content;
-const seo = page ? getSeoMeta(page) : null;
+const route = await getPublishedRoute("/privacy-policy", Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
+const page = route.entry;
 ---
-
-<Base
-	title={seo?.ogTitle ?? pageTitle}
-	description={page ? seo?.description : "Read our privacy policy to understand how we collect and use your data."}
-	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
->
-	{
-		pageContent ? (
-			<MarketingBlocks value={pageContent} />
-		) : (
-			<div class="empty-state">
-				<h1>{pageTitle}</h1>
-				<p>Add privacy policy content in the admin.</p>
-				<a href="/_emdash/admin" class="btn btn-primary">
-					Open Admin
-				</a>
-			</div>
-		)
-	}
-</Base>
-
-<style>
-	.empty-state {
-		text-align: center;
-		padding: var(--spacing-5xl) var(--spacing-lg);
-		max-width: var(--max-width);
-		margin: 0 auto;
-	}
-
-	.empty-state h1 {
-		margin-bottom: var(--spacing-md);
-	}
-
-	.empty-state p {
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-xl);
-	}
-</style>
+<PublishedPage page={page} />

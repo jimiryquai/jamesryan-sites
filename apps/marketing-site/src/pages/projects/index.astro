@@ -6,13 +6,18 @@ import {
 	getTaxonomyTerms,
 	getTermsForEntries,
 } from "emdash";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
+
+const route = await getPublishedRoute("/projects", Astro.cache);
+if (route?.kind !== "archive") return Astro.rewrite("/404");
 
 const activeTag = Astro.url.searchParams.get("tag");
 
 const [{ entries: sortedProjects, cacheHint }, tags] = await Promise.all([
 	getEmDashCollection("projects", {
+		status: "published",
 		orderBy: { published_at: "desc" },
 		...(activeTag ? { where: { tag: activeTag } } : {}),
 	}),
