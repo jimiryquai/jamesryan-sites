@@ -14,11 +14,13 @@ Rewrite `.agents/skills/emdash-mcp/SKILL.md` so it delegates server discovery an
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `.agents/skills/emdash-mcp/SKILL.md` references `emdash-site`, `emdash-garden`, and `emdash-staging-agent` via `docs/mcp.md` and `docs/publishing.md` rather than forbidding `mcporter` or naming `emdash-marketing`.
-- [ ] All examples in `.agents/skills/emdash-mcp/SKILL.md` respect the draft-only publishing boundary (no `status: "published"` writes or `content_delete` instructions for published content) and use current schema/taxonomy/route names (`layout`, `category`, `tag`, `/posts`).
+- [x] `.agents/skills/emdash-mcp/SKILL.md` references `emdash-site`, `emdash-garden`, and `emdash-staging-agent` via `docs/mcp.md` and `docs/publishing.md` rather than forbidding `mcporter` or naming `emdash-marketing`.
+- [x] All examples in `.agents/skills/emdash-mcp/SKILL.md` respect the draft-only publishing boundary (no `status: "published"` writes or `content_delete` instructions for published content) and use current schema/taxonomy/route names (`layout`, `category`, `tag`, `/posts`).
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Promoted to `baseline` and claiming for `h36-grok` (`grok-4.7`, branch `36-emdash-mcp-skill`). Risk: medium (reversible doc/skill PR to `master`).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Completed by `h36-grok` (1 fix round `4e96756` after cross-family review caught carried-over `schema_get` -> `schema_get_collection`), verified (`PASS`, `.orchestrate/evidence/36-cross-family-review.md`), and merged to `master` via PR #38.
