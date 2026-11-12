@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 25: Astro 7 and EmDash 1.5</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}.warn{fill:none;stroke:var(--no);stroke-width:2;stroke-dasharray:5 4}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Both sites on Astro 7 and EmDash 1.5</h1>
+<p class="sub">Tickets 24 and 25 · PRs #26 and #29 · on staging 2026-11-12, waiting for production</p>
+
+<h2>What changed</h2>
+<table>
+<tr><th></th><th>Before</th><th>Now</th></tr>
+<tr><td>Astro</td><td>6.4.8</td><td>7.4.10</td></tr>
+<tr><td>Cloudflare adapter</td><td>13.7.0</td><td>14.4.7</td></tr>
+<tr><td>EmDash</td><td>1.4.0 + our <code>$media</code> patch</td><td>1.5.0 (patch no longer needed)</td></tr>
+<tr><td>Page builder</td><td>0.2.0</td><td>0.3.0</td></tr>
+<tr><td>Audit</td><td class="no">4 critical, 55 high</td><td class="ok">0 critical, 1 high (zod 3, no fix exists)</td></tr>
+<tr><td>Wrangler upload metadata</td><td class="no">sent dependency names and versions</td><td class="ok">switched off</td></tr>
+</table>
+<p>The critical one was Astro's own: remote code execution through AVIF image optimisation. Visitors see no difference; the pages, sitemap and SEO output on staging are byte-for-byte the same as before, apart from the framework's own markup.</p>
+
+<h2>The one thing to watch: migration 095</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 210" role="img" aria-label="Before promoting, check production's plugin indexes; if empty, normal promotion; if not, maintenance rollout">
+<rect class="box" x="10" y="70" width="200" height="70" rx="8"/><rect class="hl" x="10" y="70" width="200" height="70" rx="8"/>
+<text x="24" y="98" font-weight="600">Before promoting</text><text x="24" y="120">read production's</text><text x="24" y="136" style="fill:var(--mute)">_plugin_indexes</text>
+<rect class="box" x="300" y="15" width="440" height="70" rx="8"/>
+<text x="314" y="43" font-weight="600" style="fill:var(--ok)">No uidx_plugin_ rows (both staging DBs)</text>
+<text x="314" y="65">095 has nothing to repair → normal promotion</text>
+<rect class="box" x="300" y="125" width="440" height="70" rx="8"/><rect class="warn" x="300" y="125" width="440" height="70" rx="8"/>
+<text x="314" y="153" font-weight="600" style="fill:var(--no)">Rows present</text>
+<text x="314" y="175">maintenance window: drain, deploy in check mode, migrate, reopen</text>
+<path class="arrow" d="M210 95 L298 55"/><path class="arrow" d="M210 115 L298 160"/>
+</svg>
+</div>
+<p>EmDash 1.5's migration 095 rescopes plugin storage unique indexes. If a database has any, the old Worker can recreate the old constraint while the new one migrates, so EmDash asks for a maintenance window. Staging had none and migrated cleanly (092–097). Production needs the same read before you promote; auto mode won't let me read production, so I'll ask you to switch it off for that one step.</p>
+
+<h2>Also worth knowing</h2>
+<div class="card">
+<p><strong>Code blocks</strong> now come from EmDash wiring the Code Block Pro renderer in by itself; CI checks the copy button on both sites.</p>
+<p><strong>Whitespace:</strong> Astro 7 changed its HTML whitespace default; both sites keep Astro 6's behaviour (<code>compressHTML: true</code>) so nothing shifts.</p>
+<p><strong>Still open in the audit:</strong> zod 3 (through the SEO plugin; no patched 3.x exists) and Satori bundled inside <code>workers-og</code>. Both need their parent packages to move.</p>
+</div>
+</main></body></html>
