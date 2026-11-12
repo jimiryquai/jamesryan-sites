@@ -8,12 +8,14 @@
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `git ls-files '.wrangler*' '**/.wrangler*' '.emdash*' '**/.emdash*'` returns zero tracked files.
-- [ ] CI fails if any `.wrangler/` or `.emdash/` runtime/generated artifact is committed in a future PR.
-- [ ] `pnpm typecheck` and `pnpm build` continue to succeed from a clean checkout without pre-committed `.wrangler/` or `.emdash/` directories.
+- [x] `git ls-files '.wrangler*' '**/.wrangler*' '.emdash*' '**/.emdash*'` returns zero tracked files.
+- [x] CI fails if any `.wrangler/` or `.emdash/` runtime/generated artifact is committed in a future PR.
+- [x] `pnpm typecheck` and `pnpm build` continue to succeed from a clean checkout without pre-committed `.wrangler/` or `.emdash/` directories.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Promoted to `baseline` and claiming for `h28-grok` (`grok-4.7`, branch `28-untrack-runtime-state`). Risk: medium (reversible PR to `master`; keep CI guard in a Node test under `scripts/` so `.github/workflows/ci.yml` is untouched).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Completed by `h28-grok` (`3782823`), independently verified from a clean checkout, cross-family reviewed (`PASS`, `.orchestrate/evidence/28-cross-family-review.md`), and merged to `master` via PR #37 (`32c703c`).
