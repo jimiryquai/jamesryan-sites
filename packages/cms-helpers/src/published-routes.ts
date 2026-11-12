@@ -1,25 +1,25 @@
-import { getEmDashCollection, getEmDashEntry, type ContentEntry, type InferCollectionData } from "emdash";
+import { getEmDashCollection, getEmDashEntry, type ContentEntry, type InferCollectionData, type ReferenceSelection, type SelectedReferences } from "emdash";
 import { getPublishedEntries, type RequestCache } from "./content-query.ts";
 import { getContentPath, resolveContentPath } from "./content-url.ts";
 import { PUBLIC_COLLECTIONS, publicCollections, type PublicCollection } from "./public-collections.ts";
 
-export type PublishedEntryRoute = {
+export type PublishedEntryRoute<S extends ReferenceSelection = ReferenceSelection> = {
 	[C in PublicCollection]: {
 		kind: "entry";
 		collection: C;
-		entry: ContentEntry<InferCollectionData<C>>;
+		entry: ContentEntry<InferCollectionData<C>, SelectedReferences<C, S>>;
 		title: string;
 	}
 }[PublicCollection];
 
-export type PublishedRoute = PublishedEntryRoute | {
+export type PublishedRoute<S extends ReferenceSelection = ReferenceSelection> = PublishedEntryRoute<S> | {
 	kind: "archive";
 	collection: PublicCollection;
 	title: string;
 };
 
-function entryRoute<C extends PublicCollection>(collection: C, entry: ContentEntry<InferCollectionData<C>>): PublishedEntryRoute {
-	return { kind: "entry", collection, entry, title: entry.data.title } as PublishedEntryRoute;
+function entryRoute<S extends ReferenceSelection>(collection: PublicCollection, entry: ContentEntry<InferCollectionData<PublicCollection>, SelectedReferences<PublicCollection, S>>): PublishedEntryRoute<S> {
+	return { kind: "entry", collection, entry, title: entry.data.title } as PublishedEntryRoute<S>;
 }
 
 // Pages have individual routes; the other collections also expose an archive.
@@ -34,8 +34,16 @@ function archiveRoute(collection: PublicCollection): PublishedRoute {
 /**
  * What may this request render? EmDash authorizes single entries, including
  * verified draft previews/edit mode. Archives still require published entries.
+ *
+ * `references` is the selection `getEmDashEntry` resolves on the same fetch, so
+ * a route that renders referenced content reads `entry.references` without a
+ * second entry read; the returned cache hint covers the whole lookup.
  */
-export async function getPublishedRoute(path: string, cache?: RequestCache): Promise<PublishedRoute | null> {
+export async function getPublishedRoute<S extends ReferenceSelection = ReferenceSelection>(
+	path: string,
+	cache?: RequestCache,
+	options?: { references?: S },
+): Promise<PublishedRoute<S> | null> {
 	const archive = publicCollections.find((collection) => archivePath(collection) === path);
 	if (archive) {
 		const result = await getEmDashCollection(archive, { status: "published", limit: 1 });
@@ -45,7 +53,7 @@ export async function getPublishedRoute(path: string, cache?: RequestCache): Pro
 	}
 	const content = resolveContentPath(path);
 	if (!content) return null;
-	const result = await getEmDashEntry(content.collection, content.slug);
+	const result = await getEmDashEntry(content.collection, content.slug, { references: options?.references });
 	if (result.error) throw result.error;
 	if (cache?.enabled) cache.set(result.cacheHint);
 	return result.entry ? entryRoute(content.collection, result.entry) : null;

@@ -14,10 +14,10 @@ mock.module("emdash", { namedExports: {
     queries.push({ kind: "collection", collection, limit });
     return { entries: records[collection].filter(entry => entry.data.status === status).slice(0, limit), cacheHint: { tags: [collection] } };
   },
-  async getEmDashEntry(collection, slug) {
-    queries.push({ kind: "entry", collection, slug });
+  async getEmDashEntry(collection, slug, options) {
+    queries.push({ kind: "entry", collection, slug, references: options?.references });
     const found = records[collection].find(entry => entry.id === slug && (entry.data.status === "published" || previewEntry === `${collection}:${slug}`));
-    return { entry: found ? { ...found, data: { ...found.data, seo: { title: "Hydrated SEO" } } } : null, cacheHint: { tags: [collection] } };
+    return { entry: found ? { ...found, data: { ...found.data, seo: { title: "Hydrated SEO" } }, ...(options?.references ? { references: { service: { entries: [{ id: "web", data: { id: "service-id" } }] } } } : {}) } : null, cacheHint: { tags: [collection] } };
   },
 } });
 const { getPublishedRoutes, getPublishedRoute } = await import("../src/published-routes.ts");
@@ -77,4 +77,20 @@ test("request-authorized draft previews resolve while anonymous requests and dis
     }
     assert.equal(await getPublishedRoute(path), null, `${path}: anonymous after preview`);
   }
+});
+
+test("a references selection rides the same single entry read and comes back on the route", async () => {
+  queries.length = 0;
+  const route = await getPublishedRoute("/contact", undefined, { references: { service: true } });
+  assert.equal(route.kind, "entry");
+  assert.equal(queries.length, 1);
+  assert.equal(queries[0].kind, "entry");
+  assert.deepEqual(queries[0].references, { service: true });
+  assert.equal(route.entry.references.service.entries[0].data.id, "service-id");
+  // Without the option nothing is selected and nothing extra is read.
+  queries.length = 0;
+  const plain = await getPublishedRoute("/contact");
+  assert.equal(plain.kind, "entry");
+  assert.equal(queries.length, 1);
+  assert.equal(queries[0].references, undefined);
 });

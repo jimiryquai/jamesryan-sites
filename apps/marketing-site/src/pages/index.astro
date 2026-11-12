@@ -17,10 +17,10 @@ import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
 
-const route = await getPublishedRoute("/", Astro.cache);
+const route = await getPublishedRoute("/", Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
-const pageLayout = await resolvePageLayout(page);
+const pageLayout = resolvePageLayout(page);
 const { entries: posts, cacheHint: postsCacheHint } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
 	limit: 4, // 1 featured + 3 grid
@@ -35,7 +35,6 @@ const homeSeo = getContentSeo(page);
 // Combine cache hints
 if (Astro.cache?.enabled) {
 	if (postsCacheHint) Astro.cache.set(postsCacheHint);
-	if (pageLayout?.cacheHint) Astro.cache.set(pageLayout.cacheHint);
 }
 
 const visiblePosts = posts;

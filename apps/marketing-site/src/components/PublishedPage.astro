@@ -6,13 +6,15 @@ import MarketingBlocks from "./MarketingBlocks.astro";
 import PageLayout from "./page-builder/PageLayout.astro";
 import { resolvePageLayout } from "./page-builder/resolve-page-layout";
 
+/** The pages route's entry, fetched with the service reference selection. */
+type ServiceRoute = Extract<PublishedEntryRoute<{ service: true }>, { collection: "pages" }>;
+
 interface Props {
-	page: Extract<PublishedEntryRoute, { collection: "pages" }>["entry"];
+	page: ServiceRoute["entry"];
 }
 const { page } = Astro.props;
 const seo = getSeoMeta(page);
-const pageLayout = await resolvePageLayout(page);
-if (pageLayout?.cacheHint && Astro.cache?.enabled) Astro.cache.set(pageLayout.cacheHint);
+const pageLayout = resolvePageLayout(page);
 ---
 <Base
 	title={seo.ogTitle}

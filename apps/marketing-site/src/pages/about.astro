@@ -5,11 +5,10 @@ import PageLayout from "../components/page-builder/PageLayout.astro";
 import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
 import Base from "../layouts/Base.astro";
 
-const route = await getPublishedRoute("/about", Astro.cache);
+const route = await getPublishedRoute("/about", Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
-const pageLayout = await resolvePageLayout(page);
-if (pageLayout?.cacheHint && Astro.cache?.enabled) Astro.cache.set(pageLayout.cacheHint);
+const pageLayout = resolvePageLayout(page);
 const seo = getSeoMeta(page);
 
 import LinkedInIcon from "@jamesryan/ui/components/icons/social/linkedin-icon.astro";
