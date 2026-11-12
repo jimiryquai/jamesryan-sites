@@ -1,0 +1,34 @@
+---
+import { env } from "cloudflare:workers";
+import { buildUsermavenProxyUrls, normalizeUsermavenKey } from "../utils/usermaven.ts";
+
+const key = normalizeUsermavenKey(env.USERMAVEN_KEY);
+const { trackingHost, scriptSrc } = buildUsermavenProxyUrls(Astro.url.origin);
+---
+
+{
+	key && (
+		<script is:inline define:vars={{ key, trackingHost, scriptSrc }}>
+			function queueUsermavenCall() {
+				if (!window.usermavenQ) {
+					window.usermavenQ = [];
+				}
+				window.usermavenQ.push(arguments);
+			}
+			if (!window.usermaven) {
+				window.usermaven = queueUsermavenCall;
+			}
+			const trackerScript = document.createElement("script");
+			const firstScript = document.getElementsByTagName("script")[0];
+			trackerScript.defer = true;
+			trackerScript.id = "um-tracker";
+			trackerScript.setAttribute("data-tracking-host", trackingHost);
+			trackerScript.setAttribute("data-key", key);
+			trackerScript.setAttribute("data-autocapture", "true");
+			trackerScript.setAttribute("data-privacy-policy", "strict");
+			trackerScript.setAttribute("data-randomize-url", "true");
+			trackerScript.src = scriptSrc;
+			firstScript.parentNode.insertBefore(trackerScript, firstScript);
+		</script>
+	)
+}

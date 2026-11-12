@@ -36,6 +36,9 @@
 			"custom_domain": true
 		}
 	],
+	"vars": {
+		"USERMAVEN_KEY": "UMNstP14wS"
+	},
 	"env": {
 		"staging": {
 			"d1_databases": [

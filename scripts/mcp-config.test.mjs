@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
-import { lstat, mkdtemp, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { lstat, mkdir, mkdtemp, readdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -26,19 +26,21 @@ function readRequestBody(req) {
 
 async function startFakeMcpServer(expectedAuthHeader) {
   const receivedAuthHeaders = [];
+  const receivedPaths = [];
   const server = createServer(async (req, res) => {
     receivedAuthHeaders.push(req.headers.authorization ?? '');
-    if (req.method !== 'POST') {
-      res.writeHead(405, { 'content-type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Method not allowed' }));
-      return;
-    }
+    receivedPaths.push(req.url);
     if (req.headers.authorization !== expectedAuthHeader) {
       res.writeHead(401, {
         'content-type': 'application/json',
-        'www-authenticate': 'Bearer resource_metadata="http://127.0.0.1/.well-known/oauth-protected-resource"',
+        'www-authenticate': `Bearer resource_metadata="http://127.0.0.1:${server.address().port}/.well-known/oauth-protected-resource"`,
       });
       res.end(JSON.stringify({ error: 'Authentication required' }));
+      return;
+    }
+    if (req.method !== 'POST') {
+      res.writeHead(405, { 'content-type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Method not allowed' }));
       return;
     }
     const payload = JSON.parse(await readRequestBody(req));
@@ -85,6 +87,7 @@ async function startFakeMcpServer(expectedAuthHeader) {
   return {
     port,
     receivedAuthHeaders,
+    receivedPaths,
     close() {
       return new Promise((resolveClose) => {
         server.close(() => resolveClose());
@@ -246,6 +249,78 @@ test('mcporter loads .env tokens via --env-file-if-exists, reports offline local
   } finally {
     await siteServer.close();
     await stagingProbe.close();
+    await rm(workDir, { recursive: true, force: true });
+  }
+});
+
+test('on-request OAuth guard refuses an OAuth challenge without starting sign-in', async (t) => {
+  const workDir = await mkdtemp(join(tmpdir(), 'mcp-oauth-guard-'));
+  const server = await startFakeMcpServer('Bearer fixture-token');
+  try {
+    const configPath = 'config/mcporter.cloudflare.json';
+    await mkdir(join(workDir, 'config'));
+    await writeFile(join(workDir, configPath), JSON.stringify({
+      imports: [],
+      mcpServers: { cloudflare: { type: 'http', url: `http://127.0.0.1:${server.port}/mcp`, lifecycle: 'ephemeral' } },
+    }));
+    const pkg = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+    await writeFile(join(workDir, 'package.json'), JSON.stringify({ private: true, scripts: { 'mcp:cloudflare': pkg.scripts['mcp:cloudflare'] } }));
+    await symlink(join(root, 'scripts'), join(workDir, 'scripts'));
+    await symlink(join(root, 'node_modules'), join(workDir, 'node_modules'));
+    await assert.rejects(
+      execFileAsync('pnpm', ['-s', 'mcp:cloudflare', 'list'], {
+        cwd: workDir,
+        env: { ...cleanMcpEnv(), HOME: workDir, XDG_DATA_HOME: join(workDir, 'data'), XDG_CACHE_HOME: join(workDir, 'cache') },
+        timeout: 10000,
+      }),
+      (error) => {
+        assert.notEqual(error.code, 0);
+        assert.match(`${error.stdout}\n${error.stderr}`, /pnpm exec mcporter --config config\/mcporter\.cloudflare\.json auth cloudflare/);
+        t.diagnostic(`Loopback refusal output:\n${error.stdout}${error.stderr}`);
+        return true;
+      },
+    );
+    assert.ok(server.receivedAuthHeaders.length > 0);
+    assert.ok(server.receivedAuthHeaders.every((header) => header === ''));
+    assert.ok(server.receivedPaths.every((path) => path === '/mcp'), 'OAuth discovery must not start');
+    await assert.rejects(execFileAsync('pnpm', ['-s', 'mcp:cloudflare', 'auth', 'cloudflare'], { cwd: workDir }), /agents must not start OAuth/);
+    assert.ok(server.receivedPaths.every((path) => path === '/mcp'));
+  } finally {
+    await server.close();
+    await rm(workDir, { recursive: true, force: true });
+  }
+});
+
+test('Cloudflare command uses a cached grant to list the on-request server', async () => {
+  const workDir = await mkdtemp(join(tmpdir(), 'mcp-cloudflare-'));
+  const server = await startFakeMcpServer('Bearer fixture-token');
+  try {
+    const config = JSON.parse(await readFile(join(root, 'config/mcporter.cloudflare.json'), 'utf8'));
+    assert.deepEqual(Object.keys(config.mcpServers), ['cloudflare']);
+    assert.equal(config.mcpServers.cloudflare.url, 'https://mcp.cloudflare.com/mcp');
+    config.mcpServers.cloudflare.url = `http://127.0.0.1:${server.port}/mcp`;
+    await mkdir(join(workDir, 'config'));
+    await writeFile(join(workDir, 'config/mcporter.cloudflare.json'), JSON.stringify(config));
+    const pkg = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
+    await writeFile(join(workDir, 'package.json'), JSON.stringify({ private: true, scripts: { 'mcp:cloudflare': pkg.scripts['mcp:cloudflare'] } }));
+    await symlink(join(root, 'scripts'), join(workDir, 'scripts'));
+    await symlink(join(root, 'node_modules'), join(workDir, 'node_modules'));
+    const env = { ...cleanMcpEnv(), HOME: workDir, XDG_DATA_HOME: join(workDir, 'data'), XDG_CACHE_HOME: join(workDir, 'cache') };
+    const tokensPath = join(workDir, 'tokens.json');
+    await writeFile(tokensPath, JSON.stringify({ tokens: { access_token: 'fixture-token', token_type: 'Bearer' } }));
+    await execFileAsync(process.execPath, [mcporterCli, '--config', 'config/mcporter.cloudflare.json', 'vault', 'set', 'cloudflare', '--tokens-file', tokensPath], { cwd: workDir, env });
+    const result = await execFileAsync('pnpm', ['-s', 'mcp:cloudflare', 'list'], { cwd: workDir, env, timeout: 10000 });
+    assert.match(result.stdout, /cloudflare.*1 tool/);
+    assert.ok(server.receivedAuthHeaders.length > 0);
+    assert.ok(server.receivedAuthHeaders.every((header) => header === 'Bearer fixture-token'));
+    await writeFile(tokensPath, JSON.stringify({ tokens: { access_token: 'revoked-fixture-token', token_type: 'Bearer' } }));
+    await execFileAsync(process.execPath, [mcporterCli, '--config', 'config/mcporter.cloudflare.json', 'vault', 'set', 'cloudflare', '--tokens-file', tokensPath], { cwd: workDir, env });
+    server.receivedPaths.length = 0;
+    await assert.rejects(execFileAsync('pnpm', ['-s', 'mcp:cloudflare', 'list'], { cwd: workDir, env, timeout: 10000 }), /pnpm exec mcporter --config config\/mcporter\.cloudflare\.json auth cloudflare/);
+    assert.ok(server.receivedPaths.length > 0);
+    assert.ok(server.receivedPaths.every((path) => path === '/mcp'), 'a rejected cached grant must not start OAuth discovery');
+  } finally {
+    await server.close();
     await rm(workDir, { recursive: true, force: true });
   }
 });
