@@ -21,6 +21,10 @@
     "@shikijs/engine-javascript": "4.1.0"
   },
   "scripts": {
-    "test": "node --experimental-test-module-mocks --test test/*.test.mjs"
+    "test": "node --experimental-test-module-mocks --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
   }
 }

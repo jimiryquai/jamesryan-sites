@@ -11,7 +11,7 @@ const route = await getPublishedRoute("/", Astro.cache, { references: { service:
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
 const pageLayout = resolvePageLayout(page);
-const { siteTagline } = resolveSiteIdentity(await getSiteSettings());
+const { siteTagline } = resolveSiteIdentity(await getSiteSettings(), { site: Astro.site, requestUrl: Astro.url });
 
 const pageTitle = page.data.title;
 const seo = getSeoMeta(page);

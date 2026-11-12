@@ -20,7 +20,7 @@ const [{ entries: posts, cacheHint }, settings] = await Promise.all([
 	}),
 	getSiteSettings(),
 ]);
-const { siteTitle, siteTagline } = resolveSiteIdentity(settings);
+const { siteTitle, siteTagline } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { test } from 'node:test';
+import { isUtf8 } from 'node:buffer';
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), 'utf8');
@@ -55,13 +56,18 @@ test('static asset headers do not declare rules for Worker-rendered discovery ro
 test('app source and shared packages have no template identity remnants', () => {
   function check(directory) {
     for (const entry of readdirSync(new URL(directory, root), { withFileTypes: true })) {
-      if (['node_modules', '.astro', 'dist', '.wrangler'].includes(entry.name)) continue;
+      if (['node_modules', '.astro', 'dist', '.wrangler'].includes(entry.name) || entry.name.startsWith('data.db')) continue;
       const path = `${directory}/${entry.name}`;
+      if (path.endsWith('/seed/assets')) continue;
       if (entry.isDirectory()) check(path);
-      else if (/\.(?:astro|[cm]?[jt]sx?|css|json)$/.test(entry.name)) {
-        assert.doesNotMatch(read(path), /Oatmeal|oatmeal\.dev|My Blog/, path);
+      else {
+        const bytes = readFileSync(new URL(path, root));
+        if (!isUtf8(bytes) || bytes.includes(0)) continue;
+        const source = bytes.toString('utf8');
+        const seed = /^apps\/[^/]+\/seed\/seed\.json$/.test(path) ? JSON.parse(source) : null;
+        assert.doesNotMatch(seed ? JSON.stringify({ meta: seed.meta, settings: seed.settings }) : source, /Oatmeal|oatmeal\.dev|My Blog/, path);
       }
     }
   }
-  for (const directory of ['apps/marketing-site/src', 'apps/digital-garden/src', 'packages']) check(directory);
+  for (const directory of ['apps', 'packages']) check(directory);
 });

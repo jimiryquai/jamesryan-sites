@@ -26,7 +26,7 @@ const [{ entries: posts, cacheHint }, settings, collection] = await Promise.all(
 	getSiteSettings(),
 	getCollectionInfo("posts"),
 ]);
-const { siteTagline } = resolveSiteIdentity(settings);
+const { siteTagline } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 

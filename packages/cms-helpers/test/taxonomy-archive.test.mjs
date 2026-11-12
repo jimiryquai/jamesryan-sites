@@ -4,15 +4,21 @@ import { mock, test } from 'node:test';
 const contexts = new AsyncLocalStorage();
 const session = { editMode: true, preview: { id: 'draft' } };
 let found = true;
+let empty = false;
+const termReads = [];
 const calls = [];
 mock.module('emdash', { namedExports: {
   getRequestContext: () => contexts.getStore(),
   runWithContext: (ctx, fn) => contexts.run(ctx, fn),
   decodeSlug: slug => slug,
-  getTerm: async (taxonomy, slug) => found ? { slug, label: 'Experiments' } : null,
+  getTaxonomyTermsWithCacheHint: async (taxonomy, options) => {
+    termReads.push({ taxonomy, options });
+    assert.deepEqual(options, { includeCounts: false });
+    return { data: found ? [{ slug: 'parent', label: 'Parent', children: [{ slug: 'experiments', label: 'Experiments' }] }] : [], cacheHint: { tags: [`emdash:taxonomy:${taxonomy}`] } };
+  },
   getEmDashCollection: async (collection, options) => {
     calls.push({ collection, options, context: contexts.getStore() });
-    return { entries: [{ id: 'public', data: { id: 'ULID', title: 'Published' } }], cacheHint: { tags: ['posts'] } };
+    return { entries: empty ? [] : [{ id: 'public', data: { id: 'ULID', title: 'Published' } }], cacheHint: { tags: ['posts'] } };
   },
   getTermsForEntries: async () => new Map([['ULID', [{ slug: 'tag', label: 'Tag' }]]]),
 } });
@@ -38,6 +44,18 @@ for (const taxonomy of ['category', 'tag']) {
     assert.deepEqual(call.options, { status: 'published', where: { [taxonomy]: 'experiments' }, orderBy: { published_at: 'desc' } });
     assert.equal(call.context.editMode, false);
     assert.equal(call.context.preview, undefined);
-    assert.deepEqual(hints, [{ tags: ['posts'] }]);
+    assert.deepEqual(hints, [{ tags: [`emdash:taxonomy:${taxonomy}`] }, { tags: ['posts'] }, ...(taxonomy === 'category' ? [{ tags: ['emdash:taxonomy:tag'] }] : [])]);
   });
 }
+
+test('empty category archive registers its taxonomy and posts but does not load unused tag terms', async () => {
+  empty = true;
+  termReads.length = 0;
+  const hints = [];
+  try {
+    const result = await getTaxonomyArchive('category', 'experiments', { enabled: true, set: hint => hints.push(hint) });
+    assert.deepEqual(result.posts, []);
+    assert.deepEqual(termReads.map(read => read.taxonomy), ['category']);
+    assert.deepEqual(hints, [{ tags: ['emdash:taxonomy:category'] }, { tags: ['posts'] }]);
+  } finally { empty = false; }
+});

@@ -20,7 +20,7 @@ export const rss: APIRoute = async ({ site, url, cache }) => {
 		cache.set(settingsResult.cacheHint);
 		cache.set(postsResult.cacheHint);
 	}
-	const { siteTitle, siteTagline } = resolveSiteIdentity(settingsResult.data);
+	const { siteTitle, siteTagline } = resolveSiteIdentity(settingsResult.data, { site, requestUrl: url });
 	if (postsResult.error) throw postsResult.error;
 	const posts = postsResult.entries;
 

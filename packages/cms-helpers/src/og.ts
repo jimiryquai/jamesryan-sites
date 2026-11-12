@@ -81,7 +81,7 @@ async function siteIdentity(options: OgSiteOptions): Promise<{ title: string; de
 	const identity = resolveSiteIdentity(data);
 	return {
 		title: data.title || options.defaultTitle || identity.siteTitle,
-		description: data.tagline || (options.defaultDescription ?? identity.siteTagline),
+		description: data.tagline || (options.defaultDescription ?? ""),
 		cacheHint,
 	};
 }
