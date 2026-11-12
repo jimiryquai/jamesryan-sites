@@ -5,8 +5,13 @@ import CTA from './CTA.astro';
 import Features from './Features.astro';
 import Testimonials from './Testimonials.astro';
 import Pricing from './Pricing.astro';
+import Prose from './Prose.astro';
+import FAQ from './FAQ.astro';
+import Stats from './Stats.astro';
+import Team from './Team.astro';
+import Comparison from './Comparison.astro';
 
-const sections: Record<string, Section> = { hero: Hero, cta: CTA, features: Features, testimonials: Testimonials, pricing: Pricing };
+const sections: Record<string, Section> = { hero: Hero, cta: CTA, features: Features, testimonials: Testimonials, pricing: Pricing, prose: Prose, faq: FAQ, stats: Stats, team: Team, comparison: Comparison };
 const offered = getOfferedBlocks();
 const slugs = offered.map((block) => block.definition.slug);
 const missing = slugs.filter((slug) => !Object.hasOwn(sections, slug));

@@ -82,7 +82,65 @@ export interface PageLayoutPricingV1Block {
 
 export type PageLayoutPricingBlock = PageLayoutPricingV1Block;
 
-export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutCtaBlock | PageLayoutFeaturesBlock | PageLayoutTestimonialsBlock | PageLayoutPricingBlock;
+export interface PageLayoutComparisonV1Block {
+  _type: "comparison";
+  _version: 1;
+  _key: string;
+  "variant"?: "table" | null;
+  "columns"?: { "key"?: "first" | "second" | "third" | null; "label"?: string | null }[] | null;
+  "rows"?: { "group_name"?: string | null; "name"?: string | null; "first_value"?: string | null; "second_value"?: string | null; "third_value"?: string | null }[] | null;
+}
+
+export type PageLayoutComparisonBlock = PageLayoutComparisonV1Block;
+
+export interface PageLayoutTeamV1Block {
+  _type: "team";
+  _version: 1;
+  _key: string;
+  "variant"?: "four-column" | "three-column" | null;
+  "scope"?: "page" | "all" | null;
+  "count"?: number | null;
+}
+
+export type PageLayoutTeamBlock = PageLayoutTeamV1Block;
+
+export interface PageLayoutFaqV1Block {
+  _type: "faq";
+  _version: 1;
+  _key: string;
+  "variant"?: "two-column" | "centered" | null;
+  "scope"?: "page" | "all" | null;
+  "count"?: number | null;
+}
+
+export type PageLayoutFaqBlock = PageLayoutFaqV1Block;
+
+export interface PageLayoutStatsV1Block {
+  _type: "stats";
+  _version: 1;
+  _key: string;
+  "variant"?: "graph" | null;
+  "eyebrow"?: string | null;
+  "heading"?: string | null;
+  "body"?: string | null;
+  "items"?: { "value"?: string | null; "label"?: string | null }[] | null;
+}
+
+export type PageLayoutStatsBlock = PageLayoutStatsV1Block;
+
+export interface PageLayoutProseV1Block {
+  _type: "prose";
+  _version: 1;
+  _key: string;
+  "variant"?: "centered" | "start" | null;
+  "heading"?: string | null;
+  "body"?: string | null;
+  "content"?: PortableTextBlock[] | null;
+}
+
+export type PageLayoutProseBlock = PageLayoutProseV1Block;
+
+export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutCtaBlock | PageLayoutFeaturesBlock | PageLayoutTestimonialsBlock | PageLayoutPricingBlock | PageLayoutComparisonBlock | PageLayoutTeamBlock | PageLayoutFaqBlock | PageLayoutStatsBlock | PageLayoutProseBlock;
 
 export interface Page {
   id: string;
