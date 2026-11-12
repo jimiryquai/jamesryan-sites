@@ -104,54 +104,6 @@ function portableTextToMarkdown(content: any[]): string {
 			} else {
 				markdown += `${prefix}${blockText}${suffix}\n\n`;
 			}
-		} else if (block._type === "marketing.hero") {
-			markdown += `# ${block.headline || ""}\n\n${block.subheadline || ""}\n\n`;
-			if (block.primaryCtaLabel) {
-				markdown += `[${block.primaryCtaLabel}](${block.primaryCtaUrl || "#"})\n\n`;
-			}
-		} else if (block._type === "marketing.features") {
-			markdown += `## ${block.headline || "Features"}\n\n${block.subheadline || ""}\n\n`;
-			if (block.features && Array.isArray(block.features)) {
-				for (const feat of block.features) {
-					markdown += `### ${feat.title}\n\n${feat.description}\n\n`;
-				}
-			}
-		} else if (block._type === "marketing.testimonials") {
-			markdown += `## ${block.headline || "Testimonials"}\n\n`;
-			if (block.testimonials && Array.isArray(block.testimonials)) {
-				for (const test of block.testimonials) {
-					markdown += `> "${test.quote}"\n> — **${test.author}**, ${test.role || ""} (${test.company || ""})\n\n`;
-				}
-			}
-		} else if (block._type === "marketing.pricing") {
-			markdown += `## ${block.headline || "Pricing Plans"}\n\n`;
-			if (block.plans && Array.isArray(block.plans)) {
-				for (const plan of block.plans) {
-					markdown += `### ${plan.name} (${plan.price}${plan.period})\n\n${plan.description || ""}\n\n`;
-					if (plan.features) {
-						markdown += `${plan.features.split("\n").map((f: string) => `- ${f}`).join("\n")}\n\n`;
-					}
-				}
-			}
-		} else if (block._type === "marketing.faq") {
-			markdown += `## ${block.headline || "FAQ"}\n\n`;
-			if (block.items && Array.isArray(block.items)) {
-				for (const item of block.items) {
-					markdown += `**Q: ${item.question}**\n\n${item.answer}\n\n`;
-				}
-			}
-		} else if (block._type === "marketing.stats") {
-			markdown += `## ${block.headline || ""}\n\n${block.subheadline || ""}\n\n`;
-			if (block.stats && Array.isArray(block.stats)) {
-				for (const stat of block.stats) {
-					markdown += `**${stat.stat}**: ${stat.text}\n\n`;
-				}
-			}
-		} else if (block._type === "marketing.cta") {
-			markdown += `## ${block.headline || ""}\n\n${block.subheadline || ""}\n\n`;
-			if (block.primaryCtaLabel) {
-				markdown += `[${block.primaryCtaLabel}](${block.primaryCtaUrl || "#"})\n\n`;
-			}
 		}
 	}
 

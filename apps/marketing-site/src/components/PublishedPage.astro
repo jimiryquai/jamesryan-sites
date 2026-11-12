@@ -2,7 +2,6 @@
 import type { PublishedEntryRoute } from "@jamesryan/cms-helpers";
 import { getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
-import MarketingBlocks from "./MarketingBlocks.astro";
 import PageLayout from "./page-builder/PageLayout.astro";
 import { resolvePageLayout } from "./page-builder/resolve-page-layout";
 
@@ -21,11 +20,5 @@ const pageLayout = resolvePageLayout(page);
 	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	{
-		pageLayout ? (
-			<PageLayout value={pageLayout.layout} group={pageLayout.group} />
-		) : (
-			<MarketingBlocks value={page.data.content ?? []} />
-		)
-	}
+	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />}
 </Base>

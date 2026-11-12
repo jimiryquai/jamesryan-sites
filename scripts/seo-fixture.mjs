@@ -8,9 +8,6 @@ const root = new URL("../", import.meta.url);
 const original = JSON.parse(readFileSync(new URL("apps/marketing-site/seed/seed.json", root)));
 const description = (name) =>
   `Fixture ${name} metadata description for verifying the rendered SEO validation pipeline.`;
-const heading = (text) => [{ _type: "block", _key: "heading", style: "h1", children: [
-  { _type: "span", _key: "text", text },
-] }];
 const paragraph = (key, text) => [{ _type: "block", _key: key, style: "normal", children: [
   { _type: "span", _key: `${key}-span`, text },
 ] }];
@@ -42,9 +39,9 @@ const layoutNewBlocks = (slug) => [
     rows: [{ _key: `${slug}-row`, group_name: `Fixture ${slug} comparison group`, name: `Fixture ${slug} comparison feature`,
       first_value: "true", second_value: "false", third_value: `Fixture ${slug} comparison value` }] },
 ];
-const page = (slug, content = heading(`Fixture ${slug} heading`), layout) => ({
+const page = (slug, layout) => ({
   id: slug, slug, status: "published",
-  data: { title: `Fixture ${slug}`, content, ...(layout ? { layout } : {}) },
+  data: { title: `Fixture ${slug}`, ...(layout ? { layout } : {}) },
 });
 const codeBlock = [{
   _type: "code-block-pro", _key: "upgrade-code", code: 'console.log("astro7-renderer-fixture");',
@@ -52,15 +49,17 @@ const codeBlock = [{
 }];
 const entries = {
   pages: [
-    page("home", [{ _type: "marketing.hero", _key: "hero", headline: "Fixture home heading" }]),
-    page("about"), page("contact"),
-    // A page with a published layout renders it in place of its Portable Text
-    // content; the same entry goes draft in the unpublished state and must 404.
-    page("pricing", heading("Fixture pricing heading"), layoutHero("pricing")),
+    page("home", layoutHero("home")),
+    // About has no layout; its route renders the hand-written body as its fallback.
+    page("about"),
+    page("contact", layoutHero("contact")),
+    // A page with a published layout renders it; the same entry goes draft in
+    // the unpublished state and must 404.
+    page("pricing", layoutHero("pricing")),
     // The five blocks added in ticket 20 render through the same published-route
-    // switch on a page whose content would otherwise hold the document block.
-    page("privacy-policy", heading("Fixture privacy heading"), layoutNewBlocks("privacy-policy")),
-    page("fixture-page", heading("Fixture custom heading")),
+    // layout switch on the page that used to hold the document block.
+    page("privacy-policy", layoutNewBlocks("privacy-policy")),
+    page("fixture-page", layoutHero("fixture-page")),
     { ...page("fixture-draft"), status: "draft" },
   ],
   posts: [
@@ -265,13 +264,13 @@ async function verify(origin, unpublished = false, database) {
   if (!unpublished) {
     await verifyCodeRenderer(origin);
     const layoutHtml = await (await fetch(new URL("/pricing", origin))).text();
-    if (!layoutHtml.includes("Fixture pricing layout heading") || layoutHtml.includes("Fixture pricing heading")) {
-      throw new Error("/pricing: a published layout was not rendered in place of content");
+    if (!layoutHtml.includes("Fixture pricing layout heading")) {
+      throw new Error("/pricing: the published layout was not rendered");
     }
-    console.log("/pricing: published layout rendered in place of content");
+    console.log("/pricing: published layout rendered");
     const newBlocksHtml = await (await fetch(new URL("/privacy-policy", origin))).text();
-    if (!newBlocksHtml.includes("Fixture privacy-policy prose heading") || newBlocksHtml.includes("Fixture privacy heading")) {
-      throw new Error("/privacy-policy: a published layout was not rendered in place of content");
+    if (!newBlocksHtml.includes("Fixture privacy-policy prose heading")) {
+      throw new Error("/privacy-policy: the published layout was not rendered");
     }
     for (const marker of [
       "Fixture privacy-policy prose paragraph.", "fixture privacy-policy prose code block",
@@ -285,11 +284,11 @@ async function verify(origin, unpublished = false, database) {
       }
     }
     console.log("/privacy-policy: layout renders prose, faq, stats, team and comparison sections");
-    const contentHtml = await (await fetch(new URL("/contact", origin))).text();
-    if (!contentHtml.includes("Fixture contact heading")) {
-      throw new Error("/contact: content fallback was not rendered for a page without layout");
+    const aboutHtml = await (await fetch(new URL("/about", origin))).text();
+    if (!aboutHtml.includes("I'm James Ryan.")) {
+      throw new Error("/about: the hand-written fallback was not rendered for a page without layout");
     }
-    console.log("/contact: content rendered for a page without layout");
+    console.log("/about: hand-written fallback rendered for a page without layout");
   }
   if (unpublished) {
     await verifyDraftPreviews(origin, database);
