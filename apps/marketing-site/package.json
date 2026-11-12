@@ -33,7 +33,7 @@
     "emdash": "1.4.0",
     "emdash-plugin-ai-comment-moderation": "2.1.0",
     "emdash-plugin-code-block-pro": "0.2.0",
-    "emdash-plugin-page-builder": "file:../../.orchestrate/pkg/emdash-plugin-page-builder-0.1.0.tgz",
+    "emdash-plugin-page-builder": "0.2.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "shiki": "4.1.0",
