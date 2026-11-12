@@ -1,37 +1,11 @@
 import type { APIRoute } from "astro";
-import { getContentPath, getPublishedEntries } from "@jamesryan/cms-helpers";
+import { getPublishedRoutes } from "@jamesryan/cms-helpers";
 
 export const GET: APIRoute = async ({ site, url, cache }) => {
 	const siteUrl = site?.toString().replace(/\/$/, "") || url.origin;
 
-	// Fetch dynamic content from EmDash collections
-	const [pages, posts, projects] = await Promise.all([
-		getPublishedEntries("pages", cache),
-		getPublishedEntries("posts", cache),
-		getPublishedEntries("projects", cache),
-	]);
-
-	const urls: string[] = [];
-
-	// Add static pages
-	urls.push(`${siteUrl}/contact`);
-	urls.push(`${siteUrl}/posts`);
-	urls.push(`${siteUrl}/projects`);
-
-	// Add dynamic pages
-	for (const page of pages) {
-		urls.push(new URL(getContentPath("pages", page.id), siteUrl).href);
-	}
-
-	// Add blog posts
-	for (const post of posts) {
-		urls.push(new URL(getContentPath("posts", post.id), siteUrl).href);
-	}
-
-	// Add projects
-	for (const project of projects) {
-		urls.push(new URL(getContentPath("projects", project.id), siteUrl).href);
-	}
+	const routes = await getPublishedRoutes(cache);
+	const urls = [...routes.keys()].map((path) => new URL(path, siteUrl).href);
 
 	// Build sitemap XML
 	const xmlUrls = [...new Set(urls)]

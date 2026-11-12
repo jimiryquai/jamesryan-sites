@@ -17,6 +17,8 @@ import {
 } from "@jdevalk/seo-graph-core";
 import type { Person, Blog } from "schema-dts";
 import { createPublicPageContext, getPageRuntime } from "emdash/page";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
+import themeScript from "./theme-init.js?raw";
 import NavbarLink from "./sections/NavbarLink.astro";
 import FooterLink from "./sections/FooterLink.astro";
 import SocialLink from "./sections/SocialLink.astro";
@@ -368,23 +370,10 @@ const headFragmentsHtml = fragments
 			noindex={seoNoindex}
 			extraLinks={extraLinks}
 			extraMeta={extraMeta}
+		/>
 		<Fragment set:html={headFragmentsHtml} />
 		<slot name="links" />
-		<script is:inline>
-			// Apply theme immediately to prevent flash
-			(function () {
-				var c = document.cookie;
-				var i = c.indexOf("theme=");
-				var theme = i >= 0 ? c.slice(i + 6).split(";")[0] : null;
-				if (theme === "dark" || theme === "light") {
-					document.documentElement.classList.add(theme);
-				} else if (
-					window.matchMedia("(prefers-color-scheme: dark)").matches
-				) {
-					document.documentElement.classList.add("dark");
-				}
-			})();
-		</script>
+		<script is:inline set:html={themeScript} />
 	</head>
 	<body
 		class="flex flex-col min-h-screen bg-olive-100 text-olive-950 antialiased dark:bg-olive-950 dark:text-white transition-colors duration-200"
@@ -408,6 +397,7 @@ const headFragmentsHtml = fragments
 								</li>
 							))}
 						</ul>
+						<ThemeSwitcher />
 					</nav>
 				</header>
 			)
@@ -421,7 +411,7 @@ const headFragmentsHtml = fragments
 			!hideHeaderFooter && (
 				<footer class="py-12" id="footer">
 					<div class="mx-auto max-w-7xl px-6 lg:px-10 relative flex flex-col md:flex-row md:items-center justify-center gap-y-4 text-sm font-sans">
-						<div class="md:absolute md:left-6 lg:left-10 text-olive-600 dark:text-olive-500 whitespace-nowrap">
+						<div class="md:absolute md:left-6 lg:left-10 text-olive-600 dark:text-olive-400 whitespace-nowrap">
 							&copy; {new Date().getFullYear()} {siteTitle}. All
 							rights reserved.
 						</div>

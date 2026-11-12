@@ -1,61 +1,13 @@
 ---
-import { getEmDashEntry, getSeoMeta, decodeSlug } from "emdash";
-import Base from "../../layouts/Base.astro";
-import MarketingBlocks from "../../components/MarketingBlocks.astro";
+import { decodeSlug } from "emdash";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
+import PublishedPage from "../../components/PublishedPage.astro";
 
 const slug = decodeSlug(Astro.params.slug);
+if (!slug) return Astro.rewrite("/404");
 
-if (!slug) {
-	return Astro.redirect("/404");
-}
-
-const { entry: page, cacheHint } = await getEmDashEntry("pages", slug);
-
-if (!page) {
-	return Astro.redirect("/404");
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
-
-const pageTitle = page.data.title;
-const pageContent = page.data.content;
-const seo = getSeoMeta(page);
+const route = await getPublishedRoute(`/pages/${encodeURIComponent(slug)}`, Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
+const page = route.entry;
 ---
-
-<Base
-	title={seo.ogTitle}
-	description={seo.description}
-	content={{ collection: "pages", id: page.data.id, slug }}
->
-	{
-		pageContent ? (
-			<MarketingBlocks value={pageContent} />
-		) : (
-			<div class="empty-state">
-				<h1 {...page.edit.title}>{pageTitle}</h1>
-				<p>Edit this page content in the admin to get started.</p>
-				<a href="/_emdash/admin" class="btn btn-primary">
-					Open Admin
-				</a>
-			</div>
-		)
-	}
-</Base>
-
-<style>
-	.empty-state {
-		text-align: center;
-		padding: var(--spacing-5xl) var(--spacing-lg);
-		max-width: var(--max-width);
-		margin: 0 auto;
-	}
-
-	.empty-state h1 {
-		margin-bottom: var(--spacing-md);
-	}
-
-	.empty-state p {
-		color: var(--color-muted);
-		margin-bottom: var(--spacing-xl);
-	}
-</style>
+<PublishedPage page={page} />

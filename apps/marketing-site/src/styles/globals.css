@@ -4,10 +4,32 @@
 @source "../../../../packages/ui/src/**/*.ts";
 @source "../../../../packages/ui/src/**/*.tsx";
 
+
 :root {
-  --color-primary: #6366f1; /* Indigo */
-  --color-primary-dark: #4f46e5;
-  --color-primary-light: #818cf8;
-  --color-accent: #f472b6;  /* Pink */
-  --color-accent-light: #f9a8d4;
+  color-scheme: light dark;
+  --color-bg: light-dark(var(--color-olive-100), var(--color-olive-950));
+  --color-text: light-dark(var(--color-olive-950), var(--color-olive-50));
+  --color-muted: light-dark(var(--color-olive-600), var(--color-olive-400));
+  --color-border: light-dark(var(--color-olive-500), var(--color-olive-400));
+  --color-surface: light-dark(var(--color-olive-50), var(--color-olive-900));
+  --color-primary: light-dark(var(--color-olive-700), var(--color-olive-300));
+  --color-primary-dark: light-dark(var(--color-olive-800), var(--color-olive-200));
+  --color-primary-light: light-dark(var(--color-olive-600), var(--color-olive-400));
+  --color-accent: var(--color-primary);
+  --color-accent-light: var(--color-primary-light);
+}
+:root.light { color-scheme: light; }
+:root.dark { color-scheme: dark; }
+
+/* Input boundaries and keyboard focus must remain visible on both surfaces. */
+input:not([type=hidden]), textarea, select {
+  border-color: var(--color-border);
+}
+input::placeholder, textarea::placeholder {
+  color: var(--color-muted);
+  opacity: 1;
+}
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
 }

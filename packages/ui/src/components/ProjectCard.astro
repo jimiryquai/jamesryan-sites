@@ -31,8 +31,8 @@ const { title, summary, featuredImage, href, client, year, tags } = Astro.props;
 			)
 		}
 		<div class="flex-1">
-			<div class="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-olive-650 dark:text-olive-400 mb-2">
-				{client && <span class="font-medium text-olive-750 dark:text-olive-350">{client}</span>}
+			<div class="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-olive-600 dark:text-olive-400 mb-2">
+				{client && <span class="font-medium text-olive-700 dark:text-olive-300">{client}</span>}
 				{client && year && <span class="w-1 h-1 rounded-full bg-olive-300 dark:bg-olive-700" />}
 				{year && <time class="whitespace-nowrap">{year}</time>}
 			</div>

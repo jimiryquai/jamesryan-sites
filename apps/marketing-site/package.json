@@ -30,6 +30,7 @@
     "astro-iconset": "^0.0.4",
     "clsx": "^2.1.1",
     "emdash": "1.4.0",
+    "emdash-plugin-ai-comment-moderation": "2.1.0",
     "emdash-plugin-code-block-pro": "0.2.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

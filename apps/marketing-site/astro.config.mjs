@@ -8,6 +8,7 @@ import tailwind from "@tailwindcss/vite";
 import seoPlugin from "@jdevalk/emdash-plugin-seo";
 import seoGraph from "@jdevalk/astro-seo-graph/integration";
 import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
+import aiCommentModeration from "emdash-plugin-ai-comment-moderation";
 
 const site = "https://jamesryan.dev";
 const hostname = new URL(site).hostname;
@@ -72,6 +73,10 @@ export default defineConfig({
 			// deployed worker bundle).
 			include: {
 				ph: [
+					"sun",
+					"moon",
+					"circle-half",
+					"check",
 					"chart-bar",
 					"check-circle",
 					"clock",
@@ -93,8 +98,10 @@ export default defineConfig({
 		}),
 		emdash({
 			database: d1({ binding: "DB", session: "auto" }),
+			migrations: { runtime: "check", dev: "auto" },
 			storage: r2({ binding: "MEDIA" }),
 			sandboxRunner: sandbox(),
+			sandboxed: [aiCommentModeration],
 			mcp: true,
 			plugins: [
 				(() => {

@@ -6,6 +6,25 @@ on:
     types: [completed]
     branches: [master]
   workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        options: [promote, migration-status, recover-lock]
+        default: promote
+        description: Promote staging or inspect/recover a migration target
+      app:
+        type: choice
+        options: [marketing-site, digital-garden]
+        default: marketing-site
+        description: Migration target app (ignored for promotion)
+      target_environment:
+        type: choice
+        options: [staging, production]
+        default: staging
+        description: Migration target environment (ignored for promotion)
+      lock_id:
+        type: string
+        description: Lock id from two status runs at least a minute apart (recovery only)
 
 permissions:
   actions: read
@@ -23,8 +42,17 @@ env:
 jobs:
   staging:
     if: github.event_name == 'workflow_run' && github.event.workflow_run.event == 'push' && github.event.workflow_run.conclusion == 'success'
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [marketing-site, digital-garden]
+    concurrency:
+      group: d1-${{ matrix.app }}-staging
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     env:
+      EXPECTED_TARGET_FINGERPRINT: ${{ vars[format('{0}_STAGING_MIGRATION_FINGERPRINT', matrix.app == 'marketing-site' && 'MARKETING_SITE' || 'DIGITAL_GARDEN')] }}
       CLOUDFLARE_ENV: staging
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -43,15 +71,50 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
-      - run: pnpm --filter marketing-site exec wrangler deploy --env staging
-      - run: pnpm --filter digital-garden exec wrangler deploy --env staging
-      - name: Smoke test and trigger automatic D1 migrations
-        run: node scripts/smoke-staging.mjs https://staging.jamesryan.dev --posts=optional https://staging.jamesryan.me
-      - name: Verify D1 migrations
+      - run: pnpm --filter "${{ matrix.app }}" build
+      - name: Inspect target and apply migrations before deploy
+        working-directory: apps/${{ matrix.app }}
+        run: bash ../../scripts/migrate-deployment.sh "${{ matrix.app }}" staging apply
+      - run: pnpm --filter "${{ matrix.app }}" exec wrangler deploy --env staging
+      - name: Smoke checks (wait for custom domain)
+        env:
+          APP: ${{ matrix.app }}
         run: |
-          pnpm --filter marketing-site exec emdash migrate --check --wrangler-config wrangler.jsonc --wrangler-env staging
-          pnpm --filter digital-garden exec emdash migrate --check --wrangler-config wrangler.jsonc --wrangler-env staging
+          if [[ "$APP" == marketing-site ]]; then
+            node scripts/smoke-staging.mjs https://staging.jamesryan.dev
+          else
+            node scripts/smoke-staging.mjs --posts=optional https://staging.jamesryan.me
+          fi
+      - name: Comment moderation smoke check
+        if: matrix.app == 'marketing-site'
+        env:
+          EMDASH_COMMENT_SMOKE_TOKEN: ${{ secrets.EMDASH_COMMENT_SMOKE_TOKEN }}
+        run: |
+          if [[ -z "$EMDASH_COMMENT_SMOKE_TOKEN" ]]; then
+            echo "Comment moderation smoke check skipped: EMDASH_COMMENT_SMOKE_TOKEN is not set."
+          else
+            node scripts/check-comment-moderation.mjs https://staging.jamesryan.dev
+          fi
+      - name: Install accessibility browser
+        if: matrix.app == 'marketing-site'
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Accessibility and contrast (light and dark)
+        if: matrix.app == 'marketing-site'
+        run: node scripts/check-accessibility.mjs https://staging.jamesryan.dev
+      - name: Save accessibility results
+        if: always() && matrix.app == 'marketing-site'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: marketing-accessibility
+          path: .scratch/accessibility/
+      - name: Verify D1 migrations
+        working-directory: apps/${{ matrix.app }}
+        run: bash ../../scripts/migrate-deployment.sh "${{ matrix.app }}" staging check
+
+  record-staging:
+    needs: staging
+    runs-on: ubuntu-latest
+    steps:
       - name: Record staged commit
         env:
           STAGED_SHA: ${{ github.event.workflow_run.head_sha }}
@@ -63,7 +126,7 @@ jobs:
           retention-days: 90
 
   identify-staging:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'workflow_dispatch' && inputs.operation == 'promote' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     outputs:
       sha: ${{ steps.staged.outputs.sha }}
@@ -90,7 +153,12 @@ jobs:
     needs: identify-staging
     runs-on: ubuntu-latest
     environment: production
+    concurrency:
+      group: d1-marketing-site-production
+      cancel-in-progress: false
+      queue: max
     env:
+      EXPECTED_TARGET_FINGERPRINT: ${{ vars.MARKETING_SITE_PRODUCTION_MIGRATION_FINGERPRINT }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
@@ -112,9 +180,51 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+      - run: pnpm --filter marketing-site build
+      - name: Inspect target and apply production migrations
+        working-directory: apps/marketing-site
+        run: bash ../../scripts/migrate-deployment.sh marketing-site production apply
       - run: pnpm --filter marketing-site exec wrangler deploy
-      - name: Trigger and verify production D1 migrations
+      - name: Smoke production
+        run: node scripts/smoke-staging.mjs https://jamesryan.dev
+      - name: Verify production D1 migrations
+        working-directory: apps/marketing-site
+        run: bash ../../scripts/migrate-deployment.sh marketing-site production check
+
+  migration-recovery:
+    if: github.event_name == 'workflow_dispatch' && inputs.operation != 'promote' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.target_environment }}
+    concurrency:
+      group: d1-${{ inputs.app }}-${{ inputs.target_environment }}
+      cancel-in-progress: false
+      queue: max
+    env:
+      CLOUDFLARE_ENV: ${{ inputs.target_environment == 'staging' && 'staging' || '' }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      EXPECTED_TARGET_FINGERPRINT: ${{ vars[format('{0}_{1}_MIGRATION_FINGERPRINT', inputs.app == 'marketing-site' && 'MARKETING_SITE' || 'DIGITAL_GARDEN', inputs.target_environment)] }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter "${{ inputs.app }}" build
+      - name: Inspect or take over the selected lock
+        working-directory: apps/${{ inputs.app }}
+        env:
+          APP: ${{ inputs.app }}
+          TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
+          OPERATION: ${{ inputs.operation }}
+          LOCK_ID: ${{ inputs.lock_id }}
         run: |
-          curl --fail --silent --show-error https://jamesryan.dev/ > /dev/null
-          pnpm --filter marketing-site exec emdash migrate --check --wrangler-config wrangler.jsonc
+          mode=status
+          if [[ "$OPERATION" == recover-lock ]]; then mode=recover; fi
+          bash ../../scripts/migrate-deployment.sh "$APP" "$TARGET_ENVIRONMENT" "$mode" "$LOCK_ID"
+      - name: Verify recovered schema
+        if: inputs.operation == 'recover-lock'
+        working-directory: apps/${{ inputs.app }}
+        run: bash ../../scripts/migrate-deployment.sh "${{ inputs.app }}" "${{ inputs.target_environment }}" check

@@ -1,8 +1,9 @@
 ---
 export const prerender = false;
 
-import { getEmDashEntry, getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
+import {  getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
 import { Image, PortableText } from "emdash/ui";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
 import { blockComponents } from "emdash-plugin-code-block-pro/astro";
@@ -10,16 +11,13 @@ import { blockComponents } from "emdash-plugin-code-block-pro/astro";
 const slug = decodeSlug(Astro.params.slug);
 
 if (!slug) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
-const { entry: project, cacheHint } = await getEmDashEntry("projects", slug);
+const route = await getPublishedRoute(`/projects/${encodeURIComponent(slug)}`, Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "projects") return Astro.rewrite("/404");
+const project = route.entry;
 
-if (!project) {
-	return Astro.redirect("/404");
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const seo = getSeoMeta(project, { defaultDescription: project.data.summary });
 
 // Related projects
@@ -83,7 +81,7 @@ function getImageSrc(img: unknown): string | undefined {
 			<div class="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm">
 				{project.data.client && (
 					<div>
-						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Client</span>
+						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400 mb-1">Client</span>
 						<span class="text-olive-900 dark:text-olive-200 font-medium" {...project.edit.client}>
 							{project.data.client}
 						</span>
@@ -91,7 +89,7 @@ function getImageSrc(img: unknown): string | undefined {
 				)}
 				{project.data.year && (
 					<div>
-						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Year</span>
+						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400 mb-1">Year</span>
 						<span class="text-olive-900 dark:text-olive-200 font-medium" {...project.edit.year}>
 							{project.data.year}
 						</span>
@@ -99,7 +97,7 @@ function getImageSrc(img: unknown): string | undefined {
 				)}
 				{project.data.url && (
 					<div>
-						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Project Link</span>
+						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400 mb-1">Project Link</span>
 						<a 
 							href={project.data.url} 
 							target="_blank" 
@@ -130,7 +128,7 @@ function getImageSrc(img: unknown): string | undefined {
 		{/* Project details content */}
 		<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
 			<div class="lg:col-span-4">
-				<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-650 dark:text-olive-400 mb-4">Project Overview</h2>
+				<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-600 dark:text-olive-400 mb-4">Project Overview</h2>
 				{project.data.summary && (
 					<p class="text-lg text-olive-900 dark:text-olive-100 font-display leading-relaxed" {...project.edit.summary}>
 						{project.data.summary}

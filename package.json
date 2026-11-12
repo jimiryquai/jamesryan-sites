@@ -10,10 +10,15 @@
     "dev:all": "pnpm --parallel dev",
     "build": "pnpm -r --if-present build",
     "typecheck": "pnpm -r --if-present typecheck",
-    "test": "node --test scripts/*.test.mjs && pnpm -r --if-present test"
+    "test": "node --test scripts/*.test.mjs && pnpm -r --if-present test",
+    "mcp:local": "node --env-file-if-exists=.env ./node_modules/mcporter/dist/cli.js --config config/mcporter.local.json",
+    "mcp:staging": "node --env-file-if-exists=.env ./node_modules/mcporter/dist/cli.js --config config/mcporter.staging.json",
+    "seed:local": "node scripts/seed-local.mjs apps/marketing-site"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
     "@jdevalk/astro-seo-graph": "2.2.0",
-    "mcporter": "0.17.0"
+    "mcporter": "0.17.0",
+    "playwright": "1.65.0"
   }
 }

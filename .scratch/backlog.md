@@ -4,3 +4,4 @@
 - Garden content model for jamesryan.me (blog vs digital garden).
 - Moderator on the EmDash plugin registry (signed releases).
 - Remove patches/emdash@1.4.0.patch when EmDash ships `$media` `file:` (ticket 20).
+- Garden: serve and list only published pages (marketing did it in ticket 23)

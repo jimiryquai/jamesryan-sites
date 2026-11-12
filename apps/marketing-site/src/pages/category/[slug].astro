@@ -13,7 +13,7 @@ const slug = decodeSlug(Astro.params.slug);
 const term = slug ? await getTerm("category", slug) : null;
 
 if (!term) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
 const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
@@ -50,7 +50,7 @@ const filteredPosts = posts.map((post) => ({
 
 		{
 			filteredPosts.length === 0 ? (
-				<p class="text-lg text-olive-650 dark:text-olive-455">No posts in this category yet.</p>
+				<p class="text-lg text-olive-600 dark:text-olive-400">No posts in this category yet.</p>
 			) : (
 				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
 					{filteredPosts.map(({ post, tags, bylines }) => (

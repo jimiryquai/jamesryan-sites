@@ -23,28 +23,37 @@ if [[ "$mode" != fixture && "$mode" != --real-seed ]]; then
   exit 2
 fi
 
-for entry in marketing-site:14321:fixture; do
+# Let the OS choose a free port so simultaneous worktree checks stay isolated.
+port=$(node --input-type=module -e 'import net from "node:net"; const server = net.createServer(); server.listen(0, "127.0.0.1", () => { console.log(server.address().port); server.close(); });')
+entries=("marketing-site:$port:fixture")
+if [[ "$mode" == fixture ]]; then entries+=("marketing-site:$port:unpublished"); fi
+for entry in "${entries[@]}"; do
   IFS=: read -r app port seed_option <<< "$entry"
-  state="$state_root/$app"
+  state="$state_root/$app-$seed_option"
   cd "$root/apps/$app"
-  pnpm exec wrangler d1 execute DB --local --persist-to "$state" --command 'SELECT 1'
-  mapfile -t databases < <(find "$state/v3/d1" -name '*.sqlite' ! -name metadata.sqlite -type f)
-  if [[ "${#databases[@]}" != 1 ]]; then
-    echo "$app: expected one local D1 database, found ${#databases[@]}" >&2
-    exit 1
-  fi
   seed="$root/apps/$app/seed/seed.json"
   fixture=false
-  if [[ "$mode" == fixture && "$seed_option" == fixture ]]; then
+  if [[ "$mode" == fixture && ( "$seed_option" == fixture || "$seed_option" == unpublished ) ]]; then
     fixture=true
+    mkdir -p "$state"
     seed="$state/fixture.json"
-    node "$root/scripts/seo-fixture.mjs" seed "$seed"
+    seed_action=seed
+    if [[ "$seed_option" == unpublished ]]; then seed_action=seed-unpublished; fi
+    node "$root/scripts/seo-fixture.mjs" "$seed_action" "$seed"
   elif [[ "$mode" == fixture ]]; then
     seed="$root/apps/$app/$seed_option"
   fi
-  pnpm exec emdash seed "$seed" --database "${databases[0]}" --skip-media
+  seed_result=$(node "$root/scripts/seed-local.mjs" "$root/apps/$app" "$seed" "$state")
+  database=$(node --input-type=module -e 'console.log(JSON.parse(process.argv[1]).database)' "$seed_result")
+  if [[ -n "${RENDERED_EVIDENCE_DIR:-}" ]]; then
+    mkdir -p "$RENDERED_EVIDENCE_DIR"
+    node --input-type=module - "$seed_result" "$RENDERED_EVIDENCE_DIR/media-rows.json" <<'NODE'
+import { writeFileSync } from 'node:fs';
+writeFileSync(process.argv[3], JSON.stringify(JSON.parse(process.argv[2]).media, null, 2));
+NODE
+  fi
   if [[ "$fixture" == true ]]; then
-    node "$root/scripts/seo-fixture.mjs" seo "${databases[0]}"
+    node "$root/scripts/seo-fixture.mjs" seo "$database" "$seed"
   fi
   ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
     --persist-to "$state" --port "$port" --inspector-port 0 &
@@ -65,8 +74,11 @@ for entry in marketing-site:14321:fixture; do
   echo "Validating $app"
   node "$root/scripts/validate-rendered-seo.mjs" "http://127.0.0.1:$port" || status=1
   if [[ "$fixture" == true ]]; then
-    node "$root/scripts/seo-fixture.mjs" verify "http://127.0.0.1:$port" || status=1
+    verify_action=verify
+    if [[ "$seed_option" == unpublished ]]; then verify_action=verify-unpublished; fi
+    node "$root/scripts/seo-fixture.mjs" "$verify_action" "http://127.0.0.1:$port" "$database" || status=1
   fi
+  node "$root/scripts/check-rendered-media.mjs" "http://127.0.0.1:$port" "$seed" "${RENDERED_EVIDENCE_DIR:-}" || status=1
   cleanup
   worker_pid=""
 done

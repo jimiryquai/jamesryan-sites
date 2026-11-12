@@ -1,0 +1,137 @@
+---
+import { Icon } from "astro-iconset/components";
+
+const themes = [
+  { value: "light", label: "Light", icon: "ph:sun" },
+  { value: "dark", label: "Dark", icon: "ph:moon" },
+  { value: "system", label: "System", icon: "ph:circle-half" },
+];
+---
+
+<theme-switcher class="relative ml-3 inline-flex shrink-0">
+  <button
+    type="button"
+    aria-label="Theme"
+    aria-describedby="theme-current"
+    aria-haspopup="menu"
+    aria-controls="theme-menu"
+    aria-expanded="false"
+    class="inline-flex size-10 items-center justify-center rounded-full hover:bg-olive-950/10 dark:hover:bg-white/10"
+  >
+    {themes.map(theme => (
+      <span data-theme-icon={theme.value} hidden={theme.value !== "system"}>
+        <Icon name={theme.icon} class="size-5" aria-hidden="true" />
+      </span>
+    ))}
+  </button>
+  <span id="theme-current" class="sr-only">System</span>
+  <div
+    id="theme-menu"
+    role="menu"
+    aria-label="Theme"
+    hidden
+    class="absolute right-0 top-full mt-2 w-36 rounded-xl border border-olive-500 bg-olive-50 p-1 text-olive-950 shadow-lg dark:border-olive-400 dark:bg-olive-900 dark:text-white"
+  >
+    {themes.map(theme => (
+      <button
+        type="button"
+        role="menuitemradio"
+        aria-checked={theme.value === "system" ? "true" : "false"}
+        data-theme={theme.value}
+        tabindex="-1"
+        class="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-olive-950/10 focus:bg-olive-950/10 dark:hover:bg-white/10 dark:focus:bg-white/10"
+      >
+        <Icon name={theme.icon} class="size-5" aria-hidden="true" />
+        {theme.label}
+        <span class="ml-auto" data-theme-check hidden={theme.value !== "system"}>
+          <Icon name="ph:check" class="size-4" aria-hidden="true" />
+        </span>
+      </button>
+    ))}
+  </div>
+</theme-switcher>
+
+<script>
+  type Theme = "light" | "dark" | "system";
+  declare global {
+    interface Window {
+      siteTheme: { readonly preference: Theme; setPreference(value: Theme): void };
+    }
+  }
+
+  class ThemeSwitcher extends HTMLElement {
+    connectedCallback() {
+      const trigger = this.querySelector<HTMLButtonElement>("button")!;
+      const menu = this.querySelector<HTMLElement>('[role="menu"]')!;
+      const items = [...menu.querySelectorAll<HTMLButtonElement>("button")];
+      const events = new AbortController();
+      this.cleanup = () => events.abort();
+      const options = { signal: events.signal };
+      const close = (returnFocus = false) => {
+        menu.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
+        if (returnFocus) trigger.focus();
+      };
+      const open = (index = items.findIndex(item => item.dataset.theme === window.siteTheme.preference)) => {
+        menu.hidden = false;
+        trigger.setAttribute("aria-expanded", "true");
+        items[index].focus();
+      };
+      const update = () => {
+        const preference = window.siteTheme.preference;
+        for (const item of items) {
+          const selected = item.dataset.theme === preference;
+          item.setAttribute("aria-checked", String(selected));
+          item.querySelector<HTMLElement>("[data-theme-check]")!.hidden = !selected;
+        }
+        for (const icon of this.querySelectorAll<HTMLElement>("[data-theme-icon]")) {
+          icon.hidden = icon.dataset.themeIcon !== preference;
+        }
+        this.querySelector("#theme-current")!.textContent = items.find(item => item.dataset.theme === preference)!.textContent!.trim();
+      };
+      update();
+      window.addEventListener("themechange", update, options);
+      trigger.addEventListener("click", () => menu.hidden ? open() : close(), options);
+      trigger.addEventListener("keydown", event => {
+        if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+          event.preventDefault();
+          open(event.key === "ArrowDown" ? 0 : items.length - 1);
+        }
+      }, options);
+      menu.addEventListener("click", event => {
+        const item = (event.target as Element).closest<HTMLButtonElement>("[data-theme]");
+        if (item) {
+          window.siteTheme.setPreference(item.dataset.theme as Theme);
+          close(true);
+        }
+      }, options);
+      menu.addEventListener("keydown", event => {
+        const index = items.indexOf(document.activeElement as HTMLButtonElement);
+        let next: number;
+        if (event.key === "ArrowDown") next = (index + 1) % items.length;
+        else if (event.key === "ArrowUp") next = (index - 1 + items.length) % items.length;
+        else if (event.key === "Home") next = 0;
+        else if (event.key === "End") next = items.length - 1;
+        else if (event.key === "Tab") {
+          close(true);
+          return;
+        } else if (event.key === "Escape") {
+          event.preventDefault();
+          close(true);
+          return;
+        } else return;
+        event.preventDefault();
+        items[next].focus();
+      }, options);
+      this.addEventListener("focusout", event => {
+        if (!this.contains(event.relatedTarget as Node)) close();
+      }, options);
+      document.addEventListener("click", event => {
+        if (!this.contains(event.target as Node)) close();
+      }, options);
+    }
+    private cleanup?: () => void;
+    disconnectedCallback() { this.cleanup?.(); }
+  }
+  if (!customElements.get("theme-switcher")) customElements.define("theme-switcher", ThemeSwitcher);
+</script>

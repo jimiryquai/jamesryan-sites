@@ -6,13 +6,18 @@ import {
 	getTaxonomyTerms,
 	getTermsForEntries,
 } from "emdash";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
+
+const route = await getPublishedRoute("/projects", Astro.cache);
+if (route?.kind !== "archive") return Astro.rewrite("/404");
 
 const activeTag = Astro.url.searchParams.get("tag");
 
 const [{ entries: sortedProjects, cacheHint }, tags] = await Promise.all([
 	getEmDashCollection("projects", {
+		status: "published",
 		orderBy: { published_at: "desc" },
 		...(activeTag ? { where: { tag: activeTag } } : {}),
 	}),
@@ -85,7 +90,7 @@ const projectsWithTags = sortedProjects.map((project) => ({
 
 		{
 			projectsWithTags.length === 0 ? (
-				<p class="text-lg text-olive-650 dark:text-olive-455">No projects found.</p>
+				<p class="text-lg text-olive-600 dark:text-olive-400">No projects found.</p>
 			) : (
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
 					{projectsWithTags.map(({ project, projectTags }) => (

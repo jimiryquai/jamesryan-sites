@@ -1,4 +1,4 @@
 import type { APIRoute } from "astro";
-import { getLlmsTxt } from "@jamesryan/cms-helpers";
+import { getGardenLlmsTxt } from "@jamesryan/cms-helpers";
 
-export const GET: APIRoute = ({ url, cache }) => getLlmsTxt(url.origin, cache);
+export const GET: APIRoute = ({ url, cache }) => getGardenLlmsTxt(url.origin, cache);

@@ -4,6 +4,10 @@ import { once } from "node:events";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 
+function spawnSmoke(command, args) {
+  return spawn(command, args, { env: { ...process.env, SMOKE_TIMEOUT_MS: '1000', SMOKE_RETRY_MS: '10' } });
+}
+
 test("smoke checks the post from the sitemap and fails on a missing endpoint", async () => {
   const paths = [];
   const server = createServer((request, response) => {
@@ -19,13 +23,13 @@ test("smoke checks the post from the sitemap and fails on a missing endpoint", a
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
-    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
+    const child = spawnSmoke(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
     let output = "";
     child.stdout.on("data", data => output += data);
     child.stderr.on("data", data => output += data);
     const [code] = await once(child, "close");
     assert.equal(code, 1, output);
-    assert.deepEqual(paths.sort(), ["/", "/_emdash/admin/login", "/llms.txt", "/posts/example", "/robots.txt", "/sitemap.xml"].sort());
+    assert.deepEqual([...new Set(paths)].sort(), ["/", "/_emdash/admin/login", "/llms.txt", "/posts/example", "/robots.txt", "/sitemap.xml"].sort());
     assert.match(output, /404.*\/llms\.txt/);
   } finally {
     server.close();
@@ -43,7 +47,7 @@ test("smoke checks reject a redirect to a healthy page", async () => {
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
-    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
+    const child = spawnSmoke(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
     const [code] = await once(child, "close");
     assert.equal(code, 1);
   } finally {
@@ -56,7 +60,7 @@ test("smoke checks require a published post even when all endpoints return 200",
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
-    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
+    const child = spawnSmoke(process.execPath, ["scripts/smoke-staging.mjs", `http://127.0.0.1:${server.address().port}`]);
     let output = "";
     child.stderr.on("data", data => output += data);
     const [code] = await once(child, "close");
@@ -76,14 +80,14 @@ test("optional posts allow an empty sitemap without skipping required endpoints"
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
-    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", "--posts=optional", `http://127.0.0.1:${server.address().port}`]);
+    const child = spawnSmoke(process.execPath, ["scripts/smoke-staging.mjs", "--posts=optional", `http://127.0.0.1:${server.address().port}`]);
     let output = "";
     child.stdout.on("data", data => output += data);
     child.stderr.on("data", data => output += data);
     const [code] = await once(child, "close");
     assert.equal(code, 0, output);
     assert.match(output, /no posts yet/);
-    assert.deepEqual(paths.sort(), ["/", "/_emdash/admin/login", "/llms.txt", "/robots.txt", "/sitemap.xml"].sort());
+    assert.deepEqual([...new Set(paths)].sort(), ["/", "/_emdash/admin/login", "/llms.txt", "/robots.txt", "/sitemap.xml"].sort());
   } finally {
     server.close();
   }
@@ -102,7 +106,7 @@ test("optional posts are checked when the sitemap contains one", async () => {
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
   try {
-    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", "--posts=optional", `http://127.0.0.1:${server.address().port}`]);
+    const child = spawnSmoke(process.execPath, ["scripts/smoke-staging.mjs", "--posts=optional", `http://127.0.0.1:${server.address().port}`]);
     let output = "";
     child.stdout.on("data", data => output += data);
     child.stderr.on("data", data => output += data);
@@ -120,7 +124,7 @@ test("optional post setting applies only to the next site", async () => {
   await once(server, "listening");
   try {
     const origin = `http://127.0.0.1:${server.address().port}`;
-    const child = spawn(process.execPath, ["scripts/smoke-staging.mjs", "--posts=optional", origin, origin]);
+    const child = spawnSmoke(process.execPath, ["scripts/smoke-staging.mjs", "--posts=optional", origin, origin]);
     let output = "";
     child.stderr.on("data", data => output += data);
     const [code] = await once(child, "close");
