@@ -220,6 +220,30 @@ function createGardenCodeSeed(path) {
   writeFileSync(path, JSON.stringify(seed));
 }
 
+async function verifyOgImages(origin, available, missing) {
+  const check = async (path, expected) => {
+    const response = await fetch(new URL(path, origin), { redirect: "manual" });
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    const isPng = bytes.length > 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+    const cacheControl = response.headers.get("cache-control") || "";
+    if (expected === 200) {
+      if (response.status !== 200 || response.headers.get("content-type") !== "image/png" || !isPng) {
+        throw new Error(`${path}: expected HTTP 200 image/png with PNG magic bytes, got HTTP ${response.status} ${response.headers.get("content-type")}`);
+      }
+      if (cacheControl.includes("immutable") || !cacheControl.includes("max-age=3600") || !cacheControl.includes("stale-while-revalidate")) {
+        throw new Error(`${path}: expected a bounded revalidateable Cache-Control, got "${cacheControl}"`);
+      }
+      console.log(`${path}: HTTP 200 image/png (PNG magic bytes); Cache-Control: ${cacheControl}`);
+    } else if (response.status !== 404 || cacheControl.includes("immutable")) {
+      throw new Error(`${path}: expected HTTP 404 without immutable caching, got HTTP ${response.status} "${cacheControl}"`);
+    } else {
+      console.log(`${path}: HTTP 404; not renderable through the OG routes, no immutable caching`);
+    }
+  };
+  for (const path of available) await check(path, 200);
+  for (const path of missing) await check(path, 404);
+}
+
 async function verifyCodeRenderer(origin) {
   for (const path of ["/posts/fixture-post", "/projects/fixture-project"]) {
     const response = await fetch(new URL(path, origin), { redirect: "manual" });
@@ -377,6 +401,8 @@ async function verify(origin, unpublished = false, database) {
   if (unpublished) {
     await verifyUsermaven(origin, true);
     await verifyDraftPreviews(origin, database);
+    await verifyOgImages(origin, ["/og/default.png"],
+      ["/og/posts/fixture-post.png", "/og/projects/fixture-project.png", "/og/pages/fixture-page.png", "/og/blog/fixture-post.png"]);
     return;
   }
   await verifyUsermaven(origin, false);
@@ -397,13 +423,21 @@ async function verify(origin, unpublished = false, database) {
     throw new Error("/projects/fixture-fallback-project: entry title/summary fallback was not rendered");
   }
   console.log("/projects/fixture-fallback-project: entry title/summary fallback rendered");
+  await verifyOgImages(origin,
+    ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png", "/og/pages/home.png"],
+    ["/og/pages/fixture-draft.png", "/og/posts/missing-post.png", "/og/blog/fixture-post.png", "/og/work/fixture-project.png"]);
 }
 
 const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
-else if (action === "verify-code") await verifyCodeRenderer(value);
+else if (action === "verify-code") {
+  await verifyCodeRenderer(value);
+  await verifyOgImages(value,
+    ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png"],
+    ["/og/posts/missing-post.png", "/og/blog/fixture-post.png", "/og/pages/home.png"]);
+}
 else if (action === "seo") applySeo(value, seedPath);
 else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished", seedPath);
 else throw new Error(`Unknown fixture action: ${action}`);
