@@ -1,8 +1,9 @@
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
 import { getPublishedRoute, getMarkdownContentPath, discoveryResponse, portableTextToMarkdown as renderPortableText } from "@jamesryan/cms-helpers";
 import { getSiteSettingsWithCacheHint } from "emdash";
 
-export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
+export const getContentMarkdown: APIRoute = async ({ params, cache, site, url }) => {
 	const path = getMarkdownContentPath(params.slug);
 	const route = await getPublishedRoute(path, cache);
 	if (route?.kind !== "entry") return discoveryResponse(new Response("Not found", { status: 404 }), cache, 60);
@@ -10,7 +11,7 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 	const { data: settings, cacheHint } = await getSiteSettingsWithCacheHint();
 	if (cache?.enabled) cache.set(cacheHint);
 	const markdown = `# ${entry.data.title || "Untitled"}
-*Published on ${settings?.title || "Oatmeal Digital Garden"}*
+*Published on ${resolveSiteIdentity(settings, { site, requestUrl: url }).siteTitle}*
 
 ${portableTextToMarkdown(entry.data.content || [])}
 `;

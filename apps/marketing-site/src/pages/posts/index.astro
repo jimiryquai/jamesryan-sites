@@ -10,7 +10,7 @@ import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
-import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 
 const route = await getPublishedRoute("/posts", Astro.cache);
 if (route?.kind !== "archive") return Astro.rewrite("/404");
@@ -26,7 +26,7 @@ const [{ entries: posts, cacheHint }, settings, collection] = await Promise.all(
 	getSiteSettings(),
 	getCollectionInfo("posts"),
 ]);
-const { siteTagline } = resolveBlogSiteIdentity(settings);
+const { siteTagline } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
@@ -86,7 +86,7 @@ function formatDate(date: Date | null | undefined) {
 							Insights & Ideas
 						</h1>
 						<p class="mt-4 text-lg text-olive-700 dark:text-olive-400 dark:text-olive-400">
-							{siteTagline || "Thoughts on the Power Platform, automation, and AI-native marketing."}
+							{siteTagline}
 						</p>
 					</div>
 

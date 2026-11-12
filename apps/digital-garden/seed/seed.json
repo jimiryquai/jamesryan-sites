@@ -2,13 +2,13 @@
 	"$schema": "https://emdashcms.com/seed.schema.json",
 	"version": "1",
 	"meta": {
-		"name": "Oatmeal Marketing Site",
-		"description": "Replicated Oatmeal marketing site with pages powered by EmDash CMS",
+		"name": "James Ryan Digital Garden",
+		"description": "James Ryan site powered by EmDash CMS",
 		"author": "Antigravity"
 	},
 	"settings": {
-		"title": "Oatmeal",
-		"tagline": "Customer support that feels like a conversation."
+		"title": "James Ryan",
+		"tagline": "Notes, essays, and software experiments from James Ryan."
 	},
 	"collections": [
 		{

@@ -18,7 +18,7 @@ import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
-import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -68,12 +68,12 @@ if (post.data.featured_image) {
 }
 const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsHint);
-const { siteTitle } = resolveBlogSiteIdentity(settings);
+const { siteTitle, siteUrl } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
 
 // Generate SEO meta from content
 const seo = getSeoMeta(post, {
 	siteTitle,
-	siteUrl: Astro.url.origin,
+	siteUrl,
 	path: `/posts/${slug}`,
 	defaultOgImage: featuredImageUrl,
 });

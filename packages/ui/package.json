@@ -21,10 +21,12 @@
     "clsx": "^2.1.1",
     "emdash": "1.5.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "@jamesryan/cms-helpers": "workspace:*"
   },
   "devDependencies": {
-    "schema-dts": "^2.0.0"
+    "schema-dts": "^2.0.0",
+    "@astrojs/check": "0.9.12"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs",

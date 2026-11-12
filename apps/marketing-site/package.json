@@ -37,7 +37,8 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "shiki": "4.1.0",
-    "workers-og": "^0.0.27"
+    "workers-og": "^0.0.27",
+    "@jamesryan/astro-config": "workspace:*"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",

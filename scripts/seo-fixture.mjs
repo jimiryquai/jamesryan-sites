@@ -138,6 +138,28 @@ const fixtureSeo = (slug) => ({
   description: description(slug),
 });
 
+function addTaxonomyFixtures(seed) {
+  seed.taxonomies = seed.taxonomies.map(taxonomy => ({
+    ...taxonomy, terms: [{ slug: "fixture-archive", label: "Fixture archive" }],
+  }));
+  for (const entry of seed.content.posts) {
+    entry.taxonomies = { category: ["fixture-archive"], tag: ["fixture-archive"] };
+  }
+}
+
+async function verifyTaxonomyArchives(origin) {
+  for (const taxonomy of ["category", "tag"]) {
+    const response = await fetch(new URL(`/${taxonomy}/fixture-archive`, origin), { redirect: "manual" });
+    const html = await response.text();
+    if (response.status !== 200 || !html.includes('href="/posts/fixture-post"') || html.includes("UNPUBLISHED fixture secret")) {
+      throw new Error(`${taxonomy}: archive must render published posts and exclude drafts (HTTP ${response.status})`);
+    }
+    const missing = await fetch(new URL(`/${taxonomy}/missing-term`, origin), { redirect: "manual" });
+    if (missing.status !== 404 || missing.headers.has("location")) throw new Error(`${taxonomy}: missing term must rewrite to HTTP 404`);
+    console.log(`${taxonomy}: shared archive HTTP 200 with published posts only; missing term HTTP 404 without redirect`);
+  }
+}
+
 function createSeed(path, unpublished = false) {
   mkdirSync(join(dirname(path), "assets"), { recursive: true });
   copyFileSync(new URL("apps/marketing-site/seed/assets/post-1.webp", root), join(dirname(path), "assets/post-1.webp"));
@@ -151,6 +173,7 @@ function createSeed(path, unpublished = false) {
     menus: original.menus.map((menu) => ({ ...menu, items: [] })),
     content: structuredClone(entries),
   };
+  addTaxonomyFixtures(seed);
   if (unpublished) {
     seed.content.pages = seed.content.pages.filter(entry => entry.slug !== "contact");
     for (const entry of seed.content.pages) {
@@ -303,6 +326,16 @@ async function verifyPublishedRevisions(origin, database) {
             throw new Error(`${endpoint}: ${collection} published row leaked a pending revision or lost private/CORS headers`);
           }
         }
+        if (collection === "posts") {
+          for (const taxonomy of ["category", "tag"]) {
+            const response = await fetch(buildPreviewUrl({ path: `/${taxonomy}/fixture-archive`, token, baseUrl: origin }));
+            const html = await response.text();
+            if (response.status !== 200 || html.includes(marker) || html.includes(draftSlug) || !html.includes(`/posts/${row.slug}`)) {
+              throw new Error(`${taxonomy}: preview archive leaked the pending post revision`);
+            }
+          }
+          console.log("Taxonomy previews: category and tag retain published post titles and slugs");
+        }
         console.log(`${collection}: pending draft revision renders in verified Markdown preview; all discovery endpoints retain live title/slug and private, no-store`);
       } finally {
         db.prepare(`UPDATE ec_${collection} SET draft_revision_id = NULL WHERE id = ?`).run(row.id);
@@ -357,6 +390,7 @@ function createGardenCodeSeed(path) {
       if (block._type === "marketing.document") block.content += '<script>unsafe-document-marker</script><p onclick="unsafe-handler-marker">Safe document marker</p>';
     }
   }
+  addTaxonomyFixtures(seed);
   seed.bylines = [];
   seed.menus = seed.menus.map(menu => ({ ...menu, items: [] }));
   mkdirSync(join(dirname(path), "assets"), { recursive: true });
@@ -566,6 +600,7 @@ async function verifyDiscovery(origin, { unpublished = false, garden = false } =
 
 async function verify(origin, unpublished = false, database) {
   await verifyDiscovery(origin, { unpublished });
+  if (!unpublished) await verifyTaxonomyArchives(origin);
   await verifyPublishedRevisions(origin, database);
   await verifyEncodedMarkdown(origin, database);
   const routes = {
@@ -702,6 +737,7 @@ if (action === "seed" || action === "seed-unpublished") createSeed(value, action
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
 else if (action === "verify-code") {
   await verifyDiscovery(value, { garden: true });
+  await verifyTaxonomyArchives(value);
   await verifyPublishedRevisions(value, seedPath);
   await verifyEncodedMarkdown(value, seedPath, true);
   await verifyDraftPreviews(value, seedPath, true);

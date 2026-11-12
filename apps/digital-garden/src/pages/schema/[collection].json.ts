@@ -1,3 +1,4 @@
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
 import { getSiteSettingsWithCacheHint } from "emdash";
 import { getPublishedEntries, getContentPath, publicCollections, discoveryResponse } from "@jamesryan/cms-helpers";
@@ -7,13 +8,11 @@ import { assembleGraph, buildWebPage, buildArticle } from "@jdevalk/seo-graph-co
 export const GET: APIRoute = async ({ params, site, url, cache }) => {
 	const collection = publicCollections.find((name) => name === params.collection);
 	if (!collection) return discoveryResponse(new Response("Not found", { status: 404 }), cache, 60);
-	const siteUrl = (site?.toString() || url.origin).replace(/\/+$/, "");
 	const entries = await getPublishedEntries(collection, cache);
 	const { data: settings, cacheHint } = await getSiteSettingsWithCacheHint();
 	if (cache?.enabled) cache.set(cacheHint);
 	if (!entries.length) return discoveryResponse(new Response("Not found", { status: 404 }), cache, 60);
-	const siteTitle = settings?.title || "James Ryan";
-	const siteDescription = settings?.tagline || "AI-native marketer & engineer";
+	const { siteTitle, siteTagline: siteDescription, siteUrl } = resolveSiteIdentity(settings, { site, requestUrl: url });
 	const { ids, blogId, pieces: allPieces } = buildSiteGraph(siteUrl, siteTitle, siteDescription);
 
 	for (const entry of entries) {

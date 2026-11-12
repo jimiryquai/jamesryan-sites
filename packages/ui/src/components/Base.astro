@@ -3,6 +3,7 @@ import {
 	getMenuWithCacheHint,
 	getSiteSettingsWithCacheHint,
 } from "emdash";
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 import Seo from "@jdevalk/astro-seo-graph/Seo.astro";
 import {
 	buildWebPage,
@@ -51,10 +52,8 @@ const {
 const settingsResult = hideHeaderFooter ? null : await getSiteSettingsWithCacheHint();
 const settings = settingsResult?.data;
 if (settingsResult && Astro.cache?.enabled) Astro.cache.set(settingsResult.cacheHint);
-const siteTitle = settings?.title || "Oatmeal";
+const { siteTitle, siteTagline: siteDescription, siteUrl } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
 const fullTitle = title ? `${title} — ${siteTitle}` : siteTitle;
-const siteDescription =
-	settings?.tagline || "Customer support that feels like a conversation.";
 // Null means an entry has no description; undefined uses the site default.
 const resolvedDescription = description === null ? undefined : description || siteDescription;
 const menuResult = hideHeaderFooter ? null : await getMenuWithCacheHint("primary");
@@ -62,7 +61,6 @@ const primaryMenu = menuResult?.data;
 if (menuResult && Astro.cache?.enabled) Astro.cache.set(menuResult.cacheHint);
 
 // Generate dynamic OG Image URL
-const siteUrl = Astro.site?.origin || "https://oatmeal.dev";
 const canonicalUrl =
 	canonical || new URL(Astro.url.pathname, siteUrl).toString();
 const ogImageUrl = getOgImageUrl(siteUrl, content);
