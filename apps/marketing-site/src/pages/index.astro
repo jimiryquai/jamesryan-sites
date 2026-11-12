@@ -1,7 +1,6 @@
 ---
-import { getPublishedRoutes } from "@jamesryan/cms-helpers";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import {
-	getEmDashEntry,
 	getEmDashCollection,
 	getTermsForEntries,
 	getSiteSettings,
@@ -16,24 +15,22 @@ import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
 
-const routes = await getPublishedRoutes(Astro.cache);
-if (!routes.has("/")) return Astro.rewrite("/404");
-
-const { entry: page, cacheHint: pageCacheHint } = await getEmDashEntry("pages", "home");
+const route = await getPublishedRoute("/", Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
+const page = route.entry;
 const { entries: posts, cacheHint: postsCacheHint } = await getEmDashCollection("posts", {
 	orderBy: { published_at: "desc" },
 	limit: 4, // 1 featured + 3 grid
 });
 const { siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
 
-const pageTitle = page?.data.title;
-const pageContent = page?.data.content;
-const seo = page ? getSeoMeta(page) : null;
-const homeSeo = page ? getContentSeo(page) : undefined;
+const pageTitle = page.data.title;
+const pageContent = page.data.content;
+const seo = getSeoMeta(page);
+const homeSeo = getContentSeo(page);
 
 // Combine cache hints
 if (Astro.cache?.enabled) {
-	if (pageCacheHint) Astro.cache.set(pageCacheHint);
 	if (postsCacheHint) Astro.cache.set(postsCacheHint);
 }
 
@@ -96,7 +93,7 @@ function formatDate(date: Date | null | undefined) {
 <Base
 	title={homeSeo?.title ? seo?.ogTitle : (pageTitle !== "Home" ? pageTitle : undefined)}
 	description={seo?.description ?? (siteTagline || "AI-native marketer & engineer")}
-	content={page ? { collection: "pages", id: page.data.id, slug: page.id } : undefined}
+	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
 	{preloadedImageUrl && (
 		<link 

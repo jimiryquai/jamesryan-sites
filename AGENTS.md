@@ -52,19 +52,23 @@ This template ships with `.mcp.json`, `.cursor/mcp.json`, and `.vscode/mcp.json`
 
 ## This Template
 
-A SaaS-style landing page template with modular content blocks: hero, features, testimonials, pricing, FAQ, plus a real contact page. Designed for product marketing sites, app landing pages, and anything that needs a hero + features + pricing + CTA flow.
+A SaaS-style landing page template with modular content blocks: hero, features, testimonials, pricing and FAQ. Designed for product marketing sites, app landing pages, and anything that needs a hero + features + pricing + CTA flow.
 
 Bolder than the blog and portfolio templates: vibrant gradient accents, isometric illustration in the hero, heavy headline weights. The voice is product-confident without tipping into stock SaaS cliche.
 
 ## Pages
 
-| Page    | Path       | What it shows                                                                                                                    |
-| ------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Home    | `/`        | Marketing blocks in any order (hero, features, testimonials, pricing, FAQ) authored as a Portable Text document on the Home page |
-| Pricing | `/pricing` | Same block-driven editor -- "Simple, transparent pricing" page using the `pricing` block                                         |
-| Contact | `/contact` | Left column with contact methods (Email / Support / Sales, each with a gradient icon), right column with a form                  |
+| Page | Path | What it shows |
+| --- | --- | --- |
+| Home | `/` | Published Home content and recent posts |
+| About | `/about` | About layout, available only with a published About entry |
+| Pricing | `/pricing` | Published Pricing content rendered through `PublishedPage.astro` |
+| Contact | `/contact` | Published Contact content rendered through `PublishedPage.astro` |
+| Privacy Policy | `/privacy-policy` | Published Privacy Policy content rendered through `PublishedPage.astro` |
+| Posts | `/posts` | Post archive, available only with published posts |
+| Work | `/projects` | Project archive, available only with published projects |
 
-There is no posts collection. Content is entirely authored as marketing blocks inside `pages`.
+When editing content routes or discovery endpoints, follow [published-route rules](docs/published-routes.md).
 
 ## Schema
 

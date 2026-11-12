@@ -6,10 +6,14 @@ import {
 	getCollectionInfo,
 } from "emdash";
 import { Image } from "emdash/ui";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
 import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+
+const route = await getPublishedRoute("/posts", Astro.cache);
+if (route?.kind !== "archive") return Astro.rewrite("/404");
 
 // Limit to what we render (1 featured + 6 grid)
 const POSTS_PER_PAGE = 7;
@@ -74,19 +78,6 @@ function formatDate(date: Date | null | undefined) {
 
 <Base title={`Blog — ${siteTitle}`} description={collection?.description || siteTagline}>
 	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24">
-		{
-			posts.length === 0 ? (
-				<section class="flex flex-col items-center gap-4 text-center py-20 max-w-md mx-auto">
-					<h2 class="text-3xl font-semibold tracking-tight text-olive-950 dark:text-white">No posts yet</h2>
-					<p class="text-olive-700 dark:text-olive-400">Create your first post in the admin panel.</p>
-					<a 
-						href="/_emdash/admin/content/posts/new" 
-						class="mt-4 inline-block px-6 py-3 bg-olive-900 text-white dark:bg-white dark:text-olive-950 font-medium rounded-full hover:bg-olive-800 dark:hover:bg-olive-100 transition-colors duration-150"
-					>
-						Create a post
-					</a>
-				</section>
-			) : (
 				<div class="space-y-24">
 					{/* Header / Intro */}
 					<div class="max-w-2xl font-sans">
@@ -208,7 +199,5 @@ function formatDate(date: Date | null | undefined) {
 						</section>
 					)}
 				</div>
-			)
-		}
 	</div>
 </Base>

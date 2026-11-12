@@ -1,8 +1,9 @@
 ---
 export const prerender = false;
 
-import { getEmDashEntry, getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
+import {  getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
 import { Image, PortableText } from "emdash/ui";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
 import { blockComponents } from "emdash-plugin-code-block-pro/astro";
@@ -13,13 +14,10 @@ if (!slug) {
 	return Astro.rewrite("/404");
 }
 
-const { entry: project, cacheHint } = await getEmDashEntry("projects", slug);
+const route = await getPublishedRoute(`/projects/${encodeURIComponent(slug)}`, Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "projects") return Astro.rewrite("/404");
+const project = route.entry;
 
-if (!project) {
-	return Astro.rewrite("/404");
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 const seo = getSeoMeta(project, { defaultDescription: project.data.summary });
 
 // Related projects

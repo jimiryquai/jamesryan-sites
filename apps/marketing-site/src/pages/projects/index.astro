@@ -6,12 +6,12 @@ import {
 	getTaxonomyTerms,
 	getTermsForEntries,
 } from "emdash";
-import { getPublishedRoutes } from "@jamesryan/cms-helpers";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
 
-const routes = await getPublishedRoutes(Astro.cache);
-if (!routes.has("/projects")) return Astro.rewrite("/404");
+const route = await getPublishedRoute("/projects", Astro.cache);
+if (route?.kind !== "archive") return Astro.rewrite("/404");
 
 const activeTag = Astro.url.searchParams.get("tag");
 

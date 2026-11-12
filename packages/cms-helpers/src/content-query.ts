@@ -5,9 +5,11 @@ import {
 	type InferCollectionData,
 } from "emdash";
 
+import type { PublicCollection } from "./public-collections.ts";
+
 export type RequestCache = { enabled: boolean; set: (hint: CacheHint) => void };
 
-export async function getPublishedEntries<T extends "pages" | "posts" | "projects">(
+export async function getPublishedEntries<T extends PublicCollection>(
 	collection: T,
 	cache?: RequestCache,
 ): Promise<ContentEntry<InferCollectionData<T>>[]> {

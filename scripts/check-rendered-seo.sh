@@ -53,7 +53,7 @@ writeFileSync(process.argv[3], JSON.stringify(JSON.parse(process.argv[2]).media,
 NODE
   fi
   if [[ "$fixture" == true ]]; then
-    node "$root/scripts/seo-fixture.mjs" seo "$database"
+    node "$root/scripts/seo-fixture.mjs" seo "$database" "$seed"
   fi
   ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
     --persist-to "$state" --port "$port" --inspector-port 0 &

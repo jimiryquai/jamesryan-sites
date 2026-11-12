@@ -57,22 +57,26 @@ function createSeed(path, unpublished = false) {
     taxonomies: original.taxonomies.map(({ terms, ...taxonomy }) => taxonomy),
     bylines: [],
     menus: original.menus.map((menu) => ({ ...menu, items: [] })),
-    content: entries,
+    content: structuredClone(entries),
   };
   if (unpublished) {
+    seed.content.pages = seed.content.pages.filter(entry => entry.slug !== "contact");
     for (const entry of seed.content.pages) {
-      if (["contact", "pricing", "privacy-policy", "fixture-page"].includes(entry.slug)) entry.status = "draft";
+      if (["pricing", "privacy-policy", "fixture-page"].includes(entry.slug)) entry.status = "draft";
     }
-    for (const entry of seed.content.projects) entry.status = "draft";
+    for (const collection of ["posts", "projects"]) {
+      for (const entry of seed.content[collection]) entry.status = "draft";
+    }
   }
   writeFileSync(path, JSON.stringify(seed));
 }
 
-function applySeo(path) {
+function applySeo(path, seedPath) {
+  const { content } = JSON.parse(readFileSync(seedPath, "utf8"));
   const db = new DatabaseSync(path);
   try {
     const insert = db.prepare("INSERT INTO _emdash_seo (collection, content_id, seo_title, seo_description) VALUES (?, ?, ?, ?)");
-    for (const [collection, records] of Object.entries(entries)) {
+    for (const [collection, records] of Object.entries(content)) {
       const get = db.prepare(`SELECT id FROM ec_${collection} WHERE slug = ?`);
       for (const entry of records) {
         if (entry.slug === "fixture-fallback" || entry.slug === "fixture-fallback-project") continue;
@@ -93,12 +97,14 @@ async function verify(origin, unpublished = false) {
     "/privacy-policy": "privacy-policy", "/pages/fixture-page": "fixture-page",
     "/posts/fixture-post": "fixture-post", "/projects/fixture-project": "fixture-project",
   };
-  const unavailable = ["/pages/fixture-draft", "/pages/fixture-missing", "/home-01", "/home-02", "/home-03",
+  const unavailable = ["/pages/fixture-draft", "/pages/fixture-missing", "/posts/missing-post",
+    "/category/missing-category", "/tag/missing-tag", "/home-01", "/home-02", "/home-03",
     "/about-01", "/about-02", "/about-03", "/pricing-01", "/pricing-02", "/pricing-03",
     "/privacy-policy-01", "/privacy-policy-02", "/404-01", "/404-02"];
   if (unpublished) {
     unavailable.push("/contact", "/pricing", "/privacy-policy", "/pages/fixture-page", "/projects",
-      "/projects/fixture-project", "/projects/fixture-fallback-project");
+      "/projects/fixture-project", "/projects/fixture-fallback-project",
+      "/posts", "/posts/fixture-post", "/posts/fixture-fallback");
     for (const path of unavailable) delete routes[path];
   }
   const llmsResponse = await fetch(new URL("/llms.txt", origin));
@@ -107,8 +113,8 @@ async function verify(origin, unpublished = false) {
   const llmsPaths = [...llms.matchAll(/\]\((https?:[^)]+)\)/g)].map(match => new URL(match[1]).pathname);
   const sitemap = await (await fetch(new URL("/sitemap.xml", origin))).text();
   const paths = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/gs)].map((match) => new URL(match[1]).pathname);
-  const expected = [...Object.keys(routes), "/posts", "/posts/fixture-fallback",
-    ...(unpublished ? [] : ["/projects", "/projects/fixture-fallback-project"])];
+  const expected = [...Object.keys(routes),
+    ...(unpublished ? [] : ["/posts", "/posts/fixture-fallback", "/projects", "/projects/fixture-fallback-project"])];
   if (new Set(paths).size !== paths.length || expected.some((path) => !paths.includes(path)) || paths.some(path => !expected.includes(path))) {
     throw new Error("Fixture sitemap is missing a route or contains duplicates");
   }
@@ -139,6 +145,7 @@ async function verify(origin, unpublished = false) {
     }
     console.log(`${path}: fixture SEO fields rendered`);
   }
+  if (unpublished) return;
   const listingHtml = await (await fetch(new URL("/posts", origin))).text();
   if (extractMetaDescription(listingHtml) !== description("posts collection")) {
     throw new Error("/posts: collection description was not rendered");
@@ -150,7 +157,6 @@ async function verify(origin, unpublished = false) {
     throw new Error("/posts/fixture-fallback: entry title/excerpt fallback was not rendered");
   }
   console.log("/posts/fixture-fallback: entry title/excerpt fallback rendered");
-  if (unpublished) return;
   const projectHtml = await (await fetch(new URL("/projects/fixture-fallback-project", origin))).text();
   if (extractTitle(projectHtml) !== `Fixture project fallback — ${site.title}` ||
       extractMetaDescription(projectHtml) !== description("fallback project summary")) {
@@ -159,9 +165,9 @@ async function verify(origin, unpublished = false) {
   console.log("/projects/fixture-fallback-project: entry title/summary fallback rendered");
 }
 
-const [action, value] = process.argv.slice(2);
+const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
-else if (action === "seo") applySeo(value);
+else if (action === "seo") applySeo(value, seedPath);
 else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished");
 else throw new Error(`Unknown fixture action: ${action}`);

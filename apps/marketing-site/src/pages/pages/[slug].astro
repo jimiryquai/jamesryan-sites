@@ -1,13 +1,13 @@
 ---
 import { decodeSlug } from "emdash";
-import { getPublishedRoutes } from "@jamesryan/cms-helpers";
+import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import PublishedPage from "../../components/PublishedPage.astro";
 
 const slug = decodeSlug(Astro.params.slug);
 if (!slug) return Astro.rewrite("/404");
 
-const routes = await getPublishedRoutes(Astro.cache);
-const page = routes.get(`/pages/${encodeURIComponent(slug)}`)?.entry;
-if (!page) return Astro.rewrite("/404");
+const route = await getPublishedRoute(`/pages/${encodeURIComponent(slug)}`, Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
+const page = route.entry;
 ---
 <PublishedPage page={page} />
