@@ -22,6 +22,10 @@ const page = (slug, content = heading(`Fixture ${slug} heading`), layout) => ({
   id: slug, slug, status: "published",
   data: { title: `Fixture ${slug}`, content, ...(layout ? { layout } : {}) },
 });
+const codeBlock = [{
+  _type: "code-block-pro", _key: "upgrade-code", code: 'console.log("astro7-renderer-fixture");',
+  language: "javascript", copyButton: true,
+}];
 const entries = {
   pages: [
     page("home", [{ _type: "marketing.hero", _key: "hero", headline: "Fixture home heading" }]),
@@ -35,13 +39,13 @@ const entries = {
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: [], featured_image: image } },
+      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading", summary: description("project summary"), content: [], featured_image: image } },
+      data: { title: "Fixture project heading", summary: description("project summary"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
   ],
@@ -200,6 +204,13 @@ async function verify(origin, unpublished = false, database) {
     console.log(`${path}: fixture SEO fields rendered`);
   }
   if (!unpublished) {
+    for (const path of ["/posts/fixture-post", "/projects/fixture-project"]) {
+      const html = await (await fetch(new URL(path, origin))).text();
+      if (!html.includes('class="cbp-copy-btn"') || !html.includes('class="shiki') || !html.includes("astro7-renderer-fixture")) {
+        throw new Error(`${path}: registered Code Block Pro renderer did not render highlighted code and copy button`);
+      }
+      console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
+    }
     const layoutHtml = await (await fetch(new URL("/pricing", origin))).text();
     if (!layoutHtml.includes("Fixture pricing layout heading") || layoutHtml.includes("Fixture pricing heading")) {
       throw new Error("/pricing: a published layout was not rendered in place of content");

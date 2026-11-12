@@ -68,7 +68,7 @@ test('emdash seed refuses files and symlinks outside the seed directory', async 
       const { stdout, stderr } = await run(process.execPath, [resolve('apps/marketing-site/node_modules/emdash/dist/cli/index.mjs'),
         'seed', seedPath, '--database', database, '--uploads-dir', join(directory, 'uploads')]);
       assert.match(stdout, /Media: 0 created, 1 skipped/);
-      assert.match(stderr, /escapes the seed directory|must be relative/);
+      assert.match(stderr, /escapes the seed directory|must be relative|must remain within mediaBasePath/);
       const db = new DatabaseSync(database);
       try { assert.equal(db.prepare('SELECT count(*) AS total FROM media').get().total, 0); }
       finally { db.close(); }

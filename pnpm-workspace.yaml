@@ -16,18 +16,5 @@ minimumReleaseAgeExclude:
   - emdash
   - '@emdash-cms/*'
   - 'emdash-plugin-code-block-pro@0.2.0'
-  - 'emdash-plugin-page-builder@0.2.0'
+  - 'emdash-plugin-page-builder@0.2.0 || 0.3.0'
   - 'emdash-plugin-ai-comment-moderation@2.1.0'
-
-# Advisory rationale and removal conditions: docs/dependency-overrides.md
-overrides:
-  '@astrojs/cloudflare>@cloudflare/vite-plugin': 1.39.0
-
-  'zod@>=4 <4.6.6': 4.6.7
-  sharp: 0.35.5
-  'undici@7': 7.30.2
-  ws: 8.22.2
-  esbuild: 0.28.2
-
-patchedDependencies:
-  emdash@1.4.0: patches/emdash@1.4.0.patch

@@ -1,33 +1,35 @@
 # Dependency overrides
 
-The workspace lockfile is the source of resolved versions; `pnpm-workspace.yaml`
-owns the overrides. Prefer updating dependencies within their ranges. These
-exceptions remain necessary with Astro 6.4.8, Cloudflare adapter 13.7.0 and
-EmDash 1.4.0 held for ticket 25. Remove each security override when every parent
-in the supported graph accepts the patched version, then reinstall and audit.
-The 24-hour release-age policy and its exclusions are unchanged.
+The workspace lockfile is the source of resolved versions. With Astro 7.4.10,
+Cloudflare adapter 14.4.7 and EmDash 1.5.0, no dependency overrides remain.
+The 24-hour release-age policy still applies. The page builder's existing
+0.2.0 exception now also permits James's 0.3.0 release; pnpm requires these
+versions in one `||` entry because its first matching package rule wins.
 
-| Override | Advisory | Why an override; removal condition |
+## Removed in ticket 25
+
+| Former override | Why it can be removed |
+| --- | --- |
+| `@astrojs/cloudflare>@cloudflare/vite-plugin` → `1.39.0` | Adapter 14 uses Vite 8 and requires plugin `^1.67.0`; retaining the old Vite 7 compatibility pin would put it outside the supported range. The lockfile resolves 1.68.0. Both apps build and the local Worker rendering checks exercise the new graph. |
+| `zod@>=4 <4.6.6` → `4.6.7` | Astro and EmDash's updated packages accept patched Zod 4; all Zod 4 copies resolve to 4.6.7. Zod 3 remains a separate unresolved advisory below. |
+| `sharp` → `0.35.5` | Updated image tooling accepts and resolves 0.35.5 without an override. Production continues to use Cloudflare Images. |
+| `undici@7` → `7.30.2` | The updated Cloudflare tooling resolves patched Undici 7.30.1; font tooling independently uses Undici 8.12.4. |
+| `ws` → `8.22.2` | Updated Cloudflare tooling accepts patched ws 8.21.0 or later. |
+| `esbuild` → `0.28.2` | Updated tooling resolves 0.28.2 without forcing Astro 6's older range. |
+
+## Remaining audit findings
+
+`pnpm audit` on 2026-11-12 reports two findings and no Astro advisory:
+
+| Package | Severity | Why it remains |
 | --- | --- | --- |
-| `zod@>=4 <4.6.6` → `4.6.7` | [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) | EmDash's auth/plugin-types packages pin 4.5.4. Remove when the permitted EmDash release uses patched Zod. This deliberately preserves Zod 3 for the SEO plugin's older graph package: no patched 3.x release exists, and a forced major upgrade is not a safe substitute. |
-| `sharp` → `0.35.5` | [GHSA-f88m-g3jw-g9cj](https://github.com/advisories/GHSA-f88m-g3jw-g9cj), [GHSA-rgj7-g3m4-5g8c](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c), [GHSA-wq5f-xc86-pv6w](https://github.com/advisories/GHSA-wq5f-xc86-pv6w) | Astro 6 and the adapter's old Miniflare constrain sharp to 0.34. Remove when both accept at least 0.35.5. New Wrangler fixes its own copy but cannot replace the adapter's Miniflare. Production uses Cloudflare Images; sharp is build/local tooling. |
-| `undici@7` → `7.30.2` | [GHSA-xjj6-f33q-929c](https://github.com/advisories/GHSA-xjj6-f33q-929c), [GHSA-4w7w-5xrc-9h26](https://github.com/advisories/GHSA-4w7w-5xrc-9h26), [GHSA-2m5v-pch6-74hx](https://github.com/advisories/GHSA-2m5v-pch6-74hx), [GHSA-qrxm-fqhp-jwvm](https://github.com/advisories/GHSA-qrxm-fqhp-jwvm) and earlier Undici advisories in the audit evidence | The adapter's pinned Miniflare pins 7.24.8. Remove when the permitted adapter's Miniflare pins at least 7.30.1. Restrict to 7.x so the independently updated font tooling's Undici 8 stays on its supported major. |
-| `ws` → `8.22.2` | [GHSA-96hv-2xvq-fx4p](https://github.com/advisories/GHSA-96hv-2xvq-fx4p) | Adapter's pinned Vite plugin and Miniflare pin 8.20.1. Remove when their permitted releases use at least 8.21.0. |
-| `esbuild` → `0.28.2` | [GHSA-g7r4-m6w7-qqqr](https://github.com/advisories/GHSA-g7r4-m6w7-qqqr) | Astro 6 constrains esbuild to 0.27. Remove when the permitted Astro release accepts at least 0.28.1. Wrangler's own copy is fixed by its direct upgrade. |
+| `zod` 3.25.76 | high, [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) | `@jdevalk/emdash-plugin-seo@0.12.0` depends on its own older `@jdevalk/astro-seo-graph@0.7.0`, whose Zod range is 3.x. There is no patched 3.x release. Forcing Zod 4 across this API boundary is not a verified fix; the parent needs an upgrade. |
+| `satori` 0.15.2 | moderate, [GHSA-wx4j-mvgx-mqwp](https://github.com/advisories/GHSA-wx4j-mvgx-mqwp) | `workers-og@0.0.27` embeds Satori in its distributed JavaScript. A manifest override would leave the embedded code unchanged; use a patched parent or a separately tested replacement. |
 
-The pre-existing `@astrojs/cloudflare>@cloudflare/vite-plugin` pin to `1.39.0`
-is an adapter compatibility constraint, not a new security override. Revisit
-with the Astro/adapter upgrade in ticket 25. The former Tiptap subscript and
-superscript pins were removed so both follow the editor's supported 3.x range
-and resolve alongside the patched core.
-
-`workers-og@0.0.27` embeds Satori in its distributed JavaScript. Overriding its
-manifest's Satori dependency would leave that embedded code unchanged; its
-moderate advisory therefore remains until a patched parent is published or a
-separately tested replacement is adopted. The remaining moderate Satori finding is reported rather than hidden by
-an override.
+Raw audit and dependency-parent evidence is saved under `.orchestrate/evidence/`
+for ticket 25. Deprecation/peer warnings from the SEO plugin and Code Block Pro
+remain upstream compatibility work, rather than new overrides.
 
 Wrangler telemetry remains disabled by `WRANGLER_SEND_METRICS=false` and Astro
 telemetry by `ASTRO_TELEMETRY_DISABLED=1` in CI and the verification shell.
-Wrangler's npm update check already existed in 4.99.0; it is not introduced by
-this upgrade. No additional analytics package is added.
+No additional analytics package is added.
