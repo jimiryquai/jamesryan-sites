@@ -1,4 +1,5 @@
 ---
+import { sanitizeDocumentHtml } from "@jamesryan/cms-helpers";
 import DocumentCentered from "@jamesryan/ui/components/sections/DocumentCentered.astro";
 
 interface Props {
@@ -19,5 +20,5 @@ const { _key, headline, subheadline, content = "" } = node;
 	headline={headline}
 	subheadline={subheadline}
 >
-	<div set:html={content} />
+	<div set:html={sanitizeDocumentHtml(content)} />
 </DocumentCentered>
