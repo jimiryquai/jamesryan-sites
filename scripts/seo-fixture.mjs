@@ -109,9 +109,9 @@ const entries = {
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading & scope", summary: description("project summary"), content: richContent, featured_image: image } },
+      data: { title: "Fixture project heading & scope", summary: description("project summary"), url: "javascript:alert(29)", content: richContent, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
-      data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
+      data: { title: "Fixture project fallback", summary: description("fallback project summary"), url: "https://example.com/safe-project", content: [], featured_image: image } },
   ],
   faqs: [
     { id: "fixture-faq", slug: "fixture-faq", status: "published",
@@ -244,8 +244,14 @@ function createGardenCodeSeed(path) {
     posts: [{ id: "fixture-post", slug: "fixture-post", status: "published",
       data: { title: "Fixture garden post", content: richContent } }],
     projects: [{ id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture garden project", content: richContent } }],
+      data: { title: "Fixture garden project", url: "data:text/html,unsafe-project", content: richContent } }],
+    pages: seed.content.pages.filter(entry => entry.slug === "privacy-policy"),
   };
+  for (const page of seed.content.pages) {
+    for (const block of page.data.content ?? []) {
+      if (block._type === "marketing.document") block.content += '<script>unsafe-document-marker</script><p onclick="unsafe-handler-marker">Safe document marker</p>';
+    }
+  }
   seed.bylines = [];
   seed.menus = seed.menus.map(menu => ({ ...menu, items: [] }));
   mkdirSync(join(dirname(path), "assets"), { recursive: true });
@@ -263,9 +269,10 @@ async function verifyNotFound(origin, secondLink) {
   const notFound = await fetch(new URL("/this-page-is-missing", origin), { redirect: "manual" });
   const notFoundHtml = await notFound.text();
   if (notFound.status !== 404) throw new Error(`/404: HTTP ${notFound.status}`);
-  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", secondLink]) {
+  for (const text of ["Page not found", "The page you're looking for doesn't exist or has been moved.", "Go home", ...(secondLink ? [secondLink] : [])]) {
     if (!notFoundHtml.includes(text)) throw new Error(`/404: missing ${JSON.stringify(text)}`);
   }
+  if (!secondLink && notFoundHtml.includes('href="/contact"')) throw new Error("/404: dead contact link rendered");
   for (const banned of NOT_FOUND_BANNED) {
     if (notFoundHtml.includes(banned)) throw new Error(`/404: still contains ${banned}`);
   }
@@ -308,7 +315,31 @@ async function verifyCodeRenderer(origin, notFoundLink) {
     }
     console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
   }
-  if (notFoundLink) await verifyNotFound(origin, notFoundLink);
+  await verifyNotFound(origin, notFoundLink);
+}
+
+async function verifyUntrustedSurfaces(origin, garden = false) {
+  const project = await fetch(new URL("/projects/fixture-project", origin));
+  const html = await project.text();
+  if (project.status !== 200 || /href="(?:javascript:|data:)/i.test(html) || html.includes("Visit site")) {
+    throw new Error("Unsafe CMS project URL rendered as a link");
+  }
+  if (garden) {
+    const sitemap = await (await fetch(new URL("/sitemap.xml", origin))).text();
+    if (sitemap.includes("/contact</loc>") || !sitemap.includes("/projects</loc>")) throw new Error("Garden sitemap contact/project availability is wrong");
+    for (const method of ["GET", "POST"]) {
+      const response = await fetch(new URL("/contact", origin), { method });
+      if (response.status !== 404) throw new Error(`Garden contact ${method}: expected 404, got ${response.status}`);
+    }
+    const document = await (await fetch(new URL("/privacy-policy", origin))).text();
+    if (!document.includes("Safe document marker") || document.includes("unsafe-document-marker") || document.includes("unsafe-handler-marker")) {
+      throw new Error("Garden document HTML was not sanitized");
+    }
+  } else {
+    const safe = await (await fetch(new URL("/projects/fixture-fallback-project", origin))).text();
+    if (!safe.includes('href="https://example.com/safe-project"')) throw new Error("Safe CMS project link missing");
+  }
+  console.log("Untrusted surfaces: unsafe project link omitted; " + (garden ? "document sanitized; absent contact GET/POST 404 and sitemap correct" : "safe project link retained"));
 }
 
 async function verifyUsermaven(origin, unconfigured) {
@@ -487,6 +518,7 @@ async function verify(origin, unpublished = false, database) {
     throw new Error("/projects/fixture-fallback-project: Portable Text is missing project-prose styling");
   }
   console.log("/projects/fixture-fallback-project: entry title/summary fallback rendered");
+  await verifyUntrustedSurfaces(origin);
   await verifyOgImages(origin,
     ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png", "/og/pages/home.png"],
     ["/og/pages/fixture-draft.png", "/og/posts/missing-post.png", "/og/blog/fixture-post.png", "/og/work/fixture-project.png"]);
@@ -497,7 +529,8 @@ if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
 else if (action === "verify-code") {
-  await verifyCodeRenderer(value, "Contact us");
+  await verifyCodeRenderer(value);
+  await verifyUntrustedSurfaces(value, true);
   await verifyOgImages(value,
     ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png"],
     ["/og/posts/missing-post.png", "/og/blog/fixture-post.png", "/og/pages/home.png"]);

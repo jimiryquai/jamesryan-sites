@@ -13,9 +13,8 @@ export const GET: APIRoute = async ({ site, url, cache }) => {
 
 	const urls: string[] = [];
 
-	// Add static pages
-	urls.push(`${siteUrl}/contact`);
-	urls.push(`${siteUrl}/projects`);
+	// The project archive exists when it has published entries.
+	if (projects.length > 0) urls.push(`${siteUrl}/projects`);
 
 	// Add dynamic pages
 	for (const page of pages) {

@@ -3,6 +3,7 @@ export const prerender = false;
 
 import { getEmDashEntry, getEmDashCollection, decodeSlug, getTermsForEntries } from "emdash";
 import { Image, PortableText } from "emdash/ui";
+import { toSafeExternalHttpUrl } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
 
@@ -64,6 +65,8 @@ function galleryItems(value: unknown): { url: string; alt: string }[] {
 	return items;
 }
 
+const safeProjectUrl = toSafeExternalHttpUrl(project.data.url);
+
 const gallery = galleryItems(project.data.gallery);
 
 // Get image src for OG image
@@ -113,11 +116,11 @@ function getImageSrc(img: unknown): string | undefined {
 						</span>
 					</div>
 				)}
-				{project.data.url && (
+				{safeProjectUrl && (
 					<div>
 						<span class="block text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-455 mb-1">Project Link</span>
 						<a 
-							href={project.data.url} 
+							href={safeProjectUrl}
 							target="_blank" 
 							rel="noopener noreferrer" 
 							class="inline-flex items-center gap-1 text-olive-700 dark:text-olive-300 hover:text-olive-950 dark:hover:text-white font-medium hover:underline transition-colors duration-150"
