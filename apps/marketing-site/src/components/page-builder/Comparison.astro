@@ -1,20 +1,45 @@
 ---
 import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
-import MarketingComparison from '../blocks/Comparison.astro';
+import PlanComparisonTable from '@jamesryan/ui/components/sections/PlanComparisonTable.astro';
 interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   rows?: { group_name?: string; name?: string; first_value?: string; second_value?: string; third_value?: string }[];
 };
 // Column keys are positions (first/second/third); the site's comparison visual is
 // the marketing table, whose plan headers are Starter/Growth/Pro.
+function parseValue(val: string): string | boolean {
+	const trimmed = (val || "").trim();
+	if (trimmed === "true") return true;
+	if (trimmed === "false") return false;
+	return trimmed;
+}
+
+const groups: Array<{
+	title: string;
+	features: Array<{
+		name: string;
+		value: Record<string, string | boolean>;
+	}>;
+}> = [];
+
+for (const item of value.rows ?? []) {
+	const groupTitle = item.group_name || "General";
+	let group = groups.find((g) => g.title === groupTitle);
+	if (!group) {
+		group = { title: groupTitle, features: [] };
+		groups.push(group);
+	}
+
+	group.features.push({
+		name: item.name ?? '',
+		value: {
+			Starter: parseValue(item.first_value ?? ''),
+			Growth: parseValue(item.second_value ?? ''),
+			Pro: parseValue(item.third_value ?? ''),
+		},
+	});
+}
+
+const plans = ["Starter", "Growth", "Pro"];
 ---
-<MarketingComparison node={{
-  _key: value._key,
-  items: (value.rows ?? []).map((row) => ({
-    groupName: row.group_name ?? '',
-    name: row.name ?? '',
-    starterValue: row.first_value ?? '',
-    growthValue: row.second_value ?? '',
-    proValue: row.third_value ?? '',
-  })),
-}} />
+<PlanComparisonTable id={value._key || 'comparison'} plans={plans} features={groups} />
