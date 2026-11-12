@@ -25,6 +25,8 @@ const { trackingHost, scriptSrc } = buildUsermavenProxyUrls(Astro.url.origin);
 			trackerScript.setAttribute("data-tracking-host", trackingHost);
 			trackerScript.setAttribute("data-key", key);
 			trackerScript.setAttribute("data-autocapture", "true");
+			// Only <form data-um-form> is tracked; CommentForm and /search send no form data.
+			trackerScript.setAttribute("data-form-tracking", "tagged");
 			trackerScript.setAttribute("data-privacy-policy", "strict");
 			trackerScript.setAttribute("data-randomize-url", "true");
 			trackerScript.src = scriptSrc;

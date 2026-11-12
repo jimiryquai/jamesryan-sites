@@ -22,7 +22,7 @@ import GitHubIcon from "@jamesryan/ui/components/icons/social/github-icon.astro"
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
 	{pageLayout ? (
-		<PageLayout value={pageLayout.layout} group={pageLayout.group} />
+		<PageLayout value={pageLayout.layout} group={pageLayout.group} edit={page.edit.layout} />
 	) : (
 	<div class="mx-auto w-full max-w-5xl px-6 lg:px-8 py-16 sm:py-24 font-sans">
 		<div
