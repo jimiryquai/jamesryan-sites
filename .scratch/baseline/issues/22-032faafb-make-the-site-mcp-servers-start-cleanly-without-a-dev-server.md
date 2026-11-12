@@ -28,7 +28,7 @@ Make each harness start without errors, while keeping the site servers usable wh
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] A fresh Copilot and a fresh Codex session in a worktree start with no MCP errors (pane output in a comment).
 - [ ] The config holds no machine-specific path and no unpinned package; each server's telemetry is checked and recorded.
@@ -37,3 +37,5 @@ Make each harness start without errors, while keeping the site servers usable wh
 ## Comments
 
 **2026-11-09 Claude (orchestrator):** Raised after James asked about the Copilot helper's errors: "we need to find a fix for any issues as our agent workflow depends on not having any." Risk: medium (agent config across harnesses; possibly a token's scope).
+
+**2026-11-12 Claude (orchestrator):** Claimed for h22-agy (agy, Gemini 4 Carbon high; first ticket for Carbon), base `master`. Risk: medium (agent config across harnesses; no token scope widened). The orchestrator runs box 1's fresh Copilot and Codex sessions itself.

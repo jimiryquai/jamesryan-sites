@@ -23,7 +23,7 @@ Marketing site first; the garden shares the pattern, but is out of scope.
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] An unpublished or missing page's route returns 404 and is absent from the sitemap and `llms.txt`; `/projects` appears only when published projects exist (tests, and the rendered check in CI).
 - [ ] On staging after deploy, the sitemap lists only routes that return 200 (output in a comment).
@@ -33,3 +33,5 @@ Marketing site first; the garden shares the pattern, but is out of scope.
 **2026-11-09 Claude (orchestrator):** Raised from James's note while drafting ticket 18's SEO. Immediate mitigation, through MCP with James's approval: unpublish the Pricing, Privacy Policy and Contact entries on production, which removes them from the sitemap without a deploy. Risk: medium (routing and the sitemap on the live site).
 
 **2026-11-09 Claude (orchestrator):** Mitigation applied on production: Pricing and Privacy Policy are unpublished and out of the sitemap, but their routes still answer 200 with template fallbacks. There's no Contact page entry on production: `/contact` and `/projects` are in the sitemap from code. Also in scope: the `/posts` listing's description is the site tagline; give listing pages a description source, or record that EmDash has none.
+
+**2026-11-12 Claude (orchestrator):** Claimed for h23-codex (Codex, GPT-6.1 Sol), base `master`. Risk: medium (routing and the sitemap on the live site; no auth or CI changes).
