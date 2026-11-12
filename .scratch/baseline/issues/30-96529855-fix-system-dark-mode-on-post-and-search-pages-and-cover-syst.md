@@ -13,13 +13,15 @@ When a visitor uses the default `System` theme preference (no `theme` cookie), `
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `/posts/<slug>` body copy, headings, links, blockquotes, code blocks, `<hr>`, and comment form fields pass WCAG 2.2 AA contrast in light, explicit `.dark`, and cookie-less `System` dark (`prefers-color-scheme: dark`) modes.
-- [ ] Zero invalid `var(...)/N` or `white/N` raw CSS declarations remain in `.astro` `<style>` blocks.
-- [ ] `/search` applies `.result-snippet` highlight styles and meets 3:1 input border and 4.5:1 placeholder/text contrast in light, explicit dark, and system-dark modes.
-- [ ] `scripts/check-accessibility.mjs` and `scripts/check-comment-fields.mjs` exercise cookie-less `colorScheme: 'dark'` so regressions in `:global(.dark)` selectors fail CI.
+- [x] `/posts/<slug>` body copy, headings, links, blockquotes, code blocks, `<hr>`, and comment form fields pass WCAG 2.2 AA contrast in light, explicit `.dark`, and cookie-less `System` dark (`prefers-color-scheme: dark`) modes.
+- [x] Zero invalid `var(...)/N` or `white/N` raw CSS declarations remain in `.astro` `<style>` blocks.
+- [x] `/search` applies `.result-snippet` highlight styles and meets 3:1 input border and 4.5:1 placeholder/text contrast in light, explicit dark, and system-dark modes.
+- [x] `scripts/check-accessibility.mjs` and `scripts/check-comment-fields.mjs` exercise cookie-less `colorScheme: 'dark'` so regressions in `:global(.dark)` selectors fail CI.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Promoted to `baseline` and claiming for `h30-pi` (`zai/glm-5.3`, branch `30-system-dark-mode`). Risk: medium (reversible CSS + Playwright contrast verification PR to `master`).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Closed via PR #40 (`c8883bb` on `master`, source `664ba3a` built by `h30-pi` `zai/glm-5.3`, cross-family Spec + Standards `PASS` after Fix Round 1; 38 page-mode checks, 9/9 comment fields, 0 violations across `light`, `dark`, and `system-dark`, plus `scripts/astro-style-values.test.mjs`).
