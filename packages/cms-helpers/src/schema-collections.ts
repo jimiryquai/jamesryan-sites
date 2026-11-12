@@ -15,7 +15,7 @@ export async function getSchemaCollections(cache?: RequestCache) {
 			return entry ? {
 				path: `/schema/${collection}.json`,
 				schemaType: collection === "posts" ? "BlogPosting" : "WebPage",
-				lastModified: entry.data.updatedAt ? new Date(entry.data.updatedAt) : new Date(),
+				lastModified: entry.data.updatedAt instanceof Date || typeof entry.data.updatedAt === "string" ? new Date(entry.data.updatedAt) : new Date(),
 			} : null;
 		}));
 		return collections.filter((collection) => collection !== null);

@@ -27,7 +27,7 @@ function archivePath(collection: PublicCollection): string | null {
 	return collection === "pages" ? null : `/${collection}`;
 }
 
-function archiveRoute(collection: PublicCollection): PublishedRoute {
+function archiveRoute(collection: PublicCollection): Extract<PublishedRoute, { kind: "archive" }> {
 	return { kind: "archive", collection, title: PUBLIC_COLLECTIONS[collection] };
 }
 

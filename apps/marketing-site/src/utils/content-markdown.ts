@@ -1,3 +1,4 @@
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
 import { getPublishedRoute, getMarkdownContentPath, portableTextToMarkdown, discoveryResponse } from "@jamesryan/cms-helpers";
 import { getSiteSettingsWithCacheHint } from "emdash";
@@ -46,7 +47,7 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 
 	const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 	if (cache?.enabled) cache.set(settingsHint);
-	const siteTitle = settings?.title || "James Ryan";
+	const siteTitle = resolveSiteIdentity(settings).siteTitle;
 
 	const fullMarkdown = `# ${title}
 *Published on ${siteTitle}*

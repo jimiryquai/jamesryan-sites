@@ -20,7 +20,7 @@
   --color-mist-900: oklch(21.8% 0.008 223.9);
   --color-mist-950: oklch(14.8% 0.004 228.8);
 
-  /* Map the shared Oatmeal classes to mist variables */
+  /* Map the shared theme classes to mist variables */
   --color-olive-50: var(--color-mist-50);
   --color-olive-100: var(--color-mist-100);
   --color-olive-200: var(--color-mist-200);

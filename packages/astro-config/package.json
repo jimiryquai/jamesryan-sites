@@ -1,0 +1,26 @@
+{
+  "name": "@jamesryan/astro-config",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./index.mjs",
+    "./worker": "./worker.ts"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.4.7",
+    "@astrojs/react": "7.1.7",
+    "@emdash-cms/cloudflare": "1.5.0",
+    "@jdevalk/emdash-plugin-seo": "0.12.0",
+    "astro-iconset": "0.0.4",
+    "emdash-plugin-code-block-pro": "0.2.0",
+    "@tailwindcss/vite": "4.3.5",
+    "@jdevalk/astro-seo-graph": "2.2.0",
+    "emdash": "1.5.0",
+    "astro": "7.4.10",
+    "shiki": "4.1.0",
+    "@shikijs/engine-javascript": "4.1.0"
+  },
+  "scripts": {
+    "test": "node --experimental-test-module-mocks --test test/*.test.mjs"
+  }
+}

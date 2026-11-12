@@ -51,3 +51,17 @@ test('static asset headers do not declare rules for Worker-rendered discovery ro
     assert.match(headers, /^\/_astro\/\*$/m);
   }
 });
+
+test('app source and shared packages have no template identity remnants', () => {
+  function check(directory) {
+    for (const entry of readdirSync(new URL(directory, root), { withFileTypes: true })) {
+      if (['node_modules', '.astro', 'dist', '.wrangler'].includes(entry.name)) continue;
+      const path = `${directory}/${entry.name}`;
+      if (entry.isDirectory()) check(path);
+      else if (/\.(?:astro|[cm]?[jt]sx?|css|json)$/.test(entry.name)) {
+        assert.doesNotMatch(read(path), /Oatmeal|oatmeal\.dev|My Blog/, path);
+      }
+    }
+  }
+  for (const directory of ['apps/marketing-site/src', 'apps/digital-garden/src', 'packages']) check(directory);
+});

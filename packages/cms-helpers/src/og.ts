@@ -1,4 +1,5 @@
 import { getEmDashEntry, getSiteSettingsWithCacheHint, getRequestContext, type CacheHint } from "emdash";
+import { resolveSiteIdentity } from "./site-identity.ts";
 import { interLatinWoff } from "./og-fonts.ts";
 import { publicCollections } from "./public-collections.ts";
 import { ImageResponse } from "workers-og";
@@ -21,9 +22,9 @@ const SESSION_CACHE_CONTROL = "private, no-store";
 
 export interface OgSiteOptions {
 	/** Site title when the CMS settings are unset, e.g. "James Ryan" or "Digital Garden". */
-	defaultTitle: string;
+	defaultTitle?: string;
 	/** Site description when the settings tagline is unset; "" omits the description cleanly. */
-	defaultDescription: string;
+	defaultDescription?: string;
 	/** Satori `background-image` value — the olive social gradient from the shared palette. */
 	socialBackground: string;
 }
@@ -77,9 +78,10 @@ function isSessionRender(): boolean {
 
 async function siteIdentity(options: OgSiteOptions): Promise<{ title: string; description: string; cacheHint: CacheHint }> {
 	const { data, cacheHint } = await getSiteSettingsWithCacheHint();
+	const identity = resolveSiteIdentity(data);
 	return {
-		title: data.title || options.defaultTitle,
-		description: data.tagline || options.defaultDescription,
+		title: data.title || options.defaultTitle || identity.siteTitle,
+		description: data.tagline || (options.defaultDescription ?? identity.siteTagline),
 		cacheHint,
 	};
 }
@@ -169,8 +171,9 @@ export async function getOgEntryImage(request: OgRequestContext, options: OgSite
 		request.cache.set(identity.cacheHint);
 	}
 
-	const title = entry.data.title || identity.title;
-	const subtitle: string = entry.data.excerpt || entry.data.summary || "";
+	const title = typeof entry.data.title === "string" && entry.data.title ? entry.data.title : identity.title;
+	const subtitle = typeof entry.data.excerpt === "string" && entry.data.excerpt
+		? entry.data.excerpt : typeof entry.data.summary === "string" ? entry.data.summary : "";
 	const footer = subtitle
 		? {
 				children: [

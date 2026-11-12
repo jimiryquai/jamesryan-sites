@@ -16,7 +16,7 @@ import { Comments, CommentForm } from "emdash/ui/comments";
 import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime, getPublishedRoute } from "@jamesryan/cms-helpers";
-import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -49,7 +49,7 @@ function getImageUrl(img: unknown): string | undefined {
 const featuredImageUrl = getImageUrl(post.data.featured_image);
 const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsHint);
-const { siteTitle } = resolveBlogSiteIdentity(settings);
+const { siteTitle } = resolveSiteIdentity(settings);
 
 // Generate SEO meta from content
 const seo = getSeoMeta(post, {
@@ -467,7 +467,7 @@ const publishDate =
 			text-decoration-thickness: 2px;
 		}
 
-		/* Styling Comments Component and Form Fields to blend with Oatmeal */
+		/* Styling Comments Component and Form Fields to blend with the theme */
 		.article-comments :global(.ec-comment-form-field input),
 		.article-comments :global(.ec-comment-form-field textarea) {
 			background: var(--color-olive-50) !important;

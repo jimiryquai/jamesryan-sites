@@ -8,7 +8,7 @@ import { Image } from "emdash/ui";
 import Base from "../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
-import { resolveBlogSiteIdentity } from "../utils/site-identity";
+import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 
 // Limit to what we render (1 featured + 6 grid)
 const POSTS_PER_PAGE = 7;
@@ -20,7 +20,7 @@ const [{ entries: posts, cacheHint }, settings] = await Promise.all([
 	}),
 	getSiteSettings(),
 ]);
-const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
+const { siteTitle, siteTagline } = resolveSiteIdentity(settings);
 
 if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
 
@@ -93,7 +93,7 @@ function formatDate(date: Date | null | undefined) {
 							Stories from the team
 						</h1>
 						<p class="mt-4 text-lg text-olive-750 dark:text-olive-455">
-							{siteTagline || "Thoughts, stories, and ideas from the Oatmeal creators."}
+							{siteTagline || "Notes, essays, and software experiments from James Ryan."}
 						</p>
 					</div>
 
