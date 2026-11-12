@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 26: Usermaven First-Party Proxy &amp; Tagged Form Tracking</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}.warn{fill:none;stroke:var(--no);stroke-width:2;stroke-dasharray:5 4}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Usermaven via First-Party Proxy (<code>/s1</code>)</h1>
+<p class="sub">Ticket 26 (<code>26-f1ded3ae</code>) · PRs #30 &amp; #35 · on staging (keyless) 2026-11-12, ready for production promotion</p>
+
+<h2>How requests flow</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 220" role="img" aria-label="Visitor browser loads /s1/lib.js and posts events to /s1/* on jamesryan.dev; Worker strips Cookie and Authorization, maps CF-Connecting-IP to X-Forwarded-For, and forwards to t.usermaven.com and events.usermaven.com">
+<rect class="box" x="10" y="30" width="210" height="160" rx="8"/>
+<text x="24" y="58" font-weight="600">Visitor Browser</text>
+<text x="24" y="82">• Cookieless (<code>strict</code>)</text>
+<text x="24" y="104">• Autocapture + pageviews</text>
+<text x="24" y="126" style="fill:var(--ok)">• Tagged forms (<code>data-um-form</code>)</text>
+<text x="24" y="148" style="fill:var(--mute)">• CommentForm &amp; /search</text>
+<text x="34" y="166" style="fill:var(--mute)">ignored (no PII sent)</text>
+
+<rect class="box" x="275" y="30" width="220" height="160" rx="8"/><rect class="hl" x="275" y="30" width="220" height="160" rx="8"/>
+<text x="290" y="58" font-weight="600">Worker Proxy (<code>/s1/*</code>)</text>
+<text x="290" y="82" style="fill:var(--no)">✗ Strips Cookie &amp; Auth</text>
+<text x="290" y="104" style="fill:var(--ok)">✓ Allowlists UA, Referer, Accept</text>
+<text x="290" y="126" style="fill:var(--ok)">✓ CF-Connecting-IP → XFF</text>
+<text x="290" y="148">• 64 KiB body cap (413 above)</text>
+<text x="290" y="170" style="fill:var(--mute)">• Staging: no key → 404</text>
+
+<rect class="box" x="550" y="30" width="195" height="70" rx="8"/>
+<text x="564" y="58" font-weight="600">t.usermaven.com</text>
+<text x="564" y="80"><code>GET /s1/lib.js</code> (1h private)</text>
+
+<rect class="box" x="550" y="120" width="195" height="70" rx="8"/>
+<text x="564" y="148" font-weight="600">events.usermaven.com</text>
+<text x="564" y="170"><code>POST /s1/*</code> (no-store)</text>
+
+<path class="arrow" d="M220 110 L273 110"/>
+<path class="arrow" d="M495 80 L548 65"/>
+<path class="arrow" d="M495 140 L548 155"/>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Behaviour</th></tr>
+<tr><td>First-party subdirectory</td><td><code>https://jamesryan.dev/s1/lib.js</code> and <code>https://jamesryan.dev/s1</code> replace the old <code>um.jamesryan.dev</code> CNAME so CNAME-uncloaking blockers don't drop analytics.</td></tr>
+<tr><td>Admin session safety</td><td><code>jamesryan.dev</code> also hosts <code>/_emdash/admin</code>; <code>/s1/*</code> strips <code>Cookie</code> (<code>emdash_session</code>) and <code>Authorization</code> before contacting Usermaven.</td></tr>
+<tr><td>Form tracking (<code>tagged</code>)</td><td><code>data-form-tracking="tagged"</code> tracks only <code>&lt;form data-um-form&gt;</code>, keeping blog post <code>&lt;CommentForm /&gt;</code> emails/messages and <code>/search</code> queries out of Usermaven.</td></tr>
+<tr><td>Staging isolation</td><td><code>USERMAVEN_KEY</code> is set only in production <code>wrangler.jsonc</code>; staging omits the snippet and returns HTTP 404 on <code>/s1/*</code>.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>Next production promotion (Box 2):</strong> once promoted, verify <code>https://jamesryan.dev/s1/lib.js</code> returns <code>200</code> and a pageview appears in Usermaven.</p>
+<p><strong>Opting in future forms:</strong> add <code>data-um-form</code> to any newsletter or contact <code>&lt;form&gt;</code> you want tracked in Usermaven.</p>
+<p><strong>Privacy policy &amp; CNAME cleanup:</strong> <code>lib.js</code> sets zero cookies and no persistent visitor ID, using only an ephemeral <code>usermaven_offline_queue_default_data</code> retry buffer in <code>localStorage</code>. Once production is verified on <code>/s1</code>, the legacy <code>um.jamesryan.dev</code> CNAME can be retired.</p>
+</div>
+</main></body></html>

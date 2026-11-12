@@ -19,9 +19,9 @@ James asked whether to use Usermaven's Cloudflare Workers proxy (https://usermav
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** needs James: promote to production so Box 2 can verify live `/s1/lib.js` and event ingestion in Usermaven
 
-- [ ] The proxy forwards `lib.js` and event requests with only allowlisted headers and the visitor's IP; without a key the snippet is absent and the route 404s (tests, and the rendered check in CI).
+- [x] The proxy forwards `lib.js` and event requests with only allowlisted headers and the visitor's IP; without a key the snippet is absent and the route 404s (tests, and the rendered check in CI).
 - [ ] After promotion, production loads `lib.js` from the proxy path, an event request returns 2xx, and the event appears in Usermaven (orchestrator, through the Usermaven MCP or the dashboard; output in a comment).
 
 ## Comments
@@ -34,3 +34,5 @@ James asked whether to use Usermaven's Cloudflare Workers proxy (https://usermav
 1. Keep unmodified `lib.js` as-is (drop `26b-usermaven-no-persistence`).
 2. Add `data-form-tracking="tagged"` to `UsermavenAnalytics.astro` (rather than `"all"`, after orchestrator verified `form-tracking.ts` captures raw input values and blog posts render EmDash `<CommentForm />`).
 Dispatching `h26c-codex` (Codex, OpenAI) on branch `26c-usermaven-form-tracking` from `origin/master` (`7edcc39`). Risk: high (visitor form-data boundary on production analytics snippet; cross-family review by Google orchestrator + James's merge approval).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Codex 5h quota was 0%, so moved before briefing to `h26c-copilot` (`GPT-6.1 Terra`, OpenAI). Commit `97fbc07` (`fix: limit Usermaven form tracking to tagged forms`) opened as PR #35, passed independent local CI + Playwright tagged/untagged form verification (`Untagged form: 0 $form events`, `Tagged form: 1 $form event request(s)`) + Google cross-family review (`.orchestrate/evidence/26c-cross-family-review.md`) + GitHub CI, and was merged to `master` by `jimiryquai` as `b992c73`. Lesson recorded at `docs/lessons/usermaven-sdk-storage-and-tagged-forms.md`; explainer at `.scratch/explainers/26-f1ded3ae.html`; evidence archived at `.orchestrate/runs/2026-11-12-26c-usermaven-form-tracking/`. Box 1 complete; Box 2 awaits next production promotion.
