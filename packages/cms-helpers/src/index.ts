@@ -7,3 +7,5 @@ export * from "./published-routes.ts";
 export * from "./public-collections.ts";
 export * from "./portable-text-markdown.ts";
 export * from "./safe-html.ts";
+export * from "./discovery-response.ts";
+export * from "./schema-collections.ts";

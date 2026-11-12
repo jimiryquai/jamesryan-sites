@@ -9,7 +9,8 @@
     "./styles/palette.css": "./src/styles/palette.css",
     "./styles/globals.css": "./src/styles/globals.css",
     "./components/*": "./src/components/*",
-    "./assets/*": "./src/assets/*"
+    "./assets/*": "./src/assets/*",
+    "./seo-graph": "./src/utils/seo-graph.ts"
   },
   "dependencies": {
     "@jdevalk/astro-seo-graph": "2.2.0",

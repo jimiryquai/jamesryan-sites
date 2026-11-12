@@ -1,31 +1,29 @@
 ---
 export const prerender = false;
 
-import { getEmDashEntry, getEmDashCollection, decodeSlug, getTermsForEntries } from "emdash";
+import { getEmDashCollection, decodeSlug, getTermsForEntries } from "emdash";
 import { Image, PortableText } from "emdash/ui";
-import { toSafeExternalHttpUrl } from "@jamesryan/cms-helpers";
+import { toSafeExternalHttpUrl, getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
 
 const slug = decodeSlug(Astro.params.slug);
 
 if (!slug) {
-	return Astro.redirect("/404");
+	return Astro.rewrite("/404");
 }
 
-const { entry: project, cacheHint } = await getEmDashEntry("projects", slug);
-
-if (!project) {
-	return Astro.redirect("/404");
-}
-
-if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+const route = await getPublishedRoute(`/projects/${encodeURIComponent(slug)}`, Astro.cache);
+if (route?.kind !== "entry" || route.collection !== "projects") return Astro.rewrite("/404");
+const project = route.entry;
 
 // Related projects
-const { entries: relatedProjects } = await getEmDashCollection("projects", {
+const { entries: relatedProjects, cacheHint: relatedHint } = await getEmDashCollection("projects", {
+	status: "published",
 	orderBy: { published_at: "desc" },
 	limit: 3,
 });
+if (Astro.cache?.enabled) Astro.cache.set(relatedHint);
 const otherProjects = relatedProjects.filter((p) => p.id !== project.id).slice(0, 2);
 
 // Single batched query for tags on related projects
