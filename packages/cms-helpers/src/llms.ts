@@ -4,6 +4,10 @@ import { getPublishedEntries, type RequestCache } from "./content-query.ts";
 import type { PublishedRoute } from "./published-routes.ts";
 import { getContentPath } from "./content-url.ts";
 
+function getExcerpt(data?: object): string | undefined {
+	return data && "excerpt" in data && typeof data.excerpt === "string" ? data.excerpt : undefined;
+}
+
 async function getPublishedLlmsSections(origin: string, cache: RequestCache) {
 	const sections = [];
 
@@ -12,9 +16,7 @@ async function getPublishedLlmsSections(origin: string, cache: RequestCache) {
 		const entries = await getPublishedEntries(collection, cache);
 		for (const entry of entries) {
 			const path = getContentPath(collection, entry.id);
-			const description = "excerpt" in entry.data && typeof entry.data.excerpt === "string"
-				? entry.data.excerpt
-				: undefined;
+			const description = getExcerpt(entry.data);
 			links.push({
 				title: entry.data.title,
 				url: new URL(path, origin).href,
@@ -35,7 +37,7 @@ function getRouteSections(origin: string, routes: Map<string, PublishedRoute>) {
 			return {
 				title: route.title,
 				url: new URL(path, origin).href,
-				description: data && "excerpt" in data && typeof data.excerpt === "string" ? data.excerpt : undefined,
+				description: getExcerpt(data),
 			};
 		}),
 	}));

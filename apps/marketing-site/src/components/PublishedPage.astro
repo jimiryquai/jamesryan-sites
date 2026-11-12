@@ -1,13 +1,17 @@
 ---
 import type { PublishedRoute } from "@jamesryan/cms-helpers";
-import { getSeoMeta } from "emdash";
+import { getEmDashEntry, getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
 import MarketingBlocks from "./MarketingBlocks.astro";
 
 interface Props {
 	page: NonNullable<PublishedRoute["entry"]>;
 }
-const { page } = Astro.props;
+const { page: routeEntry } = Astro.props;
+// Collection queries determine availability; the entry query also hydrates SEO.
+const { entry: page, cacheHint } = await getEmDashEntry("pages", routeEntry.id);
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+if (!page) return Astro.rewrite("/404");
 const seo = getSeoMeta(page);
 ---
 <Base
