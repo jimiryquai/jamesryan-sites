@@ -13,12 +13,14 @@ Close four untrusted-output and PII-logging surfaces across shared layout and ap
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] Unit tests cover `renderFragment` attribute escaping (`"`, `&`, `<`, `>`), `</script>` neutralization, and `"head"`, `"body-start"`, and `"body-end"` placements in `packages/ui/src/components/Base.astro`.
-- [ ] CMS `project.data.url` values with non-`http(s):` schemes (such as `javascript:alert(1)` or `data:`) are rejected and not rendered as clickable `<a>` links in either app.
-- [ ] Unsanitized `<div set:html={content} />` in `Document.astro` and the PII-logging `POST` handler in `apps/digital-garden/src/pages/contact.astro` are removed or sanitized with test coverage.
+- [x] Unit tests cover `renderFragment` attribute escaping (`"`, `&`, `<`, `>`), `</script>` neutralization, and `"head"`, `"body-start"`, and `"body-end"` placements in `packages/ui/src/components/Base.astro`.
+- [x] CMS `project.data.url` values with non-`http(s):` schemes (such as `javascript:alert(1)` or `data:`) are rejected and not rendered as clickable `<a>` links in either app.
+- [x] Unsanitized `<div set:html={content} />` in `Document.astro` and the PII-logging `POST` handler in `apps/digital-garden/src/pages/contact.astro` are removed or sanitized with test coverage.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `h29-codex` (`GPT-6.1-Sol`, branch `29-harden-fragments-links-contact`). Risk: medium (reversible layout, component, and staging-only `digital-garden` route hardening targeting `master`; Note: `apps/marketing-site/src/components/blocks/Document.astro` was already deleted in PR #42 / `35-46c37e20`).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Done in PR #43 (`9721d2d` on `master`, source `c8c02e4` built by `h29-codex` with 1 cross-family review fix round). Extracted `packages/ui/src/utils/page-fragments.ts` (`renderFragment` + `renderPageFragments` using EmDash's canonical `PagePlacement` `"head" | "body:start" | "body:end"` and `resolveFragments`, escaping attributes, validating `src`, escaping `</script` as `<\/script`, and failing closed on unclosed `<!--` script comments) + `@jamesryan/ui` `astro check` (`98 files, 0 errors`); added `toSafeExternalHttpUrl` and HTML5-aligned `sanitizeDocumentHtml` in `packages/cms-helpers/src/safe-html.ts`; gated external project links in both apps; sanitized `Document.astro` while preserving seeded `privacy-policy` markup byte-for-byte; and replaced `digital-garden` `contact.astro`'s PII-logging `POST` handler with `getPublishedRoute("/contact", Astro.cache)` gating (+ `404.astro` / `sitemap.xml.ts` alignment). Evidence: `.orchestrate/runs/2026-11-12-29-harden-fragments-links-contact/`.

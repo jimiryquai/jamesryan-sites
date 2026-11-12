@@ -15,7 +15,7 @@ Audit of non-HTML discovery feeds, JSON-LD endpoints, SSR response headers, and 
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `/rss.xml` emits normalized single-slash URLs, filters `status: "published"`, sets `cache.set(cacheHint)`, and never publicly caches draft/session responses.
 - [ ] `/schema/[collection].json` and `Base.astro` share one canonical `Person`/`Blog`/`WebSite` graph builder and use `getContentPath` from `@jamesryan/cms-helpers` (zero `/work/` or `/pages/contact` URLs), returning `404` or omitting collections with no published entries consistently with `/schemamap.xml`.
@@ -23,3 +23,5 @@ Audit of non-HTML discovery feeds, JSON-LD endpoints, SSR response headers, and 
 - [ ] Discovery/schema SSR routes emit `Access-Control-Allow-Origin: *` directly from Worker responses (verified by `scripts/check-rendered-seo.sh`), and `public/_headers` documents/targets only static assets.
 
 ## Comments
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `32-published-feeds-headers`. Risk: medium (reversible SSR discovery/schema/feed/cache-hint and response-header fixes targeting `master`, reaching staging only until manual production promotion).
