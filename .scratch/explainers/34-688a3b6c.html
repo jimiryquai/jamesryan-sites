@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 34: Shared Site Identity, Astro Config, Discovery &amp; Taxonomy Archives</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:52rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Shared Site Identity, Astro Config, Discovery &amp; Taxonomy Archives</h1>
+<p class="sub">Ticket 34 (<code>34-688a3b6c</code>) · PR #46 · merged to <code>master</code> (staging) 2026-11-12</p>
+
+<h2>Workspace architecture after consolidation</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 760 220" role="img" aria-label="Marketing site and Digital Garden thin route/config wrappers delegate to shared @jamesryan/astro-config, @jamesryan/cms-helpers, and @jamesryan/ui packages">
+<rect class="box" x="12" y="18" width="215" height="82" rx="8"/>
+<text x="26" y="42" font-weight="600"><code>apps/marketing-site</code></text>
+<text x="26" y="64">• 14-line <code>astro.config.mjs</code></text>
+<text x="26" y="84">• 1-line discovery &amp; worker routes</text>
+
+<rect class="box" x="12" y="118" width="215" height="82" rx="8"/>
+<text x="26" y="142" font-weight="600"><code>apps/digital-garden</code></text>
+<text x="26" y="164">• 11-line <code>astro.config.mjs</code></text>
+<text x="26" y="184">• 13 dead <code>*-0*.astro</code> removed</text>
+
+<rect class="box" x="272" y="18" width="230" height="182" rx="8"/><rect class="hl" x="272" y="18" width="230" height="182" rx="8"/>
+<text x="286" y="42" font-weight="600"><code>@jamesryan/cms-helpers</code></text>
+<text x="286" y="66" style="fill:var(--ok)">✓ <code>resolveSiteIdentity()</code></text>
+<text x="300" y="84">(0 Oatmeal / My Blog fallbacks)</text>
+<text x="286" y="108" style="fill:var(--ok)">✓ <code>discovery-handlers.ts</code></text>
+<text x="300" y="126">(<code>robots</code>, <code>rss</code>, <code>schemamap</code>, <code>api-catalog</code>)</text>
+<text x="286" y="150" style="fill:var(--ok)">✓ <code>getTaxonomyArchive()</code></text>
+<text x="300" y="168">(<code>runPublishedOnly</code> + term hints)</text>
+<text x="286" y="190">• Strict <code>tsc --noEmit</code></text>
+
+<rect class="box" x="542" y="18" width="206" height="84" rx="8"/>
+<text x="556" y="42" font-weight="600"><code>@jamesryan/astro-config</code></text>
+<text x="556" y="64" style="fill:var(--ok)">✓ <code>createSiteConfig()</code></text>
+<text x="556" y="84" style="fill:var(--ok)">✓ Shared <code>worker.ts</code> + <code>tsc</code></text>
+
+<rect class="box" x="542" y="116" width="206" height="84" rx="8"/>
+<text x="556" y="140" font-weight="600"><code>@jamesryan/ui</code></text>
+<text x="556" y="162" style="fill:var(--ok)">✓ <code>TaxonomyArchive.astro</code></text>
+<text x="556" y="182" style="fill:var(--ok)">✓ <code>astro check</code> + AA contrast</text>
+
+<path class="arrow" d="M227 59 L270 85"/>
+<path class="arrow" d="M227 159 L270 135"/>
+<path class="arrow" d="M502 60 L540 60"/>
+<path class="arrow" d="M502 158 L540 158"/>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Behaviour</th></tr>
+<tr><td>Site identity &amp; dead templates</td><td>Removed all <code>"Oatmeal"</code>, <code>"oatmeal.dev"</code>, and <code>"My Blog"</code> fallback strings across <code>apps/</code> and <code>packages/</code> plus 13 unreferenced <code>digital-garden/src/pages/*-0*.astro</code> showcase files (<code>-5,100+</code> lines), centralizing per-site defaults in <code>resolveSiteIdentity()</code> while keeping live CMS content untouched and preserving empty-tagline omission on <code>/og/default.png</code>.</td></tr>
+<tr><td>Shared Astro + EmDash config</td><td>Extracted <code>packages/astro-config/index.mjs</code> (<code>createSiteConfig</code>) and <code>worker.ts</code>. Both apps specify only deployment differences (<code>site</code>, <code>port</code>, <code>inspectorPort</code>, <code>displayFont</code>, <code>redirects</code>, <code>extraPlugins</code>, <code>sandboxedPlugins</code>, and <code>appRootUrl</code> for app-relative SEO plugin entries).</td></tr>
+<tr><td>Discovery &amp; taxonomy archives</td><td>Consolidated <code>robots.txt</code>, <code>rss.xml</code>, <code>schemamap.xml</code>, and <code>/.well-known/api-catalog</code> in <code>packages/cms-helpers/src/discovery-handlers.ts</code>, and collapsed all four <code>{category,tag}/[slug].astro</code> routes into <code>getTaxonomyArchive</code> + <code>TaxonomyArchive.astro</code> (fixing <code>digital-garden</code>'s 302 redirect on missing terms to HTTP 404 <code>Astro.rewrite("/404")</code> before streaming, enforcing <code>runPublishedOnly</code>, and registering <code>emdash:taxonomy:*</code> cache hints).</td></tr>
+<tr><td>Telemetry &amp; package typechecks</td><td>Aligned <code>ASTRO_TELEMETRY_DISABLED=1 WRANGLER_SEND_METRICS=false</code> on <code>digital-garden</code>, dropped unused <code>kysely</code> and <code>ulidx</code> devDependencies, and enabled direct <code>pnpm typecheck</code> across all shared packages (<code>cms-helpers</code>, <code>ui</code>, <code>astro-config</code>) alongside both apps.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>Astro config bundling &amp; <code>Astro.rewrite</code>:</strong> Keep <code>astro.config.mjs</code>'s relative import to <code>../../packages/astro-config/index.mjs</code> so Vite bundles uncompiled TypeScript EmDash plugin entrypoints rather than externalizing a bare workspace specifier, and keep <code>if (!archive) return Astro.rewrite("/404")</code> in page frontmatter before rendering <code>&lt;TaxonomyArchive /&gt;</code> so response headers aren't already streaming.</p>
+</div>
+</main></body></html>

@@ -9,3 +9,4 @@
 * **Creation**: Place Tailwind v4 `@variant dark` rules after equal-specificity light rules (from ticket `33-2cbc0092` cross-family review).
 * **Creation**: Workspace Astro UI packages need their own `astro check` and canonical platform unions (from ticket `29-79f19342` cross-family review).
 * **Creation**: EmDash published queries still overlay pending draft revisions during `editMode` and `preview` sessions (from ticket `32-a552c031` cross-family review).
+* **Creation**: Keep Astro config factories inside Vite's config bundle, run `Astro.rewrite` before component streaming, and attach taxonomy cache tags (from ticket `34-688a3b6c` implementation and cross-family review).

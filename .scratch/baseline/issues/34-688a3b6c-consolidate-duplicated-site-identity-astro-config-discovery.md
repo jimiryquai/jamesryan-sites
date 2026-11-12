@@ -13,13 +13,15 @@ Eliminate shallow pass-throughs and multi-file duplication across `apps/marketin
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] Zero `"Oatmeal"`, `"oatmeal.dev"`, or `"My Blog"` fallback strings remain anywhere in `apps/` or `packages/`.
-- [ ] `apps/marketing-site/astro.config.mjs` and `apps/digital-garden/astro.config.mjs` delegate shared Vite, Astro font/image, SEO graph, icon, and EmDash wiring to one shared module, specifying only per-site options (`site`, `port`, site-specific plugins, `redirectPolicy`).
-- [ ] Category and tag archive routes render through one shared taxonomy archive component/helper, and shared discovery handlers (`robots.txt`, `rss.xml`, `schemamap.xml`, `api-catalog`) live in one shared package module.
-- [ ] `apps/digital-garden` disables Astro/Wrangler telemetry in package scripts, drops unused `kysely`/`ulidx` devDependencies, and `pnpm typecheck` typechecks `packages/cms-helpers` and `packages/ui` alongside both apps.
+- [x] Zero `"Oatmeal"`, `"oatmeal.dev"`, or `"My Blog"` fallback strings remain anywhere in `apps/` or `packages/`.
+- [x] `apps/marketing-site/astro.config.mjs` and `apps/digital-garden/astro.config.mjs` delegate shared Vite, Astro font/image, SEO graph, icon, and EmDash wiring to one shared module, specifying only per-site options (`site`, `port`, site-specific plugins, `redirectPolicy`).
+- [x] Category and tag archive routes render through one shared taxonomy archive component/helper, and shared discovery handlers (`robots.txt`, `rss.xml`, `schemamap.xml`, `api-catalog`) live in one shared package module.
+- [x] `apps/digital-garden` disables Astro/Wrangler telemetry in package scripts, drops unused `kysely`/`ulidx` devDependencies, and `pnpm typecheck` typechecks `packages/cms-helpers` and `packages/ui` alongside both apps.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `34-consolidate-config-routes`. Risk: medium (reversible internal consolidation of site identity fallbacks, Astro config factory, discovery route handlers, taxonomy archive template, and workspace package scripts targeting `master`, reaching staging only until manual production promotion).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Done. Built by `h34-codex` (`GPT-6.1-Sol`) in `defd432` + `5d49645` with 1 cross-family review fix round (`1e7f91b`), merged to `master` via PR #46 (`26864a9`). Removed all `"Oatmeal"`, `"oatmeal.dev"`, and `"My Blog"` fallback strings across `apps/` and `packages/` plus 13 dead `digital-garden` showcase routes (`-5,110 / +991` lines) while preserving live CMS entry content; centralized `resolveSiteIdentity`, discovery handlers (`robots`, `rss`, `schemaMap`, `apiCatalog`), `getTaxonomyArchive` (with `runPublishedOnly` + `emdash:taxonomy:*` cache hints), `TaxonomyArchive.astro` (WCAG 2.1 AA contrast), and `packages/astro-config` (`createSiteConfig` + `worker.ts` + `tsc --noEmit`). Verified independently (`pnpm install --frozen-lockfile`, `pnpm typecheck`, `pnpm build`, `pnpm test`, `bash scripts/check-rendered-seo.sh`). Lesson compounded in `docs/lessons/astro-shared-config-and-taxonomy-route-caching.md`; explainer written at `.scratch/explainers/34-688a3b6c.html`; evidence archived at `.orchestrate/runs/2026-11-12-34-consolidate-config-routes/`.
