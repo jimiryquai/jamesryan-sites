@@ -14,7 +14,7 @@ Fix five concrete rendering and agent-native parity defects in `apps/marketing-s
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `/posts/<slug>.md` and `/projects/<slug>.md` include fenced `code-block-pro` code blocks (with language tag), `> ` blockquotes, and Markdown images, verified by `scripts/check-rendered-markdown.mjs`.
 - [ ] `/posts` renders `<title>Blog — <siteTitle></title>` without repeating `<siteTitle>`.
@@ -22,3 +22,5 @@ Fix five concrete rendering and agent-native parity defects in `apps/marketing-s
 - [ ] `/projects/<slug>` Portable Text body has explicit olive typography styling in light, explicit dark, and system-dark modes without relying on uninstalled `@tailwindcss/typography`, and `check-rendered-markdown.mjs` + `check-rendered-media.mjs` derive page paths from `@jamesryan/cms-helpers`.
 
 ## Comments
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming for `h33-grok` (`grok-4.7`, branch `33-markdown-and-routes`). Risk: medium (reversible PR to `master`; preserves existing user-visible copy word-for-word).
