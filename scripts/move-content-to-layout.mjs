@@ -11,18 +11,18 @@ import { parseArgs, isDeepStrictEqual } from 'node:util';
  * `content` itself is left for ticket 14 to clear.
  */
 
-/** The marketing block types this script knows, and their target slugs. */
-const TARGETS = {
-	'marketing.hero': 'hero',
-	'marketing.cta': 'cta',
-	'marketing.features': 'features',
-	'marketing.testimonials': 'testimonials',
-	'marketing.pricing': 'pricing',
-	'marketing.faq': 'faq',
-	'marketing.stats': 'stats',
-	'marketing.team': 'team',
-	'marketing.comparison': 'comparison',
-	'marketing.document': 'prose',
+/** One mapper per marketing block type: the single home of the ten mappings. */
+const MAPPERS = {
+	'marketing.hero': convertHero,
+	'marketing.cta': convertCta,
+	'marketing.features': convertFeatures,
+	'marketing.stats': convertStats,
+	'marketing.comparison': convertComparison,
+	'marketing.testimonials': convertTestimonials,
+	'marketing.pricing': convertPricing,
+	'marketing.faq': convertFaq,
+	'marketing.team': convertTeam,
+	'marketing.document': convertDocument,
 };
 
 const isSet = (value) => value !== undefined && value !== null && String(value).trim().length > 0;
@@ -146,6 +146,11 @@ function convertLinks(block, prefixes) {
 	return { links };
 }
 
+/** The wire error shape every failure is reported in, page-level or run-level. */
+function shapeError(error, page) {
+	return { message: error.message, operation: error.operation, status: error.status, code: error.code, ...(page ? { page } : {}) };
+}
+
 /**
  * Convert one marketing block to its page-builder shape.
  * @returns {{ block: object, skipped?: { block: string, field: string, reason: string }[], service?: string } | { stop: string }}
@@ -153,22 +158,11 @@ function convertLinks(block, prefixes) {
 export function convertBlock(block) {
 	if (!block || typeof block !== 'object') return { stop: 'marketing block is not an object' };
 	const type = block._type;
-	if (!TARGETS[type]) return { stop: `Unknown marketing block type ${String(type)}` };
+	const mapper = MAPPERS[type];
+	if (!mapper) return { stop: `Unknown marketing block type ${String(type)}` };
 	const key = block._key;
 	if (!isSet(key)) return { stop: `${type} block has no _key` };
 	const stopped = (reason) => ({ stop: `${type} (${key}): ${reason}` });
-	const mapper = {
-		'marketing.hero': convertHero,
-		'marketing.cta': convertCta,
-		'marketing.features': convertFeatures,
-		'marketing.stats': convertStats,
-		'marketing.comparison': convertComparison,
-		'marketing.testimonials': convertTestimonials,
-		'marketing.pricing': convertPricing,
-		'marketing.faq': convertFaq,
-		'marketing.team': convertTeam,
-		'marketing.document': convertDocument,
-	}[type];
 	return mapper(block, key, stopped);
 }
 
@@ -365,10 +359,9 @@ function tokenizeHtml(html) {
 	const pattern = /<!--[\s\S]*?-->|<(\/)?([a-zA-Z][a-zA-Z0-9]*)((?:"[^"]*"|'[^']*'|[^>"'])*)(\/?)>|([^<]+)/g;
 	for (let match = pattern.exec(html); match; match = pattern.exec(html)) {
 		if (match[5] !== undefined) {
-			if (match[5].trim()) tokens.push({ kind: 'text', text: collapseSpace(match[5]) });
-			else tokens.push({ kind: 'text', text: ' ' });
+			tokens.push({ kind: 'text', text: collapseSpace(match[5]) });
 		} else if (!match[1]) {
-			tokens.push({ kind: 'open', name: match[2].toLowerCase(), attrs: parseAttrs(match[3]), selfClosing: Boolean(match[4]) });
+			tokens.push({ kind: 'open', name: match[2].toLowerCase(), attrs: parseAttrs(match[3]) });
 		} else {
 			tokens.push({ kind: 'close', name: match[2].toLowerCase() });
 		}
@@ -461,12 +454,12 @@ class HtmlParser {
 			if (token.kind !== 'open' || token.name !== 'li') throw new Error(`Expected <li> in <${tag}>, found ${describe(token)}`);
 			sawItem = true;
 			this.position += 1;
-			this.parseListItem(tag, level, blocks, ordered, listId);
+			this.parseListItem(level, blocks, ordered, listId);
 		}
 		throw new Error(`Unterminated <${tag}> list`);
 	}
 
-	parseListItem(listTag, level, blocks, ordered, listId) {
+	parseListItem(level, blocks, ordered, listId) {
 		const spans = [];
 		const nested = [];
 		while (this.position < this.tokens.length) {
@@ -678,18 +671,14 @@ export async function migratePages({ site, token, apply = false, page, http = fe
 			try {
 				await applyPage(page, item, current, plan, { request });
 			} catch (error) {
-				Object.assign(page, { applied: false, error: { message: error.message, operation: error.operation, status: error.status, code: error.code } });
-				return {
-					page,
-					error: { message: error.message, operation: error.operation, status: error.status, code: error.code, page: item.slug },
-				};
+				page.applied = false;
+				page.error = shapeError(error);
+				return { page, error: shapeError(error, item.slug) };
 			}
 			return { page };
 		} catch (error) {
-			return {
-				page: { ...page, action: 'move-content-to-layout', applied: false, error: { message: error.message, operation: error.operation, status: error.status, code: error.code } },
-				error: { message: error.message, operation: error.operation, status: error.status, code: error.code, page: item.slug },
-			};
+			const shaped = shapeError(error);
+			return { page: { ...page, action: 'move-content-to-layout', applied: false, error: shaped }, error: shapeError(error, item.slug) };
 		}
 	}
 
@@ -758,7 +747,7 @@ export async function main(argv, { token = process.env.EMDASH_TOKEN, http = fetc
 		}
 		return result.errors?.length ? 1 : 0;
 	} catch (error) {
-		out(JSON.stringify({ errors: [{ message: error.message, operation: error.operation, status: error.status, code: error.code }] }, null, 2));
+		out(JSON.stringify({ errors: [shapeError(error)] }, null, 2));
 		return 1;
 	}
 }
