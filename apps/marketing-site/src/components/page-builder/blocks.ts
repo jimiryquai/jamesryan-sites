@@ -21,7 +21,6 @@ if (missing.length || unoffered.length) {
 }
 
 // Each adapter selects the UI section for the package's fixed variant vocabulary.
-// Each adapter selects the UI section for the package's fixed variant vocabulary.
 function withSections(block: BlockType, section: Section): SiteBlockType {
   return { ...block, sections: { default: section, ...Object.fromEntries(block.variants.map((variant) => [variant, section])) } };
 }

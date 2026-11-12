@@ -20,17 +20,12 @@ const testimonialShape = (data: Testimonial): TestimonialShape => ({
 const faqShape = (data: Faq): FaqShape => ({ question: data.question, answer: data.answer });
 const teamShape = (data: Team): TeamMemberShape => ({ name: data.name, role: data.role, image: data.image ?? undefined });
 
-/** The collections the page builder may read, each with its shape mapping. */
-const shapeByCollection = {
-  pricing: pricingShape,
-  testimonials: testimonialShape,
-  faqs: faqShape,
-  team: teamShape,
-} as const;
+/** The collections the page builder may read from this site. */
+type ShapeCollection = 'pricing' | 'testimonials' | 'faqs' | 'team';
 
 type ListFilter = Parameters<QueryApi['list']>[1];
 
-async function listShaped<C extends keyof typeof shapeByCollection & string, S extends object>(
+async function listShaped<C extends ShapeCollection, S extends object>(
   collection: C, filter: ListFilter | undefined, shape: (data: InferCollectionData<C>) => S,
 ): Promise<QueryListResult> {
   const result = await getEmDashCollection(collection, filter);
