@@ -123,7 +123,7 @@ async function applyRetirement(result, { request }) {
 			errors.push(shapeError(error, 'schema'));
 		}
 	}
-	result.applied = !failed && fieldDeleted !== false;
+	result.applied = !failed && fieldDeleted;
 	result.fieldDeleted = fieldDeleted;
 	if (errors.length) result.errors = [...(result.errors ?? []), ...errors];
 	return result;
