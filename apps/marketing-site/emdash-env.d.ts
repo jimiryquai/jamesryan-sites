@@ -140,7 +140,19 @@ export interface PageLayoutProseV1Block {
 
 export type PageLayoutProseBlock = PageLayoutProseV1Block;
 
-export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutCtaBlock | PageLayoutFeaturesBlock | PageLayoutTestimonialsBlock | PageLayoutPricingBlock | PageLayoutComparisonBlock | PageLayoutTeamBlock | PageLayoutFaqBlock | PageLayoutStatsBlock | PageLayoutProseBlock;
+export interface PageLayoutPostsV1Block {
+  _type: "posts";
+  _version: 1;
+  _key: string;
+  "variant"?: "featured-grid" | "grid" | "list" | null;
+  "heading"?: string | null;
+  "count"?: number | null;
+  "category"?: string | null;
+}
+
+export type PageLayoutPostsBlock = PageLayoutPostsV1Block;
+
+export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutCtaBlock | PageLayoutFeaturesBlock | PageLayoutTestimonialsBlock | PageLayoutPricingBlock | PageLayoutComparisonBlock | PageLayoutTeamBlock | PageLayoutFaqBlock | PageLayoutStatsBlock | PageLayoutProseBlock | PageLayoutPostsBlock;
 
 export interface Page {
   id: string;

@@ -1,0 +1,41 @@
+---
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import { markdownText } from 'emdash-plugin-page-builder/blocks';
+import PostCard from '@jamesryan/ui/components/PostCard.astro';
+import { cardBylines, type SitePost } from './sources';
+interface Props { value: StoredBlock; items?: readonly unknown[] }
+const value = Astro.props.value as StoredBlock & { heading?: string };
+// PageBuilder resolves this block's typed source before entering the generic section boundary.
+const posts = (Astro.props.items ?? []) as readonly SitePost[];
+// Without a block heading, the section's own default label shows.
+const heading = markdownText(value.heading) ?? 'Recent Posts';
+---
+{
+	posts.length > 0 && (
+		<section class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24 font-sans">
+			<div class="flex justify-between items-baseline mb-12">
+				<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400">{heading}</h2>
+				<a
+					href="/posts"
+					class="text-sm font-medium text-olive-900 dark:text-white hover:text-olive-700 dark:hover:text-olive-300 transition-colors duration-150"
+				>
+					View all posts &rarr;
+				</a>
+			</div>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+				{posts.map((post) => (
+					<PostCard
+						title={post.title}
+						excerpt={post.excerpt}
+						featuredImage={post.image}
+						href={post.url}
+						date={post.date ? new Date(post.date) : undefined}
+						readingTime={post.readingTime}
+						tags={post.tags ? [...post.tags] : undefined}
+						bylines={cardBylines(post)}
+					/>
+				))}
+			</div>
+		</section>
+	)
+}

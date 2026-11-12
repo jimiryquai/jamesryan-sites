@@ -16,6 +16,8 @@ const SHARED_BLOCKS = {
   testimonials: { label: "Testimonials", collection: "testimonials", texts: (data) => [data.quote, data.author] },
   pricing: { label: "Pricing", collection: "pricing", texts: (data) => [data.name] },
 };
+// The posts block's default count, mirrored from its definition.
+const POSTS_DEFAULT_COUNT = 4;
 const TOP_LEVEL_PAGES = ["about", "contact", "pricing", "privacy-policy"];
 
 const pageMarkdownPath = (slug) =>
@@ -23,9 +25,23 @@ const pageMarkdownPath = (slug) =>
     : TOP_LEVEL_PAGES.includes(slug) ? `/${slug}.md`
       : `/pages/${encodeURIComponent(slug)}.md`;
 
+/** The published posts a posts block reads, newest first. A fresh seed stamps
+ * every published entry with its seeding time, so the collection's newest-first
+ * order (`published_at` desc, monotonic ids desc) is the seed's array order
+ * reversed. */
+function postsBlockTexts(block, collections) {
+  const published = (collections.posts ?? []).filter((entry) => entry.status === "published");
+  const count = typeof block.count === "number" && block.count > 0 ? block.count : POSTS_DEFAULT_COUNT;
+  return published.slice().reverse().slice(0, count).map((entry) => {
+    const slug = entry.slug ?? entry.id;
+    return `- [${entry.data?.title ?? entry.id}](/posts/${slug})`;
+  });
+}
+
 /** Plain text a reader should find in the Markdown for one layout block. */
 function blockTexts(block, collections, pageService) {
   const data = block;
+  if (data._type === "posts") return postsBlockTexts(block, collections);
   if (SHARED_BLOCKS[data._type]) {
     const { label, collection, texts } = SHARED_BLOCKS[data._type];
     const entries = (collections[collection] ?? [])
