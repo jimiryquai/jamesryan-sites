@@ -4,15 +4,27 @@ import { addHomePostsBlock, planHomePostsBlock, HOME_POSTS_BLOCK } from './add-h
 
 const hero = { _type: 'hero', _key: 'hero', _version: 1, variant: 'centered', heading: 'Hi' };
 
-/** A fake live site serving only the pages content API, like the migration tests. */
-function fakeSite({ home } = {}) {
+/**
+ * A fake live site serving only the pages content API, modelling EmDash's GET
+ * hydration: a published page with a pending draft serves the draft in
+ * `item.data` and the published columns in `item.liveData`. A PUT on a
+ * published page stages a draft; publish promotes it.
+ */
+function fakeSite({ home, pending, concurrentEdit } = {}) {
   const item = {
     id: 'home-id', slug: 'home', status: 'published', draftRevisionId: null,
     data: structuredClone(home ?? { title: 'Home', layout: [hero] }),
   };
-  const revisions = new Map([[item.id, 'rev-home-1']]);
+  if (pending) {
+    item.data = structuredClone(pending.draft);
+    item.draftData = structuredClone(pending.draft);
+    item.liveData = structuredClone(pending.live);
+    item.draftRevisionId = 'rev-pending';
+  }
+  const revisions = new Map([[item.id, pending ? 'rev-pending' : 'rev-home-1']]);
   const store = new Map([[item.id, item]]);
   const calls = [];
+  let wrote = false;
   const http = async (url, options = {}) => {
     const { pathname } = new URL(url);
     const method = options.method ?? 'GET';
@@ -20,16 +32,37 @@ function fakeSite({ home } = {}) {
     calls.push({ method, path: pathname, ...(body ? { body } : {}) });
     const reply = (data, status = 200) => Response.json({ success: true, data }, { status });
     if (method === 'GET' && (pathname === '/_emdash/api/content/pages/home' || pathname === '/_emdash/api/content/pages/home-id')) {
-      return reply({ item: structuredClone(store.get('home-id')), _rev: revisions.get('home-id') });
+      const stored = store.get('home-id');
+      if (stored.draftRevisionId) {
+        if (concurrentEdit && wrote) concurrentEdit(stored);
+        return reply({
+          item: {
+            id: stored.id, slug: stored.slug, status: stored.status, draftRevisionId: stored.draftRevisionId,
+            data: structuredClone(stored.draftData), liveData: structuredClone(stored.liveData),
+          },
+          _rev: revisions.get('home-id'),
+        });
+      }
+      return reply({
+        item: { id: stored.id, slug: stored.slug, status: stored.status, draftRevisionId: null, data: structuredClone(stored.data) },
+        _rev: revisions.get('home-id'),
+      });
     }
     if (method === 'PUT' && pathname === '/_emdash/api/content/pages/home-id') {
+      const stored = store.get('home-id');
       if (body._rev !== revisions.get('home-id')) {
         return Response.json({ success: false, error: { code: 'CONFLICT', message: 'Page changed' } }, { status: 409 });
       }
-      Object.assign(store.get('home-id').data, body.data);
+      if (stored.status === 'published') {
+        stored.liveData = structuredClone(stored.draftRevisionId ? stored.liveData : stored.data);
+        stored.draftData = structuredClone(body.data);
+        stored.draftRevisionId = 'rev-home-2';
+      } else {
+        stored.data = structuredClone(body.data);
+      }
       revisions.set('home-id', 'rev-home-2');
-      store.get('home-id').draftRevisionId = 'rev-home-2';
-      return reply({ item: structuredClone(store.get('home-id')) });
+      wrote = true;
+      return reply({ item: structuredClone(stored) });
     }
     if (method === 'POST' && pathname === '/_emdash/api/content/pages/home-id/publish') {
       const stored = store.get('home-id');
@@ -39,6 +72,9 @@ function fakeSite({ home } = {}) {
       if (!stored.draftRevisionId) {
         return Response.json({ success: false, error: { code: 'CONFLICT', message: 'Nothing staged' } }, { status: 409 });
       }
+      stored.data = structuredClone(stored.draftData);
+      stored.draftData = undefined;
+      stored.liveData = undefined;
       stored.draftRevisionId = null;
       return reply({ item: structuredClone(stored), _rev: revisions.get('home-id') });
     }
@@ -46,6 +82,8 @@ function fakeSite({ home } = {}) {
   };
   return { store, calls, http };
 }
+
+const liveHome = () => ({ title: 'Home', layout: [hero] });
 
 test('plans the posts block immediately after the hero, before the blocks that follow it', () => {
   const cta = { _type: 'cta', _key: 'cta', _version: 1 };
@@ -77,6 +115,7 @@ test('plans against the live home and writes nothing by default', async () => {
   assert.equal(result.page.action, 'add-home-posts-block');
   assert.equal(result.page.applied, false);
   assert.equal(result.applied, false);
+  assert.equal(result.blocked, false);
   assert.equal(site.calls.filter((call) => call.method !== 'GET').length, 0);
   assert.deepEqual(result.page.moves, [{ after: 'hero', to: 'posts', key: 'posts' }]);
 });
@@ -95,12 +134,14 @@ test('applies with _rev, republishes the published home, and verifies the write'
   assert.equal(put.body.data.title, 'Home');
   const publish = site.calls.find((call) => call.method === 'POST');
   assert.equal(publish.body._rev, 'rev-home-2');
-  assert.equal(site.store.get('home-id').status, 'published');
-  assert.equal(site.store.get('home-id').draftRevisionId, null);
+  const stored = site.store.get('home-id');
+  assert.equal(stored.status, 'published');
+  assert.equal(stored.draftRevisionId, null);
+  assert.deepEqual(stored.data.layout.map((block) => block._type), ['hero', 'posts']);
 });
 
 test('a draft home is written but not published', async () => {
-  const site = fakeSite({ home: { title: 'Home', layout: [hero] } });
+  const site = fakeSite({ home: liveHome() });
   site.store.get('home-id').status = 'draft';
   const result = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', apply: true, http: site.http });
   assert.equal(result.page.published, undefined);
@@ -118,8 +159,76 @@ test('a second apply run changes nothing', async () => {
   assert.equal(site.calls.filter((call) => call.method !== 'GET').length, writes);
 });
 
+test('an unrelated pending draft on a published home refuses to write or publish, failing --apply and passing plan', async () => {
+  const site = fakeSite({
+    pending: { live: liveHome(), draft: { title: 'Home (edited)', layout: [hero, HOME_POSTS_BLOCK] } },
+  });
+  const result = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', apply: true, http: site.http });
+  assert.equal(result.blocked, true);
+  assert.equal(result.page.action, 'pending-draft');
+  assert.equal(result.page.applied, false);
+  assert.match(result.page.error.message, /not a verified home posts migration/);
+  assert.equal(site.calls.filter((call) => call.method !== 'GET').length, 0, 'a blocked run must not write');
+  const { main } = await import('./add-home-posts-block.mjs');
+  const outputs = [];
+  const applied = await main(['http://localhost:4999', '--apply'], { token: 'fake', http: site.http, out: (text) => outputs.push(text) });
+  assert.equal(applied, 1);
+  assert.equal(JSON.parse(outputs[0]).page.action, 'pending-draft');
+  const planned = await main(['http://localhost:4999'], { token: 'fake', http: site.http, out: (text) => outputs.push(text) });
+  assert.equal(planned, 0, 'plan mode exits 0 whatever it finds');
+});
+
+test('a pending draft with no live data to compare refuses the same way', async () => {
+  const site = fakeSite({ pending: { live: liveHome(), draft: { ...liveHome(), layout: [hero, HOME_POSTS_BLOCK] } } });
+  const noLive = async (url, options = {}) => {
+    const response = await site.http(url, options);
+    if ((options.method ?? 'GET') === 'GET' && new URL(url).pathname.includes('/pages/')) {
+      const body = await response.json();
+      if (body.data?.item?.liveData) delete body.data.item.liveData;
+      return Response.json(body);
+    }
+    return response;
+  };
+  const result = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', apply: true, http: noLive });
+  assert.equal(result.blocked, true);
+  assert.match(result.page.error.message, /no live data to compare/);
+});
+
+test('a verified pending migration draft republishes without a redundant PUT', async () => {
+  const site = fakeSite({
+    pending: { live: liveHome(), draft: { ...liveHome(), layout: [hero, HOME_POSTS_BLOCK] } },
+  });
+  const plan = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', http: site.http });
+  assert.equal(plan.page.action, 'republish-home-posts-block');
+  assert.equal(plan.page.applied, false);
+  assert.equal(site.calls.filter((call) => call.method !== 'GET').length, 0, 'planning must not write');
+
+  const result = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', apply: true, http: site.http });
+  assert.equal(result.page.action, 'republish-home-posts-block');
+  assert.equal(result.page.applied, true);
+  assert.equal(result.page.published, true);
+  assert.equal(site.calls.filter((call) => call.method === 'PUT').length, 0, 'the draft is already staged; no redundant PUT');
+  const publish = site.calls.find((call) => call.method === 'POST');
+  assert.equal(publish.path, '/_emdash/api/content/pages/home-id/publish');
+  assert.equal(publish.body._rev, 'rev-pending');
+  const stored = site.store.get('home-id');
+  assert.equal(stored.status, 'published');
+  assert.equal(stored.draftRevisionId, null);
+  assert.deepEqual(stored.data.layout.map((block) => block._type), ['hero', 'posts']);
+});
+
+test('a concurrent edit between the PUT and its read-back aborts before publishing', async () => {
+  const site = fakeSite({
+    concurrentEdit: (stored) => { stored.draftData.title = 'Home (someone else)'; },
+  });
+  const result = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', apply: true, http: site.http });
+  assert.equal(result.page.applied, false);
+  assert.match(result.page.error.message, /changed between the write and its read-back/);
+  assert.equal(site.calls.filter((call) => call.method === 'POST').length, 0, 'an unverified draft must never be published');
+});
+
 test('a home response without _rev refuses an unguarded write', async () => {
-  const noRev = async () => Response.json({ success: true, data: { item: { id: 'home-id', slug: 'home', status: 'draft', data: { title: 'Home', layout: [hero] } } } });
+  const noRev = async () => Response.json({ success: true, data: { item: { id: 'home-id', slug: 'home', status: 'draft', data: liveHome() } } });
   const result = await addHomePostsBlock({ site: 'http://localhost:4999', token: 'fake', apply: true, http: noRev });
   assert.equal(result.applied, false);
   assert.match(result.page.error.message, /no _rev/);

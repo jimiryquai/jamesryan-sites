@@ -8,6 +8,17 @@ import { guardDestination, shapeError } from './move-content-to-layout.mjs';
  * default; `--apply` writes through EmDash's content API with `_rev`
  * optimistic concurrency and republishes a published Home through the page
  * builder's publish policy. A second run plans nothing.
+ *
+ * Live-site safety, the same invariants as `retire-pages-content.mjs`: EmDash
+ * GET hydration puts a published page's pending draft in `item.data` and the
+ * published columns in `item.liveData`. A published Home with a pending draft
+ * is never written or published unless that draft is exactly the live page
+ * plus this script's posts block (a previous run whose publish failed), in
+ * which case only the publish is retried. After a write, publish uses the
+ * revision of a read-back only when its whole draft equals the planned data
+ * and its live columns still equal the page this run read, so a concurrent
+ * edit is never adopted and published. Plan mode exits 0 whatever it finds;
+ * `--apply` exits 1 when the run is blocked or a write fails.
  */
 
 /** The block this script adds; the seed's Home layout holds the same one. */
@@ -34,6 +45,57 @@ export function planHomePostsBlock(data) {
 	return { action: 'add-home-posts-block', layout: [...layout.slice(0, at), HOME_POSTS_BLOCK, ...layout.slice(at)] };
 }
 
+/**
+ * Classify a published Home's pending draft. Only a draft whose whole data is
+ * the live page plus this script's posts block is verified — the state a
+ * previous run leaves when its PUT landed but its publish failed. Anything
+ * else, or a draft with no live data to compare against, must not be written
+ * over or published.
+ */
+function classifyPendingPostsDraft(item) {
+	if (item.status !== 'published' || !item.draftRevisionId) return { kind: 'none' };
+	const live = item.liveData;
+	if (!live || typeof live !== 'object' || Array.isArray(live)) return { kind: 'unverifiable' };
+	const livePlan = planHomePostsBlock(live);
+	if (livePlan.action !== 'add-home-posts-block') return { kind: 'unrelated' };
+	const expectedData = { ...live, layout: livePlan.layout };
+	if (!isDeepStrictEqual(item.data ?? {}, expectedData)) return { kind: 'unrelated' };
+	const after = livePlan.layout[livePlan.layout.indexOf(HOME_POSTS_BLOCK) - 1]?._type ?? 'nothing';
+	return { kind: 'verified', expectedData, after };
+}
+
+const PENDING_MESSAGES = {
+	unverifiable: 'page home has a pending draft with no live data to compare; refusing to publish it or add the posts block',
+	unrelated: 'page home has a pending draft that is not a verified home posts migration; refusing to publish it or add the posts block',
+};
+
+/**
+ * The write may land, but only a read-back whose whole draft equals the
+ * planned data — and, on a published page, whose live columns still equal the
+ * page this run read — moves on to publish. A concurrent edit between the PUT
+ * and its read-back is never adopted.
+ */
+function assertWrittenAsPlanned(current, expectedData, expectedLive, wasPublished) {
+	const draftMatches = isDeepStrictEqual(current.item.data ?? {}, expectedData);
+	const liveMatches = !wasPublished || isDeepStrictEqual(current.item.liveData ?? null, expectedLive);
+	if (!draftMatches || !liveMatches) {
+		throw new Error('home changed between the write and its read-back; refusing to publish it');
+	}
+}
+
+/** Publish one verified revision, then confirm the page ended published, draft-free and exactly as planned. */
+async function publishVerified(request, path, page, revision, expectedData) {
+	if (!revision) throw new Error('home response has no _rev; refusing an unguarded publish');
+	await request(`${path}/publish`, 'POST', { _rev: revision });
+	const final = await request(path);
+	if (final.item.status !== 'published' || final.item.draftRevisionId ||
+		!isDeepStrictEqual(final.item.data ?? {}, expectedData)) {
+		throw new Error('home did not end published without a pending draft matching the planned posts block');
+	}
+	page.revision = final._rev;
+	page.published = true;
+}
+
 /** Plan by default; callers can inject HTTP without a site or credentials. */
 export async function addHomePostsBlock({ site, token, apply = false, http = fetch }) {
 	const base = guardDestination(site, token);
@@ -56,47 +118,70 @@ export async function addHomePostsBlock({ site, token, apply = false, http = fet
 	const item = current.item;
 	if (!item || item.slug !== 'home') throw new Error('Expected the home page at slug "home"');
 	const page = { id: item.id, slug: item.slug, status: item.status, revision: current._rev };
+	const blocked = (action, extra) => ({
+		site: base.origin, collection: 'pages', applied: false, blocked: true,
+		page: { ...page, action, applied: false, ...extra },
+	});
+	const outcome = (applied, extra = {}) => ({
+		site: base.origin, collection: 'pages', applied, blocked: false,
+		page: { ...page, ...extra },
+	});
+
+	// A published Home with a pending draft: publish it only when it is exactly
+	// this script's own staged migration; never write over an editor's draft.
+	const pending = classifyPendingPostsDraft(item);
+	if (pending.kind === 'unverifiable' || pending.kind === 'unrelated') {
+		return blocked('pending-draft', { error: { message: PENDING_MESSAGES[pending.kind] } });
+	}
+	if (pending.kind === 'verified') {
+		Object.assign(page, {
+			action: 'republish-home-posts-block', applied: false,
+			moves: [{ after: pending.after, to: 'posts', key: HOME_POSTS_BLOCK._key }],
+		});
+		if (!apply) return outcome(false);
+		try {
+			const path = `/_emdash/api/content/pages/${encodeURIComponent(item.id)}`;
+			await publishVerified(request, path, page, current._rev, pending.expectedData);
+			page.applied = true;
+		} catch (error) {
+			page.applied = false;
+			page.error = shapeError(error);
+			return outcome(false);
+		}
+		return outcome(true);
+	}
 
 	const plan = planHomePostsBlock(item.data ?? {});
-	if (plan.action === 'unchanged') return { site: base.origin, collection: 'pages', applied: false, page: { ...page, action: 'unchanged', applied: false } };
-	if (plan.action === 'stopped') return { site: base.origin, collection: 'pages', applied: false, page: { ...page, action: 'stopped', applied: false, stopReason: plan.stopReason } };
+	if (plan.action === 'unchanged') return outcome(false, { action: 'unchanged' });
+	if (plan.action === 'stopped') return blocked('stopped', { stopReason: plan.stopReason });
 
 	const after = plan.layout[plan.layout.indexOf(HOME_POSTS_BLOCK) - 1]?._type ?? 'nothing';
 	Object.assign(page, {
 		action: 'add-home-posts-block', applied: false,
 		moves: [{ after, to: 'posts', key: HOME_POSTS_BLOCK._key }],
 	});
-	if (!apply) return { site: base.origin, collection: 'pages', applied: false, page };
+	if (!apply) return outcome(false);
 	try {
 		if (!current._rev) throw new Error('home response has no _rev; refusing an unguarded write');
 		const path = `/_emdash/api/content/pages/${encodeURIComponent(item.id)}`;
-		await request(path, 'PUT', { data: { ...item.data, layout: plan.layout }, _rev: current._rev });
+		const expectedData = { ...item.data, layout: plan.layout };
+		const expectedLive = item.status === 'published' ? item.data : null;
+		await request(path, 'PUT', { data: expectedData, _rev: current._rev });
 		const verified = await request(path);
-		if (!isDeepStrictEqual(verified.item.data.layout, plan.layout)) {
-			throw new Error('home read-back layout did not match the migration write');
-		}
+		assertWrittenAsPlanned(verified, expectedData, expectedLive, item.status === 'published');
 		page.applied = true;
 		page.revision = verified._rev;
 		// A published page gets a draft from the PUT; publish it through the API
 		// so the page builder's publish policy runs. A draft stays a draft.
 		if (item.status === 'published') {
-			await request(`${path}/publish`, 'POST', { _rev: verified._rev });
-			const final = await request(path);
-			if (final.item.status !== 'published' || final.item.draftRevisionId) {
-				throw new Error('home did not end published without a pending draft');
-			}
-			if (!isDeepStrictEqual(final.item.data.layout, plan.layout)) {
-				throw new Error('home published layout did not match the migration write');
-			}
-			page.revision = final._rev;
-			page.published = true;
+			await publishVerified(request, path, page, verified._rev, expectedData);
 		}
 	} catch (error) {
 		page.applied = false;
 		page.error = shapeError(error);
-		return { site: base.origin, collection: 'pages', applied: false, page };
+		return outcome(false);
 	}
-	return { site: base.origin, collection: 'pages', applied: page.applied, page };
+	return outcome(page.applied);
 }
 
 export async function main(argv, { token = process.env.EMDASH_TOKEN, http = fetch, out = console.log } = {}) {
@@ -120,7 +205,9 @@ export async function main(argv, { token = process.env.EMDASH_TOKEN, http = fetc
 		} else {
 			out(JSON.stringify(result, null, 2));
 		}
-		return result.page.error ? 1 : 0;
+		if (result.page.error && !result.blocked) return 1;
+		if (values.apply && result.blocked) return 1;
+		return 0;
 	} catch (error) {
 		out(JSON.stringify({ errors: [shapeError(error)] }, null, 2));
 		return 1;
