@@ -75,11 +75,12 @@ token; do not infer its role from its name or scopes.
 
 ## Create a draft
 
-The following loads the token into the process environment without putting it
-in the command line:
+`emdash-staging-agent` lives in `config/mcporter.staging.json` (see
+[`docs/mcp.md`](mcp.md) for MCP config layout). The following loads the token
+into the process environment without putting it in the command line:
 
 ```sh
-node --env-file=.env "$(command -v pnpm)" exec mcporter list emdash-staging-agent --schema
+node --env-file=.env "$(command -v pnpm)" exec mcporter --config config/mcporter.staging.json list emdash-staging-agent --schema
 ```
 
 Upload an image and record its returned `item.id`, `item.url`, `width` and
@@ -87,7 +88,7 @@ Upload an image and record its returned `item.id`, `item.url`, `width` and
 was used for the small test image:
 
 ```sh
-node --env-file=.env "$(command -v pnpm)" exec mcporter call \
+node --env-file=.env "$(command -v pnpm)" exec mcporter --config config/mcporter.staging.json call \
   emdash-staging-agent.media_upload \
   filename:example.png "base64:$(base64 -w 0 example.png)" \
   contentType:image/png 'alt:Describe the image in context'
@@ -145,18 +146,19 @@ The example text is fixture text, not James's copy.
 Create without setting a published status, then read the result using its ID:
 
 ```sh
-node --env-file=.env "$(command -v pnpm)" exec mcporter call \
+node --env-file=.env "$(command -v pnpm)" exec mcporter --config config/mcporter.staging.json call \
   emdash-staging-agent.content_create --args "$(cat draft.json)"
-node --env-file=.env "$(command -v pnpm)" exec mcporter call \
+node --env-file=.env "$(command -v pnpm)" exec mcporter --config config/mcporter.staging.json call \
   emdash-staging-agent.content_get collection:posts id:POST_ID
 ```
 
 Check `status`, content, image alt, SEO fields and `_rev` in the response.
 To revise a draft, obtain a fresh `_rev` with `content_get` and pass it to
 `content_update` with the fields to change; inspect
-`mcporter list emdash-staging-agent --schema` for its arguments. Tell James the
-post ID and slug so he can review it in the admin. After James publishes it,
-check the rendered post, metadata, comments and staging validators.
+`mcporter --config config/mcporter.staging.json list emdash-staging-agent --schema`
+for its arguments. Tell James the post ID and slug so he can review it in the
+admin. After James publishes it, check the rendered post, metadata, comments
+and staging validators.
 
 EmDash documents role and token-scope enforcement in its
 [AI tools guide](https://docs.emdashcms.com/guides/ai-tools/) and
