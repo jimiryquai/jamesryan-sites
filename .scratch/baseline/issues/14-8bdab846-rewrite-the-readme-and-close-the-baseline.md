@@ -6,7 +6,7 @@
 
 Rewrite `README.md` for this repo: what the two sites are, how to run each, how deploys work (link `docs/deploying.md`), how publishing works (link `docs/publishing.md`), and the plugins and where they live. Update `AGENTS.md` (currently the template's) to point at the same docs instead of repeating them. Mark the spec done.
 
-**Blocked by:** 12-c648eac4, 13-18824682.
+**Blocked by:** 12-c648eac4, 13-18824682, 28-01f74e46, 29-79f19342, 30-96529855, 31-3370abcf, 32-a552c031, 33-2cbc0092, 34-688a3b6c, 35-46c37e20, 36-aff31a4e.
 
 **Status:** ready-for-agent
 

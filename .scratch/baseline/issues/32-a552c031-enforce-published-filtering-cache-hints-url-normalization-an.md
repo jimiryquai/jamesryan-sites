@@ -15,7 +15,7 @@ Audit of non-HTML discovery feeds, JSON-LD endpoints, SSR response headers, and 
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** ready-for-agent
 
 - [ ] `/rss.xml` emits normalized single-slash URLs, filters `status: "published"`, sets `cache.set(cacheHint)`, and never publicly caches draft/session responses.
 - [ ] `/schema/[collection].json` and `Base.astro` share one canonical `Person`/`Blog`/`WebSite` graph builder and use `getContentPath` from `@jamesryan/cms-helpers` (zero `/work/` or `/pages/contact` URLs), returning `404` or omitting collections with no published entries consistently with `/schemamap.xml`.

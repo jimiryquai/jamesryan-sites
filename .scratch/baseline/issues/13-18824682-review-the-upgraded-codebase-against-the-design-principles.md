@@ -8,10 +8,10 @@ Review this repo, `../emdash-plugin-code-block-pro` and `../emdash-plugin-ai-com
 
 **Blocked by:** 05-10cd2eae, 06-7a434f76, 09-b9733862, 10-eaea4d2b, 17-caadd917.
 
-**Status:** needs James: triage findings (tickets 28-01f74e46..36-aff31a4e and backlog lines 8..10)
+**Status:** done
 
 - [x] A findings report lives in a comment on this ticket, each finding linked to a new ticket or a backlog line.
-- [ ] James has triaged the findings (status `needs James` until then).
+- [x] James has triaged the findings (status `needs James` until then).
 
 ## Comments
 

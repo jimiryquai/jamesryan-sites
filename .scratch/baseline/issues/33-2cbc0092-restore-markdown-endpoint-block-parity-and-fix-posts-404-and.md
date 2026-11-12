@@ -14,7 +14,7 @@ Fix five concrete rendering and agent-native parity defects in `apps/marketing-s
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** ready-for-agent
 
 - [ ] `/posts/<slug>.md` and `/projects/<slug>.md` include fenced `code-block-pro` code blocks (with language tag), `> ` blockquotes, and Markdown images, verified by `scripts/check-rendered-markdown.mjs`.
 - [ ] `/posts` renders `<title>Blog — <siteTitle></title>` without repeating `<siteTitle>`.

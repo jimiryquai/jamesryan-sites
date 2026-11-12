@@ -14,7 +14,7 @@ Clean up dead code, wasted per-request database queries, dangling schema widget 
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** ready-for-agent
 
 - [ ] `apps/marketing-site/seed/seed.json` has zero `"marketing-blocks:*"` references, and `node apps/marketing-site/scripts/sync-page-builder-seed.mjs --check` passes.
 - [ ] Dead `apps/marketing-site/src/components/blocks/*` files, unregistered `apps/digital-garden/src/plugins/marketing-blocks/*`, unimported `apps/digital-garden/src/styles/theme.css`, and unused `packages/ui/src/components/TagList.astro` are removed.

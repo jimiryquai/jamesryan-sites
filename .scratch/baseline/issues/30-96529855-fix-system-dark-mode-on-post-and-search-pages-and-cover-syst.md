@@ -13,7 +13,7 @@ When a visitor uses the default `System` theme preference (no `theme` cookie), `
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** in progress
 
 - [ ] `/posts/<slug>` body copy, headings, links, blockquotes, code blocks, `<hr>`, and comment form fields pass WCAG 2.2 AA contrast in light, explicit `.dark`, and cookie-less `System` dark (`prefers-color-scheme: dark`) modes.
 - [ ] Zero invalid `var(...)/N` or `white/N` raw CSS declarations remain in `.astro` `<style>` blocks.
@@ -21,3 +21,5 @@ When a visitor uses the default `System` theme preference (no `theme` cookie), `
 - [ ] `scripts/check-accessibility.mjs` and `scripts/check-comment-fields.mjs` exercise cookie-less `colorScheme: 'dark'` so regressions in `:global(.dark)` selectors fail CI.
 
 ## Comments
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Promoted to `baseline` and claiming for `h30-pi` (`zai/glm-5.3`, branch `30-system-dark-mode`). Risk: medium (reversible CSS + Playwright contrast verification PR to `master`).

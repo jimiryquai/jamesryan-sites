@@ -13,7 +13,7 @@ Close four untrusted-output and PII-logging surfaces across shared layout and ap
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** ready-for-agent
 
 - [ ] Unit tests cover `renderFragment` attribute escaping (`"`, `&`, `<`, `>`), `</script>` neutralization, and `"head"`, `"body-start"`, and `"body-end"` placements in `packages/ui/src/components/Base.astro`.
 - [ ] CMS `project.data.url` values with non-`http(s):` schemes (such as `javascript:alert(1)` or `data:`) are rejected and not rendered as clickable `<a>` links in either app.

@@ -13,7 +13,7 @@ Eliminate shallow pass-throughs and multi-file duplication across `apps/marketin
 
 **Blocked by:** none.
 
-**Status:** needs-triage
+**Status:** ready-for-agent
 
 - [ ] Zero `"Oatmeal"`, `"oatmeal.dev"`, or `"My Blog"` fallback strings remain anywhere in `apps/` or `packages/`.
 - [ ] `apps/marketing-site/astro.config.mjs` and `apps/digital-garden/astro.config.mjs` delegate shared Vite, Astro font/image, SEO graph, icon, and EmDash wiring to one shared module, specifying only per-site options (`site`, `port`, site-specific plugins, `redirectPolicy`).
