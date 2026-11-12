@@ -21,13 +21,6 @@ import ThemeSwitcher from "./ThemeSwitcher.astro";
 import themeScript from "./theme-init.js?raw";
 import NavbarLink from "./sections/NavbarLink.astro";
 import FooterLink from "./sections/FooterLink.astro";
-import SocialLink from "./sections/SocialLink.astro";
-import NewsletterForm from "./sections/NewsletterForm.astro";
-import ButtonLink from "./elements/ButtonLink.astro";
-import PlainButtonLink from "./elements/PlainButtonLink.astro";
-import XIcon from "./icons/social/x-icon.astro";
-import GitHubIcon from "./icons/social/github-icon.astro";
-import YouTubeIcon from "./icons/social/youtube-icon.astro";
 
 function renderFragment(f: PageFragmentContribution): string {
 	if (f.kind === "html") {
@@ -82,26 +75,7 @@ const siteDescription =
 	settings?.tagline || "Customer support that feels like a conversation.";
 // Null means an entry has no description; undefined uses the site default.
 const resolvedDescription = description === null ? undefined : description || siteDescription;
-const rawLogo = settings?.logo as any;
-const siteLogo = rawLogo?.url
-	? { mediaId: rawLogo.mediaId, alt: rawLogo.alt, url: rawLogo.url }
-	: null;
-
-const [
-	primaryMenu,
-	footerProduct,
-	footerCompany,
-	footerResources,
-	footerLegal,
-] = hideHeaderFooter
-	? [null, null, null, null, null]
-	: await Promise.all([
-			getMenu("primary"),
-			getMenu("footer_product"),
-			getMenu("footer_company"),
-			getMenu("footer_resources"),
-			getMenu("footer_legal"),
-		]);
+const primaryMenu = hideHeaderFooter ? null : await getMenu("primary");
 
 // Generate dynamic OG Image URL
 const siteUrl = Astro.site?.origin || "https://oatmeal.dev";
