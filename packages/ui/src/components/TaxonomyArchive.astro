@@ -2,16 +2,15 @@
 import type { AstroComponentFactory } from "astro/runtime/server/index.js";
 import PostCard from "./PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
-import { getTaxonomyArchive } from "@jamesryan/cms-helpers/taxonomy-archive";
+import type { getTaxonomyArchive } from "@jamesryan/cms-helpers/taxonomy-archive";
 
 interface Props {
   taxonomy: "category" | "tag";
   layout: AstroComponentFactory;
+  archive: NonNullable<Awaited<ReturnType<typeof getTaxonomyArchive>>>;
 }
-const { taxonomy, layout: Base } = Astro.props;
+const { taxonomy, layout: Base, archive } = Astro.props;
 const label = taxonomy === "category" ? "Category" : "Tag";
-const archive = await getTaxonomyArchive(taxonomy, Astro.params.slug, Astro.cache);
-if (!archive) return Astro.rewrite("/404");
 const { term, posts: filteredPosts } = archive;
 ---
 

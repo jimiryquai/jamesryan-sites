@@ -1,5 +1,9 @@
 ---
 import TaxonomyArchive from "@jamesryan/ui/components/TaxonomyArchive.astro";
+import { getTaxonomyArchive } from "@jamesryan/cms-helpers/taxonomy-archive";
 import Base from "../../layouts/Base.astro";
+
+const archive = await getTaxonomyArchive("tag", Astro.params.slug, Astro.cache);
+if (!archive) return Astro.rewrite("/404");
 ---
-<TaxonomyArchive taxonomy="tag" layout={Base} />
+<TaxonomyArchive taxonomy="tag" layout={Base} archive={archive} />
