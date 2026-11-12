@@ -42,7 +42,9 @@ function fakeSite({ pages = [], fields = ['title', 'content', 'layout', 'service
 			const item = store.get(id);
 			if (!item) return Response.json({ success: false, error: { code: 'NOT_FOUND', message: 'no page' } }, { status: 404 });
 			if (body._rev !== revisions.get(id)) return Response.json({ success: false, error: { code: 'CONFLICT', message: 'Page changed' } }, { status: 409 });
-			Object.assign(item.data, body.data);
+			// A published save stages a draft and leaves the live columns in liveData.
+			if (item.status === 'published' && !item.draftRevisionId) item.liveData = structuredClone(item.data);
+			item.data = structuredClone(body.data);
 			revisions.set(id, `rev-${id}-cleared`);
 			if (item.status === 'published') item.draftRevisionId = `rev-${id}-cleared`;
 			return reply({ item: structuredClone(item) });
@@ -53,6 +55,7 @@ function fakeSite({ pages = [], fields = ['title', 'content', 'layout', 'service
 			if (body._rev !== revisions.get(id)) return Response.json({ success: false, error: { code: 'CONFLICT', message: 'Revision changed' } }, { status: 409 });
 			if (!item.draftRevisionId) return Response.json({ success: false, error: { code: 'CONFLICT', message: 'Nothing staged' } }, { status: 409 });
 			item.draftRevisionId = null;
+			delete item.liveData;
 			return reply({ item: structuredClone(item) });
 		}
 		if (method === 'GET' && pathname === '/_emdash/api/schema/collections/pages') {
@@ -67,7 +70,7 @@ function fakeSite({ pages = [], fields = ['title', 'content', 'layout', 'service
 		}
 		return Response.json({ success: false, error: { code: 'NOT_FOUND', message: `no route ${method} ${pathname}` } }, { status: 404 });
 	};
-	return { store, schema, calls, http };
+	return { store, schema, calls, revisions, http };
 }
 
 /** Pages in the states the retirement meets in the wild. */
@@ -166,6 +169,201 @@ test('apply on a ready site clears every page, republishes published pages, dele
 	assert.deepEqual(deletes.map((call) => call.path), ['/_emdash/api/schema/collections/pages/fields/content']);
 	assert.ok(site.calls.some((call) => call.method === 'GET' && call.path.startsWith('/_emdash/api/schema/collections/pages?')));
 	assert.ok(!site.schema.fields.includes('content'));
+});
+
+test('an edit between planning and clearing is left untouched and the field stays', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const site = fakeSite({ pages: readyPages() });
+	let reads = 0;
+	const http = async (url, options = {}) => {
+		const parsed = new URL(url);
+		if ((options.method ?? 'GET') === 'GET' && parsed.pathname === '/_emdash/api/content/pages/moved-id') {
+			reads += 1;
+			if (reads === 2) {
+				const page = site.store.get('moved-id');
+				page.data.content[0].headline = 'Unmoved concurrent edit';
+				site.revisions.set('moved-id', 'rev-moved-id-2');
+			}
+		}
+		return site.http(url, options);
+	};
+	const result = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http });
+	assert.equal(result.applied, false);
+	assert.equal(result.fieldDeleted, false);
+	assert.equal(site.calls.filter((call) => call.method === 'PUT' && call.path.endsWith('/moved-id')).length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	assert.equal(site.store.get('moved-id').data.content[0].headline, 'Unmoved concurrent edit');
+	assert.equal(site.store.get('moved-id').data.layout[0].heading, 'James Ryan — AI-native marketer & engineer');
+	assert.match(result.errors.find((error) => error.page === 'home').message, /changed after its migration check/);
+	assert.ok(site.schema.fields.includes('content'));
+});
+
+test('an edit between clearing and read-back is not published and the field stays', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const site = fakeSite({ pages: readyPages() });
+	let reads = 0;
+	const http = async (url, options = {}) => {
+		const parsed = new URL(url);
+		if ((options.method ?? 'GET') === 'GET' && parsed.pathname === '/_emdash/api/content/pages/moved-id') {
+			reads += 1;
+			if (reads === 3) {
+				const page = site.store.get('moved-id');
+				page.data.layout[0].heading = 'Edited during read-back';
+				page.data.title = 'Edited during read-back';
+				site.revisions.set('moved-id', 'rev-moved-id-raced');
+			}
+		}
+		return site.http(url, options);
+	};
+	const result = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http });
+	assert.equal(result.applied, false);
+	assert.equal(result.fieldDeleted, false);
+	assert.equal(site.calls.filter((call) => call.method === 'POST' && call.path.includes('/moved-id/publish')).length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	assert.equal(site.store.get('moved-id').data.layout[0].heading, 'Edited during read-back');
+	assert.equal(site.store.get('moved-id').data.title, 'Edited during read-back');
+	assert.deepEqual(site.store.get('moved-id').data.content, []);
+	assert.match(result.errors.find((error) => error.page === 'home').message, /changed after its migration check/);
+	assert.ok(site.schema.fields.includes('content'));
+});
+
+test('a pending draft without live data is not published and the field stays', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const pages = readyPages();
+	const home = pages.find((page) => page.id === 'moved-id');
+	home.data = structuredClone(home.data);
+	home.data.content = [];
+	home.draftRevisionId = 'draft-without-live';
+	delete home.liveData;
+	const site = fakeSite({ pages });
+	const result = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http: site.http });
+	assert.equal(result.ready, false);
+	assert.equal(result.applied, false);
+	assert.equal(result.fieldDeleted, false);
+	assert.equal(result.pages.find((page) => page.slug === 'home').action, 'pending-draft');
+	assert.equal(site.calls.filter((call) => call.method === 'POST').length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'PUT').length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	assert.equal(site.store.get('moved-id').draftRevisionId, 'draft-without-live');
+	assert.equal(site.store.get('moved-id').liveData, undefined);
+	assert.match(result.blocked.find((page) => page.slug === 'home').message, /no live data to compare/);
+	assert.ok(site.schema.fields.includes('content'));
+});
+
+test('content added to an already-clear page blocks field deletion and is left untouched', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const site = fakeSite({ pages: readyPages() });
+	let reads = 0;
+	const http = async (url, options = {}) => {
+		const parsed = new URL(url);
+		if ((options.method ?? 'GET') === 'GET' && parsed.pathname === '/_emdash/api/content/pages/empty-id') {
+			reads += 1;
+			if (reads === 2) {
+				const page = site.store.get('empty-id');
+				page.data.content = [{ _type: 'marketing.hero', _key: 'late', headline: 'Added after planning' }];
+				site.revisions.set('empty-id', 'rev-empty-id-2');
+			}
+		}
+		return site.http(url, options);
+	};
+	const result = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http });
+	assert.equal(result.applied, false);
+	assert.equal(result.fieldDeleted, false);
+	assert.equal(site.calls.filter((call) => call.method === 'PUT' && call.path.endsWith('/empty-id')).length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	assert.equal(site.store.get('empty-id').data.content[0].headline, 'Added after planning');
+	assert.match(result.errors.find((error) => error.page === 'about').message, /refusing to delete the content field/);
+	assert.ok(site.schema.fields.includes('content'));
+});
+
+test('a page created before field deletion blocks the deletion', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const site = fakeSite({ pages: readyPages() });
+	let lists = 0;
+	const http = async (url, options = {}) => {
+		const parsed = new URL(url);
+		const listing = (options.method ?? 'GET') === 'GET' && parsed.pathname === '/_emdash/api/content/pages';
+		if (listing && !parsed.searchParams.get('cursor')) {
+			lists += 1;
+			if (lists === 2) {
+				site.store.set('new-id', {
+					id: 'new-id', slug: 'newcomer', status: 'published', draftRevisionId: null,
+					data: { title: 'New', content: [{ _type: 'marketing.hero', _key: 'h', headline: 'New page' }] },
+				});
+				site.revisions.set('new-id', 'rev-new-id-1');
+			}
+		}
+		return site.http(url, options);
+	};
+	const result = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http });
+	assert.equal(result.fieldDeleted, false);
+	assert.equal(result.applied, false);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	assert.equal(site.store.get('new-id').data.content[0].headline, 'New page');
+	assert.match(result.errors.find((error) => error.page === 'newcomer').message, /not migrated/);
+	assert.ok(site.schema.fields.includes('content'));
+});
+
+test('a failed publish is retried only for a verified content clear', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const site = fakeSite({ pages: readyPages() });
+	let refused = false;
+	const http = async (url, options = {}) => {
+		const parsed = new URL(url);
+		const publishing = (options.method ?? 'GET') === 'POST' && parsed.pathname === '/_emdash/api/content/pages/document-id/publish';
+		if (publishing && !refused) {
+			refused = true;
+			return Response.json({ success: false, error: { code: 'UNAVAILABLE', message: 'publish failed' } }, { status: 503 });
+		}
+		return site.http(url, options);
+	};
+	const first = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http });
+	assert.equal(first.applied, false);
+	assert.equal(first.fieldDeleted, false);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	const privacy = site.store.get('document-id');
+	assert.deepEqual(privacy.data.content, []);
+	assert.ok(privacy.liveData.content.length > 0);
+	assert.equal(privacy.draftRevisionId, 'rev-document-id-cleared');
+	const putsBefore = site.calls.filter((call) => call.method === 'PUT' && call.path.endsWith('/document-id')).length;
+	const retry = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http });
+	assert.equal(retry.ready, true);
+	assert.equal(retry.applied, true);
+	assert.equal(retry.fieldDeleted, true);
+	assert.equal(retry.pages.find((page) => page.slug === 'privacy-policy').action, 'republish-clear');
+	assert.equal(retry.pages.find((page) => page.slug === 'privacy-policy').published, true);
+	assert.equal(site.calls.filter((call) => call.method === 'PUT' && call.path.endsWith('/document-id')).length, putsBefore);
+	const publishes = site.calls.filter((call) => call.method === 'POST' && call.path.endsWith('/document-id/publish'));
+	assert.equal(refused, true);
+	assert.equal(publishes.length, 1);
+	assert.equal(publishes[0].body._rev, 'rev-document-id-cleared');
+	assert.equal(site.store.get('document-id').draftRevisionId, null);
+	assert.equal(site.store.get('document-id').liveData, undefined);
+	assert.equal(site.store.get('document-id').data.content, undefined);
+	assert.ok(!site.schema.fields.includes('content'));
+});
+
+test('an unrelated pending draft is not published and the field stays', async () => {
+	const { retirePagesContent } = await import('./retire-pages-content.mjs');
+	const pages = readyPages();
+	const home = pages.find((page) => page.id === 'moved-id');
+	home.liveData = structuredClone(home.data);
+	home.data = structuredClone(home.data);
+	home.data.content = [];
+	home.data.title = 'Unrelated title edit';
+	home.draftRevisionId = 'draft-unrelated';
+	const site = fakeSite({ pages });
+	const result = await retirePagesContent({ site: 'http://localhost:4999', token: 'fake', apply: true, http: site.http });
+	assert.equal(result.ready, false);
+	assert.equal(result.applied, false);
+	assert.equal(result.fieldDeleted, false);
+	assert.equal(site.calls.filter((call) => call.method === 'POST').length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'PUT').length, 0);
+	assert.equal(site.calls.filter((call) => call.method === 'DELETE').length, 0);
+	assert.equal(site.store.get('moved-id').data.title, 'Unrelated title edit');
+	assert.equal(site.store.get('moved-id').liveData.title, 'Home');
+	assert.match(result.blocked.find((page) => page.slug === 'home').message, /not a verified content clear/);
+	assert.ok(site.schema.fields.includes('content'));
 });
 
 test('a failed clear marks the page, keeps the field, and fails the run', async () => {
