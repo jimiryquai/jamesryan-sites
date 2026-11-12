@@ -217,6 +217,13 @@ importers:
       emdash:
         specifier: 1.5.0
         version: 1.5.0(@astrojs/react@7.1.7(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1)))(@atcute/cbor@2.3.8(@atcute/cid@2.5.0))(@atcute/cid@2.5.0)(@atcute/identity@2.0.2(@atcute/lexicons@2.1.1)(typescript@6.0.3))(@floating-ui/dom@1.8.0)(@tiptap/extensions@3.33.1(@tiptap/core@3.33.1(@tiptap/pm@3.33.1))(@tiptap/pm@3.33.1))(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(astro@7.4.10(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.1))(prosemirror-model@1.25.13)(prosemirror-state@1.4.4)(prosemirror-view@1.42.9)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@6.0.3)
+      workers-og:
+        specifier: ^0.0.27
+        version: 0.0.27
+    devDependencies:
+      '@fontsource/inter':
+        specifier: ^5.3.0
+        version: 5.3.0
 
   packages/ui:
     dependencies:
@@ -1057,6 +1064,9 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource/inter@5.3.0':
+    resolution: {integrity: sha512-RofMylZmjlJEfELXeNHFWBRcSs75rGU/6bV2S2jfnvv/3rPXPGe0LgUJTklcHZ9lM4OZmAVFhcJPnACfb91A3g==}
 
   '@hono/node-server@2.1.7':
     resolution: {integrity: sha512-Wr0E6S+v2Bw9FkpGNP5BQ5QbJvclUa06UVehd65WFZe6XeJwbrKQQ5wPDevc0IC+QyzbO7v3Llh5uo45IZcSnA==}
@@ -5564,6 +5574,8 @@ snapshots:
       tabbable: 6.5.1
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource/inter@5.3.0': {}
 
   '@hono/node-server@2.1.7(hono@4.13.18)':
     dependencies:

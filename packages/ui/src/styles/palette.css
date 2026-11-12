@@ -11,4 +11,7 @@
   --color-olive-800: oklch(28.6% 0.016 107.4);
   --color-olive-900: oklch(22.8% 0.013 107.4);
   --color-olive-950: #0c0c09;
+  /* OG card background: sRGB (Satori cannot parse oklch) and shared by both
+     apps' /og image routes via their styles/palette.ts extraction. */
+  --social-background: linear-gradient(135deg, #21221b 0%, #3e4034 50%, #5b5e4c 100%);
 }

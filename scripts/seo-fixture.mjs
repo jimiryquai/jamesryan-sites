@@ -88,13 +88,13 @@ const entries = {
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
+      data: { title: "Fixture post heading", excerpt: `${description("post excerpt")} & shipped`, content: codeBlock, featured_image: image } },
     { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading", summary: description("project summary"), content: codeBlock, featured_image: image } },
+      data: { title: "Fixture project heading & scope", summary: description("project summary"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
   ],
@@ -199,6 +199,23 @@ async function verifyDraftPreviews(origin, database) {
           throw new Error(`${path}: preview leaked into ${endpoint}`);
         }
       }
+      // The draft's OG image follows the same rule: the verified token renders
+      // it as a session-specific PNG, anonymous requests get nothing.
+      const ogPath = `/og/${collection}/${slug}.png`;
+      const ogPreview = await fetch(new URL(`${ogPath}?_preview=${encodeURIComponent(token)}`, origin), { redirect: "manual" });
+      const ogBytes = new Uint8Array(await ogPreview.arrayBuffer());
+      const ogPng = ogBytes.length > 4 && ogBytes[0] === 0x89 && ogBytes[1] === 0x50 && ogBytes[2] === 0x4e && ogBytes[3] === 0x47;
+      if (ogPreview.status !== 200 || ogPreview.headers.get("content-type") !== "image/png" || !ogPng) {
+        throw new Error(`${ogPath}: preview expected HTTP 200 image/png with PNG magic bytes, got HTTP ${ogPreview.status} ${ogPreview.headers.get("content-type")}`);
+      }
+      if (ogPreview.headers.get("cache-control") !== "private, no-store") {
+        throw new Error(`${ogPath}: preview cache-control was ${ogPreview.headers.get("cache-control")}`);
+      }
+      const ogAnonymous = await fetch(new URL(ogPath, origin), { redirect: "manual" });
+      if (ogAnonymous.status !== 404) {
+        throw new Error(`${ogPath}: anonymous request exposed a draft OG image (HTTP ${ogAnonymous.status})`);
+      }
+      console.log(`${ogPath}: valid preview token HTTP 200 image/png (PNG magic bytes); Cache-Control: private, no-store; anonymous HTTP 404`);
       console.log(`${path}: valid preview HTTP 200; Cache-Control: private, no-store; anonymous/invalid token HTTP 404; absent from sitemap and llms.txt`);
     }
   } finally {
@@ -218,6 +235,30 @@ function createGardenCodeSeed(path) {
   seed.menus = seed.menus.map(menu => ({ ...menu, items: [] }));
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, JSON.stringify(seed));
+}
+
+async function verifyOgImages(origin, available, missing) {
+  const check = async (path, expected) => {
+    const response = await fetch(new URL(path, origin), { redirect: "manual" });
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    const isPng = bytes.length > 4 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+    const cacheControl = response.headers.get("cache-control") || "";
+    if (expected === 200) {
+      if (response.status !== 200 || response.headers.get("content-type") !== "image/png" || !isPng) {
+        throw new Error(`${path}: expected HTTP 200 image/png with PNG magic bytes, got HTTP ${response.status} ${response.headers.get("content-type")}`);
+      }
+      if (cacheControl.includes("immutable") || !cacheControl.includes("max-age=3600") || !cacheControl.includes("stale-while-revalidate")) {
+        throw new Error(`${path}: expected a bounded revalidateable Cache-Control, got "${cacheControl}"`);
+      }
+      console.log(`${path}: HTTP 200 image/png (PNG magic bytes); Cache-Control: ${cacheControl}`);
+    } else if (response.status !== 404 || cacheControl.includes("immutable")) {
+      throw new Error(`${path}: expected HTTP 404 without immutable caching, got HTTP ${response.status} "${cacheControl}"`);
+    } else {
+      console.log(`${path}: HTTP 404; not renderable through the OG routes, no immutable caching`);
+    }
+  };
+  for (const path of available) await check(path, 200);
+  for (const path of missing) await check(path, 404);
 }
 
 async function verifyCodeRenderer(origin) {
@@ -377,6 +418,8 @@ async function verify(origin, unpublished = false, database) {
   if (unpublished) {
     await verifyUsermaven(origin, true);
     await verifyDraftPreviews(origin, database);
+    await verifyOgImages(origin, ["/og/default.png"],
+      ["/og/posts/fixture-post.png", "/og/projects/fixture-project.png", "/og/pages/fixture-page.png", "/og/blog/fixture-post.png"]);
     return;
   }
   await verifyUsermaven(origin, false);
@@ -397,13 +440,21 @@ async function verify(origin, unpublished = false, database) {
     throw new Error("/projects/fixture-fallback-project: entry title/summary fallback was not rendered");
   }
   console.log("/projects/fixture-fallback-project: entry title/summary fallback rendered");
+  await verifyOgImages(origin,
+    ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png", "/og/pages/home.png"],
+    ["/og/pages/fixture-draft.png", "/og/posts/missing-post.png", "/og/blog/fixture-post.png", "/og/work/fixture-project.png"]);
 }
 
 const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
-else if (action === "verify-code") await verifyCodeRenderer(value);
+else if (action === "verify-code") {
+  await verifyCodeRenderer(value);
+  await verifyOgImages(value,
+    ["/og/default.png", "/og/posts/fixture-post.png", "/og/projects/fixture-project.png"],
+    ["/og/posts/missing-post.png", "/og/blog/fixture-post.png", "/og/pages/home.png"]);
+}
 else if (action === "seo") applySeo(value, seedPath);
 else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished", seedPath);
 else throw new Error(`Unknown fixture action: ${action}`);
