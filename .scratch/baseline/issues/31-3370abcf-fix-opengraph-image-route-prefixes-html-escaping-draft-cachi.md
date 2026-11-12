@@ -14,12 +14,14 @@ The OpenGraph image routes are duplicated across both apps (`apps/marketing-site
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `/og/posts/<slug>.png`, `/og/projects/<slug>.png`, and `/og/pages/<slug>.png` resolve the matching published collection entry and render its title/excerpt; missing or draft entries return HTTP `404` without `immutable` public caching.
-- [ ] Titles and subtitles containing `&`, `<`, `>`, and quotes render accurately without Satori parse failures or HTML injection.
-- [ ] OG image generation uses `Astro.cache.set(cacheHint)` with bounded revalidateable `Cache-Control` headers, avoids outbound Google Fonts fetches on request paths, and shares one implementation across both apps using the olive palette.
+- [x] `/og/posts/<slug>.png`, `/og/projects/<slug>.png`, and `/og/pages/<slug>.png` resolve the matching published collection entry and render its title/excerpt; missing or draft entries return HTTP `404` without `immutable` public caching.
+- [x] Titles and subtitles containing `&`, `<`, `>`, and quotes render accurately without Satori parse failures or HTML injection.
+- [x] OG image generation uses `Astro.cache.set(cacheHint)` with bounded revalidateable `Cache-Control` headers, avoids outbound Google Fonts fetches on request paths, and shares one implementation across both apps using the olive palette.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Promoted to `baseline` and claiming for `h31-pi` (`zai/glm-5.3`, branch `31-og-image-routes`). Risk: medium (reversible PR to `master`).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Closed via PR #39 (`c302330` on `master`, source `f18600e` built by `h31-pi` `zai/glm-5.3`, cross-family Spec + Standards `PASS` after Fix Round 1 switched from HTML string + `HTMLRewriter` to direct Satori VNodes and `publicCollections` lookup).

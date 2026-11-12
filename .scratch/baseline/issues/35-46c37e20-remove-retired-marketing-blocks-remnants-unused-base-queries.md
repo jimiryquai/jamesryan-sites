@@ -14,13 +14,15 @@ Clean up dead code, wasted per-request database queries, dangling schema widget 
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** done
 
-- [ ] `apps/marketing-site/seed/seed.json` has zero `"marketing-blocks:*"` references, and `node apps/marketing-site/scripts/sync-page-builder-seed.mjs --check` passes.
-- [ ] Dead `apps/marketing-site/src/components/blocks/*` files, unregistered `apps/digital-garden/src/plugins/marketing-blocks/*`, unimported `apps/digital-garden/src/styles/theme.css`, and unused `packages/ui/src/components/TagList.astro` are removed.
-- [ ] `packages/ui/src/components/Base.astro` queries only `getMenu("primary")`, drops unused imports/variables, and `apps/*/src/layouts/Base.astro` forwards only slots defined by `Base.astro`.
-- [ ] `scripts/{check-site.js,sync-media.js,test-manifest.js}`, broken `"check"` scripts in `apps/*/package.json`, and unreferenced `public/` assets are removed cleanly with `pnpm build` and `bash scripts/check-rendered-seo.sh` passing.
+- [x] `apps/marketing-site/seed/seed.json` has zero `"marketing-blocks:*"` references, and `node apps/marketing-site/scripts/sync-page-builder-seed.mjs --check` passes.
+- [x] Dead `apps/marketing-site/src/components/blocks/*` files, unregistered `apps/digital-garden/src/plugins/marketing-blocks/*`, unimported `apps/digital-garden/src/styles/theme.css`, and unused `packages/ui/src/components/TagList.astro` are removed.
+- [x] `packages/ui/src/components/Base.astro` queries only `getMenu("primary")`, drops unused imports/variables, and `apps/*/src/layouts/Base.astro` forwards only slots defined by `Base.astro`.
+- [x] `scripts/{check-site.js,sync-media.js,test-manifest.js}`, broken `"check"` scripts in `apps/*/package.json`, and unreferenced `public/` assets are removed cleanly with `pnpm build` and `bash scripts/check-rendered-seo.sh` passing.
 
 ## Comments
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Claiming on branch `35-remove-dead-remnants`. Risk: medium (reversible PR to `master`; removes dead code, dangling widget strings, unused D1 menu queries, and unreferenced assets without touching live user-visible copy).
+
+**2026-11-12 Gemini (agy Carbon, orchestrator):** Closed via PR #42 (`d2db2b6` on `master`, source `a180855` built by `h35-codex` `GPT-6.1-Sol`, cross-family Spec + Standards `PASS` on first pass; 72 files cleaned with `scripts/dead-remnants.test.mjs`).

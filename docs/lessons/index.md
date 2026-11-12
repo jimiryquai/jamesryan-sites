@@ -7,10 +7,12 @@ okf_version: 0.2
 ## accessibility
 
 * [Cookie-forced theme tests mask broken cookie-less System dark mode](cookie-forced-theme-tests-mask-system-dark-mode.md) - Setting `Cookie: theme=light|dark` in Playwright skips the default `System` theme state where `<html>` has neither `.light` nor `.dark`, hiding scoped `:global(.dark)` CSS bugs on dark OSes.
+* [Place Tailwind v4 @variant dark rules after equal-specificity light rules](tailwind-custom-variant-dark-zero-specificity.md) - Because `@custom-variant dark` expands with zero-specificity `:where(.dark, .dark *)`, `@variant dark` blocks placed above light-mode rules lose the CSS cascade in both `.dark` and `system-dark` modes.
 
 ## cloudflare
 
 * [Cloudflare Workers Assets ignores public/_headers on SSR routes](workers-assets-headers-ignore-ssr-routes.md) - Under `@astrojs/cloudflare` Workers Assets, `public/_headers` applies only to static asset responses, never to Worker-rendered `APIRoute` or `.astro` responses.
+* [Pass Satori VNodes and bundled WOFF1 bytes to workers-og instead of HTML strings](workers-og-vnodes-and-bundled-woff1.md) - `workers-og`'s `HTMLRewriter` string parser leaves HTML entities un-decoded in PNG output and requires `display: flex` on every element, while Satori's `fontkit` rejects WOFF2.
 
 ## usermaven
 
