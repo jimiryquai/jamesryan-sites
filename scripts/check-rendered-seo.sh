@@ -26,7 +26,7 @@ fi
 # Let the OS choose a free port so simultaneous worktree checks stay isolated.
 port=$(node --input-type=module -e 'import net from "node:net"; const server = net.createServer(); server.listen(0, "127.0.0.1", () => { console.log(server.address().port); server.close(); });')
 entries=("marketing-site:$port:fixture")
-if [[ "$mode" == fixture ]]; then entries+=("marketing-site:$port:unpublished"); fi
+if [[ "$mode" == fixture ]]; then entries+=("marketing-site:$port:unpublished" "digital-garden:$port:code"); fi
 for entry in "${entries[@]}"; do
   IFS=: read -r app port seed_option <<< "$entry"
   state="$state_root/$app-$seed_option"
@@ -40,6 +40,9 @@ for entry in "${entries[@]}"; do
     seed_action=seed
     if [[ "$seed_option" == unpublished ]]; then seed_action=seed-unpublished; fi
     node "$root/scripts/seo-fixture.mjs" "$seed_action" "$seed"
+  elif [[ "$seed_option" == code ]]; then
+    seed="$state/fixture.json"
+    node "$root/scripts/seo-fixture.mjs" seed-garden-code "$seed"
   elif [[ "$mode" == fixture ]]; then
     seed="$root/apps/$app/$seed_option"
   fi
@@ -72,6 +75,12 @@ NODE
     exit 1
   fi
   echo "Validating $app"
+  if [[ "$seed_option" == code ]]; then
+    node "$root/scripts/seo-fixture.mjs" verify-code "http://127.0.0.1:$port" || status=1
+    cleanup
+    worker_pid=""
+    continue
+  fi
   node "$root/scripts/validate-rendered-seo.mjs" "http://127.0.0.1:$port" || status=1
   if [[ "$fixture" == true ]]; then
     verify_action=verify

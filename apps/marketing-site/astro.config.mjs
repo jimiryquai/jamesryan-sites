@@ -17,6 +17,8 @@ const hostname = new URL(site).hostname;
 export default defineConfig({
 	site,
 	output: "server",
+	// Preserve inline spacing from Astro 6 across the compiler upgrade.
+	compressHTML: true,
 	adapter: cloudflare({ 
 		inspectorPort: process.argv.includes("dev") ? 9229 : false 
 	}),

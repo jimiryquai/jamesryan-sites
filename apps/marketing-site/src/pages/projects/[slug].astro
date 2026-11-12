@@ -6,7 +6,6 @@ import { Image, PortableText } from "emdash/ui";
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
 import ProjectCard from "@jamesryan/ui/components/ProjectCard.astro";
-import { blockComponents } from "emdash-plugin-code-block-pro/astro";
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -137,7 +136,7 @@ function getImageSrc(img: unknown): string | undefined {
 			</div>
 			
 			<div class="lg:col-span-8 prose prose-olive dark:prose-invert max-w-none prose-h2:font-display prose-h2:text-3xl prose-p:leading-relaxed text-olive-800 dark:text-olive-300">
-				<PortableText value={project.data.content} components={{ type: blockComponents }} />
+				<PortableText value={project.data.content} />
 			</div>
 		</div>
 

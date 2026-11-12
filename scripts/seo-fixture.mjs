@@ -22,6 +22,10 @@ const page = (slug, content = heading(`Fixture ${slug} heading`), layout) => ({
   id: slug, slug, status: "published",
   data: { title: `Fixture ${slug}`, content, ...(layout ? { layout } : {}) },
 });
+const codeBlock = [{
+  _type: "code-block-pro", _key: "upgrade-code", code: 'console.log("astro7-renderer-fixture");',
+  language: "javascript", copyButton: true,
+}];
 const entries = {
   pages: [
     page("home", [{ _type: "marketing.hero", _key: "hero", headline: "Fixture home heading" }]),
@@ -35,13 +39,13 @@ const entries = {
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: [], featured_image: image } },
+      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading", summary: description("project summary"), content: [], featured_image: image } },
+      data: { title: "Fixture project heading", summary: description("project summary"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
   ],
@@ -145,6 +149,31 @@ async function verifyDraftPreviews(origin, database) {
   }
 }
 
+function createGardenCodeSeed(path) {
+  const seed = JSON.parse(readFileSync(new URL("apps/digital-garden/seed/seed.json", root)));
+  seed.content = {
+    posts: [{ id: "fixture-post", slug: "fixture-post", status: "published",
+      data: { title: "Fixture garden post", content: codeBlock } }],
+    projects: [{ id: "fixture-project", slug: "fixture-project", status: "published",
+      data: { title: "Fixture garden project", content: codeBlock } }],
+  };
+  seed.bylines = [];
+  seed.menus = seed.menus.map(menu => ({ ...menu, items: [] }));
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, JSON.stringify(seed));
+}
+
+async function verifyCodeRenderer(origin) {
+  for (const path of ["/posts/fixture-post", "/projects/fixture-project"]) {
+    const response = await fetch(new URL(path, origin), { redirect: "manual" });
+    const html = await response.text();
+    if (response.status !== 200 || !html.includes('class="cbp-copy-btn"') || !html.includes('class="shiki') || !html.includes("astro7-renderer-fixture")) {
+      throw new Error(`${path}: registered Code Block Pro renderer did not render highlighted code and copy button (HTTP ${response.status})`);
+    }
+    console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
+  }
+}
+
 async function verify(origin, unpublished = false, database) {
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
@@ -200,6 +229,7 @@ async function verify(origin, unpublished = false, database) {
     console.log(`${path}: fixture SEO fields rendered`);
   }
   if (!unpublished) {
+    await verifyCodeRenderer(origin);
     const layoutHtml = await (await fetch(new URL("/pricing", origin))).text();
     if (!layoutHtml.includes("Fixture pricing layout heading") || layoutHtml.includes("Fixture pricing heading")) {
       throw new Error("/pricing: a published layout was not rendered in place of content");
@@ -237,6 +267,8 @@ async function verify(origin, unpublished = false, database) {
 const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
+else if (action === "seed-garden-code") createGardenCodeSeed(value);
+else if (action === "verify-code") await verifyCodeRenderer(value);
 else if (action === "seo") applySeo(value, seedPath);
 else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished", seedPath);
 else throw new Error(`Unknown fixture action: ${action}`);

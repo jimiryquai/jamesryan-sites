@@ -16,10 +16,10 @@
     "page-builder": "node scripts/apply-page-builder.mjs"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "13.7.0",
-    "@astrojs/react": "^5.0.5",
-    "@emdash-cms/admin": "1.4.0",
-    "@emdash-cms/cloudflare": "1.4.0",
+    "@astrojs/cloudflare": "14.4.7",
+    "@astrojs/react": "7.1.7",
+    "@emdash-cms/admin": "1.5.0",
+    "@emdash-cms/cloudflare": "1.5.0",
     "@iconify-json/ph": "^1.2.2",
     "@jamesryan/cms-helpers": "workspace:*",
     "@jamesryan/ui": "workspace:*",
@@ -27,26 +27,26 @@
     "@jdevalk/emdash-plugin-seo": "0.12.0",
     "@jdevalk/seo-graph-core": "0.7.0",
     "@shikijs/engine-javascript": "4.1.0",
-    "astro": "6.4.8",
+    "astro": "7.4.10",
     "astro-iconset": "^0.0.4",
     "clsx": "^2.1.1",
-    "emdash": "1.4.0",
+    "emdash": "1.5.0",
     "emdash-plugin-ai-comment-moderation": "2.1.0",
     "emdash-plugin-code-block-pro": "0.2.0",
-    "emdash-plugin-page-builder": "0.2.0",
+    "emdash-plugin-page-builder": "0.3.0",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "shiki": "4.1.0",
     "workers-og": "^0.0.27"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.7",
-    "@cloudflare/workers-types": "4.20260609.1",
+    "@astrojs/check": "0.9.12",
+    "@cloudflare/workers-types": "5.20261110.1",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "schema-dts": "^2.0.0",
     "tailwindcss": "^4.3.0",
-    "wrangler": "4.99.0"
+    "wrangler": "4.160.0"
   }
 }
