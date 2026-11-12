@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import { access } from "node:fs/promises";
 import { test } from "node:test";
 import {
+	MAX_EVENT_BODY_BYTES,
 	USERMAVEN_PROXY_PATH,
 	USERMAVEN_SCRIPT_PATH,
+	buildUsermavenProxyUrls,
 	proxyUsermavenRequest,
 } from "../src/utils/usermaven.ts";
 
@@ -300,4 +302,105 @@ test("proxy rejects path confusion and disallowed HTTP methods, handles upstream
 	});
 	assert.equal(oversizedRes.status, 404);
 	assert.equal(cancelledOversized, true);
+});
+
+test("proxy builds absolute tracking-host and script URLs from request origin and honors loopback eventsOrigin only on loopback requests", async () => {
+	assert.deepEqual(buildUsermavenProxyUrls("https://jamesryan.dev/posts/hello?x=1"), {
+		trackingHost: `https://jamesryan.dev${USERMAVEN_PROXY_PATH}`,
+		scriptSrc: `https://jamesryan.dev${USERMAVEN_SCRIPT_PATH}`,
+	});
+
+	const seenUrls = [];
+	async function fakeUpstream(input) {
+		seenUrls.push(input.toString());
+		return new Response(JSON.stringify({ status: 1 }), {
+			status: 200,
+			headers: { "Content-Type": "application/json" },
+		});
+	}
+
+	const loopbackRes = await proxyUsermavenRequest({
+		request: new Request(`http://127.0.0.1:4321${USERMAVEN_PROXY_PATH}/api.abc?p_1=UMNstP14wS`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ event_type: "pageview" }),
+		}),
+		key: "UMNstP14wS",
+		eventsOrigin: "http://127.0.0.1:9999",
+		fetchImpl: fakeUpstream,
+	});
+	assert.equal(loopbackRes.status, 200);
+	assert.equal(seenUrls[0], "http://127.0.0.1:9999/api.abc?p_1=UMNstP14wS");
+
+	const prodIgnoredOverrideRes = await proxyUsermavenRequest({
+		request: new Request(`${EVENT_URL}?token=UMNstP14wS`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ event_type: "pageview" }),
+		}),
+		key: "UMNstP14wS",
+		eventsOrigin: "http://127.0.0.1:9999",
+		fetchImpl: fakeUpstream,
+	});
+	assert.equal(prodIgnoredOverrideRes.status, 200);
+	assert.equal(seenUrls[1], "https://events.usermaven.com/api/v1/event?token=UMNstP14wS");
+});
+
+test("proxy caps buffered event request bodies at MAX_EVENT_BODY_BYTES and returns 413 above it without contacting upstream", async () => {
+	assert.equal(MAX_EVENT_BODY_BYTES, 65_536);
+
+	let forwardedBytes = 0;
+	const exactLimitBody = new Uint8Array(MAX_EVENT_BODY_BYTES);
+	const exactLimitRes = await proxyUsermavenRequest({
+		request: new Request(EVENT_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: exactLimitBody,
+		}),
+		key: "UMNstP14wS",
+		fetchImpl: async (_input, init = {}) => {
+			forwardedBytes = init.body.byteLength;
+			return new Response(JSON.stringify({ status: 1 }), { status: 200 });
+		},
+	});
+	assert.equal(exactLimitRes.status, 200);
+	assert.equal(forwardedBytes, MAX_EVENT_BODY_BYTES);
+
+	const oneByteOverRes = await proxyUsermavenRequest({
+		request: new Request(EVENT_URL, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"Content-Length": String(MAX_EVENT_BODY_BYTES + 1),
+			},
+			body: new Uint8Array(MAX_EVENT_BODY_BYTES + 1),
+		}),
+		key: "UMNstP14wS",
+		fetchImpl: rejectUpstreamFetch,
+	});
+	assert.equal(oneByteOverRes.status, 413);
+	assert.equal(oneByteOverRes.headers.get("cache-control"), "no-store");
+
+	let cancelledStreamedOverLimit = false;
+	const streamedOverLimitBody = new ReadableStream({
+		pull(controller) {
+			controller.enqueue(new Uint8Array(16_384));
+		},
+		cancel() {
+			cancelledStreamedOverLimit = true;
+		},
+	});
+	const streamedOverLimitRes = await proxyUsermavenRequest({
+		request: new Request(EVENT_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: streamedOverLimitBody,
+			duplex: "half",
+		}),
+		key: "UMNstP14wS",
+		fetchImpl: rejectUpstreamFetch,
+	});
+	assert.equal(streamedOverLimitRes.status, 413);
+	assert.equal(streamedOverLimitRes.headers.get("cache-control"), "no-store");
+	assert.equal(cancelledStreamedOverLimit, true);
 });

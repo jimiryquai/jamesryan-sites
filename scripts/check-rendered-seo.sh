@@ -70,6 +70,7 @@ writeFileSync(process.argv[3], JSON.stringify(config, null, 2));
 NODE
   fi
   ./node_modules/.bin/wrangler dev --config "$wrangler_config" --local \
+    --infer-origin-from-routes=false \
     --persist-to "$state" --port "$port" --inspector-port 0 &
   worker_pid=$!
   ready=false

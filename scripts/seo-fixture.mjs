@@ -4,7 +4,11 @@ import { createRequire } from "node:module";
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { extractTitle, extractMetaDescription } from "@jdevalk/astro-seo-graph/integration";
-import { USERMAVEN_PROXY_PATH, USERMAVEN_SCRIPT_PATH } from "../apps/marketing-site/src/utils/usermaven.ts";
+import {
+  USERMAVEN_PROXY_PATH,
+  USERMAVEN_SCRIPT_PATH,
+  buildUsermavenProxyUrls,
+} from "../apps/marketing-site/src/utils/usermaven.ts";
 
 const root = new URL("../", import.meta.url);
 const marketingRequire = createRequire(new URL("../apps/marketing-site/package.json", import.meta.url));
@@ -244,10 +248,11 @@ async function verifyUsermaven(origin, unconfigured) {
     console.log(`/: Usermaven snippet absent and ${USERMAVEN_PROXY_PATH}/* HTTP 404 when USERMAVEN_KEY is unset`);
     return;
   }
+  const { trackingHost, scriptSrc } = buildUsermavenProxyUrls(origin);
   for (const requiredMarker of [
     "um-tracker",
-    USERMAVEN_PROXY_PATH,
-    USERMAVEN_SCRIPT_PATH,
+    JSON.stringify(trackingHost),
+    JSON.stringify(scriptSrc),
     configuredUsermavenKey,
     "data-tracking-host",
     "data-key",

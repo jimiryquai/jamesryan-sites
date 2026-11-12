@@ -1,14 +1,9 @@
 ---
 import { env } from "cloudflare:workers";
-import {
-	USERMAVEN_PROXY_PATH,
-	USERMAVEN_SCRIPT_PATH,
-	normalizeUsermavenKey,
-} from "../utils/usermaven.ts";
+import { buildUsermavenProxyUrls, normalizeUsermavenKey } from "../utils/usermaven.ts";
 
 const key = normalizeUsermavenKey(env.USERMAVEN_KEY);
-const trackingHost = USERMAVEN_PROXY_PATH;
-const scriptSrc = USERMAVEN_SCRIPT_PATH;
+const { trackingHost, scriptSrc } = buildUsermavenProxyUrls(Astro.url.origin);
 ---
 
 {
