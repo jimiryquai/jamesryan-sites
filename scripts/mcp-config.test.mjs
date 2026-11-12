@@ -34,7 +34,10 @@ async function startFakeMcpServer(expectedAuthHeader) {
       return;
     }
     if (req.headers.authorization !== expectedAuthHeader) {
-      res.writeHead(401, { 'content-type': 'application/json' });
+      res.writeHead(401, {
+        'content-type': 'application/json',
+        'www-authenticate': 'Bearer resource_metadata="http://127.0.0.1/.well-known/oauth-protected-resource"',
+      });
       res.end(JSON.stringify({ error: 'Authentication required' }));
       return;
     }
@@ -110,6 +113,25 @@ function cleanMcpEnv() {
   return env;
 }
 
+async function writeLoopbackConfig(sourceConfigPath, urlByServer, destConfigPath) {
+  const config = JSON.parse(await readFile(sourceConfigPath, 'utf8'));
+  for (const [name, server] of Object.entries(config.mcpServers)) {
+    const replacementUrl = urlByServer[name];
+    assert.ok(replacementUrl, `missing loopback URL override for ${name}`);
+    assert.equal(new URL(replacementUrl).hostname, '127.0.0.1', `${name} test URL must stay on loopback`);
+    server.url = replacementUrl;
+  }
+  await writeFile(destConfigPath, JSON.stringify(config, null, 2));
+}
+
+function runMcporterConfig(configPath, envPath, args, cwd) {
+  return execFileAsync(
+    process.execPath,
+    [`--env-file-if-exists=${envPath}`, mcporterCli, '--config', configPath, ...args],
+    { cwd, env: cleanMcpEnv() },
+  );
+}
+
 test('always-loaded .mcp.json points to config/mcporter.json and holds no machine paths, unpinned packages or local/token servers', async () => {
   const linkStat = await lstat(join(root, '.mcp.json'));
   assert.ok(linkStat.isSymbolicLink(), '.mcp.json must remain a symlink to config/mcporter.json');
@@ -156,10 +178,10 @@ test('on-request local and staging configs isolate dev-server and token-authenti
   const local = JSON.parse(await readFile(join(root, 'config/mcporter.local.json'), 'utf8'));
   assert.deepEqual(Object.keys(local.mcpServers), ['emdash-site', 'emdash-garden']);
   assert.equal(local.mcpServers['emdash-site'].url, 'http://localhost:4321/_emdash/api/mcp');
-  assert.equal(local.mcpServers['emdash-site'].headers?.Authorization, 'Bearer ${EMDASH_SITE_PAT:-}');
+  assert.equal(local.mcpServers['emdash-site'].headers?.Authorization, 'Bearer ${EMDASH_SITE_PAT}');
   assert.match(local.mcpServers['emdash-site'].description ?? '', /4321.*pnpm dev/);
   assert.equal(local.mcpServers['emdash-garden'].url, 'http://localhost:4322/_emdash/api/mcp');
-  assert.equal(local.mcpServers['emdash-garden'].headers?.Authorization, 'Bearer ${EMDASH_GARDEN_PAT:-}');
+  assert.equal(local.mcpServers['emdash-garden'].headers?.Authorization, 'Bearer ${EMDASH_GARDEN_PAT}');
   assert.match(local.mcpServers['emdash-garden'].description ?? '', /4322.*pnpm dev:garden/);
 
   const pkg = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
@@ -173,27 +195,27 @@ test('on-request local and staging configs isolate dev-server and token-authenti
   );
 });
 
-test('mcporter loads .env tokens via --env-file-if-exists, reports offline local ports cleanly, and blocks unauthenticated staging calls', async () => {
+test('mcporter loads .env tokens via --env-file-if-exists, reports offline local ports cleanly, and blocks unauthenticated calls', async () => {
   const workDir = await mkdtemp(join(tmpdir(), 'mcp-config-seam-'));
   const siteServer = await startFakeMcpServer('Bearer fixture-site-token');
   const stagingProbe = await startFakeMcpServer('Bearer fixture-staging-token');
   const closedGardenPort = await allocateClosedPort();
 
   try {
-    const localTemplate = await readFile(join(root, 'config/mcporter.local.json'), 'utf8');
-    const localFixture = localTemplate
-      .replace('http://localhost:4321/_emdash/api/mcp', `http://127.0.0.1:${siteServer.port}/_emdash/api/mcp`)
-      .replace('http://localhost:4322/_emdash/api/mcp', `http://127.0.0.1:${closedGardenPort}/_emdash/api/mcp`);
     const localConfigPath = join(workDir, 'mcporter.local.json');
-    const envPath = join(workDir, '.env');
-    await writeFile(localConfigPath, localFixture);
-    await writeFile(envPath, 'EMDASH_SITE_PAT=fixture-site-token\n');
-
-    const localRun = await execFileAsync(
-      process.execPath,
-      [`--env-file-if-exists=${envPath}`, mcporterCli, '--config', localConfigPath, 'list'],
-      { cwd: workDir, env: cleanMcpEnv() },
+    await writeLoopbackConfig(
+      join(root, 'config/mcporter.local.json'),
+      {
+        'emdash-site': `http://127.0.0.1:${siteServer.port}/_emdash/api/mcp`,
+        'emdash-garden': `http://127.0.0.1:${closedGardenPort}/_emdash/api/mcp`,
+      },
+      localConfigPath,
     );
+
+    const envPath = join(workDir, '.env');
+    await writeFile(envPath, 'EMDASH_SITE_PAT=fixture-site-token\nEMDASH_GARDEN_PAT=fixture-garden-token\n');
+
+    const localRun = await runMcporterConfig(localConfigPath, envPath, ['list'], workDir);
     assert.match(
       localRun.stdout,
       /- emdash-site — Requires local marketing-site dev server on port 4321 \(pnpm dev\) \(1 tool,/,
@@ -202,22 +224,23 @@ test('mcporter loads .env tokens via --env-file-if-exists, reports offline local
       localRun.stdout,
       /- emdash-garden — Requires local digital-garden dev server on port 4322 \(pnpm dev:garden\) \(offline — unable to reach server,/,
     );
-    assert.ok(siteServer.receivedAuthHeaders.includes('Bearer fixture-site-token'));
+    assert.ok(siteServer.receivedAuthHeaders.length > 0);
+    assert.ok(siteServer.receivedAuthHeaders.every((header) => header === 'Bearer fixture-site-token'));
 
-    const stagingTemplate = await readFile(join(root, 'config/mcporter.staging.json'), 'utf8');
-    const stagingFixture = stagingTemplate.replace(
-      'https://staging.jamesryan.dev/_emdash/api/mcp',
-      `http://127.0.0.1:${stagingProbe.port}/_emdash/api/mcp`,
-    );
-    const stagingConfigPath = join(workDir, 'mcporter.staging.json');
-    await writeFile(stagingConfigPath, stagingFixture);
-
+    siteServer.receivedAuthHeaders.length = 0;
     const missingEnvPath = join(workDir, '.env.missing');
-    const stagingWithoutToken = await execFileAsync(
-      process.execPath,
-      [`--env-file-if-exists=${missingEnvPath}`, mcporterCli, '--config', stagingConfigPath, 'list'],
-      { cwd: workDir, env: cleanMcpEnv() },
+    const localWithoutToken = await runMcporterConfig(localConfigPath, missingEnvPath, ['list'], workDir);
+    assert.match(localWithoutToken.stdout, /EMDASH_SITE_PAT must be set/);
+    assert.equal(siteServer.receivedAuthHeaders.length, 0, 'local server must not be contacted without token');
+
+    const stagingConfigPath = join(workDir, 'mcporter.staging.json');
+    await writeLoopbackConfig(
+      join(root, 'config/mcporter.staging.json'),
+      { 'emdash-staging-agent': `http://127.0.0.1:${stagingProbe.port}/_emdash/api/mcp` },
+      stagingConfigPath,
     );
+
+    const stagingWithoutToken = await runMcporterConfig(stagingConfigPath, missingEnvPath, ['list'], workDir);
     assert.match(stagingWithoutToken.stdout, /EMDASH_AGENT_STAGING_TOKEN must be set/);
     assert.equal(stagingProbe.receivedAuthHeaders.length, 0, 'staging server must not be contacted without token');
   } finally {

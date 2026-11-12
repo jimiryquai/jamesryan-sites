@@ -6,28 +6,17 @@ MCP configurations live under `config/` and use `mcporter` 0.17.0's direct Strea
 
 | Config file | Symlink | Servers | When loaded | Auth variable |
 | --- | --- | --- | --- | --- |
-| `config/mcporter.json` | `.mcp.json` | `emdash-docs` (`https://docs.emdashcms.com/mcp`) | Automatically at harness start and bare `pnpm exec mcporter` | None (public HTTPS) |
-| `config/mcporter.staging.json` | — | `emdash-staging-agent` (`https://staging.jamesryan.dev/_emdash/api/mcp`) | On request via `pnpm mcp:staging` or `--config` | `EMDASH_AGENT_STAGING_TOKEN` |
-| `config/mcporter.local.json` | — | `emdash-site` (`http://localhost:4321/_emdash/api/mcp`), `emdash-garden` (`http://localhost:4322/_emdash/api/mcp`) | On request via `pnpm mcp:local` or `--config` | `EMDASH_SITE_PAT`, `EMDASH_GARDEN_PAT` |
+| `config/mcporter.json` | `.mcp.json` | `emdash-docs` (`https://docs.emdashcms.com/mcp`) | Automatically at harness start and bare `pnpm exec mcporter` (see [`AGENTS.md`](../AGENTS.md)) | None (public HTTPS) |
+| `config/mcporter.staging.json` | — | `emdash-staging-agent` (`https://staging.jamesryan.dev/_emdash/api/mcp`) | On request via `pnpm -s mcp:staging` | `EMDASH_AGENT_STAGING_TOKEN` |
+| `config/mcporter.local.json` | — | `emdash-site` (`http://localhost:4321/_emdash/api/mcp`), `emdash-garden` (`http://localhost:4322/_emdash/api/mcp`) | On request via `pnpm -s mcp:local` | `EMDASH_SITE_PAT`, `EMDASH_GARDEN_PAT` |
 
 Each config sets `"imports": []` so `mcporter` lists only this repository's servers instead of importing user-level editor configs (`~/.claude.json`, `~/.config/opencode/`).
 
 ## Commands
 
-### EmDash documentation (`emdash-docs`)
-
-Run from the repository root with no extra flags or environment variables:
-
-```sh
-pnpm exec mcporter list
-pnpm exec mcporter call emdash-docs.search_docs query:"MCP server authentication"
-```
-
-Done when `mcporter list` reports `emdash-docs` healthy and `search_docs` returns matching documentation pages.
-
 ### Staging drafts (`emdash-staging-agent`)
 
-`emdash-staging-agent` uses the Contributor token (`content:read`, `content:write`, `media:read`, `media:write`) stored in the gitignored `.env`. Read [`docs/publishing.md`](publishing.md) and run its D1 token-owner preflight before any write.
+`emdash-staging-agent` uses the Contributor token (`content:read`, `content:write`, `media:read`, `media:write`) stored in the gitignored `.env`. Read [`docs/publishing.md`](publishing.md) and complete its D1 token-owner preflight before any write.
 
 For read-only inspection or calls from the repository root:
 
@@ -37,7 +26,7 @@ pnpm -s mcp:staging list emdash-staging-agent
 pnpm -s mcp:staging call emdash-staging-agent.content_list collection:posts limit:5
 ```
 
-`pnpm mcp:staging` runs `node --env-file-if-exists=.env ./node_modules/mcporter/dist/cli.js --config config/mcporter.staging.json`, loading `.env` into the child process when present without printing secrets on the command line. Pass `-s` (`--silent`) to `pnpm` when piping JSON stdout.
+Pass `-s` (`--silent`) to `pnpm` so stdout contains only `mcporter` output when parsing JSON.
 
 ### Local dev databases (`emdash-site` and `emdash-garden`)
 
@@ -48,19 +37,17 @@ pnpm -s mcp:staging call emdash-staging-agent.content_list collection:posts limi
    pnpm dev:garden   # digital-garden on http://localhost:4322
    ```
    Done when the dev server listens on port `4321` or `4322`.
-2. Verify MCP readiness (requires `EMDASH_SITE_PAT` or `EMDASH_GARDEN_PAT` in `.env` or the shell environment):
+2. Verify MCP readiness with `.env` containing `EMDASH_SITE_PAT` and `EMDASH_GARDEN_PAT` (or those variables exported in the shell):
    ```sh
    pnpm -s mcp:local list
    ```
-   Done when the running site reports its tool count instead of `offline — unable to reach server`.
+   Done when the running site reports its tool count instead of `offline — unable to reach server`. Without a running dev server, `pnpm -s mcp:local list` marks each closed port `offline` alongside its `pnpm dev` / `pnpm dev:garden` command; without PATs, `mcporter` fails fast before making unauthenticated HTTP requests.
 3. Invoke tools against the running local server:
    ```sh
    pnpm -s mcp:local call emdash-site.content_list collection:posts
    pnpm -s mcp:local call emdash-garden.content_list collection:pages
    ```
    Done when the JSON tool response returns from the local SQLite database.
-
-Without a running dev server, `pnpm -s mcp:local list` (or `pnpm exec mcporter --config config/mcporter.local.json list` in a worktree with no `.env`) reports each server as `offline — unable to reach server` alongside the `pnpm dev` / `pnpm dev:garden` command needed to start it.
 
 ## Why local and staging site servers live outside `.mcp.json`
 
@@ -81,4 +68,11 @@ Without a running dev server, `pnpm -s mcp:local list` (or `pnpm exec mcporter -
 | Antigravity CLI (`agy`) | No (`~/.gemini/config/mcp_config.json`, `.agents/mcp_config.json`) | Static headers only; ignores `.env` and `${VAR}` | Sends literal `${VAR}` header and fails with HTTP 401 if configured | `agy mcp --help`, [Antigravity MCP docs](https://antigravity.google/docs/mcp) |
 | MCPorter (`mcporter` 0.17.0) | Yes (`config/mcporter.json`) | `process.env` only (`${VAR}`, `${VAR:-default}`, `$env:VAR`); ignores `.env` | Errors with `Environment variable(s) EMDASH_AGENT_STAGING_TOKEN must be set for MCP header substitution` | `node_modules/mcporter/dist/env.js` |
 
-Keeping `.mcp.json` (`config/mcporter.json`) limited to `emdash-docs` guarantees zero-error startup across every harness and worktree while keeping `emdash-staging-agent`, `emdash-site`, and `emdash-garden` one command away through `pnpm mcp:staging` and `pnpm mcp:local`.
+Keeping `.mcp.json` (`config/mcporter.json`) limited to `emdash-docs` guarantees zero-error startup across every harness and worktree while keeping `emdash-staging-agent`, `emdash-site`, and `emdash-garden` one command away through `pnpm -s mcp:staging` and `pnpm -s mcp:local`.
+
+## Telemetry audit (checked 2026-11-12)
+
+- **`mcp-remote`:** Removed completely; no `npx` or runtime package downloads remain in any config.
+- **`mcporter` `0.17.0` (pinned exact in root `package.json`):** `node_modules/mcporter/dist/` contains no analytics or telemetry SDKs or reporting endpoints; outbound HTTP requests target only the configured MCP server URL, sending standard MCP `clientInfo` metadata (`clientName`).
+- **`emdash-site`, `emdash-garden`, and `emdash-staging-agent` (`emdash` `1.4.0` built-in `/_emdash/api/mcp`):** `emdash/src/astro/routes/api/mcp.ts` and `emdash/src/mcp/` run a stateless `WebStandardStreamableHTTPServerTransport` against the app's own D1/SQLite database with zero third-party telemetry or phone-home requests. Set `WRANGLER_SEND_METRICS=false` and `ASTRO_TELEMETRY_DISABLED=1` when starting local Astro/Wrangler dev servers.
+- **`emdash-docs` (`https://docs.emdashcms.com/mcp`):** Remote public Streamable HTTP endpoint operated by EmDash; runs no local code and receives requests only when `emdash-docs` is listed or queried (`"lifecycle": "ephemeral"`).
