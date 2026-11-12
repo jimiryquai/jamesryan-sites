@@ -88,7 +88,7 @@ NODE
   fi
   echo "Validating $app"
   if [[ "$seed_option" == code ]]; then
-    node "$root/scripts/seo-fixture.mjs" verify-code "http://127.0.0.1:$port" || status=1
+    node "$root/scripts/seo-fixture.mjs" verify-code "http://127.0.0.1:$port" "$database" || status=1
     cleanup
     worker_pid=""
     continue

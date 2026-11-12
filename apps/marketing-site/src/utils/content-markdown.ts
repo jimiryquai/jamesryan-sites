@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
-import { getPublishedRoute, portableTextToMarkdown } from "@jamesryan/cms-helpers";
-import { getRequestContext, getSiteSettings } from "emdash";
+import { getPublishedRoute, portableTextToMarkdown, discoveryResponse } from "@jamesryan/cms-helpers";
+import { getSiteSettingsWithCacheHint } from "emdash";
 import { mergeCacheHints } from "emdash-plugin-page-builder/blocks";
 import { renderLayoutMarkdown } from "../components/page-builder/layout-markdown";
 import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
@@ -44,7 +44,8 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 		contentMarkdown = portableTextToMarkdown(entry.data.content || []);
 	}
 
-	const settings = await getSiteSettings();
+	const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
+	if (cache?.enabled) cache.set(settingsHint);
 	const siteTitle = settings?.title || "James Ryan";
 
 	const fullMarkdown = `# ${title}
@@ -53,17 +54,10 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 ${contentMarkdown}
 `;
 
-	// Edit mode and verified previews may serve drafts; the response is
-	// session-specific and must never reach a shared cache (EmDash's middleware
-	// already does this for HTML, which a markdown response is not).
-	const requestContext = getRequestContext();
-	const sessionRender = requestContext?.editMode === true || requestContext?.preview !== undefined;
-	if (sessionRender) cache?.set(false);
 
-	return new Response(fullMarkdown, {
+	return discoveryResponse(new Response(fullMarkdown, {
 		headers: {
 			"Content-Type": "text/markdown; charset=utf-8",
-			"Cache-Control": sessionRender ? "private, no-store" : "public, max-age=3600",
 		},
-	});
+	}), cache);
 };

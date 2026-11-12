@@ -122,6 +122,12 @@ const entries = {
       data: { name: "Fixture Member", role: "Fixture member role" } },
   ],
 };
+// Drafts coexist with published records to catch leaks from secondary queries.
+for (const collection of ["posts", "projects"]) {
+  entries[collection].push({ id: "fixture-secret", slug: "fixture-secret", status: "draft",
+    data: { title: "UNPUBLISHED fixture secret", content: [] } });
+}
+delete entries.posts.find(entry => entry.slug === "fixture-fallback").data.featured_image;
 const site = {
   title: "Fixture Marketing Testing",
   tagline: description("listing"),
@@ -176,7 +182,7 @@ function applySeo(path, seedPath) {
   }
 }
 
-async function verifyDraftPreviews(origin, database) {
+async function verifyDraftPreviews(origin, database, garden = false) {
   // Let EmDash initialize its local-only signing secret, then read that same secret.
   // Neither the secret nor signed URLs are printed or persisted as evidence.
   await fetch(new URL("/?_preview=invalid", origin), { redirect: "manual" });
@@ -187,10 +193,13 @@ async function verifyDraftPreviews(origin, database) {
     const secret = JSON.parse(secretRow.value);
     const require = createRequire(new URL("../apps/marketing-site/package.json", import.meta.url));
     const { generatePreviewToken, buildPreviewUrl } = await import(require.resolve("emdash"));
-    for (const [collection, slug, path] of [
+    for (const [collection, slug, path] of (garden ? [
+      ["posts", "fixture-secret", "/posts/fixture-secret"],
+      ["projects", "fixture-secret", "/projects/fixture-secret"],
+    ] : [
       ["pages", "fixture-page", "/pages/fixture-page"],
       ["posts", "fixture-post", "/posts/fixture-post"],
-    ]) {
+    ])) {
       const row = db.prepare(`SELECT id FROM ec_${collection} WHERE slug = ?`).get(slug);
       if (!row) throw new Error(`Missing preview fixture ${collection}/${slug}`);
       const token = await generatePreviewToken({ contentId: `${collection}:${row.id}`, secret });
@@ -200,7 +209,7 @@ async function verifyDraftPreviews(origin, database) {
       const cacheControl = preview.headers.get("cache-control");
       if (cacheControl !== "private, no-store") throw new Error(`${path}: preview cache-control was ${cacheControl}`);
       const html = await preview.text();
-      if (extractTitle(html) !== `${fixtureSeo(slug).title} — ${site.title}`) {
+      if (garden ? !html.includes("UNPUBLISHED fixture secret") : extractTitle(html) !== `${fixtureSeo(slug).title} — ${site.title}`) {
         throw new Error(`${path}: preview fixture content/SEO was not rendered`);
       }
       const anonymous = await fetch(new URL(path, origin), { redirect: "manual" });
@@ -208,12 +217,30 @@ async function verifyDraftPreviews(origin, database) {
       if (anonymous.status !== 404 || wrongToken.status !== 404) {
         throw new Error(`${path}: anonymous or invalid-token request exposed a draft`);
       }
-      for (const endpoint of ["/sitemap.xml", "/llms.txt"]) {
+      for (const endpoint of ["/sitemap.xml", "/llms.txt", "/rss.xml", "/schemamap.xml", "/.well-known/api-catalog", "/schema/posts.json", "/schema/projects.json", "/schema/pages.json"]) {
         const response = await fetch(new URL(endpoint, origin));
-        if (response.status !== 200 || (await response.text()).includes(path)) {
+        if (![200, 404].includes(response.status) || (await response.text()).includes(path)) {
           throw new Error(`${path}: preview leaked into ${endpoint}`);
         }
       }
+      for (const endpoint of ["/rss.xml", "/sitemap.xml", "/llms.txt", "/schemamap.xml", "/.well-known/api-catalog", "/schema/pages.json", "/schema/posts.json", "/schema/projects.json"]) {
+        const sessionResponse = await fetch(buildPreviewUrl({ path: endpoint, token, baseUrl: origin }));
+        const text = await sessionResponse.text();
+        if (sessionResponse.headers.get("cache-control") !== "private, no-store" ||
+            sessionResponse.headers.get("access-control-allow-origin") !== "*" ||
+            (collection === "posts" && text.includes(`/posts/${slug}`))) {
+          throw new Error(`${endpoint}: verified preview cache, CORS or discovery isolation failed`);
+        }
+      }
+      const markdownPath = `${path}.md`;
+      const markdownPreview = await fetch(buildPreviewUrl({ path: markdownPath, token, baseUrl: origin }));
+      if (markdownPreview.status !== 200 || !markdownPreview.headers.get("content-type")?.startsWith("text/markdown") ||
+          markdownPreview.headers.get("cache-control") !== "private, no-store") {
+        throw new Error(`${markdownPath}: draft preview must render private Markdown`);
+      }
+      if ((await fetch(new URL(markdownPath, origin))).status !== 404) throw new Error(`${markdownPath}: anonymous draft leak`);
+      console.log("Discovery preview responses: CORS *; Cache-Control: private, no-store; published content only");
+      console.log(`${markdownPath}: verified preview HTTP 200 text/markdown; private, no-store; anonymous HTTP 404`);
       // The draft's OG image follows the same rule: the verified token renders
       // it as a session-specific PNG, anonymous requests get nothing.
       const ogPath = `/og/${collection}/${slug}.png`;
@@ -247,6 +274,10 @@ function createGardenCodeSeed(path) {
       data: { title: "Fixture garden project", url: "data:text/html,unsafe-project", content: richContent } }],
     pages: seed.content.pages.filter(entry => entry.slug === "privacy-policy"),
   };
+  for (const collection of ["posts", "projects"]) {
+    seed.content[collection].push({ id: "fixture-secret", slug: "fixture-secret", status: "draft",
+      data: { title: "UNPUBLISHED fixture secret", content: [] } });
+  }
   for (const page of seed.content.pages) {
     for (const block of page.data.content ?? []) {
       if (block._type === "marketing.document") block.content += '<script>unsafe-document-marker</script><p onclick="unsafe-handler-marker">Safe document marker</p>';
@@ -395,7 +426,70 @@ async function verifyUsermaven(origin, unconfigured) {
   console.log("/: Usermaven first-party proxy snippet rendered when USERMAVEN_KEY is configured");
 }
 
+async function verifyDiscovery(origin, { unpublished = false, garden = false } = {}) {
+  const collectionNames = ["pages", "posts", "projects"];
+  const available = unpublished ? ["pages"] : collectionNames;
+  const responses = new Map();
+  for (const endpoint of ["/rss.xml", "/llms.txt", "/sitemap.xml", "/schemamap.xml", "/.well-known/api-catalog", ...collectionNames.map(name => `/schema/${name}.json`)]) {
+    const response = await fetch(new URL(endpoint, origin), { redirect: "manual" });
+    const text = await response.text();
+    const expectedStatus = endpoint.startsWith("/schema/") && !available.some(name => endpoint === `/schema/${name}.json`) ? 404 : 200;
+    if (response.status !== expectedStatus || response.headers.get("access-control-allow-origin") !== "*" ||
+        !response.headers.get("cache-control")?.includes("public, max-age=") || response.headers.get("cache-control").includes("immutable")) {
+      throw new Error(`${endpoint}: expected HTTP ${expectedStatus}, CORS * and bounded public caching, got ${response.status} ${JSON.stringify(Object.fromEntries(response.headers))}`);
+    }
+    if (text.includes("UNPUBLISHED fixture secret") || text.includes("fixture-secret")) throw new Error(`${endpoint}: draft leaked`);
+    responses.set(endpoint, text);
+    console.log(`${endpoint}: HTTP ${response.status}; Access-Control-Allow-Origin: *; Cache-Control: ${response.headers.get("cache-control")}`);
+  }
+  const rss = responses.get("/rss.xml");
+  const rssPaths = [...rss.matchAll(/<item>[\s\S]*?<link>(.*?)<\/link>/g)].map(match => new URL(match[1]).pathname);
+  const expectedPosts = unpublished ? [] : garden ? ["/posts/fixture-post"] : ["/posts/fixture-post", "/posts/fixture-fallback"];
+  if (/\/\/(?:posts\/|rss\.xml)/.test(rss) || rssPaths.length !== expectedPosts.length || expectedPosts.some(path => !rssPaths.includes(path))) {
+    throw new Error("RSS URLs or published post membership are wrong");
+  }
+  for (const collection of collectionNames) {
+    const endpoint = `/schema/${collection}.json`;
+    for (const index of ["/schemamap.xml", "/.well-known/api-catalog"]) {
+      if (responses.get(index).includes(endpoint) !== available.includes(collection)) throw new Error(`${index}: ${collection} availability differs from schema endpoint`);
+    }
+    if (!available.includes(collection)) continue;
+    const text = responses.get(endpoint);
+    const graph = JSON.parse(text)["@graph"];
+    const person = graph.find(node => node["@type"] === "Person");
+    const blog = graph.find(node => node["@type"] === "Blog");
+    if (JSON.stringify(person.sameAs) !== JSON.stringify(["https://www.linkedin.com/in/jimiryquai/", "https://www.x.com/jimiryquai"]) ||
+        !blog.url.endsWith("/posts/") || !blog["@id"].endsWith("/posts/#blog") ||
+        /\/(?:work|blog)\/|\/pages\/contact/.test(text)) throw new Error(`${endpoint}: canonical graph or URL mismatch`);
+    const entryPaths = graph.filter(node => node["@type"] === "WebPage").map(node => new URL(node.url).pathname);
+    const expectedPaths = collection === "posts" ? expectedPosts : collection === "projects" ?
+      (garden ? ["/projects/fixture-project"] : ["/projects/fixture-project", "/projects/fixture-fallback-project"]) :
+      garden ? ["/privacy-policy"] : unpublished ? ["/", "/about"] : ["/", "/about", "/contact", "/pricing", "/privacy-policy", "/pages/fixture-page"];
+    if (entryPaths.length !== expectedPaths.length || expectedPaths.some(path => !entryPaths.includes(path))) throw new Error(`${endpoint}: entry URLs or published membership are wrong`);
+  }
+  console.log("Discovery agreement: schema, schemamap and API catalog expose exactly the published collections; canonical Person and /posts/ Blog; canonical entry URLs");
+  console.log(`RSS: normalized single-slash URLs; ${expectedPosts.length} published items; no draft items`);
+  if (garden) {
+    for (const [path, expected] of [["/posts/fixture-post.md", 200], ["/projects/fixture-project.md", 200], ["/privacy-policy.md", 200], ["/blog/fixture-post.md", 404], ["/work/fixture-project.md", 404], ["/posts/fixture-secret.md", 404], ["/projects/fixture-secret.md", 404], ["/posts/fixture-secret", 404], ["/projects/fixture-secret", 404]]) {
+      const response = await fetch(new URL(path, origin), { redirect: "manual" });
+      if (response.status !== expected || (expected === 200 && !response.headers.get("content-type")?.startsWith("text/markdown"))) throw new Error(`${path}: expected ${expected} Markdown/404, got ${response.status}`);
+      console.log(`${path}: HTTP ${expected}${expected === 200 ? " text/markdown" : ""}`);
+    }
+  }
+  if (!unpublished) {
+    for (const path of ["/posts/fixture-post", "/projects/fixture-project"]) {
+      const html = await (await fetch(new URL(path, origin))).text();
+      if (html.includes("UNPUBLISHED fixture secret")) throw new Error(`${path}: draft leaked through related content`);
+    }
+    const fallback = garden ? "/posts/fixture-post" : "/posts/fixture-fallback";
+    const html = await (await fetch(new URL(fallback, origin))).text();
+    if (!html.includes(`/og${fallback}.png`)) throw new Error(`${fallback}: fallback OG URL does not use the slug`);
+    console.log("Related posts/projects: no draft content; fallback OG URL uses the slug");
+  }
+}
+
 async function verify(origin, unpublished = false, database) {
+  await verifyDiscovery(origin, { unpublished });
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
     "/privacy-policy": "privacy-policy", "/pages/fixture-page": "fixture-page",
@@ -529,6 +623,8 @@ if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seed-garden-code") createGardenCodeSeed(value);
 else if (action === "verify-code") {
+  await verifyDiscovery(value, { garden: true });
+  await verifyDraftPreviews(value, seedPath, true);
   await verifyCodeRenderer(value);
   await verifyUntrustedSurfaces(value, true);
   await verifyOgImages(value,

@@ -1,23 +1,29 @@
+import { getContentPath, discoveryResponse } from "@jamesryan/cms-helpers";
 import type { APIRoute } from "astro";
-import { getEmDashCollection, getSiteSettings } from "emdash";
+import { getEmDashCollection, getSiteSettingsWithCacheHint } from "emdash";
 
-import { resolveBlogSiteIdentity } from "../utils/site-identity";
+import { resolveBlogSiteIdentity } from "../utils/site-identity.ts";
 
-export const GET: APIRoute = async ({ site, url }) => {
-	const siteUrl = site?.toString() || url.origin;
-	const { siteTitle, siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
+export const GET: APIRoute = async ({ site, url, cache }) => {
+	const siteUrl = (site?.toString() || url.origin).replace(/\/+$/, "");
+	const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
+	if (cache?.enabled) cache.set(settingsHint);
+	const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
 
-	const { entries: posts } = await getEmDashCollection("posts", {
+	const { entries: posts, cacheHint } = await getEmDashCollection("posts", {
+		status: "published",
 		orderBy: { published_at: "desc" },
 		limit: 20,
 	});
+
+	if (cache?.enabled) cache.set(cacheHint);
 
 	const items = posts
 		.map((post) => {
 			if (!post.data.publishedAt) return null;
 			const pubDate = post.data.publishedAt.toUTCString();
 
-			const postUrl = `${siteUrl}/posts/${post.id}`;
+			const postUrl = new URL(getContentPath("posts", post.id), siteUrl).href;
 			const title = escapeXml(post.data.title || "Untitled");
 			const description = escapeXml(post.data.excerpt || "");
 
@@ -45,12 +51,12 @@ ${items}
   </channel>
 </rss>`;
 
-	return new Response(rss, {
+	return discoveryResponse(new Response(rss, {
 		headers: {
 			"Content-Type": "application/rss+xml; charset=utf-8",
 			"Cache-Control": "public, max-age=3600",
 		},
-	});
+	}), cache);
 };
 
 const XML_ESCAPE_PATTERNS = [

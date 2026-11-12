@@ -1,97 +1,23 @@
 import type { APIRoute } from "astro";
-import { getEmDashCollection, getSiteSettings } from "emdash";
-import { makeIds, assembleGraph, buildWebSite, buildWebPage, buildArticle, buildPiece, buildImageObject } from "@jdevalk/seo-graph-core";
-import type { Person, Blog } from "schema-dts";
+import { getSiteSettingsWithCacheHint } from "emdash";
+import { getPublishedEntries, getContentPath, publicCollections, discoveryResponse } from "@jamesryan/cms-helpers";
+import { buildSiteGraph } from "@jamesryan/ui/seo-graph";
+import { assembleGraph, buildWebPage, buildArticle } from "@jdevalk/seo-graph-core";
 
-export const GET: APIRoute = async ({ params, site, url }) => {
-	const { collection } = params;
-	if (!collection || !["pages", "posts", "projects"].includes(collection)) {
-		return new Response("Not found", { status: 404 });
-	}
-
-	const siteUrl = site?.toString().replace(/\/$/, "") || url.origin;
-	const settings = await getSiteSettings();
+export const GET: APIRoute = async ({ params, site, url, cache }) => {
+	const collection = publicCollections.find((name) => name === params.collection);
+	if (!collection) return discoveryResponse(new Response("Not found", { status: 404 }), cache, 60);
+	const siteUrl = (site?.toString() || url.origin).replace(/\/+$/, "");
+	const entries = await getPublishedEntries(collection, cache);
+	const { data: settings, cacheHint } = await getSiteSettingsWithCacheHint();
+	if (cache?.enabled) cache.set(cacheHint);
+	if (!entries.length) return discoveryResponse(new Response("Not found", { status: 404 }), cache, 60);
 	const siteTitle = settings?.title || "James Ryan";
 	const siteDescription = settings?.tagline || "AI-native marketer & engineer";
-
-	// Query EmDash collection
-	const { entries } = await getEmDashCollection(collection as "pages" | "posts" | "projects", { limit: 100 });
-
-	const ids = makeIds({ siteUrl });
-
-	const allPieces: any[] = [];
-
-	// Build common site entities
-	const personImagePiece = buildImageObject({
-		id: ids.personImage,
-		url: `${siteUrl}/images/avatar.webp`,
-		width: 400,
-		height: 400,
-	}, ids);
-
-	const personPiece = buildPiece<Person>({
-		"@type": "Person",
-		"@id": ids.person,
-		name: "James Ryan",
-		givenName: "James",
-		familyName: "Ryan",
-		url: `${siteUrl}/about`,
-		image: { "@id": ids.personImage },
-		sameAs: [
-			"https://www.linkedin.com/in/jamesryan.dev/",
-			"https://www.x.com/jimiryquai"
-		],
-		jobTitle: "Senior Power Platform Technical Consultant",
-		worksFor: {
-			"@type": "EmployeeRole",
-			roleName: "Senior Power Platform Technical Consultant",
-			worksFor: {
-				"@type": "Organization",
-				name: "Capgemini",
-				url: "https://www.capgemini.com/",
-			}
-		},
-		knowsAbout: [
-			"Power Platform",
-			"Software Development",
-			"Cloud Computing",
-			"Data Modeling"
-		]
-	});
-
-	const blogId = `${siteUrl}/posts/#blog`;
-	const blogPiece = buildPiece<Blog>({
-		"@type": "Blog",
-		"@id": blogId,
-		name: siteTitle,
-		description: siteDescription,
-		url: `${siteUrl}/posts/`,
-		publisher: { "@id": ids.person },
-		inLanguage: "en-US",
-	});
-
-	const websitePiece = buildWebSite({
-		url: siteUrl,
-		name: siteTitle,
-		description: siteDescription,
-		publisher: { "@id": ids.person },
-	}, ids);
-
-	allPieces.push(personPiece, personImagePiece, blogPiece, websitePiece);
+	const { ids, blogId, pieces: allPieces } = buildSiteGraph(siteUrl, siteTitle, siteDescription);
 
 	for (const entry of entries) {
-		let path = `/pages/${entry.id}`;
-		if (collection === "posts") {
-			path = `/posts/${entry.id}`;
-		} else if (collection === "projects") {
-			path = `/work/${entry.id}`;
-		} else if (entry.id === "home") {
-			path = "/";
-		} else if (["about", "pricing", "privacy-policy"].includes(entry.id)) {
-			path = `/${entry.id}`;
-		}
-
-		const entryUrl = `${siteUrl}${path}`;
+		const entryUrl = new URL(getContentPath(collection, entry.id), siteUrl).href;
 		const data = entry.data as unknown as Record<string, unknown>;
 		const title = (typeof data.title === "string" ? data.title : null) || (typeof data.quote === "string" ? data.quote : null) || "Untitled";
 		const desc = (typeof data.excerpt === "string" ? data.excerpt : null) || (typeof data.author === "string" ? data.author : null) || "";
@@ -127,10 +53,10 @@ export const GET: APIRoute = async ({ params, site, url }) => {
 
 	const graph = assembleGraph(allPieces);
 
-	return new Response(JSON.stringify(graph, null, 2), {
+	return discoveryResponse(new Response(JSON.stringify(graph, null, 2), {
 		headers: {
 			"Content-Type": "application/ld+json; charset=utf-8",
 			"Cache-Control": "public, max-age=300",
 		},
-	});
+	}), cache, 300);
 };
