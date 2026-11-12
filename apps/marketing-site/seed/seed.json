@@ -42,7 +42,8 @@
               "team",
               "faq",
               "stats",
-              "prose"
+              "prose",
+              "posts"
             ]
           }
         },
@@ -597,6 +598,13 @@
                   "url": "/about"
                 }
               ]
+            },
+            {
+              "_type": "posts",
+              "_key": "posts",
+              "_version": 1,
+              "variant": "featured-grid",
+              "count": 4
             }
           ]
         }
@@ -3838,6 +3846,51 @@
               "slug": "content",
               "label": "Content",
               "type": "portableText"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "posts",
+      "label": "Posts",
+      "description": "Recent posts pulled from a shared posts collection rather than written inline, with an optional heading, a count (4 by default), and an optional category taxonomy slug to filter by. Choose featured-grid when the first post with an image is featured and the remaining posts sit in a grid. Choose grid when posts sit side by side as equal cards. Choose list when posts sit in a vertical list of entries.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "featured-grid",
+                  "grid",
+                  "list"
+                ]
+              }
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "count",
+              "label": "Count",
+              "type": "integer",
+              "defaultValue": 4,
+              "validation": {
+                "min": 1,
+                "max": 24
+              }
+            },
+            {
+              "slug": "category",
+              "label": "Category",
+              "type": "string"
             }
           ]
         }

@@ -1,94 +1,27 @@
 ---
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
-import {
-	getEmDashCollection,
-	getTermsForEntries,
-	getSiteSettings,
-	getSeoMeta,
-	getContentSeo,
-} from "emdash";
-import { Image } from "emdash/ui";
-import { getImage } from "astro:assets";
+import { getSiteSettings, getSeoMeta, getContentSeo } from "emdash";
 import Base from "../layouts/Base.astro";
 import PageLayout from "../components/page-builder/PageLayout.astro";
 import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
-import PostCard from "@jamesryan/ui/components/PostCard.astro";
-import { getReadingTime } from "@jamesryan/cms-helpers";
+import { resolveFeaturedPostPreload } from "../components/page-builder/featured-post-preload";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
 
 const route = await getPublishedRoute("/", Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
 const pageLayout = resolvePageLayout(page);
-const { entries: posts, cacheHint: postsCacheHint } = await getEmDashCollection("posts", {
-	orderBy: { published_at: "desc" },
-	limit: 4, // 1 featured + 3 grid
-});
 const { siteTagline } = resolveBlogSiteIdentity(await getSiteSettings());
 
 const pageTitle = page.data.title;
 const seo = getSeoMeta(page);
 const homeSeo = getContentSeo(page);
 
-// Combine cache hints
-if (Astro.cache?.enabled) {
-	if (postsCacheHint) Astro.cache.set(postsCacheHint);
-}
-
-const visiblePosts = posts;
-const featuredPost = visiblePosts.find((p) => p.data.featured_image) || visiblePosts[0];
-
-let preloadedImageUrl = "";
-if (featuredPost?.data.featured_image) {
-	try {
-		const rawSrc = featuredPost.data.featured_image.src || `/_emdash/api/media/file/${featuredPost.data.featured_image.id}`;
-		const optimized = await getImage({
-			src: rawSrc,
-			width: featuredPost.data.featured_image.width || 1200,
-			height: featuredPost.data.featured_image.height || 750,
-			format: "webp",
-		});
-		preloadedImageUrl = optimized.src;
-	} catch (e) {
-		console.error("Failed to generate preload image URL in index.astro:", e);
-		preloadedImageUrl = featuredPost.data.featured_image.src || `/_emdash/api/media/file/${featuredPost.data.featured_image.id}`;
-	}
-}
-const featuredIndex = featuredPost ? visiblePosts.indexOf(featuredPost) : -1;
-const gridPosts = visiblePosts.filter((_, i) => i !== featuredIndex).slice(0, 3);
-
-// Get tags and bylines
-const tagEntryIds = [
-	...(featuredPost ? [featuredPost.data.id] : []),
-	...gridPosts.map((p) => p.data.id),
-];
-const tagsByEntry = await getTermsForEntries("posts", tagEntryIds, "tag");
-
-const featuredTags = featuredPost
-	? (tagsByEntry.get(featuredPost.data.id) ?? []).map((t) => ({
-			slug: t.slug,
-			label: t.label,
-		}))
-	: [];
-const featuredBylines = featuredPost?.data.bylines ?? [];
-
-const gridPostsWithTags = gridPosts.map((post) => ({
-	post,
-	tags: (tagsByEntry.get(post.data.id) ?? []).map((t) => ({
-		slug: t.slug,
-		label: t.label,
-	})),
-	bylines: post.data.bylines ?? [],
-}));
-
-function formatDate(date: Date | null | undefined) {
-	if (!date) return null;
-	return date.toLocaleDateString("en-US", {
-		year: "numeric",
-		month: "long",
-		day: "numeric",
-	});
-}
+// The featured post's image is Home's LCP: preload it when the layout's posts
+// block features one. The read is shared with the section that renders it.
+const preloadedImageUrl = pageLayout
+	? await resolveFeaturedPostPreload(pageLayout.layout.map((block) => ({ ...block })), pageLayout.group)
+	: "";
 ---
 
 <Base
@@ -107,121 +40,4 @@ function formatDate(date: Date | null | undefined) {
 	)}
 
 	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} edit={page.edit.layout} />}
-
-	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 pb-24 sm:pb-32 -mt-8 sm:-mt-12">
-		{
-			posts.length > 0 && (
-				<div class="space-y-24">
-					{/* Featured Post */}
-					{featuredPost && (
-						<section class="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-							<div class="lg:col-span-7 aspect-[16/10] w-full overflow-hidden rounded-3xl bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5">
-								<a href={`/posts/${featuredPost.id}`} class="block w-full h-full">
-									<Image 
-										image={featuredPost.data.featured_image} 
-										class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-										style="width: 100%; height: 100%; object-fit: cover;"
-										loading="eager"
-										fetchpriority="high"
-									/>
-								</a>
-							</div>
-							<div class="lg:col-span-5 flex flex-col justify-center">
-								<div class="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-olive-600 dark:text-olive-400 mb-4">
-									{featuredBylines.length > 0 && (
-										<>
-											<div class="flex items-center gap-1.5 whitespace-nowrap">
-												{featuredBylines.slice(0, 2).map((credit, index) => (
-													<span class="inline-flex items-center gap-1.5">
-														{index > 0 && <span class="text-olive-400 dark:text-olive-600">,</span>}
-														{credit.byline.avatarMediaId && (
-															<img
-																src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
-																alt={credit.byline.displayName}
-																class="w-5 h-5 rounded-full object-cover"
-															/>
-														)}
-														<span class="font-medium text-olive-700 dark:text-olive-300">
-															{credit.byline.displayName}
-														</span>
-													</span>
-												))}
-												{featuredBylines.length > 2 && (
-													<span class="text-xs text-olive-500 dark:text-olive-400 ml-0.5">
-														+{featuredBylines.length - 2}
-													</span>
-												)}
-											</div>
-											<span class="w-1 h-1 rounded-full bg-olive-300 dark:bg-olive-700" />
-										</>
-									)}
-									{formatDate(featuredPost.data.publishedAt) && (
-										<time>{formatDate(featuredPost.data.publishedAt)}</time>
-									)}
-									<span class="w-1 h-1 rounded-full bg-olive-300 dark:bg-olive-700" />
-									<span>
-										{getReadingTime(featuredPost.data.content)} min read
-									</span>
-								</div>
-
-								<a href={`/posts/${featuredPost.id}`} class="block group-hover:opacity-90">
-									<h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-olive-950 dark:text-white leading-tight group-hover:text-olive-700 dark:group-hover:text-olive-300 transition-colors duration-150">
-										{featuredPost.data.title}
-									</h2>
-								</a>
-
-								{featuredPost.data.excerpt && (
-									<p class="mt-4 text-base sm:text-lg text-olive-700 dark:text-olive-400 leading-relaxed font-sans">
-										{featuredPost.data.excerpt}
-									</p>
-								)}
-
-								{featuredTags.length > 0 && (
-									<div class="mt-6 flex flex-wrap gap-2">
-										{featuredTags.map((tag) => (
-											<a 
-												href={`/tag/${tag.slug}`} 
-												class="inline-block px-3 py-1 text-xs text-olive-700 dark:text-olive-300 bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5 rounded-full hover:text-olive-950 dark:hover:text-white hover:bg-olive-950/5 dark:hover:bg-white/10 transition-colors duration-150"
-											>
-												{tag.label}
-											</a>
-										))}
-									</div>
-								)}
-							</div>
-						</section>
-					)}
-
-					{/* Latest Posts Grid */}
-					{gridPostsWithTags.length > 0 && (
-						<section class="border-t border-olive-950/10 dark:border-white/10 pt-16 font-sans">
-							<div class="flex justify-between items-baseline mb-12">
-								<h2 class="text-xs font-semibold tracking-widest uppercase text-olive-500 dark:text-olive-400">Recent Posts</h2>
-								<a 
-									href="/posts" 
-									class="text-sm font-medium text-olive-900 dark:text-white hover:text-olive-700 dark:hover:text-olive-300 transition-colors duration-150"
-								>
-									View all posts &rarr;
-								</a>
-							</div>
-							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
-								{gridPostsWithTags.map(({ post, tags, bylines }) => (
-									<PostCard
-										title={post.data.title ?? "Untitled"}
-										excerpt={post.data.excerpt}
-										featuredImage={post.data.featured_image}
-										href={`/posts/${post.id}`}
-										date={post.data.publishedAt ?? undefined}
-										readingTime={getReadingTime(post.data.content)}
-										tags={tags}
-										bylines={bylines}
-									/>
-								))}
-							</div>
-						</section>
-					)}
-				</div>
-			)
-		}
-	</div>
 </Base>

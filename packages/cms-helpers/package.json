@@ -5,7 +5,8 @@
   "type": "module",
   "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./reading-time": "./src/reading-time.ts"
   },
   "scripts": {
     "test": "node --experimental-test-module-mocks --test test/*.test.mjs"
