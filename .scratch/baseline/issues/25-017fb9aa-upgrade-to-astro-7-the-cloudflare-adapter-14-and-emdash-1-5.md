@@ -15,9 +15,9 @@ Astro <7.2.8 has a critical advisory, "Remote code execution through AVIF image 
 3. Check whether EmDash 1.5 ships the `$media` `file:` seed option, and if so remove `patches/emdash@1.4.0.patch` (backlog item).
 4. Remove any `pnpm.overrides` from ticket 24 that the upgrade makes unnecessary.
 
-**Blocked by:** 24-1e3128bf; emdash-plugin-page-builder v1/22-6f8475dd (0.3.0 on npm with a widened Astro peer range).
+**Blocked by:** 24-1e3128bf.
 
-**Status:** needs-triage
+**Status:** in progress
 
 - [ ] Both apps run Astro 7, `@astrojs/cloudflare` 14 and EmDash 1.5; `pnpm audit` shows no Astro advisory (output in a comment).
 - [ ] CI passes, staging deploys through the migration pipeline with the new fingerprints, and the smoke, rendered SEO, media and accessibility checks pass there (output in a comment).
@@ -25,3 +25,5 @@ Astro <7.2.8 has a critical advisory, "Remote code execution through AVIF image 
 ## Comments
 
 **2026-11-12 Claude (orchestrator):** Raised from James's request (Astro security advisories, not urgent), relayed by the page-builder session with versions checked by the orchestrator on npm. Kept at `needs-triage` until page-builder 0.3.0 is on npm, since the tracker can't see another repo's ticket. Risk: high (framework upgrade and new migrations on both apps, through the deploy pipeline).
+
+**2026-11-12 Claude (orchestrator):** Unblocked: 24 done (dc101c4), page-builder 0.3.0 on npm with peer `astro ^6.4.8 || ^7.2.8` (checked on npm). Builder Codex Sol; risk high stands.
