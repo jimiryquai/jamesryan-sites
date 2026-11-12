@@ -72,3 +72,4 @@ Staging sitemap paths against staging, 2026-11-12T09:50:12Z, deploy run 43194270
 - For James: fill the Posts collection description (Content Types → Posts). Until then, `/posts` uses the tagline. See `docs/posts-description.md`.
 - Evidence: `.orchestrate/runs/2026-11-12-23-published-pages/`.
 
+**2026-11-12 Claude (orchestrator):** Now on production (Promotion A, run 43246552093). All 9 sitemap paths on jamesryan.dev return 200. `/pricing`, `/privacy-policy`, `/contact`, `/projects` and the template pages return 404. The rendered SEO check leaves only `/posts`'s description, which waits for James to fill in the Posts collection description.

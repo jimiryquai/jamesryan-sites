@@ -21,3 +21,5 @@ James wants Cloudflare's agent tooling (2026-11-12, https://github.com/cloudflar
 ## Comments
 
 **2026-11-12 Claude (orchestrator):** Raised from James's question. Risk: high (OAuth access to the Cloudflare account; the config decides when a browser login can start).
+
+**2026-11-12 Claude (orchestrator):** The helper stopped on telemetry: Cloudflare's MCP server logs tool name, user ID and error code per call on its side (`cloudflare/mcp` `src/metrics.ts`). James decided "yes": accept it, record it in `docs/mcp.md`. Resumed with mcporter `--no-oauth` as the guard.
