@@ -12,10 +12,10 @@ James wants Cloudflare's agent tooling (2026-11-12, https://github.com/cloudflar
 
 **Blocked by:** none.
 
-**Status:** in progress
+**Status:** needs-james
 
-- [ ] `pnpm -s mcp:cloudflare` reaches the Cloudflare MCP server from an on-request config; with no cached grant it fails with the sign-in command instead of opening a browser (test, and the output in a comment).
-- [ ] `docs/mcp.md` covers scopes, the grant's cache and revocation, and the telemetry check; `.mcp.json` is unchanged.
+- [x] `pnpm -s mcp:cloudflare` reaches the Cloudflare MCP server from an on-request config; with no cached grant it fails with the sign-in command instead of opening a browser (test, and the output in a comment).
+- [x] `docs/mcp.md` covers scopes, the grant's cache and revocation, and the telemetry check; `.mcp.json` is unchanged.
 - [ ] After James signs in read-only, `pnpm -s mcp:cloudflare list` shows the server healthy (orchestrator; output in a comment).
 
 ## Comments
@@ -23,3 +23,11 @@ James wants Cloudflare's agent tooling (2026-11-12, https://github.com/cloudflar
 **2026-11-12 Claude (orchestrator):** Raised from James's question. Risk: high (OAuth access to the Cloudflare account; the config decides when a browser login can start).
 
 **2026-11-12 Claude (orchestrator):** The helper stopped on telemetry: Cloudflare's MCP server logs tool name, user ID and error code per call on its side (`cloudflare/mcp` `src/metrics.ts`). James decided "yes": accept it, record it in `docs/mcp.md`. Resumed with mcporter `--no-oauth` as the guard.
+
+**2026-11-12 Claude (orchestrator):** Built by h27-copilot (Copilot, GPT-6.1 Terra), PR #32, merged to master as d650bb3.
+- **Who merged it:** the merge happened at 15:37 under James's GitHub account, before the orchestrator's CI re-run finished. The helper only opened the PR (its session log shows `gh pr create` and no merge). The orchestrator has asked the page-builder session whether it merged it. The orchestrator's review and CI re-run (exit 0) both pass after the fact.
+- **The guard:** `pnpm -s mcp:cloudflare` runs `scripts/mcp-no-oauth.mjs`, which allows only `list`, `call` and `resource`, always passes `--no-oauth`, and sets `MCPORTER_OAUTH_NO_BROWSER=1`.
+- **Box 1:** run by the orchestrator with no grant. It opened no browser and printed `cloudflare (auth required …)` and `If authorization is required, ask James to run: pnpm exec mcporter --config config/mcporter.cloudflare.json auth cloudflare`.
+- **Box 2:** `docs/mcp.md` covers scopes, the cache and revocation, and the telemetry decision.
+- **Box 3** waits on James signing in, read-only.
+
