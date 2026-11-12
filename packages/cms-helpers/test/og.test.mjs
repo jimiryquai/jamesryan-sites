@@ -23,8 +23,10 @@ class FakeImageResponse extends Response {
 }
 mock.module("emdash", { namedExports: {
 	async getEmDashEntry(collection, slug) {
+		assert.ok(typeof collection === "string" && Object.hasOwn(records, collection),
+			`mock: getEmDashEntry received a non-collection ${String(collection)}`);
 		queries.push({ kind: "entry", collection, slug });
-		return { entry: records[collection]?.find((e) => e.id === slug) ?? null, cacheHint: { tags: [collection] } };
+		return { entry: records[collection].find((e) => e.id === slug) ?? null, cacheHint: { tags: [collection] } };
 	},
 	async getSiteSettingsWithCacheHint() {
 		queries.push({ kind: "settings" });
@@ -33,7 +35,7 @@ mock.module("emdash", { namedExports: {
 	getRequestContext: () => requestContext,
 } });
 mock.module("workers-og", { namedExports: { ImageResponse: FakeImageResponse } });
-const { escapeHtml, getOgEntryImage, getOgSiteImage, ogFontData } = await import("../src/og.ts");
+const { getOgEntryImage, getOgSiteImage, ogFontData } = await import("../src/og.ts");
 
 const options = { defaultTitle: "James Ryan", defaultDescription: "", socialBackground: "linear-gradient(135deg, #21221b 0%, #3e4034 50%, #5b5e4c 100%)" };
 const request = (slug, overrides = {}) => ({
@@ -43,9 +45,28 @@ const request = (slug, overrides = {}) => ({
 	...overrides,
 });
 
-test("escapeHtml neutralizes markup-significant characters", () => {
-	assert.equal(escapeHtml(`C# & .NET <tag> "quoted" 'single'`), "C# &amp; .NET &lt;tag&gt; &quot;quoted&quot; &#39;single&#39;");
-});
+/** Every text string in the VNode tree, in document order. */
+const textOf = (node) => {
+	if (typeof node === "string") return [node];
+	const children = node.props?.children;
+	if (!children) return [];
+	return Array.isArray(children) ? children.flatMap(textOf) : textOf(children);
+};
+/** Every element node matching a predicate, including the root. */
+const nodesWith = (node, predicate) => {
+	if (!node || typeof node !== "object") return [];
+	const self = predicate(node) ? [node] : [];
+	const children = node.props?.children;
+	const below = Array.isArray(children)
+		? children.flatMap((child) => nodesWith(child, predicate))
+		: typeof children === "object" && children
+			? nodesWith(children, predicate)
+			: [];
+	return [...self, ...below];
+};
+const texts = (element) => textOf(element).join(" ");
+const hasFontSize = (element, fontSize) =>
+	nodesWith(element, (node) => node.props?.style?.fontSize === fontSize);
 
 test("og prefixes map to their collections and render the entry card", async () => {
 	for (const [slug, collection, subtitle] of [["posts/fixture-post", "posts", "Post excerpt"], ["projects/fixture-project", "projects", "Project summary"], ["pages/home", "pages", undefined]]) {
@@ -55,16 +76,27 @@ test("og prefixes map to their collections and render the entry card", async () 
 		assert.equal(response.headers.get("Content-Type"), "image/png", slug);
 		assert.ok(queries.some((q) => q.kind === "entry" && q.collection === collection), slug);
 		const { element } = rendered[0];
-		assert.ok(element.includes(`Title of ${slug.split("/")[1]}`), slug);
-		if (subtitle) assert.ok(element.includes(subtitle), slug);
-		else assert.ok(!element.includes("font-size:24px"), `${slug}: no subtitle row for a page`);
-		assert.ok(element.includes("Configured Site"), slug);
-		assert.ok(element.includes(options.socialBackground), slug);
+		const cardText = texts(element);
+		assert.ok(cardText.includes(`Title of ${slug.split("/")[1]}`), slug);
+		assert.ok(cardText.includes("Configured Site"), slug);
+		const [root] = nodesWith(element, (node) => node.props?.style?.width === 1200);
+		assert.equal(root?.props?.style?.backgroundImage, options.socialBackground, slug);
+		const [footer] = nodesWith(element, (node) => node.props?.style?.borderTop === "1px solid rgba(255, 255, 255, 0.25)");
+		if (subtitle) {
+			const [subtitleNode] = hasFontSize(element, 24);
+			assert.ok(subtitleNode, `${slug}: subtitle node present`);
+			assert.ok(texts(subtitleNode).includes(subtitle), slug);
+			assert.equal(footer?.props?.style?.justifyContent, "space-between", slug);
+		} else {
+			assert.equal(hasFontSize(element, 24).length, 0, `${slug}: no subtitle node for a page`);
+			assert.equal(footer?.props?.style?.justifyContent, "flex-end", slug);
+		}
 	}
 });
 
-test("unknown prefixes, missing slugs and missing entries return 404 without immutable caching", async () => {
-	for (const slug of ["blog/fixture-post", "work/fixture-project", "tag/fixture-post", "fixture-post", "posts/", "posts/missing-post"]) {
+test("unknown prefixes, prototype keys, missing slugs and missing entries return 404 without immutable caching", async () => {
+	for (const slug of ["blog/fixture-post", "work/fixture-project", "tag/fixture-post", "fixture-post", "posts/", "posts/missing-post",
+		"constructor/fixture-post", "toString/fixture-post", "__proto__/fixture-post"]) {
 		queries.length = 0;
 		const response = await getOgEntryImage(request(slug), options);
 		assert.equal(response.status, 404, slug);
@@ -102,17 +134,19 @@ test("preview and edit sessions render drafts with private, no-store and no rout
 	}
 });
 
-test("titles, subtitles and hosts are HTML-escaped in the card", async () => {
-	records.posts.push(entry("escaped-post", { title: `R&D <b>bold</b> "quotes"`, excerpt: "A & B <i>italic</i>" }));
+test("titles, subtitles and hosts render as exact glyphs with no injected elements", async () => {
+	records.posts.push(entry("punctuated-post", { title: `R&D <b>bold</b> "quotes" 'single'`, excerpt: "A & B <i>italic</i>" }));
 	try {
 		rendered.length = 0;
-		const response = await getOgEntryImage(request("posts/escaped-post"), options);
+		const response = await getOgEntryImage(request("posts/punctuated-post"), options);
 		assert.equal(response.status, 200);
 		const { element } = rendered[0];
-		assert.ok(element.includes("R&amp;D &lt;b&gt;bold&lt;/b&gt; &quot;quotes&quot;"), element);
-		assert.ok(element.includes("A &amp; B &lt;i&gt;italic&lt;/i&gt;"), element);
-		assert.ok(element.includes("example.com"), element);
-		assert.ok(!element.includes("<b>bold</b>"), element);
+		const cardText = texts(element);
+		assert.ok(cardText.includes(`R&D <b>bold</b> "quotes" 'single'`), cardText);
+		assert.ok(cardText.includes("A & B <i>italic</i>"), cardText);
+		assert.ok(cardText.includes("example.com"), cardText);
+		assert.ok(!cardText.includes("&amp;") && !cardText.includes("&lt;") && !cardText.includes("&quot;"), cardText);
+		assert.equal(nodesWith(element, (node) => node.type === "b" || node.type === "i").length, 0, "no injected markup elements");
 	} finally {
 		records.posts.pop();
 	}
@@ -132,10 +166,14 @@ test("the site card renders configured identity and sets the settings cache hint
 	const response = await getOgSiteImage(request(undefined, { cache: { enabled: true, set: (h) => hints.push(h) } }), options);
 	assert.equal(response.status, 200);
 	const { element } = rendered[0];
-	assert.ok(element.includes("Configured Site"), "site title rendered");
-	assert.ok(element.includes("Configured tagline"), "tagline rendered as the card description");
-	assert.ok(element.includes(options.socialBackground));
-	assert.ok(element.includes("example.com"));
+	const cardText = texts(element);
+	assert.ok(cardText.includes("Configured Site"), "site title rendered");
+	assert.ok(cardText.includes("Configured tagline"), "tagline rendered as the card description");
+	assert.ok(cardText.includes("example.com"));
+	const [root] = nodesWith(element, (node) => node.props?.style?.width === 1200);
+	assert.equal(root?.props?.style?.backgroundImage, options.socialBackground);
+	const [descriptionNode] = hasFontSize(element, 60);
+	assert.ok(descriptionNode && texts(descriptionNode).includes("Configured tagline"), "60px description node present");
 	assert.ok(hints.map((h) => h.tags).flat(2).includes("settings"));
 	assert.ok(!response.headers.get("Cache-Control").includes("immutable"));
 });
@@ -148,8 +186,9 @@ test("the site card falls back to app defaults and omits the description cleanly
 		const response = await getOgSiteImage(request(undefined), { ...options, defaultDescription: "" });
 		assert.equal(response.status, 200);
 		const { element } = rendered[0];
-		assert.ok(element.includes("James Ryan"), "default title used when settings are unset");
-		assert.ok(!element.includes("font-size:60px"), "no description block when no tagline and no default");
+		const cardText = texts(element);
+		assert.ok(cardText.includes("James Ryan"), "default title used when settings are unset");
+		assert.equal(hasFontSize(element, 60).length, 0, "no description node when no tagline and no default");
 	} finally {
 		settings = previous;
 	}

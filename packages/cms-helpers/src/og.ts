@@ -1,6 +1,6 @@
 import { getEmDashEntry, getSiteSettingsWithCacheHint, getRequestContext, type CacheHint } from "emdash";
 import { interLatinWoff } from "./og-fonts.ts";
-import type { PublicCollection } from "./public-collections.ts";
+import { publicCollections } from "./public-collections.ts";
 import { ImageResponse } from "workers-og";
 
 /**
@@ -8,10 +8,12 @@ import { ImageResponse } from "workers-og";
  * owns the URL rule): `/og/posts/<slug>.png`, `/og/projects/<slug>.png`,
  * `/og/pages/<slug>.png` and `/og/default.png`, rendered by workers-og from
  * bundled Inter bytes — zero outbound requests at render time.
+ *
+ * Cards are Satori VNodes, not HTML strings: workers-og's HTMLRewriter path
+ * does not decode entities (an escaped `&amp;` would render literally), while
+ * a VNode hands plain JS strings straight to Satori — text children carry
+ * exact glyphs with no parser and no injection surface.
  */
-
-/** `packages/ui` Base.astro emits exactly these prefixes for these collections. */
-const OG_COLLECTIONS: Record<string, PublicCollection> = { posts: "posts", projects: "projects", pages: "pages" };
 
 const NOT_FOUND_CACHE_CONTROL = "public, max-age=60";
 const PUBLIC_CACHE_CONTROL = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800";
@@ -33,13 +35,14 @@ export interface OgRequestContext {
 	cache?: { enabled: boolean; set: (hint: CacheHint | false) => void } | null;
 }
 
-export function escapeHtml(text: string): string {
-	return text
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#39;");
+/** A Satori element: camelCase `style` props, string or element children. */
+type OgStyle = Record<string, string | number>;
+type OgElement = Extract<ConstructorParameters<typeof ImageResponse>[0], { props: unknown }>;
+
+/** Every div is display:flex: Satori requires it of any element whose children
+ * are not a bare string, and consistent flex keeps the card layout explicit. */
+function div(style: OgStyle, children: string | OgElement[]): OgElement {
+	return { type: "div", props: { style: { display: "flex", ...style }, children } } as OgElement;
 }
 
 let cachedFontData: Array<{ name: string; data: ArrayBuffer; weight: number; style: "normal" }> | undefined;
@@ -81,8 +84,8 @@ async function siteIdentity(options: OgSiteOptions): Promise<{ title: string; de
 	};
 }
 
-function ogImage(html: string, sessionRender: boolean): ImageResponse {
-	return new ImageResponse(html, {
+function ogImage(element: OgElement, sessionRender: boolean): ImageResponse {
+	return new ImageResponse(element, {
 		width: 1200,
 		height: 630,
 		fonts: ogFontData(),
@@ -99,21 +102,47 @@ function notFound(): Response {
 	});
 }
 
-function cardShell(options: OgSiteOptions, body: string, footer: { content: string; spread: boolean }): string {
-	// Compact markup, and display:flex on every div: satori counts whitespace
-	// text nodes between tags as children, and workers-og's parser wraps even a
-	// single text child in an array — so any div without display:flex throws.
-	return (
-		`<div style="display: flex; flex-direction: column; width: 1200px; height: 630px; background-image: ${options.socialBackground}; color: #ffffff; padding: 70px 90px; justify-content: space-between; font-family: 'Inter', sans-serif;">` +
-		body +
-		`<div style="display: flex; flex-direction: row; justify-content: ${footer.spread ? "space-between" : "flex-end"}; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.25); padding-top: 35px; margin-top: auto;">` +
-		footer.content +
-		"</div></div>"
+function hostBadge(host: string): OgElement {
+	return div(
+		{
+			fontSize: 20,
+			fontWeight: 600,
+			background: "rgba(255, 255, 255, 0.18)",
+			padding: "12px 28px",
+			borderRadius: 100,
+			border: "1px solid rgba(255, 255, 255, 0.1)",
+		},
+		host,
 	);
 }
 
-function hostBadge(url: URL): string {
-	return `<div style="display: flex; font-size: 20px; font-weight: 600; background: rgba(255, 255, 255, 0.18); padding: 12px 28px; border-radius: 100px; border: 1px solid rgba(255, 255, 255, 0.1);">${escapeHtml(url.host)}</div>`;
+function card(options: OgSiteOptions, body: OgElement, footer: { children: OgElement[]; spread: boolean }): OgElement {
+	return div(
+		{
+			flexDirection: "column",
+			width: 1200,
+			height: 630,
+			backgroundImage: options.socialBackground,
+			color: "#ffffff",
+			padding: "70px 90px",
+			justifyContent: "space-between",
+			fontFamily: "'Inter', sans-serif",
+		},
+		[
+			body,
+			div(
+				{
+					flexDirection: "row",
+					justifyContent: footer.spread ? "space-between" : "flex-end",
+					alignItems: "center",
+					borderTop: "1px solid rgba(255, 255, 255, 0.25)",
+					paddingTop: 35,
+					marginTop: "auto",
+				},
+				footer.children,
+			),
+		],
+	);
 }
 
 /** `/og/<collection>/<slug>.png`: the entry's title and excerpt/summary. */
@@ -121,7 +150,9 @@ export async function getOgEntryImage(request: OgRequestContext, options: OgSite
 	const slug = request.params.slug ?? "";
 	const separator = slug.indexOf("/");
 	if (separator <= 0) return notFound();
-	const collection = OG_COLLECTIONS[slug.slice(0, separator)];
+	// Resolve the prefix against the known collections (a plain-object map would
+	// match prototype keys like "constructor" and 500 downstream).
+	const collection = publicCollections.find((collection) => collection === slug.slice(0, separator));
 	const entryId = slug.slice(separator + 1);
 	if (!collection || !entryId) return notFound();
 
@@ -142,16 +173,25 @@ export async function getOgEntryImage(request: OgRequestContext, options: OgSite
 	const subtitle: string = entry.data.excerpt || entry.data.summary || "";
 	const footer = subtitle
 		? {
-				content: `<div style="display: flex; font-size: 24px; opacity: 0.85; font-weight: 400; max-width: 800px; white-space: nowrap; overflow: hidden;">${escapeHtml(subtitle)}</div>${hostBadge(request.url)}`,
+				children: [
+					div({ fontSize: 24, opacity: 0.85, fontWeight: 400, maxWidth: 800, whiteSpace: "nowrap", overflow: "hidden" }, subtitle),
+					hostBadge(request.url.host),
+				],
 				spread: true,
 			}
-		: { content: hostBadge(request.url), spread: false };
-	const html = cardShell(
+		: { children: [hostBadge(request.url.host)], spread: false };
+	const element = card(
 		options,
-		`<div style="display: flex; flex-direction: column;"><div style="display: flex; font-size: 26px; font-weight: 600; opacity: 0.95; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 2.5px;">${escapeHtml(identity.title)}</div><div style="display: flex; flex-direction: column; font-size: 60px; font-weight: 700; line-height: 1.25; max-height: 310px; overflow: hidden;">${escapeHtml(title)}</div></div>`,
+		div({ flexDirection: "column" }, [
+			div(
+				{ fontSize: 26, fontWeight: 600, opacity: 0.95, marginBottom: 24, textTransform: "uppercase", letterSpacing: 2.5 },
+				identity.title,
+			),
+			div({ flexDirection: "column", fontSize: 60, fontWeight: 700, lineHeight: 1.25, maxHeight: 310, overflow: "hidden" }, title),
+		]),
 		footer,
 	);
-	return ogImage(html, sessionRender);
+	return ogImage(element, sessionRender);
 }
 
 /** `/og/default.png`: the site card — settings identity, never invented copy. */
@@ -162,12 +202,12 @@ export async function getOgSiteImage(request: Omit<OgRequestContext, "params">, 
 	else if (request.cache?.enabled) request.cache.set(identity.cacheHint);
 
 	const description = identity.description
-		? `<div style="display: flex; flex-direction: column; font-size: 60px; font-weight: 700; line-height: 1.3; margin-bottom: 24px;">${escapeHtml(identity.description)}</div>`
-		: "";
-	const html = cardShell(
-		options,
-		`<div style="display: flex; flex-direction: column; justify-content: center; height: 100%;"><div style="display: flex; font-size: 32px; font-weight: 600; opacity: 0.95; margin-bottom: 28px; text-transform: uppercase; letter-spacing: 2.5px;">${escapeHtml(identity.title)}</div>${description}</div>`,
-		{ content: hostBadge(request.url), spread: false },
-	);
-	return ogImage(html, sessionRender);
+		? div({ flexDirection: "column", fontSize: 60, fontWeight: 700, lineHeight: 1.3, marginBottom: 24 }, identity.description)
+		: null;
+	const body = div({ flexDirection: "column", justifyContent: "center", height: "100%" }, [
+		div({ fontSize: 32, fontWeight: 600, opacity: 0.95, marginBottom: 28, textTransform: "uppercase", letterSpacing: 2.5 }, identity.title),
+		...(description ? [description] : []),
+	]);
+	const element = card(options, body, { children: [hostBadge(request.url.host)], spread: false });
+	return ogImage(element, sessionRender);
 }

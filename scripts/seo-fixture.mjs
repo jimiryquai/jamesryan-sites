@@ -88,13 +88,13 @@ const entries = {
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
+      data: { title: "Fixture post heading", excerpt: `${description("post excerpt")} & shipped`, content: codeBlock, featured_image: image } },
     { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading", summary: description("project summary"), content: codeBlock, featured_image: image } },
+      data: { title: "Fixture project heading & scope", summary: description("project summary"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
   ],
@@ -199,6 +199,23 @@ async function verifyDraftPreviews(origin, database) {
           throw new Error(`${path}: preview leaked into ${endpoint}`);
         }
       }
+      // The draft's OG image follows the same rule: the verified token renders
+      // it as a session-specific PNG, anonymous requests get nothing.
+      const ogPath = `/og/${collection}/${slug}.png`;
+      const ogPreview = await fetch(new URL(`${ogPath}?_preview=${encodeURIComponent(token)}`, origin), { redirect: "manual" });
+      const ogBytes = new Uint8Array(await ogPreview.arrayBuffer());
+      const ogPng = ogBytes.length > 4 && ogBytes[0] === 0x89 && ogBytes[1] === 0x50 && ogBytes[2] === 0x4e && ogBytes[3] === 0x47;
+      if (ogPreview.status !== 200 || ogPreview.headers.get("content-type") !== "image/png" || !ogPng) {
+        throw new Error(`${ogPath}: preview expected HTTP 200 image/png with PNG magic bytes, got HTTP ${ogPreview.status} ${ogPreview.headers.get("content-type")}`);
+      }
+      if (ogPreview.headers.get("cache-control") !== "private, no-store") {
+        throw new Error(`${ogPath}: preview cache-control was ${ogPreview.headers.get("cache-control")}`);
+      }
+      const ogAnonymous = await fetch(new URL(ogPath, origin), { redirect: "manual" });
+      if (ogAnonymous.status !== 404) {
+        throw new Error(`${ogPath}: anonymous request exposed a draft OG image (HTTP ${ogAnonymous.status})`);
+      }
+      console.log(`${ogPath}: valid preview token HTTP 200 image/png (PNG magic bytes); Cache-Control: private, no-store; anonymous HTTP 404`);
       console.log(`${path}: valid preview HTTP 200; Cache-Control: private, no-store; anonymous/invalid token HTTP 404; absent from sitemap and llms.txt`);
     }
   } finally {
