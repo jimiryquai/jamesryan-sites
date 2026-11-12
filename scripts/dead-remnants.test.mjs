@@ -43,3 +43,11 @@ test('app check scripts do not invoke the retired checker', () => {
     assert.doesNotMatch(pkg.scripts?.check ?? '', /check-site\.js/);
   }
 });
+
+test('static asset headers do not declare rules for Worker-rendered discovery routes', () => {
+  for (const app of ['marketing-site', 'digital-garden']) {
+    const headers = read(`apps/${app}/public/_headers`);
+    assert.doesNotMatch(headers, /^\/(?:\.well-known|schema(?:\/|map\.xml)|sitemap\.xml)/m);
+    assert.match(headers, /^\/_astro\/\*$/m);
+  }
+});

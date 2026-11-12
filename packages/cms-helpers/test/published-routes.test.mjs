@@ -10,6 +10,8 @@ const records = {
 const queries = [];
 let previewEntry;
 mock.module("emdash", { namedExports: {
+    getRequestContext: () => undefined,
+    runWithContext: (_context, fn) => fn(),
   async getEmDashCollection(collection, { status, limit }) {
     queries.push({ kind: "collection", collection, limit });
     return { entries: records[collection].filter(entry => entry.data.status === status).slice(0, limit), cacheHint: { tags: [collection] } };
@@ -93,4 +95,20 @@ test("a references selection rides the same single entry read and comes back on 
   assert.equal(plain.kind, "entry");
   assert.equal(queries.length, 1);
   assert.equal(queries[0].references, undefined);
+});
+
+test("decoded Markdown route segments resolve space and UTF-8 slugs through the canonical route map", async () => {
+  const { getMarkdownContentPath } = await import("../src/content-url.ts");
+  for (const slug of ["a post", "café 東京"]) {
+    const record = entry(slug);
+    records.posts.push(record);
+    try {
+      const route = await getPublishedRoute(getMarkdownContentPath(`posts/${slug}`));
+      assert.equal(route?.kind, "entry");
+      assert.equal(route.entry.id, slug);
+    } finally { records.posts.pop(); }
+  }
+  assert.equal(getMarkdownContentPath("posts/a post"), "/posts/a%20post");
+  assert.equal(getMarkdownContentPath("home"), "/");
+  assert.equal(getMarkdownContentPath(undefined), "/");
 });

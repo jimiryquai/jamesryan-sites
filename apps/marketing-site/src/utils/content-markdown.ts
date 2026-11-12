@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getPublishedRoute, portableTextToMarkdown, discoveryResponse } from "@jamesryan/cms-helpers";
+import { getPublishedRoute, getMarkdownContentPath, portableTextToMarkdown, discoveryResponse } from "@jamesryan/cms-helpers";
 import { getSiteSettingsWithCacheHint } from "emdash";
 import { mergeCacheHints } from "emdash-plugin-page-builder/blocks";
 import { renderLayoutMarkdown } from "../components/page-builder/layout-markdown";
@@ -17,9 +17,9 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 	// getPublishedRoute owns the URL mapping, published-only visibility and
 	// authorized previews (docs/published-routes.md). `home` is the .md
 	// spelling of the root page's `/` path.
-	const path = params.slug === "home" || !params.slug ? "/" : `/${params.slug}`;
+	const path = getMarkdownContentPath(params.slug);
 	const route = await getPublishedRoute(path, cache, { references: { service: true } });
-	if (route?.kind !== "entry") return new Response("Not found", { status: 404 });
+	if (route?.kind !== "entry") return discoveryResponse(new Response("Not found", { status: 404 }), cache, 60);
 
 	let title = "";
 	let contentMarkdown = "";
@@ -53,7 +53,6 @@ export const getContentMarkdown: APIRoute = async ({ params, cache }) => {
 
 ${contentMarkdown}
 `;
-
 
 	return discoveryResponse(new Response(fullMarkdown, {
 		headers: {

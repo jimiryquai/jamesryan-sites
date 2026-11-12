@@ -8,9 +8,10 @@ export function discoveryResponse(
 ): Response {
 	const context = getRequestContext();
 	const sessionRender = context?.editMode === true || context?.preview !== undefined;
-	if (sessionRender) cache?.set(false);
+	const serverError = response.status >= 500;
+	if (sessionRender || serverError) cache?.set(false);
 	const headers = new Headers(response.headers);
 	headers.set("Access-Control-Allow-Origin", "*");
-	headers.set("Cache-Control", sessionRender ? "private, no-store" : `public, max-age=${maxAge}`);
+	headers.set("Cache-Control", serverError ? "no-store" : sessionRender ? "private, no-store" : `public, max-age=${maxAge}`);
 	return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
