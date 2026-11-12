@@ -14,7 +14,8 @@ function escapeHtmlAttribute(value: string): string {
 }
 
 const documentTags = new Set("p h1 h2 h3 h4 h5 h6 ul ol li strong b em i code pre blockquote br hr a".split(" "));
-const discardedContainers = new Set("script style iframe object svg math template textarea xmp plaintext noscript".split(" "));
+const nestedContainers = new Set("svg math object template".split(" "));
+const discardedContainers = new Set([...nestedContainers, ..."script style iframe textarea xmp plaintext noscript".split(" ")]);
 
 function safeDocumentHref(raw: string): string | null {
 	// Decode URL-relevant entities before checking. Unknown entities fail closed.
@@ -39,6 +40,51 @@ function safeDocumentHref(raw: string): string | null {
 	} catch { return null; }
 }
 
+function tagEnd(content: string, start: number): number {
+	let quote = "";
+	for (let index = start; index < content.length; index++) {
+		const character = content[index];
+		if (quote) { if (character === quote) quote = ""; }
+		else if (character === '"' || character === "'") quote = character;
+		else if (character === ">") return index;
+	}
+	return content.length;
+}
+
+function discardContainer(content: string, cursor: number, tag: string): number {
+	// Raw-text elements end at their first closing tag. Container subtrees
+	// need token boundaries so quoted attributes and comments cannot close them.
+	const nested = nestedContainers.has(tag);
+	if (!nested) {
+		const close = new RegExp(`</${tag}(?=[\\s/>])`, "gi");
+		close.lastIndex = cursor;
+		const match = close.exec(content);
+		return match ? Math.min(tagEnd(content, close.lastIndex) + 1, content.length) : content.length;
+	}
+	let depth = 1;
+	while (cursor < content.length) {
+		const next = content.indexOf("<", cursor);
+		if (next < 0) break;
+		if (content.startsWith("<!--", next)) {
+			const end = content.indexOf("-->", next + 4);
+			cursor = end < 0 ? content.length : end + 3;
+			continue;
+		}
+		const token = /^<(\/?)([a-z][a-z0-9]*)(?=[\s/>])/i.exec(content.slice(next));
+		if (!token) { cursor = next + 1; continue; }
+		const end = tagEnd(content, next + token[0].length);
+		cursor = Math.min(end + 1, content.length);
+		const name = token[2].toLowerCase();
+		if (name === tag) {
+			depth += token[1] ? -1 : 1;
+			if (depth === 0) return cursor;
+		} else if (!token[1] && discardedContainers.has(name) && !nestedContainers.has(name)) {
+			cursor = discardContainer(content, cursor, name);
+		}
+	}
+	return content.length;
+}
+
 /** Rebuild a deliberately small document vocabulary; never emit input tag markup. */
 export function sanitizeDocumentHtml(content: string): string {
 	let output = "";
@@ -58,24 +104,14 @@ export function sanitizeDocumentHtml(content: string): string {
 		}
 		const start = /^<(\/?)([a-z][a-z0-9]*)(?=[\s/>])/i.exec(content.slice(cursor));
 		if (!start) { output += "&lt;"; cursor++; continue; }
-		let end = cursor + start[0].length;
-		let quote = "";
-		for (; end < content.length; end++) {
-			const character = content[end];
-			if (quote) { if (character === quote) quote = ""; }
-			else if (character === '"' || character === "'") quote = character;
-			else if (character === ">") break;
-		}
+		const end = tagEnd(content, cursor + start[0].length);
 		if (end === content.length) break;
 		const tag = start[2].toLowerCase();
 		const closing = start[1] === "/";
 		const attributes = content.slice(cursor + start[0].length, end);
 		cursor = end + 1;
 		if (discardedContainers.has(tag) && !closing) {
-			const close = new RegExp(`</${tag}\\s*>`, "gi");
-			close.lastIndex = cursor;
-			const match = close.exec(content);
-			cursor = match ? close.lastIndex : content.length;
+			cursor = discardContainer(content, cursor, tag);
 			continue;
 		}
 		if (!documentTags.has(tag)) continue;

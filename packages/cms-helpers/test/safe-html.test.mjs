@@ -49,3 +49,16 @@ test('malformed document markup fails closed and cannot smuggle attributes or ta
  assert.equal(sanitizeDocumentHtml('<p>Safe</p><a href="unterminated'), '<p>Safe</p>');
  assert.equal(sanitizeDocumentHtml('Text < 3 &amp; fine'), 'Text &lt; 3 &amp; fine');
 });
+
+test('nested dangerous containers discard all their contents', () => {
+ for (const tag of ['svg', 'math', 'object', 'template']) {
+  assert.equal(sanitizeDocumentHtml(`<${tag}><${tag}></${tag}><p>Discard</p></${tag}><p>Keep</p>`), '<p>Keep</p>');
+  assert.equal(sanitizeDocumentHtml(`<${tag}><${tag} title=">"></${tag}><p>Discard</p></${tag}><p>Keep</p>`), '<p>Keep</p>');
+ }
+});
+
+test('discarded container boundaries ignore comments, attributes and raw-text children', () => {
+ for (const inner of ['<!-- </svg> -->', '<p title="</svg>">Hidden</p>', '<script>const x="</svg>";</script>']) {
+  assert.equal(sanitizeDocumentHtml(`<svg>${inner}<p>Discard</p></svg><p>Keep</p>`), '<p>Keep</p>');
+ }
+});
