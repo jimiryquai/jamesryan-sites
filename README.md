@@ -114,10 +114,8 @@ media row storage keys, preserves content alt text and captions, rejects filenam
 collisions, and verifies files on a rerun. Review and commit both the JSON and assets.
 
 EmDash's [seed documentation](https://docs.emdashcms.com/themes/seed-files/)
-describes local files, but published 1.4.0 only resolves URL references. The pinned
-`patches/emdash@1.4.0.patch` supplies local file resolution for the CLI and
-programmatic `mediaBasePath` callers, reusing EmDash's upload, dimensions and hash
-deduplication. It rejects absolute paths and escapes through parent paths or
-symlinks. Remove the patch when a released EmDash version implements this API;
-`scripts/seed-local.test.mjs` checks the real CLI behavior. Local files are not
-bundled into Workers; seed with the Node CLI before serving local R2 media.
+describes the native `$media.file` support available in EmDash 1.5. The CLI
+and programmatic `mediaBasePath` callers reuse its upload, dimensions and hash
+deduplication. Absolute paths and escapes through parent paths or symlinks are
+rejected; `scripts/seed-local.test.mjs` checks the real CLI behavior. Local files
+are not bundled into Workers; seed with the Node CLI before serving local R2 media.
