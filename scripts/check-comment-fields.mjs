@@ -8,7 +8,7 @@ export async function checkCommentFields(origin, postPath, output = '.scratch/co
   const browser = await chromium.launch();
   const results = [];
   try {
-    for (const mode of ['light', 'dark']) {
+    for (const mode of ['light', 'dark', 'system-dark']) {
       const session = await openAccessibilityPage(browser, origin, mode);
       const { page } = session;
       await session.visit(postPath);
