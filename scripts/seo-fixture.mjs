@@ -11,6 +11,9 @@ const description = (name) =>
 const heading = (text) => [{ _type: "block", _key: "heading", style: "h1", children: [
   { _type: "span", _key: "text", text },
 ] }];
+const paragraph = (key, text) => [{ _type: "block", _key: key, style: "normal", children: [
+  { _type: "span", _key: `${key}-span`, text },
+] }];
 const image = {
   $media: { file: "assets/post-1.webp", alt: "Fixture image" },
 };
@@ -18,6 +21,27 @@ const layoutHero = (slug) => [{
   _type: "hero", _key: `layout-${slug}`, _version: 1, variant: "centered",
   heading: `Fixture ${slug} layout heading`, body: `Fixture ${slug} layout body`, links: [],
 }];
+// Every offered block type renders through the published layout route; the
+// fixture proves each section (sources included) end to end in CI.
+const layoutNewBlocks = (slug) => [
+  { _type: "prose", _key: `layout-${slug}-prose`, _version: 1, variant: "centered",
+    heading: `Fixture ${slug} prose heading`, body: `Fixture ${slug} prose body`,
+    content: [...paragraph(`${slug}-prose-p`, `Fixture ${slug} prose paragraph.`),
+      { _type: "code", _key: `${slug}-prose-code`, code: `fixture ${slug} prose code block`, language: "js" }] },
+  { _type: "faq", _key: `layout-${slug}-faq`, _version: 1, variant: "two-column", scope: "all" },
+  { _type: "stats", _key: `layout-${slug}-stats`, _version: 1, variant: "graph",
+    eyebrow: `Fixture ${slug} stats eyebrow`, heading: `Fixture ${slug} stats heading`, body: `Fixture ${slug} stats body`,
+    items: [{ _key: `${slug}-stat`, value: "99%", label: `Fixture ${slug} stat label` }] },
+  { _type: "team", _key: `layout-${slug}-team`, _version: 1, variant: "four-column", scope: "all" },
+  { _type: "comparison", _key: `layout-${slug}-comparison`, _version: 1, variant: "table",
+    columns: [
+      { _key: `${slug}-col-first`, key: "first", label: "Starter" },
+      { _key: `${slug}-col-second`, key: "second", label: "Growth" },
+      { _key: `${slug}-col-third`, key: "third", label: "Pro" },
+    ],
+    rows: [{ _key: `${slug}-row`, group_name: `Fixture ${slug} comparison group`, name: `Fixture ${slug} comparison feature`,
+      first_value: "true", second_value: "false", third_value: `Fixture ${slug} comparison value` }] },
+];
 const page = (slug, content = heading(`Fixture ${slug} heading`), layout) => ({
   id: slug, slug, status: "published",
   data: { title: `Fixture ${slug}`, content, ...(layout ? { layout } : {}) },
@@ -29,7 +53,9 @@ const entries = {
     // A page with a published layout renders it in place of its Portable Text
     // content; the same entry goes draft in the unpublished state and must 404.
     page("pricing", heading("Fixture pricing heading"), layoutHero("pricing")),
-    page("privacy-policy", heading("Fixture privacy heading")),
+    // The five blocks added in ticket 20 render through the same published-route
+    // switch on a page whose content would otherwise hold the document block.
+    page("privacy-policy", heading("Fixture privacy heading"), layoutNewBlocks("privacy-policy")),
     page("fixture-page", heading("Fixture custom heading")),
     { ...page("fixture-draft"), status: "draft" },
   ],
@@ -44,6 +70,14 @@ const entries = {
       data: { title: "Fixture project heading", summary: description("project summary"), content: [], featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
+  ],
+  faqs: [
+    { id: "fixture-faq", slug: "fixture-faq", status: "published",
+      data: { question: "Fixture FAQ question", answer: "Fixture FAQ answer" } },
+  ],
+  team: [
+    { id: "fixture-member", slug: "fixture-member", status: "published",
+      data: { name: "Fixture Member", role: "Fixture member role" } },
   ],
 };
 const site = {
@@ -205,6 +239,22 @@ async function verify(origin, unpublished = false, database) {
       throw new Error("/pricing: a published layout was not rendered in place of content");
     }
     console.log("/pricing: published layout rendered in place of content");
+    const newBlocksHtml = await (await fetch(new URL("/privacy-policy", origin))).text();
+    if (!newBlocksHtml.includes("Fixture privacy-policy prose heading") || newBlocksHtml.includes("Fixture privacy heading")) {
+      throw new Error("/privacy-policy: a published layout was not rendered in place of content");
+    }
+    for (const marker of [
+      "Fixture privacy-policy prose paragraph.", "fixture privacy-policy prose code block",
+      "Questions &amp; Answers", "Fixture FAQ question",
+      "Fixture privacy-policy stats heading", "Fixture privacy-policy stat label",
+      "Fixture Member",
+      "Fixture privacy-policy comparison group", "Fixture privacy-policy comparison feature",
+    ]) {
+      if (!newBlocksHtml.includes(marker)) {
+        throw new Error(`/privacy-policy: layout section marker missing: ${marker}`);
+      }
+    }
+    console.log("/privacy-policy: layout renders prose, faq, stats, team and comparison sections");
     const contentHtml = await (await fetch(new URL("/contact", origin))).text();
     if (!contentHtml.includes("Fixture contact heading")) {
       throw new Error("/contact: content fallback was not rendered for a page without layout");

@@ -42,7 +42,12 @@
               "cta",
               "features",
               "testimonials",
-              "pricing"
+              "pricing",
+              "comparison",
+              "team",
+              "faq",
+              "stats",
+              "prose"
             ]
           }
         },
@@ -3202,6 +3207,280 @@
                   "all"
                 ]
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "comparison",
+      "label": "Comparison",
+      "category": "Sections",
+      "description": "Use a comparison block to compare features across up to three options. Each column has a label and a fixed position; each row gives the feature name, an optional group name, and a value for each position. Choose table for the grouped comparison table.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "table"
+                ]
+              },
+              "defaultValue": "table"
+            },
+            {
+              "slug": "columns",
+              "label": "Columns",
+              "type": "repeater",
+              "validation": {
+                "maxItems": 3,
+                "subFields": [
+                  {
+                    "slug": "key",
+                    "label": "Position",
+                    "type": "select",
+                    "options": [
+                      "first",
+                      "second",
+                      "third"
+                    ]
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "rows",
+              "label": "Rows",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "group_name",
+                    "label": "Group name",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "name",
+                    "label": "Feature name",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "first_value",
+                    "label": "First column value",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "second_value",
+                    "label": "Second column value",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "third_value",
+                    "label": "Third column value",
+                    "type": "text"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "team",
+      "label": "Team",
+      "description": "Team members pulled from a shared team collection rather than written inline. Scope picks whether the members come from the page's group or the whole collection; count caps how many. Variant four-column shows many compact portrait cards in a dense grid; three-column shows fewer, larger cards per row. Use team for the people behind the page; customer quotes belong on the testimonials block.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "four-column",
+                  "three-column"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
+              }
+            },
+            {
+              "slug": "count",
+              "label": "Count",
+              "type": "integer",
+              "validation": {
+                "min": 1,
+                "max": 24
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "faq",
+      "label": "FAQ",
+      "description": "Frequently asked questions pulled from a shared FAQs collection rather than written inline. Scope picks whether the questions come from the page's group or the whole collection; count caps how many. Variant two-column shows the questions beside a heading and supporting copy; centered shows them under a centered heading.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "two-column",
+                  "centered"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
+              }
+            },
+            {
+              "slug": "count",
+              "label": "Count",
+              "type": "integer",
+              "validation": {
+                "min": 1,
+                "max": 24
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "stats",
+      "label": "Stats",
+      "category": "Sections",
+      "description": "Use a stats block for a row of figures that support a claim: a heading, optional supporting copy, and one or more value-and-label pairs. Choose graph when the figures sit over a graph and an optional eyebrow can sit above the heading. A quote belongs on the testimonials block.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "graph"
+                ]
+              },
+              "defaultValue": "graph"
+            },
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "Items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "label": "Value",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "prose",
+      "label": "Prose",
+      "category": "Sections",
+      "description": "Use a prose block for long-form Portable Text document sections such as privacy policies, legal terms, or editorial copy: a heading, an optional plain-text body (such as a last-updated note or lead), and Portable Text content. Choose centered when the heading, body and prose column are centered on the page. Choose start when the heading, body and prose column line up with the start of the section.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "centered",
+                  "start"
+                ]
+              },
+              "defaultValue": "centered"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "content",
+              "label": "Content",
+              "type": "portableText"
             }
           ]
         }

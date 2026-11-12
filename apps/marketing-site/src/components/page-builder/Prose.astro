@@ -1,0 +1,18 @@
+---
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import type { PortableTextBlock } from 'emdash';
+import DocumentCentered from '@jamesryan/ui/components/sections/DocumentCentered.astro';
+import DocumentLeftAligned from '@jamesryan/ui/components/sections/DocumentLeftAligned.astro';
+import { PortableText } from 'emdash/ui';
+interface Props { value: StoredBlock }
+const value = Astro.props.value as StoredBlock & {
+  variant?: 'centered' | 'start'; heading?: string; body?: string; content?: PortableTextBlock[];
+};
+// The same sections Document.astro renders for marketing.document. The body is
+// Portable Text, so it keeps the site's PortableText renderers (code, images)
+// rather than Document.astro's raw HTML string.
+const Section = value.variant === 'start' ? DocumentLeftAligned : DocumentCentered;
+---
+<Section id={value._key || 'document'} headline={value.heading} subheadline={value.body}>
+  <PortableText value={value.content ?? []} />
+</Section>

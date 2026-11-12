@@ -1,7 +1,11 @@
 import { getEmDashCollection, getEmDashEntry } from 'emdash';
-import { createPricingSource, createTestimonialsSource, mergeCacheHints, type QueryApi } from 'emdash-plugin-page-builder/blocks';
-import type { Pricing, Testimonial } from '../../../emdash-env';
-import type { PricingTier, Testimonial as TestimonialShape } from 'emdash-plugin-page-builder/blocks';
+import type { InferCollectionData } from 'emdash';
+import {
+  createFaqSource, createPricingSource, createTeamSource, createTestimonialsSource,
+  mergeCacheHints, type Faq as FaqShape, type PricingTier, type QueryApi, type QueryListResult,
+  type TeamMember as TeamMemberShape, type Testimonial as TestimonialShape,
+} from 'emdash-plugin-page-builder/blocks';
+import type { Faq, Pricing, Team, Testimonial } from '../../../emdash-env';
 
 // These assignments make collection/shape drift a type error in this site.
 const pricingShape = (data: Pricing): PricingTier => ({
@@ -13,18 +17,35 @@ const pricingShape = (data: Pricing): PricingTier => ({
 const testimonialShape = (data: Testimonial): TestimonialShape => ({
   quote: data.quote, author: data.author, role: data.role ?? undefined, company: data.company ?? undefined, avatar: data.avatar ?? undefined,
 });
-const query: QueryApi = {
+const faqShape = (data: Faq): FaqShape => ({ question: data.question, answer: data.answer });
+const teamShape = (data: Team): TeamMemberShape => ({ name: data.name, role: data.role, image: data.image ?? undefined });
+
+/** The collections the page builder may read, each with its shape mapping. */
+const shapeByCollection = {
+  pricing: pricingShape,
+  testimonials: testimonialShape,
+  faqs: faqShape,
+  team: teamShape,
+} as const;
+
+type ListFilter = Parameters<QueryApi['list']>[1];
+
+async function listShaped<C extends keyof typeof shapeByCollection & string, S extends object>(
+  collection: C, filter: ListFilter | undefined, shape: (data: InferCollectionData<C>) => S,
+): Promise<QueryListResult> {
+  const result = await getEmDashCollection(collection, filter);
+  if (result.error) throw result.error;
+  // The package's query boundary carries data as a record; the shape functions
+  // keep their typed results until this one boundary.
+  return { ...result, entries: result.entries.map((entry) => ({ ...entry, data: { ...entry.data, ...(shape(entry.data) as Record<string, unknown>) } })) };
+}
+
+const siteQuery: QueryApi = {
   async list(collection, filter) {
-    if (collection === 'pricing') {
-      const result = await getEmDashCollection('pricing', filter);
-      if (result.error) throw result.error;
-      return { ...result, entries: result.entries.map((entry) => ({ ...entry, data: { ...entry.data, ...pricingShape(entry.data) } })) };
-    }
-    if (collection === 'testimonials') {
-      const result = await getEmDashCollection('testimonials', filter);
-      if (result.error) throw result.error;
-      return { ...result, entries: result.entries.map((entry) => ({ ...entry, data: { ...entry.data, ...testimonialShape(entry.data) } })) };
-    }
+    if (collection === 'pricing') return listShaped('pricing', filter, pricingShape);
+    if (collection === 'testimonials') return listShaped('testimonials', filter, testimonialShape);
+    if (collection === 'faqs') return listShaped('faqs', filter, faqShape);
+    if (collection === 'team') return listShaped('team', filter, teamShape);
     throw new Error(`Unsupported page builder collection: ${collection}`);
   },
   async get(collection, id, options) {
@@ -44,7 +65,18 @@ const query: QueryApi = {
     };
   },
 };
-export const sources = {
-  pricing: createPricingSource({ groupField: 'service', query }),
-  testimonials: createTestimonialsSource({ groupField: 'service', query }),
-};
+
+/**
+ * Wire the shared-content blocks to this site's collections, grouped by the
+ * page's `service`. `query` is injectable so tests exercise the wiring
+ * without a database (CODING_STANDARDS rule 7).
+ */
+export function createSources(query: QueryApi) {
+  return {
+    pricing: createPricingSource({ groupField: 'service', query }),
+    testimonials: createTestimonialsSource({ groupField: 'service', query }),
+    faq: createFaqSource({ groupField: 'service', query }),
+    team: createTeamSource({ groupField: 'service', query }),
+  };
+}
+export const sources = createSources(siteQuery);
