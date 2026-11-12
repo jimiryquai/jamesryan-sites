@@ -1,4 +1,4 @@
-# Reaching EmDash MCP servers
+# Reaching MCP servers
 
 MCP configurations live under `config/` and use `mcporter` 0.17.0's direct Streamable HTTP transport (`"type": "http"`, `"lifecycle": "ephemeral"`, `"imports": []`) with no `mcp-remote` subprocesses, shell wrappers, or machine-specific paths.
 
@@ -9,6 +9,7 @@ MCP configurations live under `config/` and use `mcporter` 0.17.0's direct Strea
 | `config/mcporter.json` | `.mcp.json` | `emdash-docs` (`https://docs.emdashcms.com/mcp`) | Automatically at harness start and bare `pnpm exec mcporter` (see [`AGENTS.md`](../AGENTS.md)) | None (public HTTPS) |
 | `config/mcporter.staging.json` | — | `emdash-staging-agent` (`https://staging.jamesryan.dev/_emdash/api/mcp`) | On request via `pnpm -s mcp:staging` | `EMDASH_AGENT_STAGING_TOKEN` |
 | `config/mcporter.local.json` | — | `emdash-site` (`http://localhost:4321/_emdash/api/mcp`), `emdash-garden` (`http://localhost:4322/_emdash/api/mcp`) | On request via `pnpm -s mcp:local` | `EMDASH_SITE_PAT`, `EMDASH_GARDEN_PAT` |
+| `config/mcporter.cloudflare.json` | — | `cloudflare` (`https://mcp.cloudflare.com/mcp`) | On request via `pnpm -s mcp:cloudflare` | OAuth grant |
 
 Each config sets `"imports": []` so `mcporter` lists only this repository's servers instead of importing user-level editor configs (`~/.claude.json`, `~/.config/opencode/`).
 
@@ -27,6 +28,28 @@ pnpm -s mcp:staging call emdash-staging-agent.content_list collection:posts limi
 ```
 
 Pass `-s` (`--silent`) to `pnpm` so stdout contains only `mcporter` output when parsing JSON.
+
+### Cloudflare API (`cloudflare`)
+
+Cloudflare's Code Mode server can search its API and documentation and execute calls across Cloudflare services, subject to the granted permissions. It can change live resources if granted write scopes. It is never loaded through `.mcp.json`.
+
+Only James starts or renews the interactive grant, from the repository root:
+
+```sh
+pnpm exec mcporter --config config/mcporter.cloudflare.json auth cloudflare
+```
+
+In the consent screens, select only the account and read permissions needed, starting with the narrowest read-only access. Cloudflare's server requires `user:read`, `account:read`, and `offline_access` for identity, account discovery, and refresh; its Minimal preset starts there. Its Read only preset covers many products, so narrow optional permissions where possible. Cloudflare may request additional scopes for a refused operation; agents must not approve or start a new sign-in. Sources: [Cloudflare MCP servers](https://developers.cloudflare.com/agents/model-context-protocol/cloudflare/servers-for-cloudflare/), [scope definitions](https://github.com/cloudflare/mcp/blob/main/src/auth/scopes.ts), and [OAuth consent](https://developers.cloudflare.com/fundamentals/oauth/authorizing-an-application/) (read 2026-11-12).
+
+After James signs in, use `pnpm -s mcp:cloudflare list` or `pnpm -s mcp:cloudflare call cloudflare.<tool> ...`. The wrapper supports `list`, `call`, and `resource` only and enforces mcporter's `--no-oauth`; a missing, expired, or rejected grant fails instead of starting OAuth. Refreshing a cached grant may contact the OAuth token endpoint. If authorization is required, the wrapper prints the command above for James.
+
+mcporter stores its OAuth vault at `$XDG_DATA_HOME/mcporter/credentials.json` when `XDG_DATA_HOME` is absolute, otherwise `~/.mcporter/credentials.json` (with possible legacy files under `~/.mcporter/cloudflare/`). Treat it as a secret; encryption depends on mcporter's vault configuration. To revoke access, James should revoke the Cloudflare application under [Manage OAuth authorizations](https://dash.cloudflare.com/?to=/profile/access-management/authorization), then clear local cached credentials:
+
+```sh
+pnpm exec mcporter --config config/mcporter.cloudflare.json config logout cloudflare
+```
+
+Clearing local credentials alone does not revoke the server-side authorization.
 
 ### Local dev databases (`emdash-site` and `emdash-garden`)
 
@@ -76,3 +99,4 @@ Keeping `.mcp.json` (`config/mcporter.json`) limited to `emdash-docs` guarantees
 - **`mcporter` `0.17.0` (pinned exact in root `package.json`):** `node_modules/mcporter/dist/` contains no analytics or telemetry SDKs or reporting endpoints; outbound HTTP requests target only the configured MCP server URL, sending standard MCP `clientInfo` metadata (`clientName`).
 - **`emdash-site`, `emdash-garden`, and `emdash-staging-agent` (`emdash` `1.4.0` built-in `/_emdash/api/mcp`):** `emdash/src/astro/routes/api/mcp.ts` and `emdash/src/mcp/` run a stateless `WebStandardStreamableHTTPServerTransport` against the app's own D1/SQLite database with zero third-party telemetry or phone-home requests. Set `WRANGLER_SEND_METRICS=false` and `ASTRO_TELEMETRY_DISABLED=1` when starting local Astro/Wrangler dev servers.
 - **`emdash-docs` (`https://docs.emdashcms.com/mcp`):** Remote public Streamable HTTP endpoint operated by EmDash; runs no local code and receives requests only when `emdash-docs` is listed or queried (`"lifecycle": "ephemeral"`).
+- **Cloudflare API MCP:** mcporter's OAuth flow also contacts the server's discovery, registration and token endpoints and, for interactive authorization, the browser authorization endpoint; cached tokens can be refreshed. No separate mcporter analytics endpoint was found in the pinned local source. Cloudflare's production server records server-side usage metrics: [source](https://github.com/cloudflare/mcp/blob/main/src/metrics.ts) and [production binding](https://github.com/cloudflare/mcp/blob/main/wrangler.jsonc) (read 2026-11-12) show tool name, user ID for user credentials and error code per call, auth and schema-mismatch events, and HTTP-layer User-Agent; schema-mismatch metrics contain no response values. Logs and traces are also enabled in the checked configuration. James accepted Cloudflare's server-side usage metrics on 2026-11-12; this is separate from local tool telemetry.
