@@ -1,9 +1,18 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { access, readFile } from 'node:fs/promises';
+import { dirname, resolve } from 'node:path';
 import test from 'node:test';
 
 const skillPath = resolve(import.meta.dirname, '../.agents/skills/emdash-mcp/SKILL.md');
+
+function relativeMarkdownTargets(markdown) {
+  const targets = [];
+  for (const match of markdown.matchAll(/\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)) {
+    const href = match[1];
+    if (href.startsWith('.')) targets.push(href);
+  }
+  return targets;
+}
 
 function parseFrontmatter(markdown) {
   const match = markdown.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n/);
@@ -41,6 +50,12 @@ test('emdash-mcp skill points agents at mcporter servers and the publishing docs
 
   assert.match(markdown, /docs\/mcp\.md/);
   assert.match(markdown, /docs\/publishing\.md/);
+  const docLinks = relativeMarkdownTargets(markdown);
+  assert.ok(docLinks.some((href) => href.endsWith('docs/mcp.md')));
+  assert.ok(docLinks.some((href) => href.endsWith('docs/publishing.md')));
+  for (const href of docLinks) {
+    await access(resolve(dirname(skillPath), href));
+  }
   assert.match(markdown, /emdash-site/);
   assert.match(markdown, /emdash-garden/);
   assert.match(markdown, /emdash-staging-agent/);
@@ -61,9 +76,14 @@ test('emdash-mcp skill examples stay draft-only and use current schema names', a
   assert.match(markdown, /\btag\b/);
   assert.match(markdown, /\/posts/);
 
+  assert.match(markdown, /schema_get_collection/);
+  assert.doesNotMatch(markdown, /\bschema_get\b/);
+
   assert.doesNotMatch(markdown, /post_tag/);
   assert.doesNotMatch(markdown, /\/blog\b/);
   assert.doesNotMatch(markdown, /status:\s*["']published["']/);
+  assert.doesNotMatch(markdown, /status:\s*published\b/);
+  assert.doesNotMatch(markdown, /"status"\s*:\s*"published"/);
   assert.doesNotMatch(markdown, /"content"\s*:/);
   assert.doesNotMatch(markdown, /content_delete/);
 });

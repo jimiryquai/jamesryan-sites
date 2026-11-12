@@ -40,4 +40,4 @@ pnpm -s mcp:local call emdash-site.taxonomy_list_terms taxonomy:category
 pnpm -s mcp:local call emdash-site.taxonomy_list_terms taxonomy:tag
 ```
 
-Before a local write, call `schema_get` for that collection when the token includes schema read.
+Before a local write, call `schema_get_collection` with `slug:<collection>` when the token includes `schema:read`.
