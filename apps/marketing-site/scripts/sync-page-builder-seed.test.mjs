@@ -5,10 +5,10 @@ import * as pageBuilder from 'emdash-plugin-page-builder/blocks';
 import { getOfferedBlocks } from '../src/components/page-builder/offered-blocks.mjs';
 import { syncPageBuilderSeed } from './sync-page-builder-seed.mjs';
 
-/** The ten block types this site offers on pages.layout (ticket 20). */
-const offeredSlugs = ['hero', 'cta', 'features', 'testimonials', 'pricing', 'comparison', 'team', 'faq', 'stats', 'prose'];
+/** The eleven block types this site offers on pages.layout (tickets 20, 28). */
+const offeredSlugs = ['hero', 'cta', 'features', 'testimonials', 'pricing', 'comparison', 'team', 'faq', 'stats', 'prose', 'posts'];
 
-test('offers exactly the ten package block types, each the package module itself', () => {
+test('offers exactly the eleven package block types, each the package module itself', () => {
   const offered = getOfferedBlocks();
   assert.deepEqual(offered.map((block) => block.definition.slug), offeredSlugs);
   const exported = Object.values(pageBuilder).filter((value) => pageBuilder.isBlockType(value));

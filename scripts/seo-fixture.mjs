@@ -30,6 +30,11 @@ const layoutHero = (slug) => [{
   _type: "hero", _key: `layout-${slug}`, _version: 1, variant: "centered",
   heading: `Fixture ${slug} layout heading`, body: `Fixture ${slug} layout body`, links: [],
 }];
+// The seeded home: a hero, then the recent posts the posts block reads.
+const layoutHome = [
+  ...layoutHero("home"),
+  { _type: "posts", _key: "layout-home-posts", _version: 1, variant: "featured-grid", count: 4 },
+];
 // Every offered block type renders through the published layout route; the
 // fixture proves each section (sources included) end to end in CI.
 const layoutNewBlocks = (slug) => [
@@ -42,6 +47,13 @@ const layoutNewBlocks = (slug) => [
     eyebrow: `Fixture ${slug} stats eyebrow`, heading: `Fixture ${slug} stats heading`, body: `Fixture ${slug} stats body`,
     items: [{ _key: `${slug}-stat`, value: "99%", label: `Fixture ${slug} stat label` }] },
   { _type: "team", _key: `layout-${slug}-team`, _version: 1, variant: "four-column", scope: "all" },
+  // Every posts variant renders through its own site section (default included:
+  // the block without a variant falls back to it), each reading the posts source.
+  { _type: "posts", _key: `layout-${slug}-posts-grid`, _version: 1, variant: "grid", count: 2,
+    heading: `Fixture ${slug} posts grid heading` },
+  { _type: "posts", _key: `layout-${slug}-posts-list`, _version: 1, variant: "list", count: 2,
+    heading: `Fixture ${slug} posts list heading` },
+  { _type: "posts", _key: `layout-${slug}-posts-default`, _version: 1, heading: `Fixture ${slug} posts default heading` },
   { _type: "comparison", _key: `layout-${slug}-comparison`, _version: 1, variant: "table",
     columns: [
       { _key: `${slug}-col-first`, key: "first", label: "Starter" },
@@ -61,7 +73,7 @@ const codeBlock = [{
 }];
 const entries = {
   pages: [
-    page("home", layoutHero("home")),
+    page("home", layoutHome),
     // About has no layout; its route renders the hand-written body as its fallback.
     page("about"),
     page("contact", layoutHero("contact")),
@@ -75,9 +87,9 @@ const entries = {
     { ...page("fixture-draft"), status: "draft" },
   ],
   posts: [
-    { id: "fixture-post", slug: "fixture-post", status: "published",
+    { id: "fixture-post", slug: "fixture-post", status: "published", publishedAt: "2026-10-02T09:00:00.000Z",
       data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
-    { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
+    { id: "fixture-fallback", slug: "fixture-fallback", status: "published", publishedAt: "2026-10-01T09:00:00.000Z",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
@@ -342,12 +354,19 @@ async function verify(origin, unpublished = false, database) {
       "Fixture privacy-policy stats heading", "Fixture privacy-policy stat label",
       "Fixture Member",
       "Fixture privacy-policy comparison group", "Fixture privacy-policy comparison feature",
+      "Fixture privacy-policy posts grid heading", "Fixture privacy-policy posts list heading",
+      "Fixture privacy-policy posts default heading", "Fixture fallback title",
     ]) {
       if (!newBlocksHtml.includes(marker)) {
         throw new Error(`/privacy-policy: layout section marker missing: ${marker}`);
       }
     }
-    console.log("/privacy-policy: layout renders prose, faq, stats, team and comparison sections");
+    console.log("/privacy-policy: layout renders prose, faq, stats, team, comparison and posts sections");
+    const homeHtml = await (await fetch(new URL("/", origin))).text();
+    if (!homeHtml.includes("Fixture post heading") || !homeHtml.includes("Fixture fallback title")) {
+      throw new Error("/: the posts block did not render the recent posts");
+    }
+    console.log("/: posts block rendered the recent posts");
     const aboutHtml = await (await fetch(new URL("/about", origin))).text();
     if (!aboutHtml.includes("I'm James Ryan.")) {
       throw new Error("/about: the hand-written fallback was not rendered for a page without layout");
