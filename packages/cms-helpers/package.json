@@ -12,6 +12,6 @@
   },
   "dependencies": {
     "@jdevalk/astro-seo-graph": "2.2.0",
-    "emdash": "1.4.0"
+    "emdash": "1.5.0"
   }
 }
