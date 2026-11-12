@@ -1,0 +1,19 @@
+---
+import type { PublishedRoute } from "@jamesryan/cms-helpers";
+import { getSeoMeta } from "emdash";
+import Base from "../layouts/Base.astro";
+import MarketingBlocks from "./MarketingBlocks.astro";
+
+interface Props {
+	page: NonNullable<PublishedRoute["entry"]>;
+}
+const { page } = Astro.props;
+const seo = getSeoMeta(page);
+---
+<Base
+	title={seo.ogTitle}
+	description={seo.description}
+	content={{ collection: "pages", id: page.data.id, slug: page.id }}
+>
+	<MarketingBlocks value={page.data.content ?? []} />
+</Base>

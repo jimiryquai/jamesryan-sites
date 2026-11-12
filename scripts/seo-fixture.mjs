@@ -13,7 +13,7 @@ const heading = (text) => [{ _type: "block", _key: "heading", style: "h1", child
 const image = {
   $media: { file: "assets/post-1.webp", alt: "Fixture image" },
 };
-const page = (slug, content = []) => ({
+const page = (slug, content = heading(`Fixture ${slug} heading`)) => ({
   id: slug, slug, status: "published", data: { title: `Fixture ${slug}`, content },
 });
 const entries = {
@@ -22,6 +22,7 @@ const entries = {
     page("about"), page("contact"), page("pricing"),
     page("privacy-policy", heading("Fixture privacy heading")),
     page("fixture-page", heading("Fixture custom heading")),
+    { ...page("fixture-draft"), status: "draft" },
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
@@ -45,17 +46,25 @@ const fixtureSeo = (slug) => ({
   description: description(slug),
 });
 
-function createSeed(path) {
+function createSeed(path, unpublished = false) {
   mkdirSync(join(dirname(path), "assets"), { recursive: true });
   copyFileSync(new URL("apps/marketing-site/seed/assets/post-1.webp", root), join(dirname(path), "assets/post-1.webp"));
   const seed = {
     ...original,
     settings: site,
+    collections: original.collections.map(collection => collection.slug === "posts"
+      ? { ...collection, description: description("posts collection") } : collection),
     taxonomies: original.taxonomies.map(({ terms, ...taxonomy }) => taxonomy),
     bylines: [],
     menus: original.menus.map((menu) => ({ ...menu, items: [] })),
     content: entries,
   };
+  if (unpublished) {
+    for (const entry of seed.content.pages) {
+      if (["contact", "pricing", "privacy-policy", "fixture-page"].includes(entry.slug)) entry.status = "draft";
+    }
+    for (const entry of seed.content.projects) entry.status = "draft";
+  }
   writeFileSync(path, JSON.stringify(seed));
 }
 
@@ -78,19 +87,47 @@ function applySeo(path) {
   }
 }
 
-async function verify(origin) {
+async function verify(origin, unpublished = false) {
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
     "/privacy-policy": "privacy-policy", "/pages/fixture-page": "fixture-page",
     "/posts/fixture-post": "fixture-post", "/projects/fixture-project": "fixture-project",
   };
+  const unavailable = ["/pages/fixture-draft", "/pages/fixture-missing", "/home-01", "/home-02", "/home-03",
+    "/about-01", "/about-02", "/about-03", "/pricing-01", "/pricing-02", "/pricing-03",
+    "/privacy-policy-01", "/privacy-policy-02", "/404-01", "/404-02"];
+  if (unpublished) {
+    unavailable.push("/contact", "/pricing", "/privacy-policy", "/pages/fixture-page", "/projects",
+      "/projects/fixture-project", "/projects/fixture-fallback-project");
+    for (const path of unavailable) delete routes[path];
+  }
+  const llmsResponse = await fetch(new URL("/llms.txt", origin));
+  if (llmsResponse.status !== 200) throw new Error(`llms.txt: HTTP ${llmsResponse.status}`);
+  const llms = await llmsResponse.text();
+  const llmsPaths = [...llms.matchAll(/\]\((https?:[^)]+)\)/g)].map(match => new URL(match[1]).pathname);
   const sitemap = await (await fetch(new URL("/sitemap.xml", origin))).text();
   const paths = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/gs)].map((match) => new URL(match[1]).pathname);
-  const expected = [...Object.keys(routes), "/posts", "/projects", "/posts/fixture-fallback", "/projects/fixture-fallback-project"];
-  if (new Set(paths).size !== paths.length || expected.some((path) => !paths.includes(path))) {
+  const expected = [...Object.keys(routes), "/posts", "/posts/fixture-fallback",
+    ...(unpublished ? [] : ["/projects", "/projects/fixture-fallback-project"])];
+  if (new Set(paths).size !== paths.length || expected.some((path) => !paths.includes(path)) || paths.some(path => !expected.includes(path))) {
     throw new Error("Fixture sitemap is missing a route or contains duplicates");
   }
   console.log("Fixture sitemap includes every route exactly once");
+  if (expected.some(path => !llmsPaths.includes(path)) || llmsPaths.some(path => !expected.includes(path))) {
+    throw new Error("Fixture llms.txt does not match public routes");
+  }
+  for (const path of unavailable) {
+    const response = await fetch(new URL(path, origin), { redirect: "manual" });
+    if (response.status !== 404 || paths.includes(path) || llmsPaths.includes(path)) {
+      throw new Error(`${path}: expected HTTP 404 and absence from sitemap and llms.txt, got HTTP ${response.status}`);
+    }
+    console.log(`${path}: HTTP 404; absent from sitemap and llms.txt`);
+  }
+  for (const path of expected) {
+    const response = await fetch(new URL(path, origin), { redirect: "manual" });
+    if (response.status !== 200) throw new Error(`${path}: expected HTTP 200, got ${response.status}`);
+    console.log(`${path}: HTTP 200; present in sitemap and llms.txt`);
+  }
   for (const [path, slug] of Object.entries(routes)) {
     const response = await fetch(new URL(path, origin));
     if (!response.ok) throw new Error(`${path}: HTTP ${response.status}`);
@@ -102,12 +139,18 @@ async function verify(origin) {
     }
     console.log(`${path}: fixture SEO fields rendered`);
   }
+  const listingHtml = await (await fetch(new URL("/posts", origin))).text();
+  if (extractMetaDescription(listingHtml) !== description("posts collection")) {
+    throw new Error("/posts: collection description was not rendered");
+  }
+  console.log("/posts: collection description rendered");
   const html = await (await fetch(new URL("/posts/fixture-fallback", origin))).text();
   if (extractTitle(html) !== `Fixture fallback title — ${site.title}` ||
       extractMetaDescription(html) !== description("fallback excerpt")) {
     throw new Error("/posts/fixture-fallback: entry title/excerpt fallback was not rendered");
   }
   console.log("/posts/fixture-fallback: entry title/excerpt fallback rendered");
+  if (unpublished) return;
   const projectHtml = await (await fetch(new URL("/projects/fixture-fallback-project", origin))).text();
   if (extractTitle(projectHtml) !== `Fixture project fallback — ${site.title}` ||
       extractMetaDescription(projectHtml) !== description("fallback project summary")) {
@@ -118,7 +161,7 @@ async function verify(origin) {
 
 const [action, value] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
-if (action === "seed") createSeed(value);
+if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seo") applySeo(value);
-else if (action === "verify") await verify(value);
+else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished");
 else throw new Error(`Unknown fixture action: ${action}`);

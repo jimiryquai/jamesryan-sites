@@ -1,4 +1,5 @@
 ---
+import { getPublishedRoutes } from "@jamesryan/cms-helpers";
 import {
 	getEmDashEntry,
 	getEmDashCollection,
@@ -14,6 +15,9 @@ import MarketingBlocks from "../components/MarketingBlocks.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
+
+const routes = await getPublishedRoutes(Astro.cache);
+if (!routes.has("/")) return Astro.rewrite("/404");
 
 const { entry: page, cacheHint: pageCacheHint } = await getEmDashEntry("pages", "home");
 const { entries: posts, cacheHint: postsCacheHint } = await getEmDashCollection("posts", {

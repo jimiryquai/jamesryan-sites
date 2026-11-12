@@ -1,7 +1,11 @@
 ---
+import { getPublishedRoutes } from "@jamesryan/cms-helpers";
 import { getEmDashEntry, getSeoMeta, getSiteSettings } from "emdash";
 import Base from "../layouts/Base.astro";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
+
+const routes = await getPublishedRoutes(Astro.cache);
+if (!routes.has("/about")) return Astro.rewrite("/404");
 
 const [{ entry: page, cacheHint }, settings] = await Promise.all([
 	getEmDashEntry("pages", "about"),

@@ -1,6 +1,7 @@
 import { renderLlmsTxt } from "@jdevalk/astro-seo-graph";
 import { getSiteSettingsWithCacheHint } from "emdash";
 import { getPublishedEntries, type RequestCache } from "./content-query.ts";
+import type { PublishedRoute } from "./published-routes.ts";
 import { getContentPath } from "./content-url.ts";
 
 async function getPublishedLlmsSections(origin: string, cache: RequestCache) {
@@ -26,11 +27,25 @@ async function getPublishedLlmsSections(origin: string, cache: RequestCache) {
 	return sections;
 }
 
-export async function getLlmsTxt(origin: string, cache: RequestCache): Promise<Response> {
+function getRouteSections(origin: string, routes: Map<string, PublishedRoute>) {
+	return (["pages", "posts", "projects"] as const).map((collection) => ({
+		name: { pages: "Pages", posts: "Posts", projects: "Projects" }[collection],
+		links: [...routes].filter(([, route]) => route.collection === collection).map(([path, route]) => {
+			const data = route.entry?.data;
+			return {
+				title: route.title,
+				url: new URL(path, origin).href,
+				description: data && "excerpt" in data && typeof data.excerpt === "string" ? data.excerpt : undefined,
+			};
+		}),
+	}));
+}
+
+export async function getLlmsTxt(origin: string, cache: RequestCache, routes?: Map<string, PublishedRoute>): Promise<Response> {
 	try {
 		const [{ data: settings, cacheHint }, sections] = await Promise.all([
 			getSiteSettingsWithCacheHint(),
-			getPublishedLlmsSections(origin, cache),
+			routes ? getRouteSections(origin, routes) : getPublishedLlmsSections(origin, cache),
 		]);
 		if (cache.enabled) cache.set(cacheHint);
 		return new Response(renderLlmsTxt({
