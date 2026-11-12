@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import { dirname, join } from "node:path";
+import { createRequire } from "node:module";
 import { DatabaseSync } from "node:sqlite";
 import { extractTitle, extractMetaDescription } from "@jdevalk/astro-seo-graph/integration";
 
@@ -91,7 +92,52 @@ function applySeo(path, seedPath) {
   }
 }
 
-async function verify(origin, unpublished = false) {
+async function verifyDraftPreviews(origin, database) {
+  // Let EmDash initialize its local-only signing secret, then read that same secret.
+  // Neither the secret nor signed URLs are printed or persisted as evidence.
+  await fetch(new URL("/?_preview=invalid", origin), { redirect: "manual" });
+  const db = new DatabaseSync(database, { readOnly: true });
+  try {
+    const secretRow = db.prepare("SELECT value FROM options WHERE name = ?").get("emdash:preview_secret");
+    if (!secretRow) throw new Error("Local EmDash preview secret was not initialized");
+    const secret = JSON.parse(secretRow.value);
+    const require = createRequire(new URL("../apps/marketing-site/package.json", import.meta.url));
+    const { generatePreviewToken, buildPreviewUrl } = await import(require.resolve("emdash"));
+    for (const [collection, slug, path] of [
+      ["pages", "fixture-page", "/pages/fixture-page"],
+      ["posts", "fixture-post", "/posts/fixture-post"],
+    ]) {
+      const row = db.prepare(`SELECT id FROM ec_${collection} WHERE slug = ?`).get(slug);
+      if (!row) throw new Error(`Missing preview fixture ${collection}/${slug}`);
+      const token = await generatePreviewToken({ contentId: `${collection}:${row.id}`, secret });
+      const previewUrl = buildPreviewUrl({ path, token, baseUrl: origin });
+      const preview = await fetch(previewUrl, { redirect: "manual" });
+      if (preview.status !== 200) throw new Error(`${path}: preview expected HTTP 200, got ${preview.status}`);
+      const cacheControl = preview.headers.get("cache-control");
+      if (cacheControl !== "private, no-store") throw new Error(`${path}: preview cache-control was ${cacheControl}`);
+      const html = await preview.text();
+      if (extractTitle(html) !== `${fixtureSeo(slug).title} — ${site.title}`) {
+        throw new Error(`${path}: preview fixture content/SEO was not rendered`);
+      }
+      const anonymous = await fetch(new URL(path, origin), { redirect: "manual" });
+      const wrongToken = await fetch(buildPreviewUrl({ path, token: "invalid", baseUrl: origin }), { redirect: "manual" });
+      if (anonymous.status !== 404 || wrongToken.status !== 404) {
+        throw new Error(`${path}: anonymous or invalid-token request exposed a draft`);
+      }
+      for (const endpoint of ["/sitemap.xml", "/llms.txt"]) {
+        const response = await fetch(new URL(endpoint, origin));
+        if (response.status !== 200 || (await response.text()).includes(path)) {
+          throw new Error(`${path}: preview leaked into ${endpoint}`);
+        }
+      }
+      console.log(`${path}: valid preview HTTP 200; Cache-Control: private, no-store; anonymous/invalid token HTTP 404; absent from sitemap and llms.txt`);
+    }
+  } finally {
+    db.close();
+  }
+}
+
+async function verify(origin, unpublished = false, database) {
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
     "/privacy-policy": "privacy-policy", "/pages/fixture-page": "fixture-page",
@@ -145,7 +191,10 @@ async function verify(origin, unpublished = false) {
     }
     console.log(`${path}: fixture SEO fields rendered`);
   }
-  if (unpublished) return;
+  if (unpublished) {
+    await verifyDraftPreviews(origin, database);
+    return;
+  }
   const listingHtml = await (await fetch(new URL("/posts", origin))).text();
   if (extractMetaDescription(listingHtml) !== description("posts collection")) {
     throw new Error("/posts: collection description was not rendered");
@@ -169,5 +218,5 @@ const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
 else if (action === "seo") applySeo(value, seedPath);
-else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished");
+else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished", seedPath);
 else throw new Error(`Unknown fixture action: ${action}`);

@@ -31,7 +31,10 @@ function archiveRoute(collection: PublicCollection): PublishedRoute {
 	return { kind: "archive", collection, title: PUBLIC_COLLECTIONS[collection] };
 }
 
-/** Resolve one public route with one targeted CMS query, including entry SEO. */
+/**
+ * What may this request render? EmDash authorizes single entries, including
+ * verified draft previews/edit mode. Archives still require published entries.
+ */
 export async function getPublishedRoute(path: string, cache?: RequestCache): Promise<PublishedRoute | null> {
 	const archive = publicCollections.find((collection) => archivePath(collection) === path);
 	if (archive) {
@@ -45,10 +48,10 @@ export async function getPublishedRoute(path: string, cache?: RequestCache): Pro
 	const result = await getEmDashEntry(content.collection, content.slug);
 	if (result.error) throw result.error;
 	if (cache?.enabled) cache.set(result.cacheHint);
-	return result.entry?.data.status === "published" ? entryRoute(content.collection, result.entry) : null;
+	return result.entry ? entryRoute(content.collection, result.entry) : null;
 }
 
-/** Enumerate the same published entry/archive rule for discovery endpoints. */
+/** What may the public discover? Always enumerate published entries/archives only. */
 export async function getPublishedRoutes(cache?: RequestCache): Promise<Map<string, PublishedRoute>> {
 	const routes = new Map<string, PublishedRoute>();
 	await Promise.all(publicCollections.map(async (collection) => {

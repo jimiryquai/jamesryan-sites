@@ -8,6 +8,7 @@ const records = {
   projects: [entry("launched"), entry("draft-project", "draft")],
 };
 const queries = [];
+let previewEntry;
 mock.module("emdash", { namedExports: {
   async getEmDashCollection(collection, { status, limit }) {
     queries.push({ kind: "collection", collection, limit });
@@ -15,7 +16,7 @@ mock.module("emdash", { namedExports: {
   },
   async getEmDashEntry(collection, slug) {
     queries.push({ kind: "entry", collection, slug });
-    const found = records[collection].find(entry => entry.id === slug);
+    const found = records[collection].find(entry => entry.id === slug && (entry.data.status === "published" || previewEntry === `${collection}:${slug}`));
     return { entry: found ? { ...found, data: { ...found.data, seo: { title: "Hydrated SEO" } } } : null, cacheHint: { tags: [collection] } };
   },
 } });
@@ -58,5 +59,22 @@ test("archives disappear from lookup and discovery when only drafts remain", asy
     } finally {
       records[collection] = original;
     }
+  }
+});
+
+
+test("request-authorized draft previews resolve while anonymous requests and discovery exclude them", async () => {
+  for (const [collection, slug, path] of [["pages", "pricing", "/pricing"], ["posts", "draft-post", "/posts/draft-post"]]) {
+    assert.equal(await getPublishedRoute(path), null, `${path}: anonymous`);
+    try {
+      previewEntry = `${collection}:${slug}`;
+      const route = await getPublishedRoute(path);
+      assert.equal(route?.kind, "entry", `${path}: verified preview`);
+      assert.equal(route.entry.data.status, "draft");
+      assert.equal((await getPublishedRoutes()).has(path), false, `${path}: discovery`);
+    } finally {
+      previewEntry = undefined;
+    }
+    assert.equal(await getPublishedRoute(path), null, `${path}: anonymous after preview`);
   }
 });

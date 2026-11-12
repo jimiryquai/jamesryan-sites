@@ -76,7 +76,7 @@ NODE
   if [[ "$fixture" == true ]]; then
     verify_action=verify
     if [[ "$seed_option" == unpublished ]]; then verify_action=verify-unpublished; fi
-    node "$root/scripts/seo-fixture.mjs" "$verify_action" "http://127.0.0.1:$port" || status=1
+    node "$root/scripts/seo-fixture.mjs" "$verify_action" "http://127.0.0.1:$port" "$database" || status=1
   fi
   node "$root/scripts/check-rendered-media.mjs" "http://127.0.0.1:$port" "$seed" "${RENDERED_EVIDENCE_DIR:-}" || status=1
   cleanup
