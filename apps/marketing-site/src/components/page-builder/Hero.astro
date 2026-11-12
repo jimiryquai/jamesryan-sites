@@ -1,0 +1,27 @@
+---
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import HeroSimpleCentered from '@jamesryan/ui/components/sections/HeroSimpleCentered.astro';
+import HeroLeftAlignedWithPhoto from '@jamesryan/ui/components/sections/HeroLeftAlignedWithPhoto.astro';
+import HeroLeftAlignedWithDemo from '@jamesryan/ui/components/sections/HeroLeftAlignedWithDemo.astro';
+import AnnouncementBadge from '@jamesryan/ui/components/elements/announcement-badge.astro';
+import { Image } from 'emdash/ui';
+import type { MediaValue } from 'emdash';
+import Actions from './Actions.astro';
+interface Props { value: StoredBlock }
+const value = Astro.props.value as StoredBlock & {
+  heading?: string; body?: string; variant?: 'centered' | 'photo' | 'demo';
+  eyebrow?: string; eyebrow_url?: string; eyebrow_action?: string;
+  image?: MediaValue; links?: { label: string; url: string }[];
+};
+const sections = { centered: HeroSimpleCentered, photo: HeroLeftAlignedWithPhoto, demo: HeroLeftAlignedWithDemo };
+const Section = sections[value.variant ?? 'centered'] ?? sections.centered;
+const centered = Section === HeroSimpleCentered;
+---
+<Section id={value._key || 'hero'} headline={value.heading} subheadline={value.body}
+  class={centered ? 'py-24 sm:py-32 lg:py-48' : undefined}>
+  {value.eyebrow && value.eyebrow_url && <AnnouncementBadge slot="eyebrow"
+    href={value.eyebrow_url} text={value.eyebrow} cta={value.eyebrow_action} />}
+  <Actions slot="cta" links={value.links} />
+  {!centered && value.image && <Image slot={value.variant === 'photo' ? 'photo' : 'demo'}
+    image={value.image} width={1800} height={945} class="w-full h-auto object-cover" />}
+</Section>

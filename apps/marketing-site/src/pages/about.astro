@@ -1,11 +1,14 @@
 ---
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import { getSeoMeta } from "emdash";
+import PageLayout from "../components/page-builder/PageLayout.astro";
+import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
 import Base from "../layouts/Base.astro";
 
-const route = await getPublishedRoute("/about", Astro.cache);
+const route = await getPublishedRoute("/about", Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
+const pageLayout = resolvePageLayout(page);
 const seo = getSeoMeta(page);
 
 import LinkedInIcon from "@jamesryan/ui/components/icons/social/linkedin-icon.astro";
@@ -18,6 +21,9 @@ import GitHubIcon from "@jamesryan/ui/components/icons/social/github-icon.astro"
 	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
+	{pageLayout ? (
+		<PageLayout value={pageLayout.layout} group={pageLayout.group} />
+	) : (
 	<div class="mx-auto w-full max-w-5xl px-6 lg:px-8 py-16 sm:py-24 font-sans">
 		<div
 			class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start"
@@ -123,4 +129,5 @@ import GitHubIcon from "@jamesryan/ui/components/icons/social/github-icon.astro"
 			</div>
 		</div>
 	</div>
+	)}
 </Base>

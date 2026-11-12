@@ -1,0 +1,12 @@
+---
+import type { Page } from '../../../emdash-env';
+import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
+import PageBuilder from 'emdash-plugin-page-builder/blocks/PageBuilder.astro';
+import { blocks } from './blocks';
+import { sources } from './sources';
+interface Props { value: Page['layout']; group?: string }
+const { value, group } = Astro.props;
+// Generated block interfaces omit the generic renderer's string index signature.
+const layout: StoredBlock[] | undefined = value?.map((block) => ({ ...block }));
+---
+<PageBuilder value={layout} blocks={blocks} sources={sources} group={group} />

@@ -4,6 +4,8 @@
 	"main": "./src/worker.ts",
 	"compatibility_date": "2026-02-24",
 	"compatibility_flags": ["nodejs_compat"],
+	"send_metrics": false,
+	"dependencies_instrumentation": { "enabled": false },
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -34,6 +36,9 @@
 			"custom_domain": true
 		}
 	],
+	"vars": {
+		"USERMAVEN_KEY": "UMNstP14wS"
+	},
 	"env": {
 		"staging": {
 			"d1_databases": [

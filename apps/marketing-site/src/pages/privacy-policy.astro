@@ -2,7 +2,7 @@
 import PublishedPage from "../components/PublishedPage.astro";
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
 
-const route = await getPublishedRoute("/privacy-policy", Astro.cache);
+const route = await getPublishedRoute("/privacy-policy", Astro.cache, { references: { service: true } });
 if (route?.kind !== "entry" || route.collection !== "pages") return Astro.rewrite("/404");
 const page = route.entry;
 ---

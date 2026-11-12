@@ -9,6 +9,7 @@ cleanup() {
     kill "$worker_pid" 2>/dev/null || true
     wait "$worker_pid" 2>/dev/null || true
   fi
+  rm -f -- "$root/apps/marketing-site/dist/server/wrangler.unconfigured.json"
 }
 finish() {
   cleanup
@@ -26,7 +27,7 @@ fi
 # Let the OS choose a free port so simultaneous worktree checks stay isolated.
 port=$(node --input-type=module -e 'import net from "node:net"; const server = net.createServer(); server.listen(0, "127.0.0.1", () => { console.log(server.address().port); server.close(); });')
 entries=("marketing-site:$port:fixture")
-if [[ "$mode" == fixture ]]; then entries+=("marketing-site:$port:unpublished"); fi
+if [[ "$mode" == fixture ]]; then entries+=("marketing-site:$port:unpublished" "digital-garden:$port:code"); fi
 for entry in "${entries[@]}"; do
   IFS=: read -r app port seed_option <<< "$entry"
   state="$state_root/$app-$seed_option"
@@ -40,6 +41,9 @@ for entry in "${entries[@]}"; do
     seed_action=seed
     if [[ "$seed_option" == unpublished ]]; then seed_action=seed-unpublished; fi
     node "$root/scripts/seo-fixture.mjs" "$seed_action" "$seed"
+  elif [[ "$seed_option" == code ]]; then
+    seed="$state/fixture.json"
+    node "$root/scripts/seo-fixture.mjs" seed-garden-code "$seed"
   elif [[ "$mode" == fixture ]]; then
     seed="$root/apps/$app/$seed_option"
   fi
@@ -55,7 +59,18 @@ NODE
   if [[ "$fixture" == true ]]; then
     node "$root/scripts/seo-fixture.mjs" seo "$database" "$seed"
   fi
-  ./node_modules/.bin/wrangler dev --config dist/server/wrangler.json --local \
+  wrangler_config="dist/server/wrangler.json"
+  if [[ "$seed_option" == unpublished ]]; then
+    wrangler_config="dist/server/wrangler.unconfigured.json"
+    node --input-type=module - "dist/server/wrangler.json" "$wrangler_config" <<'NODE'
+import { readFileSync, writeFileSync } from 'node:fs';
+const config = JSON.parse(readFileSync(process.argv[2], 'utf8'));
+delete config.vars;
+writeFileSync(process.argv[3], JSON.stringify(config, null, 2));
+NODE
+  fi
+  ./node_modules/.bin/wrangler dev --config "$wrangler_config" --local \
+    --infer-origin-from-routes=false \
     --persist-to "$state" --port "$port" --inspector-port 0 &
   worker_pid=$!
   ready=false
@@ -72,6 +87,12 @@ NODE
     exit 1
   fi
   echo "Validating $app"
+  if [[ "$seed_option" == code ]]; then
+    node "$root/scripts/seo-fixture.mjs" verify-code "http://127.0.0.1:$port" || status=1
+    cleanup
+    worker_pid=""
+    continue
+  fi
   node "$root/scripts/validate-rendered-seo.mjs" "http://127.0.0.1:$port" || status=1
   if [[ "$fixture" == true ]]; then
     verify_action=verify

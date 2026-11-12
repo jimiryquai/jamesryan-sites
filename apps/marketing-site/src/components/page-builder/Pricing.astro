@@ -1,0 +1,18 @@
+---
+import type { StoredBlock, PricingTier } from 'emdash-plugin-page-builder/blocks';
+import PricingMultiTier from '@jamesryan/ui/components/sections/PricingMultiTier.astro';
+import PricingHeroMultiTier from '@jamesryan/ui/components/sections/PricingHeroMultiTier.astro';
+import Plan from './Plan.astro';
+interface Props { value: StoredBlock; items?: readonly unknown[] }
+const { value } = Astro.props;
+// PageBuilder resolves this block's typed source before entering the generic section boundary.
+const items = (Astro.props.items ?? []) as readonly PricingTier[];
+---
+{value.variant === 'single' ? items.slice(0, 1).map((plan) => <Plan plan={plan} single />)
+  : value.variant === 'toggle' ? <PricingHeroMultiTier id={value._key}>
+    <Fragment slot="monthly-plans">{items.map((plan) => <Plan plan={plan} billing="monthly" />)}</Fragment>
+    <Fragment slot="yearly-plans">{items.map((plan) => <Plan plan={plan} billing="yearly" />)}</Fragment>
+  </PricingHeroMultiTier>
+  : <PricingMultiTier id={value._key}>
+    <Fragment slot="plans">{items.map((plan) => <Plan plan={plan} />)}</Fragment>
+  </PricingMultiTier>}

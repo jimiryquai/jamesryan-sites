@@ -12,17 +12,11 @@ blockExoticSubdeps: true
 
 minimumReleaseAge: 1440
 
+# Keep one rule per package: pnpm uses its first matching rule.
+# Version exceptions cover only releases still resolved in the lockfile.
 minimumReleaseAgeExclude:
   - emdash
   - '@emdash-cms/*'
   - 'emdash-plugin-code-block-pro@0.2.0'
+  - 'emdash-plugin-page-builder@0.3.0'
   - 'emdash-plugin-ai-comment-moderation@2.1.0'
-
-# Keep new admin extensions on the same Tiptap release as its existing editor.
-overrides:
-  '@tiptap/extension-subscript': 3.23.5
-  '@tiptap/extension-superscript': 3.23.5
-  '@astrojs/cloudflare>@cloudflare/vite-plugin': 1.39.0
-
-patchedDependencies:
-  emdash@1.4.0: patches/emdash@1.4.0.patch

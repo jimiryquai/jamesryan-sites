@@ -2,40 +2,97 @@ import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
 import { DatabaseSync } from "node:sqlite";
+import { fileURLToPath } from "node:url";
 import { extractTitle, extractMetaDescription } from "@jdevalk/astro-seo-graph/integration";
+import {
+  USERMAVEN_PROXY_PATH,
+  USERMAVEN_SCRIPT_PATH,
+  buildUsermavenProxyUrls,
+} from "../apps/marketing-site/src/utils/usermaven.ts";
 
 const root = new URL("../", import.meta.url);
+const marketingRequire = createRequire(new URL("../apps/marketing-site/package.json", import.meta.url));
+const { unstable_readConfig: readWranglerConfig } = marketingRequire("wrangler");
+const configuredUsermavenKey = readWranglerConfig(
+  { config: fileURLToPath(new URL("apps/marketing-site/wrangler.jsonc", root)) },
+  { hideWarnings: true },
+).vars?.USERMAVEN_KEY;
 const original = JSON.parse(readFileSync(new URL("apps/marketing-site/seed/seed.json", root)));
 const description = (name) =>
   `Fixture ${name} metadata description for verifying the rendered SEO validation pipeline.`;
-const heading = (text) => [{ _type: "block", _key: "heading", style: "h1", children: [
-  { _type: "span", _key: "text", text },
+const paragraph = (key, text) => [{ _type: "block", _key: key, style: "normal", children: [
+  { _type: "span", _key: `${key}-span`, text },
 ] }];
 const image = {
   $media: { file: "assets/post-1.webp", alt: "Fixture image" },
 };
-const page = (slug, content = heading(`Fixture ${slug} heading`)) => ({
-  id: slug, slug, status: "published", data: { title: `Fixture ${slug}`, content },
+const layoutHero = (slug) => [{
+  _type: "hero", _key: `layout-${slug}`, _version: 1, variant: "centered",
+  heading: `Fixture ${slug} layout heading`, body: `Fixture ${slug} layout body`, links: [],
+}];
+// Every offered block type renders through the published layout route; the
+// fixture proves each section (sources included) end to end in CI.
+const layoutNewBlocks = (slug) => [
+  { _type: "prose", _key: `layout-${slug}-prose`, _version: 1, variant: "centered",
+    heading: `Fixture ${slug} prose heading`, body: `Fixture ${slug} prose body`,
+    content: [...paragraph(`${slug}-prose-p`, `Fixture ${slug} prose paragraph.`),
+      { _type: "code", _key: `${slug}-prose-code`, code: `fixture ${slug} prose code block`, language: "js" }] },
+  { _type: "faq", _key: `layout-${slug}-faq`, _version: 1, variant: "two-column", scope: "all" },
+  { _type: "stats", _key: `layout-${slug}-stats`, _version: 1, variant: "graph",
+    eyebrow: `Fixture ${slug} stats eyebrow`, heading: `Fixture ${slug} stats heading`, body: `Fixture ${slug} stats body`,
+    items: [{ _key: `${slug}-stat`, value: "99%", label: `Fixture ${slug} stat label` }] },
+  { _type: "team", _key: `layout-${slug}-team`, _version: 1, variant: "four-column", scope: "all" },
+  { _type: "comparison", _key: `layout-${slug}-comparison`, _version: 1, variant: "table",
+    columns: [
+      { _key: `${slug}-col-first`, key: "first", label: "Starter" },
+      { _key: `${slug}-col-second`, key: "second", label: "Growth" },
+      { _key: `${slug}-col-third`, key: "third", label: "Pro" },
+    ],
+    rows: [{ _key: `${slug}-row`, group_name: `Fixture ${slug} comparison group`, name: `Fixture ${slug} comparison feature`,
+      first_value: "true", second_value: "false", third_value: `Fixture ${slug} comparison value` }] },
+];
+const page = (slug, layout) => ({
+  id: slug, slug, status: "published",
+  data: { title: `Fixture ${slug}`, ...(layout ? { layout } : {}) },
 });
+const codeBlock = [{
+  _type: "code-block-pro", _key: "upgrade-code", code: 'console.log("astro7-renderer-fixture");',
+  language: "javascript", copyButton: true,
+}];
 const entries = {
   pages: [
-    page("home", [{ _type: "marketing.hero", _key: "hero", headline: "Fixture home heading" }]),
-    page("about"), page("contact"), page("pricing"),
-    page("privacy-policy", heading("Fixture privacy heading")),
-    page("fixture-page", heading("Fixture custom heading")),
+    page("home", layoutHero("home")),
+    // About has no layout; its route renders the hand-written body as its fallback.
+    page("about"),
+    page("contact", layoutHero("contact")),
+    // A page with a published layout renders it; the same entry goes draft in
+    // the unpublished state and must 404.
+    page("pricing", layoutHero("pricing")),
+    // The five blocks added in ticket 20 render through the same published-route
+    // layout switch on the page that used to hold the document block.
+    page("privacy-policy", layoutNewBlocks("privacy-policy")),
+    page("fixture-page", layoutHero("fixture-page")),
     { ...page("fixture-draft"), status: "draft" },
   ],
   posts: [
     { id: "fixture-post", slug: "fixture-post", status: "published",
-      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: [], featured_image: image } },
+      data: { title: "Fixture post heading", excerpt: description("post excerpt"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback", slug: "fixture-fallback", status: "published",
       data: { title: "Fixture fallback title", excerpt: description("fallback excerpt"), content: [], featured_image: image } },
   ],
   projects: [
     { id: "fixture-project", slug: "fixture-project", status: "published",
-      data: { title: "Fixture project heading", summary: description("project summary"), content: [], featured_image: image } },
+      data: { title: "Fixture project heading", summary: description("project summary"), content: codeBlock, featured_image: image } },
     { id: "fixture-fallback-project", slug: "fixture-fallback-project", status: "published",
       data: { title: "Fixture project fallback", summary: description("fallback project summary"), content: [], featured_image: image } },
+  ],
+  faqs: [
+    { id: "fixture-faq", slug: "fixture-faq", status: "published",
+      data: { question: "Fixture FAQ question", answer: "Fixture FAQ answer" } },
+  ],
+  team: [
+    { id: "fixture-member", slug: "fixture-member", status: "published",
+      data: { name: "Fixture Member", role: "Fixture member role" } },
   ],
 };
 const site = {
@@ -137,6 +194,83 @@ async function verifyDraftPreviews(origin, database) {
   }
 }
 
+function createGardenCodeSeed(path) {
+  const seed = JSON.parse(readFileSync(new URL("apps/digital-garden/seed/seed.json", root)));
+  seed.content = {
+    posts: [{ id: "fixture-post", slug: "fixture-post", status: "published",
+      data: { title: "Fixture garden post", content: codeBlock } }],
+    projects: [{ id: "fixture-project", slug: "fixture-project", status: "published",
+      data: { title: "Fixture garden project", content: codeBlock } }],
+  };
+  seed.bylines = [];
+  seed.menus = seed.menus.map(menu => ({ ...menu, items: [] }));
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, JSON.stringify(seed));
+}
+
+async function verifyCodeRenderer(origin) {
+  for (const path of ["/posts/fixture-post", "/projects/fixture-project"]) {
+    const response = await fetch(new URL(path, origin), { redirect: "manual" });
+    const html = await response.text();
+    if (response.status !== 200 || !html.includes('class="cbp-copy-btn"') || !html.includes('class="shiki') || !html.includes("astro7-renderer-fixture")) {
+      throw new Error(`${path}: registered Code Block Pro renderer did not render highlighted code and copy button (HTTP ${response.status})`);
+    }
+    console.log(`${path}: registered Code Block Pro renderer rendered highlighted code and copy button`);
+  }
+}
+
+async function verifyUsermaven(origin, unconfigured) {
+  if (!configuredUsermavenKey) {
+    throw new Error("apps/marketing-site/wrangler.jsonc is missing production vars.USERMAVEN_KEY");
+  }
+  const homeHtml = await (await fetch(new URL("/", origin))).text();
+  if (unconfigured) {
+    for (const marker of ["um-tracker", "usermaven", USERMAVEN_SCRIPT_PATH, configuredUsermavenKey]) {
+      if (homeHtml.includes(marker)) {
+        throw new Error(`/: Usermaven marker ${JSON.stringify(marker)} rendered when USERMAVEN_KEY is unset`);
+      }
+    }
+    const unconfiguredScript = await fetch(new URL(USERMAVEN_SCRIPT_PATH, origin), { redirect: "manual" });
+    await unconfiguredScript.text();
+    const unconfiguredEvent = await fetch(new URL(`${USERMAVEN_PROXY_PATH}/api/v1/event`, origin), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_type: "pageview" }),
+      redirect: "manual",
+    });
+    await unconfiguredEvent.text();
+    if (unconfiguredScript.status !== 404 || unconfiguredEvent.status !== 404) {
+      throw new Error(
+        `Usermaven proxy expected HTTP 404 when USERMAVEN_KEY is unset, got ${unconfiguredScript.status} and ${unconfiguredEvent.status}`,
+      );
+    }
+    console.log(`/: Usermaven snippet absent and ${USERMAVEN_PROXY_PATH}/* HTTP 404 when USERMAVEN_KEY is unset`);
+    return;
+  }
+  const { trackingHost, scriptSrc } = buildUsermavenProxyUrls(origin);
+  for (const requiredMarker of [
+    "um-tracker",
+    JSON.stringify(trackingHost),
+    JSON.stringify(scriptSrc),
+    configuredUsermavenKey,
+    "data-tracking-host",
+    "data-key",
+    'setAttribute("data-autocapture", "true")',
+    'setAttribute("data-privacy-policy", "strict")',
+    'setAttribute("data-randomize-url", "true")',
+  ]) {
+    if (!homeHtml.includes(requiredMarker)) {
+      throw new Error(`/: Usermaven snippet missing ${JSON.stringify(requiredMarker)} when USERMAVEN_KEY is configured`);
+    }
+  }
+  for (const forbiddenHost of ["um.jamesryan.dev", "t.usermaven.com", "events.usermaven.com"]) {
+    if (homeHtml.includes(forbiddenHost)) {
+      throw new Error(`/: Usermaven snippet must use first-party proxy path, found ${forbiddenHost}`);
+    }
+  }
+  console.log("/: Usermaven first-party proxy snippet rendered when USERMAVEN_KEY is configured");
+}
+
 async function verify(origin, unpublished = false, database) {
   const routes = {
     "/": "home", "/about": "about", "/contact": "contact", "/pricing": "pricing",
@@ -191,10 +325,41 @@ async function verify(origin, unpublished = false, database) {
     }
     console.log(`${path}: fixture SEO fields rendered`);
   }
+  if (!unpublished) {
+    await verifyCodeRenderer(origin);
+    const layoutHtml = await (await fetch(new URL("/pricing", origin))).text();
+    if (!layoutHtml.includes("Fixture pricing layout heading")) {
+      throw new Error("/pricing: the published layout was not rendered");
+    }
+    console.log("/pricing: published layout rendered");
+    const newBlocksHtml = await (await fetch(new URL("/privacy-policy", origin))).text();
+    if (!newBlocksHtml.includes("Fixture privacy-policy prose heading")) {
+      throw new Error("/privacy-policy: the published layout was not rendered");
+    }
+    for (const marker of [
+      "Fixture privacy-policy prose paragraph.", "fixture privacy-policy prose code block",
+      "Questions &amp; Answers", "Fixture FAQ question",
+      "Fixture privacy-policy stats heading", "Fixture privacy-policy stat label",
+      "Fixture Member",
+      "Fixture privacy-policy comparison group", "Fixture privacy-policy comparison feature",
+    ]) {
+      if (!newBlocksHtml.includes(marker)) {
+        throw new Error(`/privacy-policy: layout section marker missing: ${marker}`);
+      }
+    }
+    console.log("/privacy-policy: layout renders prose, faq, stats, team and comparison sections");
+    const aboutHtml = await (await fetch(new URL("/about", origin))).text();
+    if (!aboutHtml.includes("I'm James Ryan.")) {
+      throw new Error("/about: the hand-written fallback was not rendered for a page without layout");
+    }
+    console.log("/about: hand-written fallback rendered for a page without layout");
+  }
   if (unpublished) {
+    await verifyUsermaven(origin, true);
     await verifyDraftPreviews(origin, database);
     return;
   }
+  await verifyUsermaven(origin, false);
   const listingHtml = await (await fetch(new URL("/posts", origin))).text();
   if (extractMetaDescription(listingHtml) !== description("posts collection")) {
     throw new Error("/posts: collection description was not rendered");
@@ -217,6 +382,8 @@ async function verify(origin, unpublished = false, database) {
 const [action, value, seedPath] = process.argv.slice(2);
 if (!value) throw new Error("usage: node scripts/seo-fixture.mjs seed|seo|verify <path-or-origin>");
 if (action === "seed" || action === "seed-unpublished") createSeed(value, action === "seed-unpublished");
+else if (action === "seed-garden-code") createGardenCodeSeed(value);
+else if (action === "verify-code") await verifyCodeRenderer(value);
 else if (action === "seo") applySeo(value, seedPath);
 else if (action === "verify" || action === "verify-unpublished") await verify(value, action === "verify-unpublished", seedPath);
 else throw new Error(`Unknown fixture action: ${action}`);

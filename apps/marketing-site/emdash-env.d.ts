@@ -11,6 +11,7 @@ export interface Faq {
   status: string;
   question: string;
   answer: string;
+  service: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -19,12 +20,134 @@ export interface Faq {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface PageLayoutHeroV1Block {
+  _type: "hero";
+  _version: 1;
+  _key: string;
+  "variant"?: "centered" | "photo" | "demo" | null;
+  "eyebrow"?: string | null;
+  "eyebrow_url"?: string | null;
+  "eyebrow_action"?: string | null;
+  "heading"?: string | null;
+  "body"?: string | null;
+  "image"?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } } | null;
+  "links"?: { "label"?: string | null; "url"?: string | null }[] | null;
+}
+
+export type PageLayoutHeroBlock = PageLayoutHeroV1Block;
+
+export interface PageLayoutCtaV1Block {
+  _type: "cta";
+  _version: 1;
+  _key: string;
+  "variant"?: "start" | "centered" | null;
+  "heading"?: string | null;
+  "body"?: string | null;
+  "links"?: { "label"?: string | null; "url"?: string | null }[] | null;
+}
+
+export type PageLayoutCtaBlock = PageLayoutCtaV1Block;
+
+export interface PageLayoutFeaturesV1Block {
+  _type: "features";
+  _version: 1;
+  _key: string;
+  "eyebrow"?: string | null;
+  "heading"?: string | null;
+  "subheadline"?: string | null;
+  "variant"?: "two-column" | "three-column" | "three-column-demos" | "alternating" | null;
+  "items"?: { "title"?: string | null; "description"?: string | null; "image"?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } } | null; "icon"?: string | null; "cta_label"?: string | null; "cta_url"?: string | null }[] | null;
+}
+
+export type PageLayoutFeaturesBlock = PageLayoutFeaturesV1Block;
+
+export interface PageLayoutTestimonialsV1Block {
+  _type: "testimonials";
+  _version: 1;
+  _key: string;
+  "variant"?: "single" | "grid" | "split" | null;
+  "scope"?: "page" | "all" | null;
+  "count"?: number | null;
+}
+
+export type PageLayoutTestimonialsBlock = PageLayoutTestimonialsV1Block;
+
+export interface PageLayoutPricingV1Block {
+  _type: "pricing";
+  _version: 1;
+  _key: string;
+  "variant"?: "tiers" | "toggle" | "single" | null;
+  "scope"?: "page" | "all" | null;
+}
+
+export type PageLayoutPricingBlock = PageLayoutPricingV1Block;
+
+export interface PageLayoutComparisonV1Block {
+  _type: "comparison";
+  _version: 1;
+  _key: string;
+  "variant"?: "table" | null;
+  "columns"?: { "key"?: "first" | "second" | "third" | null; "label"?: string | null }[] | null;
+  "rows"?: { "group_name"?: string | null; "name"?: string | null; "first_value"?: string | null; "second_value"?: string | null; "third_value"?: string | null }[] | null;
+}
+
+export type PageLayoutComparisonBlock = PageLayoutComparisonV1Block;
+
+export interface PageLayoutTeamV1Block {
+  _type: "team";
+  _version: 1;
+  _key: string;
+  "variant"?: "four-column" | "three-column" | null;
+  "scope"?: "page" | "all" | null;
+  "count"?: number | null;
+}
+
+export type PageLayoutTeamBlock = PageLayoutTeamV1Block;
+
+export interface PageLayoutFaqV1Block {
+  _type: "faq";
+  _version: 1;
+  _key: string;
+  "variant"?: "two-column" | "centered" | null;
+  "scope"?: "page" | "all" | null;
+  "count"?: number | null;
+}
+
+export type PageLayoutFaqBlock = PageLayoutFaqV1Block;
+
+export interface PageLayoutStatsV1Block {
+  _type: "stats";
+  _version: 1;
+  _key: string;
+  "variant"?: "graph" | null;
+  "eyebrow"?: string | null;
+  "heading"?: string | null;
+  "body"?: string | null;
+  "items"?: { "value"?: string | null; "label"?: string | null }[] | null;
+}
+
+export type PageLayoutStatsBlock = PageLayoutStatsV1Block;
+
+export interface PageLayoutProseV1Block {
+  _type: "prose";
+  _version: 1;
+  _key: string;
+  "variant"?: "centered" | "start" | null;
+  "heading"?: string | null;
+  "body"?: string | null;
+  "content"?: PortableTextBlock[] | null;
+}
+
+export type PageLayoutProseBlock = PageLayoutProseV1Block;
+
+export type PageLayoutBlock = PageLayoutHeroBlock | PageLayoutCtaBlock | PageLayoutFeaturesBlock | PageLayoutTestimonialsBlock | PageLayoutPricingBlock | PageLayoutComparisonBlock | PageLayoutTeamBlock | PageLayoutFaqBlock | PageLayoutStatsBlock | PageLayoutProseBlock;
+
 export interface Page {
   id: string;
   slug: string | null;
   status: string;
   title: string;
-  content?: PortableTextBlock[];
+  layout?: PageLayoutBlock[];
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -64,6 +187,7 @@ export interface Pricing {
   cta_url?: string;
   badge?: string;
   highlighted?: boolean;
+  service: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -113,6 +237,7 @@ export interface Team {
   name: string;
   role: string;
   image?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  service: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -130,6 +255,7 @@ export interface Testimonial {
   role?: string;
   company?: string;
   avatar?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown>; darkVariant?: { id: string; src?: string; alt?: string; caption?: string; width?: number; height?: number; filename?: string; mimeType?: string; blurhash?: string; dominantColor?: string; focalX?: number; focalY?: number; provider?: string; previewUrl?: string; meta?: Record<string, unknown> } };
+  service: string;
   createdAt: Date;
   updatedAt: Date;
   publishedAt: Date | null;
@@ -138,19 +264,7 @@ export interface Testimonial {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
-export interface FaqReferences {
-  service: ReferencePage<Service>;
-}
-
-export interface PricingReferences {
-  service: ReferencePage<Service>;
-}
-
-export interface TeamReferences {
-  service: ReferencePage<Service>;
-}
-
-export interface TestimonialReferences {
+export interface PageReferences {
   service: ReferencePage<Service>;
 }
 
@@ -166,9 +280,6 @@ declare module "emdash" {
     testimonials: Testimonial;
   }
   interface EmDashCollectionReferences {
-    faqs: FaqReferences;
-    pricing: PricingReferences;
-    team: TeamReferences;
-    testimonials: TestimonialReferences;
+    pages: PageReferences;
   }
 }

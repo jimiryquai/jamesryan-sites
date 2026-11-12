@@ -5,6 +5,7 @@ import icon from "astro-iconset";
 import { defineConfig, fontProviders } from "astro/config";
 import emdash from "emdash/astro";
 import tailwind from "@tailwindcss/vite";
+import pageBuilderPlugin from "emdash-plugin-page-builder/plugin";
 import seoPlugin from "@jdevalk/emdash-plugin-seo";
 import seoGraph from "@jdevalk/astro-seo-graph/integration";
 import { codeBlockProPlugin } from "emdash-plugin-code-block-pro";
@@ -16,6 +17,8 @@ const hostname = new URL(site).hostname;
 export default defineConfig({
 	site,
 	output: "server",
+	// Preserve inline spacing from Astro 6 across the compiler upgrade.
+	compressHTML: true,
 	adapter: cloudflare({ 
 		inspectorPort: process.argv.includes("dev") ? 9229 : false 
 	}),
@@ -112,15 +115,7 @@ export default defineConfig({
 					return seo;
 				})(),
 				codeBlockProPlugin(),
-				{
-					id: "marketing-blocks",
-					version: "0.1.0",
-					// Absolute file:// URL so the virtual emdash/plugins module
-					// can resolve this at build time (relative paths fail because
-					// the virtual module has no on-disk location to anchor them).
-					entrypoint: new URL("./src/plugins/marketing-blocks/index.ts", import.meta.url).href,
-					adminEntry: new URL("./src/plugins/marketing-blocks/admin.tsx", import.meta.url).href,
-				},
+				pageBuilderPlugin(),
 			],
 		}),
 	],

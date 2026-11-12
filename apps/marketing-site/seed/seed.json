@@ -28,9 +28,31 @@
           "required": true
         },
         {
-          "slug": "content",
-          "label": "Content",
-          "type": "portableText"
+          "slug": "layout",
+          "label": "Layout",
+          "type": "blocks",
+          "validation": {
+            "allowedTypes": [
+              "hero",
+              "cta",
+              "features",
+              "testimonials",
+              "pricing",
+              "comparison",
+              "team",
+              "faq",
+              "stats",
+              "prose"
+            ]
+          }
+        },
+        {
+          "slug": "service",
+          "label": "Service",
+          "type": "reference",
+          "validation": {
+            "targetCollection": "services"
+          }
         }
       ]
     },
@@ -557,18 +579,24 @@
         "status": "published",
         "data": {
           "title": "Home",
-          "content": [
+          "layout": [
             {
-              "_type": "marketing.hero",
+              "_type": "hero",
               "_key": "hero",
-              "variation": "left-aligned-with-demo",
-              "headline": "James Ryan — AI-native marketer & engineer",
-              "subheadline": "I build intelligent marketing engines and software tools that drive real growth. Bridging the gap between code and customers.",
-              "primaryCtaLabel": "View My Blog",
-              "primaryCtaUrl": "/posts",
-              "secondaryCtaLabel": "About Me",
-              "secondaryCtaUrl": "/about",
-              "centered": true
+              "_version": 1,
+              "variant": "centered",
+              "heading": "James Ryan — AI-native marketer & engineer",
+              "body": "I build intelligent marketing engines and software tools that drive real growth. Bridging the gap between code and customers.",
+              "links": [
+                {
+                  "label": "View My Blog",
+                  "url": "/posts"
+                },
+                {
+                  "label": "About Me",
+                  "url": "/about"
+                }
+              ]
             }
           ]
         }
@@ -578,8 +606,7 @@
         "slug": "about",
         "status": "published",
         "data": {
-          "title": "About Us",
-          "content": []
+          "title": "About Us"
         }
       },
       {
@@ -587,8 +614,7 @@
         "slug": "pricing",
         "status": "published",
         "data": {
-          "title": "Pricing",
-          "content": []
+          "title": "Pricing"
         }
       },
       {
@@ -597,13 +623,371 @@
         "status": "published",
         "data": {
           "title": "Privacy Policy",
-          "content": [
+          "layout": [
             {
-              "_type": "marketing.document",
+              "_type": "prose",
               "_key": "document",
-              "headline": "Privacy Policy",
-              "subheadline": "Last updated on December 19, 2025.",
-              "content": "<p>Company Inc. (\"<strong>Company</strong>,\" \"<strong>we</strong>,\" \"<strong>us</strong>,\" or \"<strong>our</strong>\") respects your privacy and is committed to protecting your personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you interact with our websites, products, or services (collectively, the \"<strong>Services</strong>\"). This policy is provided for informational purposes and is intended to be a general example only.</p><h2>Information We Collect and How We Use It</h2><p>We may collect information that you voluntarily provide to us when you interact with the Services, such as when you contact us, create an account, or otherwise communicate with us. This information may include basic personal or account details, such as your name, email address, or similar contact information.</p><p>We may also automatically collect limited technical or usage information when you use the Services. This may include information such as browser type, device or operating system details, IP address, and general usage data.</p><p>Information we collect may be used for purposes such as:</p><ul><li>Providing and maintaining the Services</li><li>Responding to inquiries and communications</li><li>Improving features and functionality</li><li>Complying with applicable legal obligations</li></ul><h2>Sharing, Retention, and Security of Information</h2><p>We do not sell your personal information. We may share information with third-party service providers who perform services on our behalf, such as hosting or technical support, and only to the extent necessary for them to perform those services. We may also disclose information if required to do so by law or in response to valid legal requests.</p><p>We retain information only for as long as reasonably necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required or permitted by law.</p><p>We take reasonable administrative, technical, and organizational measures designed to protect information from unauthorized access, use, alteration, or disclosure. However, no method of transmission over the internet or method of electronic storage is completely secure, and we cannot guarantee absolute security.</p><h2>Your Choices, Updates, and Contact Information</h2><p>You may choose not to provide certain information to us, though doing so may limit your ability to use some features of the Services. Depending on your location, you may have certain rights regarding your personal information under applicable laws.</p><p>We may update this Privacy Policy from time to time. Any changes will be reflected by updating the \"<strong>Last updated</strong>\" date at the top of this page. Continued use of the Services after any changes indicates acceptance of the updated policy.</p><p>If you have any questions about this Privacy Policy, please contact us at:</p><p><strong>Company Inc.</strong><br />Email: <a href=\"mailto:privacy@company.example\">privacy@company.example</a><br />Address: 123 Demo Street, Example City, Country</p>"
+              "_version": 1,
+              "variant": "centered",
+              "heading": "Privacy Policy",
+              "body": "Last updated on December 19, 2025.",
+              "content": [
+                {
+                  "_type": "block",
+                  "_key": "document-0",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-0-0",
+                      "text": "Company Inc. (\"",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-1",
+                      "text": "Company",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-2",
+                      "text": ",\" \"",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-3",
+                      "text": "we",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-4",
+                      "text": ",\" \"",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-5",
+                      "text": "us",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-6",
+                      "text": ",\" or \"",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-7",
+                      "text": "our",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-8",
+                      "text": "\") respects your privacy and is committed to protecting your personal information. This Privacy Policy describes, in general terms, how we collect, use, store, and protect information when you interact with our websites, products, or services (collectively, the \"",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-9",
+                      "text": "Services",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-0-10",
+                      "text": "\"). This policy is provided for informational purposes and is intended to be a general example only.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-1",
+                  "style": "h2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-1-0",
+                      "text": "Information We Collect and How We Use It",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-2",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-2-0",
+                      "text": "We may collect information that you voluntarily provide to us when you interact with the Services, such as when you contact us, create an account, or otherwise communicate with us. This information may include basic personal or account details, such as your name, email address, or similar contact information.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-3",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-3-0",
+                      "text": "We may also automatically collect limited technical or usage information when you use the Services. This may include information such as browser type, device or operating system details, IP address, and general usage data.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-4",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-4-0",
+                      "text": "Information we collect may be used for purposes such as:",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-5",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-5-0",
+                      "text": "Providing and maintaining the Services",
+                      "marks": []
+                    }
+                  ],
+                  "listItem": "bullet",
+                  "level": 1
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-6",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-6-0",
+                      "text": "Responding to inquiries and communications",
+                      "marks": []
+                    }
+                  ],
+                  "listItem": "bullet",
+                  "level": 1
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-7",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-7-0",
+                      "text": "Improving features and functionality",
+                      "marks": []
+                    }
+                  ],
+                  "listItem": "bullet",
+                  "level": 1
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-8",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-8-0",
+                      "text": "Complying with applicable legal obligations",
+                      "marks": []
+                    }
+                  ],
+                  "listItem": "bullet",
+                  "level": 1
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-9",
+                  "style": "h2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-9-0",
+                      "text": "Sharing, Retention, and Security of Information",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-10",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-10-0",
+                      "text": "We do not sell your personal information. We may share information with third-party service providers who perform services on our behalf, such as hosting or technical support, and only to the extent necessary for them to perform those services. We may also disclose information if required to do so by law or in response to valid legal requests.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-11",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-11-0",
+                      "text": "We retain information only for as long as reasonably necessary to fulfill the purposes described in this Privacy Policy, unless a longer retention period is required or permitted by law.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-12",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-12-0",
+                      "text": "We take reasonable administrative, technical, and organizational measures designed to protect information from unauthorized access, use, alteration, or disclosure. However, no method of transmission over the internet or method of electronic storage is completely secure, and we cannot guarantee absolute security.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-13",
+                  "style": "h2",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-13-0",
+                      "text": "Your Choices, Updates, and Contact Information",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-14",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-14-0",
+                      "text": "You may choose not to provide certain information to us, though doing so may limit your ability to use some features of the Services. Depending on your location, you may have certain rights regarding your personal information under applicable laws.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-15",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-15-0",
+                      "text": "We may update this Privacy Policy from time to time. Any changes will be reflected by updating the \"",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-15-1",
+                      "text": "Last updated",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-15-2",
+                      "text": "\" date at the top of this page. Continued use of the Services after any changes indicates acceptance of the updated policy.",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-16",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-16-0",
+                      "text": "If you have any questions about this Privacy Policy, please contact us at:",
+                      "marks": []
+                    }
+                  ]
+                },
+                {
+                  "_type": "block",
+                  "_key": "document-17",
+                  "style": "normal",
+                  "children": [
+                    {
+                      "_type": "span",
+                      "_key": "document-17-0",
+                      "text": "Company Inc.\n",
+                      "marks": [
+                        "strong"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-17-1",
+                      "text": "Email: ",
+                      "marks": []
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-17-2",
+                      "text": "privacy@company.example\n",
+                      "marks": [
+                        "document-link-0"
+                      ]
+                    },
+                    {
+                      "_type": "span",
+                      "_key": "document-17-3",
+                      "text": "Address: 123 Demo Street, Example City, Country",
+                      "marks": []
+                    }
+                  ],
+                  "markDefs": [
+                    {
+                      "_key": "document-link-0",
+                      "_type": "link",
+                      "href": "mailto:privacy@company.example"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -2886,5 +3270,578 @@
       }
     ],
     "projects": []
-  }
+  },
+  "blockTypes": [
+    {
+      "slug": "hero",
+      "label": "Hero",
+      "category": "Sections",
+      "description": "Use a hero for the opening section of a page: a heading, an optional plain-text body, an optional image, and links. Choose centered when the heading, body and links sit in a centered stack and no image is shown. Choose photo when the copy is aligned to the start and the image is a photograph shown with it. Choose demo when the copy is aligned to the start and the image is a product screenshot or interface shown as a demo. The first link is the primary action and the second is an optional quieter action. Set the eyebrow, its URL and its action together when a short linked announcement sits above the heading. Priced plans belong on the pricing block.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "centered",
+                  "photo",
+                  "demo"
+                ]
+              },
+              "defaultValue": "centered"
+            },
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "eyebrow_url",
+              "label": "Eyebrow URL",
+              "type": "url"
+            },
+            {
+              "slug": "eyebrow_action",
+              "label": "Eyebrow action",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "image",
+              "label": "Image",
+              "type": "image",
+              "options": {
+                "darkVariant": true
+              }
+            },
+            {
+              "slug": "links",
+              "label": "Links",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "url",
+                    "label": "URL",
+                    "type": "url"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "cta",
+      "label": "Call to action",
+      "category": "Sections",
+      "description": "Use a cta for a later prompt to act, not the opening section. It has a heading, an optional plain-text body, and links. Choose start when the heading, body and links line up with the start of the section. Choose centered when they sit in the middle. The first link is the primary action and the second is an optional alternative.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "start",
+                  "centered"
+                ]
+              },
+              "defaultValue": "start"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "links",
+              "label": "Links",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "url",
+                    "label": "URL",
+                    "type": "url"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "features",
+      "label": "Features",
+      "description": "Grid or alternating list of product features, capabilities, or value propositions with optional images, icons, and links. Use \"two-column\" for a two-column card grid with visual demos, \"three-column\" for a compact three-column grid with text and icons, \"three-column-demos\" for three columns with screenshots, or \"alternating\" for stacked rows alternating between description and media.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "subheadline",
+              "label": "Subheadline",
+              "type": "text"
+            },
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "two-column",
+                  "three-column",
+                  "three-column-demos",
+                  "alternating"
+                ]
+              }
+            },
+            {
+              "slug": "items",
+              "label": "Items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "title",
+                    "label": "Title",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "description",
+                    "label": "Description",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "image",
+                    "label": "Image",
+                    "type": "image"
+                  },
+                  {
+                    "slug": "icon",
+                    "label": "Icon",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "cta_label",
+                    "label": "CTA label",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "cta_url",
+                    "label": "CTA URL",
+                    "type": "url"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "testimonials",
+      "label": "Testimonials",
+      "description": "Customer quotes pulled from a shared testimonials collection rather than written inline. Scope picks whether the quotes come from the page's group or the whole collection; count caps how many. Variant single shows one large quote with a photo; grid shows several quotes side by side; split shows one quote beside a large photo.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "single",
+                  "grid",
+                  "split"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
+              }
+            },
+            {
+              "slug": "count",
+              "label": "Count",
+              "type": "integer",
+              "validation": {
+                "min": 1,
+                "max": 24
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "pricing",
+      "label": "Pricing",
+      "description": "Pricing tiers pulled from a shared pricing collection rather than written inline. Scope picks whether the tiers come from the page's group or the whole collection. Variant tiers shows several plans side by side; toggle adds a monthly and yearly billing switcher; single shows one plan beside its feature list.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "tiers",
+                  "toggle",
+                  "single"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "comparison",
+      "label": "Comparison",
+      "category": "Sections",
+      "description": "Use a comparison block to compare features across up to three options. Each column has a label and a fixed position; each row gives the feature name, an optional group name, and a value for each position. Choose table for the grouped comparison table.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "table"
+                ]
+              },
+              "defaultValue": "table"
+            },
+            {
+              "slug": "columns",
+              "label": "Columns",
+              "type": "repeater",
+              "validation": {
+                "maxItems": 3,
+                "subFields": [
+                  {
+                    "slug": "key",
+                    "label": "Position",
+                    "type": "select",
+                    "options": [
+                      "first",
+                      "second",
+                      "third"
+                    ]
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string"
+                  }
+                ]
+              }
+            },
+            {
+              "slug": "rows",
+              "label": "Rows",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "group_name",
+                    "label": "Group name",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "name",
+                    "label": "Feature name",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "first_value",
+                    "label": "First column value",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "second_value",
+                    "label": "Second column value",
+                    "type": "text"
+                  },
+                  {
+                    "slug": "third_value",
+                    "label": "Third column value",
+                    "type": "text"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "team",
+      "label": "Team",
+      "description": "Team members pulled from a shared team collection rather than written inline. Scope picks whether the members come from the page's group or the whole collection; count caps how many. Variant four-column shows many compact portrait cards in a dense grid; three-column shows fewer, larger cards per row. Use team for the people behind the page; customer quotes belong on the testimonials block.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "four-column",
+                  "three-column"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
+              }
+            },
+            {
+              "slug": "count",
+              "label": "Count",
+              "type": "integer",
+              "validation": {
+                "min": 1,
+                "max": 24
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "faq",
+      "label": "FAQ",
+      "description": "Frequently asked questions pulled from a shared FAQs collection rather than written inline. Scope picks whether the questions come from the page's group or the whole collection; count caps how many. Variant two-column shows the questions beside a heading and supporting copy; centered shows them under a centered heading.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "two-column",
+                  "centered"
+                ]
+              }
+            },
+            {
+              "slug": "scope",
+              "label": "Scope",
+              "type": "select",
+              "defaultValue": "all",
+              "validation": {
+                "options": [
+                  "page",
+                  "all"
+                ]
+              }
+            },
+            {
+              "slug": "count",
+              "label": "Count",
+              "type": "integer",
+              "validation": {
+                "min": 1,
+                "max": 24
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "stats",
+      "label": "Stats",
+      "category": "Sections",
+      "description": "Use a stats block for a row of figures that support a claim: a heading, optional supporting copy, and one or more value-and-label pairs. Choose graph when the figures sit over a graph and an optional eyebrow can sit above the heading. A quote belongs on the testimonials block.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "graph"
+                ]
+              },
+              "defaultValue": "graph"
+            },
+            {
+              "slug": "eyebrow",
+              "label": "Eyebrow",
+              "type": "string"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "items",
+              "label": "Items",
+              "type": "repeater",
+              "validation": {
+                "subFields": [
+                  {
+                    "slug": "value",
+                    "label": "Value",
+                    "type": "string"
+                  },
+                  {
+                    "slug": "label",
+                    "label": "Label",
+                    "type": "string"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slug": "prose",
+      "label": "Prose",
+      "category": "Sections",
+      "description": "Use a prose block for long-form Portable Text document sections such as privacy policies, legal terms, or editorial copy: a heading, an optional plain-text body (such as a last-updated note or lead), and Portable Text content. Choose centered when the heading, body and prose column are centered on the page. Choose start when the heading, body and prose column line up with the start of the section.",
+      "currentVersion": 1,
+      "versions": [
+        {
+          "version": 1,
+          "fields": [
+            {
+              "slug": "variant",
+              "label": "Variant",
+              "type": "select",
+              "validation": {
+                "options": [
+                  "centered",
+                  "start"
+                ]
+              },
+              "defaultValue": "centered"
+            },
+            {
+              "slug": "heading",
+              "label": "Heading",
+              "type": "string"
+            },
+            {
+              "slug": "body",
+              "label": "Body",
+              "type": "text"
+            },
+            {
+              "slug": "content",
+              "label": "Content",
+              "type": "portableText"
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }

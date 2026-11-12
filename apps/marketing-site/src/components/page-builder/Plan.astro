@@ -1,0 +1,19 @@
+---
+import type { PricingTier } from 'emdash-plugin-page-builder/blocks';
+import PricingPlan from '@jamesryan/ui/components/sections/PricingPlan.astro';
+import PricingSingleTierTwoColumn from '@jamesryan/ui/components/sections/PricingSingleTierTwoColumn.astro';
+import ButtonLink from '@jamesryan/ui/components/elements/ButtonLink.astro';
+import SoftButtonLink from '@jamesryan/ui/components/elements/SoftButtonLink.astro';
+interface Props { plan: PricingTier; billing?: 'monthly' | 'yearly'; single?: boolean }
+const { plan, billing, single } = Astro.props;
+const Section = single ? PricingSingleTierTwoColumn : PricingPlan;
+const Button = plan.highlighted ? ButtonLink : SoftButtonLink;
+const price = billing === 'monthly' ? plan.price_monthly ?? plan.price : billing === 'yearly' ? plan.price_yearly ?? plan.price : plan.price;
+---
+<Section name={plan.name} headline={single ? plan.name : undefined}
+  price={price} period={billing === 'yearly' ? '/yr' : plan.period}
+  badge={plan.badge ?? (plan.highlighted ? 'Most popular' : undefined)}
+  features={(plan.features ?? '').split('\n').map((feature) => feature.trim()).filter(Boolean)}>
+  <div slot="subheadline">{plan.description}</div>
+  {plan.cta_label && plan.cta_url && <Button slot="cta" href={plan.cta_url} size="lg">{plan.cta_label}</Button>}
+</Section>

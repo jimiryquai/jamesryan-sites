@@ -1,0 +1,17 @@
+{
+  "title": "Home",
+  "content": [
+    {
+      "_type": "marketing.hero",
+      "_key": "hero",
+      "variation": "left-aligned-with-demo",
+      "headline": "James Ryan \u2014 AI-native marketer & engineer",
+      "subheadline": "I build intelligent marketing engines and software tools that drive real growth. Bridging the gap between code and customers.",
+      "primaryCtaLabel": "View My Blog",
+      "primaryCtaUrl": "/posts",
+      "secondaryCtaLabel": "About Me",
+      "secondaryCtaUrl": "/about",
+      "centered": true
+    }
+  ]
+}

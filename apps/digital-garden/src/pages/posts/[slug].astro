@@ -18,7 +18,6 @@ import Base from "../../layouts/Base.astro";
 import PostCard from "@jamesryan/ui/components/PostCard.astro";
 import { getReadingTime } from "@jamesryan/cms-helpers";
 import { resolveBlogSiteIdentity } from "../../utils/site-identity";
-import { blockComponents } from "emdash-plugin-code-block-pro/astro";
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -227,7 +226,7 @@ const publishDate =
 
 				{/* Rich Text Body Content */}
 				<div class="article-content font-sans">
-					<PortableText value={post.data.content} components={{ type: blockComponents }} />
+					<PortableText value={post.data.content} />
 				</div>
 
 				{/* Comments Area */}

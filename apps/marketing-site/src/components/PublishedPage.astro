@@ -2,18 +2,23 @@
 import type { PublishedEntryRoute } from "@jamesryan/cms-helpers";
 import { getSeoMeta } from "emdash";
 import Base from "../layouts/Base.astro";
-import MarketingBlocks from "./MarketingBlocks.astro";
+import PageLayout from "./page-builder/PageLayout.astro";
+import { resolvePageLayout } from "./page-builder/resolve-page-layout";
+
+/** The pages route's entry, fetched with the service reference selection. */
+type ServiceRoute = Extract<PublishedEntryRoute<{ service: true }>, { collection: "pages" }>;
 
 interface Props {
-	page: Extract<PublishedEntryRoute, { collection: "pages" }>["entry"];
+	page: ServiceRoute["entry"];
 }
 const { page } = Astro.props;
 const seo = getSeoMeta(page);
+const pageLayout = resolvePageLayout(page);
 ---
 <Base
 	title={seo.ogTitle}
 	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	<MarketingBlocks value={page.data.content ?? []} />
+	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />}
 </Base>
