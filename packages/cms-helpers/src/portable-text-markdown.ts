@@ -21,7 +21,7 @@ function textValue(value: unknown): string | undefined {
 export function isSafeMarkdownUrl(url: string): boolean {
 	if (/[\u0000-\u001F\u007F]/.test(url)) return false;
 	const trimmed = url.trim();
-	if (!trimmed || trimmed.startsWith("//")) return false;
+	if (!trimmed || trimmed.startsWith("//") || /^\/[/\\]/.test(trimmed)) return false;
 	if (trimmed.startsWith("#")) return true;
 	if (trimmed.startsWith("/")) return true;
 	const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(trimmed);

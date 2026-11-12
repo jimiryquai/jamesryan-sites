@@ -8,7 +8,6 @@
  */
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { portableTextToMarkdown } from "@jamesryan/cms-helpers";
 import { pageMarkdownPath, publishedEntryPath } from "./published-path.mjs";
 
 // The page builder's shared-content block labels, and where each reads items.
@@ -60,6 +59,45 @@ function formatDestination(url) {
   return url;
 }
 
+function isSafeUrl(url) {
+  if (typeof url !== "string" || /[\u0000-\u001F\u007F]/.test(url)) return false;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.startsWith("//") || /^\/[/\\]/.test(trimmed)) return false;
+  if (trimmed.startsWith("#") || trimmed.startsWith("/")) return true;
+  const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(trimmed);
+  if (!scheme) return true;
+  return ["http", "https", "mailto", "tel"].includes(scheme[1].toLowerCase());
+}
+
+function wrapCode(text) {
+  if (!text.includes("`")) return `\`${text}\``;
+  return `${backtickFence(text)} ${text} ${backtickFence(text)}`;
+}
+
+/** Inline marks for a blockquote, kept local so a renderer regression cannot satisfy itself. */
+function markedSpan(text, marks, markDefs) {
+  let value = text;
+  const applied = Array.isArray(marks) ? marks : [];
+  if (applied.includes("code")) value = wrapCode(value);
+  if (applied.includes("em")) value = `*${value}*`;
+  if (applied.includes("strong")) value = `**${value}**`;
+  for (const mark of applied) {
+    if (typeof mark !== "string" || mark === "strong" || mark === "em" || mark === "code") continue;
+    const link = (markDefs ?? []).find((def) => def?._key === mark && typeof def.href === "string");
+    if (link && isSafeUrl(link.href)) value = `[${value}](${formatDestination(link.href)})`;
+  }
+  return value;
+}
+
+function blockquoteMarker(block) {
+  const children = block.children ?? [];
+  const raw = children.map((child) => child?.text ?? "").join("");
+  if (!raw.trim()) return "";
+  const text = children.map((child) => markedSpan(typeof child?.text === "string" ? child.text : "", child?.marks, block.markDefs)).join("");
+  const quoted = (text.trim() ? text : raw).split("\n").map((line) => `> ${line}`).join("\n");
+  return quoted.trim() ? quoted : `> ${raw.trim()}`;
+}
+
 /** A non-empty Markdown image, including an empty alt. */
 function imageMarker(alt, url) {
   const escaped = escapeAlt(alt);
@@ -81,7 +119,7 @@ function portableTextMarkers(content) {
     } else if (block._type === "image") {
       markers.push(imageMarker(imageAlt(block), stableImageUrl(block)));
     } else if (block._type === "block" && block.style === "blockquote") {
-      const quoted = portableTextToMarkdown([block]).replace(/\n+$/, "");
+      const quoted = blockquoteMarker(block);
       if (quoted) markers.push(quoted);
     }
   }
@@ -93,8 +131,10 @@ function plainBlockTexts(content) {
   const texts = [];
   for (const block of content ?? []) {
     if (!block || block._type !== "block" || block.style === "blockquote") continue;
-    const text = (block.children ?? []).map((child) => child?.text ?? "").join("");
-    if (text) texts.push(text);
+    for (const child of block.children ?? []) {
+      const text = typeof child?.text === "string" ? child.text.trim() : "";
+      if (text) texts.push(text);
+    }
   }
   return texts;
 }

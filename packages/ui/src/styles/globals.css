@@ -33,31 +33,6 @@
     font-size: 1.125rem;
     line-height: 1.8;
     color: var(--color-olive-800);
-
-    @variant dark {
-      color: var(--color-olive-200);
-      :where(h1),
-      :where(h2),
-      :where(h3),
-      :where(h4),
-      :where(h5),
-      :where(h6),
-      :where(a),
-      :where(code) { color: #fff; }
-      :where(blockquote) {
-        border-left-color: var(--color-olive-600);
-        background: color-mix(in srgb, white 5%, transparent);
-        color: var(--color-olive-100);
-      }
-      :where(pre) {
-        border-color: color-mix(in srgb, white 10%, transparent);
-        background: color-mix(in srgb, white 5%, transparent);
-      }
-      :where(code) { background: color-mix(in srgb, white 10%, transparent); }
-      :where(pre code) { background: none; color: inherit; }
-      :where(img) { border-color: color-mix(in srgb, white 10%, transparent); }
-      :where(hr) { border-top-color: color-mix(in srgb, white 10%, transparent); }
-    }
   }
   .project-prose :where(p) { margin-bottom: 1.5rem; }
   .project-prose :where(h1),
@@ -168,6 +143,33 @@
   .project-prose .cbp-wrapper .line.cbp-highlighted {
     background: color-mix(in srgb, var(--color-olive-400) 12%, transparent);
     box-shadow: inset 4px 0 0 0 var(--color-olive-400);
+  }
+  /* After the light rules so equal-specificity :where(.dark) colors win. */
+  .project-prose {
+    @variant dark {
+      color: var(--color-olive-200);
+      :where(h1),
+      :where(h2),
+      :where(h3),
+      :where(h4),
+      :where(h5),
+      :where(h6),
+      :where(a),
+      :where(code) { color: #fff; }
+      :where(blockquote) {
+        border-left-color: var(--color-olive-600);
+        background: color-mix(in srgb, white 5%, transparent);
+        color: var(--color-olive-100);
+      }
+      :where(pre) {
+        border-color: color-mix(in srgb, white 10%, transparent);
+        background: color-mix(in srgb, white 5%, transparent);
+      }
+      :where(code) { background: color-mix(in srgb, white 10%, transparent); }
+      :where(pre code) { background: none; color: inherit; }
+      :where(img) { border-color: color-mix(in srgb, white 10%, transparent); }
+      :where(hr) { border-top-color: color-mix(in srgb, white 10%, transparent); }
+    }
   }
 }
 

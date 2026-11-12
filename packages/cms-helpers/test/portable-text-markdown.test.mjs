@@ -124,6 +124,14 @@ test("a javascript image URL and a javascript link are not emitted", () => {
 		"",
 	);
 	assert.equal(
+		portableTextToMarkdown([{ _type: "image", alt: "Bad", url: "/\\evil.example/a.png" }]),
+		"",
+	);
+	assert.equal(
+		portableTextToMarkdown([{ _type: "image", alt: "Bad", url: "//evil.example/a.png" }]),
+		"",
+	);
+	assert.equal(
 		portableTextToMarkdown([{
 			_type: "block",
 			style: "normal",
