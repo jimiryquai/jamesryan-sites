@@ -20,5 +20,5 @@ const pageLayout = resolvePageLayout(page);
 	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />}
+	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} edit={page.edit.layout} />}
 </Base>

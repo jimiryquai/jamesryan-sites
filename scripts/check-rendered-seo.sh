@@ -100,6 +100,7 @@ NODE
     node "$root/scripts/seo-fixture.mjs" "$verify_action" "http://127.0.0.1:$port" "$database" || status=1
   fi
   node "$root/scripts/check-rendered-media.mjs" "http://127.0.0.1:$port" "$seed" "${RENDERED_EVIDENCE_DIR:-}" || status=1
+  node "$root/scripts/check-rendered-markdown.mjs" "http://127.0.0.1:$port" "$seed" "${RENDERED_EVIDENCE_DIR:-}" || status=1
   cleanup
   worker_pid=""
 done

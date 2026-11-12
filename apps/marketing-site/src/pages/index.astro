@@ -106,7 +106,7 @@ function formatDate(date: Date | null | undefined) {
 		/>
 	)}
 
-	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />}
+	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} edit={page.edit.layout} />}
 
 	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 pb-24 sm:pb-32 -mt-8 sm:-mt-12">
 		{
