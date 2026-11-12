@@ -3,13 +3,19 @@ import type { StoredBlock } from 'emdash-plugin-page-builder/blocks';
 import CallToActionSimple from '@jamesryan/ui/components/sections/CallToActionSimple.astro';
 import CallToActionSimpleCentered from '@jamesryan/ui/components/sections/CallToActionSimpleCentered.astro';
 import Actions from './Actions.astro';
+import { veSection, ed } from './vx-edit';
 interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   heading?: string; body?: string; variant?: 'start' | 'centered'; links?: { label: string; url: string }[];
 };
+// THROWAWAY SPIKE (ticket 25): text markers in the visual editor preview only.
+const vx = Astro.locals.vxFrame === true;
 const sections = { start: CallToActionSimple, centered: CallToActionSimpleCentered };
 const Section = sections[value.variant ?? 'start'] ?? sections.start;
 ---
-<Section id={value._key} headline={value.heading} subheadline={value.body}>
-  <Actions slot="cta" links={value.links} />
+<Section id={value._key} {...veSection(Astro.locals, value)}
+  headline={vx ? undefined : value.heading} subheadline={vx ? undefined : value.body}>
+  {vx && <span slot="headline" {...ed(Astro.locals, value, 'heading')}>{value.heading ?? ''}</span>}
+  {vx && <span slot="subheadline" {...ed(Astro.locals, value, 'body')}>{value.body ?? ''}</span>}
+  <Actions slot="cta" links={value.links} vxPrefix={vx && value._key ? `${value._key}.links` : undefined} />
 </Section>

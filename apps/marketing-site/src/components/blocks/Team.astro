@@ -11,6 +11,8 @@ interface MemberItem {
 }
 
 interface Props {
+	/** THROWAWAY SPIKE (ticket 25): visual-editor root markers, preview only. */
+	vxAttrs?: Record<string, string>;
 	node: {
 		_key?: string;
 		headline?: string;
@@ -20,7 +22,7 @@ interface Props {
 	};
 }
 
-const { node } = Astro.props;
+const { node, vxAttrs } = Astro.props;
 const { _key, headline, subheadline, members = [], serviceSlug } = node;
 
 let membersData = members;
@@ -40,6 +42,7 @@ if (serviceSlug) {
 
 <TeamFourColumnGrid
 	id={_key || "team"}
+	{...(vxAttrs ?? {})}
 	headline={headline}
 	subheadline={subheadline}
 >

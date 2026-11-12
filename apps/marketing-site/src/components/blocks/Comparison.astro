@@ -1,5 +1,6 @@
 ---
 import PlanComparisonTable from "@jamesryan/ui/components/sections/PlanComparisonTable.astro";
+import { veSection } from "../page-builder/vx-edit";
 
 interface RawItem {
 	groupName: string;
@@ -53,10 +54,13 @@ for (const item of items) {
 }
 
 const plans = ["Starter", "Growth", "Pro"];
+// THROWAWAY SPIKE (ticket 25): block-root marker in the visual editor preview only.
+const vxAttrs = veSection(Astro.locals, { _key: node._key, _type: "comparison" });
 ---
 
 <PlanComparisonTable
 	id={_key || "comparison"}
+	{...vxAttrs}
 	plans={plans}
 	features={groups}
 />

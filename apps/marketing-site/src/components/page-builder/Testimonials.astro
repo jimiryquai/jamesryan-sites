@@ -5,20 +5,24 @@ import Testimonial from '@jamesryan/ui/components/sections/Testimonial.astro';
 import TestimonialLargeQuote from '@jamesryan/ui/components/sections/TestimonialLargeQuote.astro';
 import TestimonialTwoColumnWithLargePhoto from '@jamesryan/ui/components/sections/TestimonialTwoColumnWithLargePhoto.astro';
 import { Image } from 'emdash/ui';
+import { veSection } from './vx-edit';
 interface Props { value: StoredBlock; items?: readonly unknown[] }
 const { value } = Astro.props;
 // PageBuilder resolves this block's typed source before entering the generic section boundary.
+// THROWAWAY SPIKE (ticket 25): root markers in the visual editor preview only;
+// quotes/authors live in the testimonials collection, not in page-block fields.
 const items = (Astro.props.items ?? []) as readonly TestimonialShape[];
 const sections = { single: TestimonialLargeQuote, split: TestimonialTwoColumnWithLargePhoto };
 const Section = value.variant === 'split' ? sections.split : sections.single;
 const visible = value.variant === 'grid' ? items : items.slice(0, 1);
+const vxAttrs = veSection(Astro.locals, value);
 ---
-{value.variant === 'grid' ? <TestimonialThreeColumnGrid id={value._key}>
+{value.variant === 'grid' ? <TestimonialThreeColumnGrid id={value._key} {...vxAttrs}>
   {visible.map((item) => <Testimonial name={item.author} byline={[item.role, item.company].filter(Boolean).join(' at ')}>
     <p slot="quote">{item.quote}</p>
     {item.avatar && <Image slot="img" image={item.avatar} width={160} height={160} />}
   </Testimonial>)}
-</TestimonialThreeColumnGrid> : visible.map((item) => <Section id={value._key}
+</TestimonialThreeColumnGrid> : visible.map((item) => <Section id={value._key} {...vxAttrs}
   name={item.author} byline={[item.role, item.company].filter(Boolean).join(' at ')}>
   <p slot="quote">{item.quote}</p>
   {item.avatar && <Image slot="img" image={item.avatar} width={1400} height={1000} class="w-full h-auto object-cover" />}

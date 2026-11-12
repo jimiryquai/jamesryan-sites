@@ -1,6 +1,7 @@
 ---
 import StatsWithGraph from "@jamesryan/ui/components/sections/StatsWithGraph.astro";
 import Stat from "@jamesryan/ui/components/sections/Stat.astro";
+import { veSection, ed } from "../page-builder/vx-edit";
 
 interface StatItem {
 	stat: string;
@@ -19,13 +20,26 @@ interface Props {
 
 const { node } = Astro.props;
 const { _key, eyebrow, headline, subheadline, stats = [] } = node;
+// THROWAWAY SPIKE (ticket 25): visual-editor markers, preview only. The stats
+// block's repeater items map to Stat's stat/text slots for leaf markers.
+const vx = Astro.locals.vxFrame === true;
+const block = { _key, _type: "stats" };
 ---
 
 <StatsWithGraph
 	id={_key || "stats"}
-	eyebrow={eyebrow}
-	headline={headline}
-	subheadline={subheadline}
+	{...veSection(Astro.locals, block)}
+	eyebrow={vx ? undefined : eyebrow}
+	headline={vx ? undefined : headline}
+	subheadline={vx ? undefined : subheadline}
 >
-	{stats.map((s) => <Stat stat={s.stat} text={s.text} />)}
+	{vx && eyebrow !== undefined && <span slot="eyebrow" {...ed(Astro.locals, block, "eyebrow")}>{eyebrow}</span>}
+	{vx && <span slot="headline" {...ed(Astro.locals, block, "heading")}>{headline ?? ""}</span>}
+	{vx && <span slot="subheadline" {...ed(Astro.locals, block, "body")}>{subheadline ?? ""}</span>}
+	{stats.map((s, i) => (
+		<Stat stat={vx ? undefined : s.stat} text={vx ? undefined : s.text}>
+			{vx && <span slot="stat" {...ed(Astro.locals, block, `items.${i}.value`)}>{s.stat ?? ""}</span>}
+			{vx && <span slot="text" {...ed(Astro.locals, block, `items.${i}.label`)}>{s.text ?? ""}</span>}
+		</Stat>
+	))}
 </StatsWithGraph>

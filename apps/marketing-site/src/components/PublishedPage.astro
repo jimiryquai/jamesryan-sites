@@ -1,9 +1,10 @@
 ---
 import type { PublishedEntryRoute } from "@jamesryan/cms-helpers";
-import { getSeoMeta } from "emdash";
+import { getSeoMeta, getRequestContext } from "emdash";
 import Base from "../layouts/Base.astro";
 import PageLayout from "./page-builder/PageLayout.astro";
 import { resolvePageLayout } from "./page-builder/resolve-page-layout";
+import { FRAME_JS } from "../plugins/visual-editor/frame";
 
 /** The pages route's entry, fetched with the service reference selection. */
 type ServiceRoute = Extract<PublishedEntryRoute<{ service: true }>, { collection: "pages" }>;
@@ -14,11 +15,29 @@ interface Props {
 const { page } = Astro.props;
 const seo = getSeoMeta(page);
 const pageLayout = resolvePageLayout(page);
+
+// THROWAWAY SPIKE (ticket 25): the visual editor opens this route in a frame
+// with ?vx_frame=1 on a signed draft-preview URL. Markers and the frame bridge
+// are emitted only when EmDash's middleware actually *verified* the preview
+// token (getRequestContext().preview is set only for a valid token) — never on
+// query presence alone — and the response is never cacheable.
+const vxFrame = Astro.url.searchParams.get("vx_frame") === "1" && !!getRequestContext()?.preview;
+if (vxFrame) {
+	Astro.locals.vxFrame = true;
+	Astro.response.headers.set("Cache-Control", "private, no-store");
+}
 ---
 <Base
 	title={seo.ogTitle}
 	description={seo.description}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />}
+	{vxFrame ? (
+		<div id="vx-blocks">
+			{pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />}
+		</div>
+	) : (
+		pageLayout && <PageLayout value={pageLayout.layout} group={pageLayout.group} />
+	)}
+	{vxFrame && <script is:inline set:html={FRAME_JS} />}
 </Base>

@@ -5,6 +5,8 @@ import Faq from "@jamesryan/ui/components/sections/Faq.astro";
 import { getServiceEntries } from "@jamesryan/cms-helpers";
 
 interface Props {
+	/** THROWAWAY SPIKE (ticket 25): visual-editor root markers, preview only. */
+	vxAttrs?: Record<string, string>;
 	node: {
 		_key?: string;
 		headline?: string;
@@ -18,7 +20,7 @@ interface Props {
 	};
 }
 
-const { node } = Astro.props;
+const { node, vxAttrs } = Astro.props;
 const {
 	_key,
 	headline,
@@ -48,6 +50,7 @@ const isTwoColumn = variation === "two-column";
 	isTwoColumn && (
 		<FAQsTwoColumnAccordion
 			id={_key || "faqs"}
+			{...(vxAttrs ?? {})}
 			headline={headline || "Questions & Answers"}
 			subheadline={subheadline}
 		>
@@ -66,6 +69,7 @@ const isTwoColumn = variation === "two-column";
 	!isTwoColumn && (
 		<FAQsAccordion
 			id={_key || "faqs"}
+			{...(vxAttrs ?? {})}
 			headline={headline || "Questions & Answers"}
 			subheadline={subheadline}
 		>

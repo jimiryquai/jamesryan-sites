@@ -45,3 +45,7 @@ sandbox.db
 
 # Generated EmDash migration manifests (rebuilt for each deployment)
 .emdash/
+
+# THROWAWAY SPIKE (ticket 25): isolated local experiment state and generated fixture seed
+apps/marketing-site/.spike-state/
+.orchestrate/spike/fixture/

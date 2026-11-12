@@ -4,6 +4,7 @@ import type { PortableTextBlock } from 'emdash';
 import DocumentCentered from '@jamesryan/ui/components/sections/DocumentCentered.astro';
 import DocumentLeftAligned from '@jamesryan/ui/components/sections/DocumentLeftAligned.astro';
 import { PortableText } from 'emdash/ui';
+import { veSection, ed } from './vx-edit';
 interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   variant?: 'centered' | 'start'; heading?: string; body?: string; content?: PortableTextBlock[];
@@ -11,8 +12,14 @@ const value = Astro.props.value as StoredBlock & {
 // The same sections Document.astro renders for marketing.document. The body is
 // Portable Text, so it keeps the site's PortableText renderers (code, images)
 // rather than Document.astro's raw HTML string.
+// THROWAWAY SPIKE (ticket 25): heading/body markers in the visual editor
+// preview only; the Portable Text content has no inline markers (classic editor).
 const Section = value.variant === 'start' ? DocumentLeftAligned : DocumentCentered;
+const vx = Astro.locals.vxFrame === true;
 ---
-<Section id={value._key || 'document'} headline={value.heading} subheadline={value.body}>
+<Section id={value._key || 'document'} {...veSection(Astro.locals, value)}
+  headline={vx ? undefined : value.heading} subheadline={vx ? undefined : value.body}>
+  {vx && <span slot="headline" {...ed(Astro.locals, value, 'heading')}>{value.heading ?? ''}</span>}
+  {vx && <span slot="subheadline" {...ed(Astro.locals, value, 'body')}>{value.body ?? ''}</span>}
   <PortableText value={value.content ?? []} />
 </Section>

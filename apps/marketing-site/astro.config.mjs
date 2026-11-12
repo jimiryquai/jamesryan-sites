@@ -14,6 +14,18 @@ import aiCommentModeration from "emdash-plugin-ai-comment-moderation";
 const site = "https://jamesryan.dev";
 const hostname = new URL(site).hostname;
 
+// THROWAWAY SPIKE (ticket 25): local copy of DavesAgenda/emdash-visual-editor
+// @08a5e75 (MIT), adapted to the pages.layout field — see
+// src/plugins/visual-editor/ADAPTATIONS.md. Nothing here merges.
+const visualEditorSpike = () => ({
+	id: "visual-editor",
+	version: "1.0.0",
+	format: "native",
+	entrypoint: new URL("./src/plugins/visual-editor/index.ts", import.meta.url).pathname,
+	adminEntry: new URL("./src/plugins/visual-editor/admin.tsx", import.meta.url).pathname,
+	adminPages: [{ path: "/", label: "Visual editor", icon: "paint-brush" }],
+});
+
 export default defineConfig({
 	site,
 	output: "server",
@@ -116,6 +128,7 @@ export default defineConfig({
 				})(),
 				codeBlockProPlugin(),
 				pageBuilderPlugin(),
+				visualEditorSpike(),
 			],
 		}),
 	],

@@ -7,21 +7,29 @@ import AnnouncementBadge from '@jamesryan/ui/components/elements/announcement-ba
 import { Image } from 'emdash/ui';
 import type { MediaValue } from 'emdash';
 import Actions from './Actions.astro';
+import { veSection, ed } from './vx-edit';
 interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   heading?: string; body?: string; variant?: 'centered' | 'photo' | 'demo';
   eyebrow?: string; eyebrow_url?: string; eyebrow_action?: string;
   image?: MediaValue; links?: { label: string; url: string }[];
 };
+// THROWAWAY SPIKE (ticket 25): in the visual editor's preview the text leaves
+// carry data-vx-f markers through the UI sections' headline/subheadline slots.
+const vx = Astro.locals.vxFrame === true;
 const sections = { centered: HeroSimpleCentered, photo: HeroLeftAlignedWithPhoto, demo: HeroLeftAlignedWithDemo };
 const Section = sections[value.variant ?? 'centered'] ?? sections.centered;
 const centered = Section === HeroSimpleCentered;
 ---
-<Section id={value._key || 'hero'} headline={value.heading} subheadline={value.body}
+<Section id={value._key || 'hero'} {...veSection(Astro.locals, value)}
+  headline={vx ? undefined : value.heading} subheadline={vx ? undefined : value.body}
   class={centered ? 'py-24 sm:py-32 lg:py-48' : undefined}>
+  {vx && <span slot="headline" {...ed(Astro.locals, value, 'heading')}>{value.heading ?? ''}</span>}
+  {vx && <span slot="subheadline" {...ed(Astro.locals, value, 'body')}>{value.body ?? ''}</span>}
   {value.eyebrow && value.eyebrow_url && <AnnouncementBadge slot="eyebrow"
-    href={value.eyebrow_url} text={value.eyebrow} cta={value.eyebrow_action} />}
-  <Actions slot="cta" links={value.links} />
+    href={value.eyebrow_url} text={value.eyebrow} cta={value.eyebrow_action}
+    {...(vx ? ed(Astro.locals, value, 'eyebrow') : {})} />}
+  <Actions slot="cta" links={value.links} vxPrefix={vx && value._key ? `${value._key}.links` : undefined} />
   {!centered && value.image && <Image slot={value.variant === 'photo' ? 'photo' : 'demo'}
     image={value.image} width={1800} height={945} class="w-full h-auto object-cover" />}
 </Section>

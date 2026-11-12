@@ -12,12 +12,15 @@ import FeatureThreeColumn from '@jamesryan/ui/components/sections/FeatureThreeCo
 import FeatureThreeColumnWithDemos from '@jamesryan/ui/components/sections/FeatureThreeColumnWithDemos.astro';
 import StackedAlternatingFeature from '@jamesryan/ui/components/sections/StackedAlternatingFeature.astro';
 import Link from '@jamesryan/ui/components/elements/link.astro';
+import { veSection, ed } from './vx-edit';
 interface Props { value: StoredBlock }
 const value = Astro.props.value as StoredBlock & {
   heading?: string; subheadline?: string; eyebrow?: string;
   variant?: 'two-column' | 'three-column' | 'three-column-demos' | 'alternating';
   items?: { title: string; description?: string; icon?: string; image?: MediaValue; cta_label?: string; cta_url?: string }[];
 };
+// THROWAWAY SPIKE (ticket 25): text markers in the visual editor preview only.
+const vx = Astro.locals.vxFrame === true;
 const sections = {
   'two-column': [FeaturesTwoColumnWithDemos, Feature],
   'three-column': [FeaturesThreeColumn, FeatureThreeColumn],
@@ -29,9 +32,14 @@ const icons: Record<string, string> = { mail: 'envelope', zap: 'lightning', shie
 const compact = value.variant === 'three-column' || value.variant === 'three-column-demos';
 const [Section, Item] = sections[value.variant ?? 'two-column'] ?? sections['two-column'];
 ---
-<Section id={value._key} eyebrow={value.eyebrow} headline={value.heading} subheadline={value.subheadline}>
-  {(value.items ?? []).map((item) => <Item headline={item.title}>
-    <div slot="subheadline">
+<Section id={value._key} {...veSection(Astro.locals, value)}
+  eyebrow={vx ? undefined : value.eyebrow} headline={vx ? undefined : value.heading} subheadline={vx ? undefined : value.subheadline}>
+  {vx && value.eyebrow !== undefined && <span slot="eyebrow" {...ed(Astro.locals, value, 'eyebrow')}>{value.eyebrow}</span>}
+  {vx && <span slot="headline" {...ed(Astro.locals, value, 'heading')}>{value.heading ?? ''}</span>}
+  {vx && <span slot="subheadline" {...ed(Astro.locals, value, 'subheadline')}>{value.subheadline ?? ''}</span>}
+  {(value.items ?? []).map((item, i) => <Item headline={vx ? undefined : item.title}>
+    {vx && <span slot="headline" {...ed(Astro.locals, value, `items.${i}.title`)}>{item.title ?? ''}</span>}
+    <div slot="subheadline" {...(vx ? ed(Astro.locals, value, `items.${i}.description`) : {})}>
       {item.description}
       {compact && item.cta_label && item.cta_url && <Link href={item.cta_url}>{item.cta_label}</Link>}
     </div>

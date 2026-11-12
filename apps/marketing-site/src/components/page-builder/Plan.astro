@@ -4,13 +4,17 @@ import PricingPlan from '@jamesryan/ui/components/sections/PricingPlan.astro';
 import PricingSingleTierTwoColumn from '@jamesryan/ui/components/sections/PricingSingleTierTwoColumn.astro';
 import ButtonLink from '@jamesryan/ui/components/elements/ButtonLink.astro';
 import SoftButtonLink from '@jamesryan/ui/components/elements/SoftButtonLink.astro';
-interface Props { plan: PricingTier; billing?: 'monthly' | 'yearly'; single?: boolean }
-const { plan, billing, single } = Astro.props;
+import { veSection } from './vx-edit';
+interface Props { plan: PricingTier; billing?: 'monthly' | 'yearly'; single?: boolean; vxKey?: string }
+const { plan, billing, single, vxKey } = Astro.props;
+// THROWAWAY SPIKE (ticket 25): root marker in the visual editor preview only;
+// the plan fields themselves belong to the pricing collection, not the page block.
+const vxSingle = single && vxKey ? veSection(Astro.locals, { _key: vxKey, _type: 'pricing' }) : {};
 const Section = single ? PricingSingleTierTwoColumn : PricingPlan;
 const Button = plan.highlighted ? ButtonLink : SoftButtonLink;
 const price = billing === 'monthly' ? plan.price_monthly ?? plan.price : billing === 'yearly' ? plan.price_yearly ?? plan.price : plan.price;
 ---
-<Section name={plan.name} headline={single ? plan.name : undefined}
+<Section name={plan.name} headline={single ? plan.name : undefined} {...vxSingle}
   price={price} period={billing === 'yearly' ? '/yr' : plan.period}
   badge={plan.badge ?? (plan.highlighted ? 'Most popular' : undefined)}
   features={(plan.features ?? '').split('\n').map((feature) => feature.trim()).filter(Boolean)}>

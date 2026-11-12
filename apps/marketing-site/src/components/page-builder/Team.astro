@@ -4,16 +4,20 @@ import MarketingTeam from '../blocks/Team.astro';
 import TeamThreeColumnGrid from '@jamesryan/ui/components/sections/TeamThreeColumnGrid.astro';
 import TeamMember from '@jamesryan/ui/components/sections/TeamMember.astro';
 import { Image } from 'emdash/ui';
+import { veSection } from './vx-edit';
 interface Props { value: StoredBlock; items?: readonly unknown[] }
 const value = Astro.props.value as StoredBlock & { variant?: 'four-column' | 'three-column' };
 // PageBuilder resolves this block's typed source before entering the generic section boundary.
+// THROWAWAY SPIKE (ticket 25): root markers in the visual editor preview only;
+// names/roles/photos live in the team collection, not in page-block fields.
 const items = (Astro.props.items ?? []) as readonly TeamMemberShape[];
 const members = items.map((item) => ({ name: item.name, byline: item.role, img: item.image }));
+const vxAttrs = veSection(Astro.locals, value);
 // The default and four-column variants render exactly what marketing.team does;
 // three-column is the block's own variant, on the same TeamMember card.
 ---
-{value.variant === 'three-column' ? <TeamThreeColumnGrid id={value._key || 'team'}>
+{value.variant === 'three-column' ? <TeamThreeColumnGrid id={value._key || 'team'} {...vxAttrs}>
   {members.map((member) => <TeamMember name={member.name} byline={member.byline}>
     {member.img && <Image slot="img" image={member.img} alt="" class="not-dark:bg-white/75 dark:bg-black/75" width={800} height={1000} />}
   </TeamMember>)}
-</TeamThreeColumnGrid> : <MarketingTeam node={{ _key: value._key, members }} />}
+</TeamThreeColumnGrid> : <MarketingTeam vxAttrs={vxAttrs} node={{ _key: value._key, members }} />}

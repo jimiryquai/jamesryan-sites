@@ -2,11 +2,19 @@
 import ButtonLink from '@jamesryan/ui/components/elements/ButtonLink.astro';
 import PlainButtonLink from '@jamesryan/ui/components/elements/PlainButtonLink.astro';
 import ArrowNarrowRightIcon from '@jamesryan/ui/components/icons/arrow-narrow-right-icon.astro';
-interface Props { links?: { label: string; url: string }[] }
-const links = Astro.props.links ?? [];
+interface Props {
+  links?: { label: string; url: string }[];
+  /** THROWAWAY SPIKE (ticket 25): when set (visual editor preview only), link labels carry data-vx-f markers. */
+  vxPrefix?: string;
+}
+const { links = [], vxPrefix } = Astro.props;
 ---
 {links.length > 0 && <div class="flex items-center gap-4">
   {links.map((link, index) => index === 0
-    ? <ButtonLink href={link.url} size="lg">{link.label}</ButtonLink>
-    : <PlainButtonLink href={link.url} size="lg">{link.label} <ArrowNarrowRightIcon /></PlainButtonLink>)}
+    ? <ButtonLink href={link.url} size="lg">{vxPrefix
+      ? <span data-vx-f={`${vxPrefix}.${index}.label`}>{link.label}</span>
+      : link.label}</ButtonLink>
+    : <PlainButtonLink href={link.url} size="lg">{vxPrefix
+      ? <span data-vx-f={`${vxPrefix}.${index}.label`}>{link.label}</span>
+      : link.label} <ArrowNarrowRightIcon /></PlainButtonLink>)}
 </div>}

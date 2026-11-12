@@ -1,13 +1,17 @@
 ---
 import type { Faq as FaqShape, StoredBlock } from 'emdash-plugin-page-builder/blocks';
 import MarketingFAQ from '../blocks/FAQ.astro';
+import { veSection } from './vx-edit';
 interface Props { value: StoredBlock; items?: readonly unknown[] }
 const value = Astro.props.value as StoredBlock & { variant?: 'two-column' | 'centered' };
 // PageBuilder resolves this block's typed source before entering the generic section boundary.
 const items = (Astro.props.items ?? []) as readonly FaqShape[];
 // The block has no headline fields; the marketing component's own default heading shows.
+// THROWAWAY SPIKE (ticket 25): root marker in the visual editor preview only;
+// questions/answers live in the faqs collection, not in page-block fields.
+const vxAttrs = veSection(Astro.locals, value);
 ---
-<MarketingFAQ node={{
+<MarketingFAQ vxAttrs={vxAttrs} node={{
   _key: value._key,
   variation: value.variant === 'centered' ? 'centered' : 'two-column',
   items: items.map((item) => ({ question: item.question, answer: item.answer })),

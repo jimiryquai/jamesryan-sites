@@ -1,0 +1,18 @@
+{
+  "database": "/home/james/Repos/Workspace/building/jamesryan-sites/.claude/worktrees/spike/25-inline-editor/apps/marketing-site/.spike-state/v3/d1/miniflare-D1DatabaseObject/3614150ae9830ebc6ed1d4e6bf21d0c08d94bb2b921c78ff3b840629e38fca9a.sqlite",
+  "stateDirectory": "/home/james/Repos/Workspace/building/jamesryan-sites/.claude/worktrees/spike/25-inline-editor/apps/marketing-site/.spike-state",
+  "seedPath": "/home/james/Repos/Workspace/building/jamesryan-sites/.claude/worktrees/spike/25-inline-editor/.orchestrate/spike/fixture/fixture.json",
+  "bucket": "jamesryan-media",
+  "media": [
+    {
+      "id": "01M78FCT3CQK7HYG76C1PW8NY7",
+      "filename": "api-key.png",
+      "storage_key": "01M78FCT3B5Z59BMFDYT6FS8HC.png",
+      "mime_type": "image/png",
+      "alt": "VX hero image",
+      "caption": null,
+      "width": 1094,
+      "height": 759
+    }
+  ]
+}
