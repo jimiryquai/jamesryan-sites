@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:b6a76f0896eaee872faa73b683baa3e6f425bf6b07ffa92d8df663327617bdd3",
+  "claims": [
+    {
+      "id": "claim_55d89ca50dbc436ab1dce79cf10bc02c",
+      "statement": "The olive palette is defined as Tailwind v4 @theme OKLCH tokens with the social-background gradient deliberately in sRGB because Satori cannot parse OKLCH, and each app's palette.ts extracts that gradient by regex for the OG routes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/styles/palette.ts#L5-L5",
+          "version": "repo-lines-v1:sha256:ad9d0cd3512a2e76f6a7bfb40361a0fce965c6b116df37f361ce90d92c667611:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ5ZDBjZDM1MTJhMmU3NmY2YTdiZmI0MDM2MWEwZmNlOTY1YzZiMTE2ZGYzN2YzNjFjZTkwZDkyYzY2NzYxMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWQ5ZDBjZDM1MTJhMmU3NmY2YTdiZmI0MDM2MWEwZmNlOTY1YzZiMTE2ZGYzN2YzNjFjZTkwZDkyYzY2NzYxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDBhMGJiMjQwODIzYTM0ZmE2YmExYzJkODkwNGZhN2MyOGIwYjlkODE0ZmYwMmRhNjY5YmYxODNiMjAwMTBjNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://packages/ui/src/styles/palette.css#L1-L17",
+          "version": "repo-lines-v1:sha256:8dddf02ae863056605c98b988a58b4bba0a02207def213e32283cb27a490b4b6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAzMDllNTRiMjZiODI4ZTJkYjZmMTQ0MjkxZDkzYzAwYzM0MDQwNjVmNTUwNjgwZjc5Nzc1NzVmNDdhOWRhODciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7b9f50a430264c2cbbd96ec9c20f3539",
+      "statement": "theme-init.js is an inline head script applying the theme cookie's classes and colorScheme before first paint, and window.siteTheme.setPreference persists explicit light or dark choices as a one-year cookie while system clears it, dispatching themechange.",
+      "evidence": [
+        {
+          "resource": "repo://packages/ui/src/components/theme-init.js#L1-L22",
+          "version": "repo-lines-v1:sha256:069b530710178f5b537b8b50eb1b0d213b99f8e17a73d95e085508cf81b0bad7:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAwYTY2Yzc2MDI4NWJkYmVmNjgyNWQwZDI2ODdkNGU3ODA1YjI0ODhhNTMyMTkzNzBkMTZhNWU4OTA0ZTBkNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ZmFjNWEzMDM5YmJhZDI4N2FjODE1ZDUzM2NmM2FiZDRiNDIxNzkyMGNiZTJjOTNiYjM0YTZlMzAwMDMxNDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_09518ac94c104be3b700dd357bc5bb36",
+      "statement": "The dark custom variant matches both an explicit .dark class and cookie-less system dark through prefers-color-scheme, so explicit visitor choice wins over the system preference and styles must not gate on .dark alone.",
+      "evidence": [
+        {
+          "resource": "repo://packages/ui/src/styles/globals.css#L1-L10",
+          "version": "repo-lines-v1:sha256:69ffb3c366be63d34f4983c7cc5ddce84d1a4ed0b001dc04fa19fdd1706aeea2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjExYjhlNjllODlhMzFlODdlMjVlYzQzYzkyZmZjZGRkMGNiNzk0ZGI3NTdkNjE2N2FlMzFlZTA1OGY5ZWE0MjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjFiN2ZkYTBjZWIzZTFiMTVkZGIyODMzMTkzZjczN2FjOGE0MDFmOGIyN2I2NDA3MTcwYTM5OTRhN2I1MmUzMTQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5126495adf7849aa8e65a1f8dd048532",
+      "statement": "ThemeSwitcher renders an ARIA menu button with a role=menu popup of menuitemradio options for light, dark, and system with Phosphor icons and an sr-only current-choice description.",
+      "evidence": [
+        {
+          "resource": "repo://packages/ui/src/components/ThemeSwitcher.astro#L1-L33",
+          "version": "repo-lines-v1:sha256:49b7c688582200ab9312e7861481b1676ceda2ab2c5bd5f2db9c5d787dc539d4:eyJzZWxlY3RlZExpbmVDb3VudCI6MzMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1MmQ3MTExMDNkNTBhNDM3ODMwYzZmYmNkMDRmYjRiYWI0OWEwZjgyZjZkMjZkMWM3OTFjNmU4NDg4ZGQwOTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwODJkMGY2ZDI2ODJlNjFlMzg3ZjkwYzRmYmY2NGJiY2NmNDMyOWZhNmRhNTdjODliZmUyMzZmYjNmMDI2YTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYzNzFlODI3MDA1ODM4ZmRiOGY0MTJmZjdkMGFjZGZhMGM2MmJlMWM4ZmQ5MGQ1ZmIxMmE2MGY5NWEyZmQ4YWQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8c9791b1c8104db4bdcc892ee149b1b9",
+      "statement": "Palette changes belong in packages/ui/src/styles and must keep WCAG 2.2 AA contrast in light and dark modes, which the staging accessibility check enforces with axe wcag22aa tags in both themes.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-accessibility.mjs#L31-L45",
+          "version": "repo-lines-v1:sha256:b4c4710d7739d738904e8dce3394e355263e8010dcb5544aea81a04dd1483d46:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZjMTI1MWQ1ZTg5NjA1NGY0NjZjMTEyNTlkMjI1NWYwNzIyYjVlMjU0YzMwNmI5YzJhZDM2MWIxM2ZhOTA5NDciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmMzg0MzAzNWYwMzhmOTk3MGY5ODE3Mzc1YWU3N2VhODlmZjY0ZDk0ZDRmODA1OGIwN2RjZjUyNGNmYjEzMzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk2NTE5OTY5ZmE3ZDZiYTI5MzQ3NWIyMGIzNjM4MTBjZDcxNjRkMjUxYjQwNjhiNzJlZjlhODc0NDc0ZjAwN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0ZDJkNmQ2MjAxM2U3ZDg3Njc5NmFlNTU1MTdhMzFhNDM3YzA1ODRmMGYxYzM3ZmExODE1NTQ0OWQ3NmIxOTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9044f848cdda403fad64e143599454d8",
+      "statement": "The ui package exports Base, PostCard, and ProjectCard from its index, plus path exports for styles, components, assets, and the seo-graph helper.",
+      "evidence": [
+        {
+          "resource": "repo://packages/ui/package.json#L3-L12",
+          "version": "repo-lines-v1:sha256:4728514f9041f5b7a7735364fa1a71967cc6bf8dca428a89a7054b0dd5018000:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYjk1YWU4YmE4ZmZlOTM5YzliNmEyNmRiOTlmZmFhNzU4ZmIyODI5YmU1MTUwN2I5OGJjY2U2ZTU4YmY5NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5ODc0ZmJjMWZjZmI1YzczNGExYTE5NmNlY2FmYjhjMjUyYTQ3NzhhMmI5NmYwMTBlODhjYjcwNmQzOGY3ZGEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4MGY1NTI1ZjI4NzkzOTY4ODA3ZmE4NzZhYTU3OWJkZDU2MDA3ZGRjN2FkZWJhYWUxNzM3OTI2YTM2ZWNhMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImNmMTEzYWNhMzkxMjRlNGMyNGUwNDNiYjNkMGIzOTU0YzA3MDAzODJlMDAzOTA3OTIwOTc3ZGE2ZDg4ZGZhNmQifQ"
+        },
+        {
+          "resource": "repo://packages/ui/src/index.ts#L1-L3",
+          "version": "repo-lines-v1:sha256:ae7123acb29e7cc0d5644d119b12e3f70b7a4ca8f6061b7c9e6efb7f671d208f:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTRiMWI2ZmIwMWJkZjI1YWYxYWZhYjc4MzJiYzVmNTc2Mzg2ZjZjNmYxZDA0ZDU2YTg0NjcwZDYwNGI4N2U2NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjZkZDljMGRkMWIwNGM1NzFhODVmMWJjODYwMzEwODMyYjE0NDU5NTg0YWM0YjFiMjRiODUyMzgxYWJmYTYwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b06424070cb8467a89b4cc0cd8692433",
+      "statement": "Base.astro composes the shared page chrome: site identity, cached primary menu with cache hint set, OG image URLs derived from og-image utils, and EmDash runtime plugin fragments.",
+      "evidence": [
+        {
+          "resource": "repo://packages/ui/src/components/Base.astro#L59-L86",
+          "version": "repo-lines-v1:sha256:f000724c5577e9cd51ce8e11fa9712c95fe9616d3b2fe763f9b33633ce8e64d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4YmRkNDE0ZTgzMzBiODI5NDU5Zjg1NDI0YmU0YjRiNWRiMGI3ZjYyOWMwNjdlYjE5ODQ4OGM5OTkwMzNiZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmODc5MTcxZGM4OTkwOTAzMzQyZjVhOTA4N2Q3MDE3MWU1Nzc3Y2Y2ZjI3NzNiMTdiMjg4YmM0ZGVkOGFmYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNTU3NTEwMWVmOGFiNjEzMDM5MDQ2MDc3NWZlMDExNTM3MmYyZmQyOWExMGEwYjEwMzdlZDg1ZjQxNWJjMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhNjVjYzU1MGNiZThiOTU4YWUxMjQyOWZhMTVkZTI5YTI0ZDM5ZDk5MzI3ZjZkOTRiNmU2Y2JmYWQzZTZlMzgifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

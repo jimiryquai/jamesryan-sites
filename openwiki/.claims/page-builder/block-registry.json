@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:7bd23f6bfd4583ed1a5826b82b1585fec1cfc13b1826d0701892b9cbbba75680",
+  "claims": [
+    {
+      "id": "claim_6032d8a911844e25868372d2b3f5ee47",
+      "statement": "offered-blocks.json is a plain array of eleven block slugs and getOfferedBlocks resolves exactly those slugs against the installed package's BlockType exports, throwing on duplicates, empty lists, or unexported slugs so new package blocks are never offered implicitly.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/offered-blocks.json",
+          "version": "repo-file-v1:sha256:1c963617062cd2a3cc30f85f0a95814ae17143b24197f295a37ed007364428cc"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/offered-blocks.mjs#L1-L21",
+          "version": "repo-lines-v1:sha256:4b96fb0ac45c2889f8a8f0174873a4a649e7f61587dfb1182923b0bfa0316d96:eyJzZWxlY3RlZExpbmVDb3VudCI6MjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5ZDdlNDA2NzA2YWU0MDUwMzc1MjNhZjRhMjVmOGY5OWMwYTYxODdiY2ZkYzZhZDc4NWY5ZGIyNDAwNDNmOTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAyZTM3ZTJlNGZmYWRhYjJlNDljOWRmODY2NjY2NGQxOTRmNjk1MDI5YjUwYjBiZmYwYmFhMGE0NGY1NmJmNTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQ4OWRmMGYwZTMxOGY1YWM4MzUyOTIyNGFlMDc0NTRmMTM4MDI3MDNmNzE1MGQzNmUxNmZhNGM3ZTgzNWI4YmQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_bc95beffe746485b9084dca06d6b8b27",
+      "statement": "blocks.ts cross-checks offered slugs against its section map in both directions at module load, throwing on any mismatch, and posts is the only block whose variants map to distinct sections while other blocks select variants inside one section.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/blocks.ts#L17-L31",
+          "version": "repo-lines-v1:sha256:03c4d8be93a530f2874ecaa6f07a0a514f3f446a13111435a0f95c848e993723:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE2NDFkZGJiZTBhYzM5ZTBhODI2ZmVhNDVlNDIyOTNiNDNhM2RiYWMzN2Y3NmM1ZTJmZmRkMTAwNDEwMTliOTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRkMjc5YzRhNGE0Y2Y3MTQ2MDYxNDQ4NzEwYzYzMjdjOTIyMWUwNTc3YTJlYWVhMGE4Yzc4ZTA5MzU5MGM1ZTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ4NjM3ZmEzNDk2NWUyM2Q4MzdlMzUzZDZkYWU1NDhkZDMzOGU1MTEzNjg1N2Q0ZjRjMWEzMTdhY2EwNWM3MTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e319e1ee1b98418ebd041109452e1b28",
+      "statement": "withSections attaches site sections to package blocks, materializing a per-variant map that still names a default when a single section covers all variants.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/blocks.ts#L32-L43",
+          "version": "repo-lines-v1:sha256:89ae40f9e03c6aa3758fae1e543192fdee6e34c7fcde8790ec2c382d2433f453:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3N2RlNTM1N2Q3MDJiZTIzYmNjNzc2ZWRlNWVhZDcxMTY4NWQ0NjU1N2M5OGM5NDc4ZmI2ZWE3Mzc3OWM1Y2QiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5MTlmMzVlNTg0MThiZmI5YzRjNmVhZmIzYjRlMmRiZjI1Njc3ZTY4NjUzNzUxN2YxN2UzMjdiMzQ5YTUzYWEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImVkZjkzNDJiOGI2OGU5NzUxZmIwM2M1MmNhYzU0MTRhZGZlODk3YjYxYTdlYWUyZGFjNjRkOTFjYjdkNWUzOWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_fda380fcc9e045f8950862db84ffa538",
+      "statement": "resolvePageLayout derives the layout and service group key purely from the entry getPublishedRoute already fetched with a service reference selection, so one cache hint covers the read.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/resolve-page-layout.ts#L10-L27",
+          "version": "repo-lines-v1:sha256:259a06a4bc44de04b9d37e58431063863f0ac5a7bcb92081000830330623d6a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVhZjIyY2YwNzMyNTkyYzI0NzE0MWNiZTYxZWZhMTEwMTI2MTJmNWEzMTIyYjlhZjliYmFmNTJmNTcyNGQxOTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjMTljNTY0OWNlYzJiYjZlYzgyNDE1ZTA4M2E5YmRiNDg0NTRkZmVlOTAyY2I3Y2YwOGM4ZWM3YzUxNWM0OGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU1ZmU5Yjk5ZGY5YThlZTljYzEwNGYwYTU5NDI5MzBiYjIyYTY3ZWM2MzkzYzgyNWEwZGI3NDMxMmNhNzEzZjIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY0NzE3ZTJiYTQwNjEyMThhMjI5ZDBjODMwYTE3ZWI4OGY0YzM2NGU1OTg3ZGFkNDJmYmVhODRkOTRhODFlYTcifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4845abd0d59b40a68ec2c3ff80040606",
+      "statement": "sync-page-builder-seed.mjs rewrites the seed's blockTypes and the pages layout allowedTypes from package definitions, and its --check mode is wired into marketing typecheck so a drifted seed fails CI.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/package.json#L14-L14",
+          "version": "repo-lines-v1:sha256:0cadcebd765f489d6cad16b2199fd770cc4259958b0ea25b01567f521f6af844:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGNhZGNlYmQ3NjVmNDg5ZDZjYWQxNmIyMTk5ZmQ3NzBjYzQyNTk5NThiMGVhMjViMDE1NjdmNTIxZjZhZjg0NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGNhZGNlYmQ3NjVmNDg5ZDZjYWQxNmIyMTk5ZmQ3NzBjYzQyNTk5NThiMGVhMjViMDE1NjdmNTIxZjZhZjg0NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjc3N2Y0Mjk1OWMzNDMwYjU2NjE2ZDQxN2RjNzcwZTQzZTNmZjc1NzExODEwMzE0NWUwY2VjZjU5ZTA0YjMzZSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmYxNTYxOTgwYjMyYzQ0OGYxZjRjNjMyMjY0ZGJkMDkyMDA2YThhMzFiZjZjZGM2YjJiOTcxYWM2ODE4OTdhYyJ9"
+        },
+        {
+          "resource": "repo://apps/marketing-site/scripts/sync-page-builder-seed.mjs#L6-L22",
+          "version": "repo-lines-v1:sha256:aaf291ffeccf1fa9d64a8d7b1f000c2a1c4f4acc1900b15b4938bb4efd4941b5:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjMzlkMjI4NGIwNDUxMDI4MTgyMDJjMmQ3NjQwNjA5MmUxODU0YTNlZjE4Yjk0NDNkMmY2NTUyZTJlMzcxZTUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhOTg3Zjk4NmVjOWE5MDYwNTVkOGJkOTI4OWFkZDE5NWQwOGYyZjA4ZDIxOWU2YjM5ZDQ4NTY2YzdjZWQ4MTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI3MjZkMzk0MzQ1NThhYzM4MTQyNzA5MGJhYzk4NTc4ZGQzOWYxMDY2ZjY5ZWU2YzY2MWRlNWM0MWMyOWNiZTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b35cdf976b624780a44710b100fdde1f",
+      "statement": "apply-page-builder.mjs invokes the package CLI with --types derived from getOfferedBlocks and rejects manually passed --types, keeping renderer, seed, and CLI on one selection.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/scripts/apply-page-builder.mjs#L4-L18",
+          "version": "repo-lines-v1:sha256:7cc56b262bc0b9791916cabb5f997c25ef69b219baf63d12eb2d206b525197fe:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFlZGRlMjQ3NDdlOTYyZTA5ODgxZTk4YzY5Yzk0YzRmYjM4NjU1MjIxY2M1YmM3NzUxNTA5NWM4OTc4NGNhNTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImQ4MmI5N2IwMDhiZTZlZmEwNjU4YzM4ZmRjZWZhN2M4ZDZkNTkxZTg0ZTk2ZmEzMWUwMGU0NzI0Njg5ZTRjMmMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjUzYTc2NWU5MGJlOTUyNDMzZjQyZjU5YzQzMmU1NDFiN2I1Mjk4NDJiYzg1Nzk1MTViMjk1MmMwOGFiYmM1ZDIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

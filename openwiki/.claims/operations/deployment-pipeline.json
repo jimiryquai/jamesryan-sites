@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:2c606a8c509ad3894c02302deb9cea0a96cdcbc6b54e49e013abed072f46c0ef",
+  "claims": [
+    {
+      "id": "claim_fddeb7c6bbcd4ebab65b75e514ace7ba",
+      "statement": "CI runs typecheck, build, tests, and the rendered-SEO check on pull requests and master pushes, with telemetry env vars forced off and frozen-lockfile installs.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/ci.yml#L1-L37",
+          "version": "repo-lines-v1:sha256:507e0053e9f56b9d12ce04241e6f5aa2551bf995d61a55a7b3357fc24a5652d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA2ZTFiMzJmYTA5MDc5YWUyZjAwMDFmZmYwZWNhMjdiNDk4NTk1N2Q0ZWI0ODU3OTI5YjNjZjA1OGZhYWU1NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxMmEwMjMwZGM2ZWMyOGRlNjFjMWRiNDQ0MDFiNjY4MjZiMmE0YTBhODM5NDU4MzljZjNjMzFiNzM2NzQ2YTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_60791c07218e4d86b43e3676780a3cb9",
+      "statement": "Staging deploys trigger from successful CI workflow_run completions on master and run as a per-app matrix with queued per-app concurrency groups, rejecting stale runs whose head_sha is no longer the master tip.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L5-L58",
+          "version": "repo-lines-v1:sha256:782bfbe49269f5bf7f420d2f8c825a31b74119686781b440a4781632e9621039:eyJzZWxlY3RlZExpbmVDb3VudCI6NTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4ZjY3ZDg3NTQ2ODlhMWEyOTA2YjMxYjA1NjUwYjNiZDcyOTYxZDI0NmQ5YzdiMDc2NTI2YjE3YjBkZTAzNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NWQyNDFiNDk5NmQ2M2Q4YmY2YjY5ZmRjMjgzY2Y4ZmYwOTA4YTc3Nzc5YjcyMGQwODg4NDc0NzQyYTFhMTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM5MDliYzQxYTg5ZmJiZjc4YWY5OTEyZTQxODZhZTcwZjU5MDE0OGM4NzhjMDBjZTIwOWQ1ZGNjNmM4NmYyMjEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE3YTA2NzNjOGIwNWMzNDA4NzVhZmVmNmRhOGZjNjVjNDA3YzQxODgzOTU2NjNiZTg0YjhhYjNjODkwZjljZTgifQ"
+        },
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L62-L69",
+          "version": "repo-lines-v1:sha256:c6728acc34e17441d7f882220adac93806bc20357b23525b1be99d2b3010c9a6:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGYyNWFkYTUxMWYzNTMxMjkxZTJjZDJlYzJjMjMyNDcwY2UxOTg0MjU5ZWFiOGViNzNhZTRhNmFhNmU5N2VjZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTRjZmFiNmFmNjdhZGExOWM4OTgyN2RlMDk1MjFmMTQ2ZjJhYzA1MGM5NDU1YzIwOWUwMzU2NjgzNDU2MGIwZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTdhMDY3M2M4YjA1YzM0MDg3NWFmZWY2ZGE4ZmM2NWM0MDdjNDE4ODM5NTY2M2JlODRiOGFiM2M4OTBmOWNlOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDU0M2FlMzI0NDAwY2Q0MzA0M2ZmZmRhZWMxYmUxNTVlNjBiOTU2ZjIyMDc5ZWMwNWQzZDhhY2Q2ZWQ2NTk5NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_831453f04bd94ce496eaca34619ceff0",
+      "statement": "Staging builds with CLOUDFLARE_ENV=staging because Astro fixes deployment bindings at build time, then applies migrations, deploys with --env staging, smokes, and verifies migrations before the staged-sha artifact is recorded only after both apps pass.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L52-L57",
+          "version": "repo-lines-v1:sha256:e253dca10bb5d22c42a04bc7fb1cd86ea1f2e474eae35ff624cf3e91baa7e6a1:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTE0NzQ2NmNkMzljYTU3OGY5NjA5MTlhZDkwZDA1M2EwZDA0YjVkYTBiNzQ4ZjY4NjZkN2VmZTRlYTM5NzAzOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODg4OGE4YTFkYTJhYzA1NzE5ZWViOGQxNzQxZmE1MjRmODU4ZTdmYmJiYWUwZWIwZmI2OTdhMDdiYzAxMTgxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTQyMDg2NzM4MzllZjNiNjQ1ODkzM2NlMWM0NmZmMDdiOGJlMzJmNjYyMDBiY2NlOTUzMDlhMGQwMzE3YzQ0OSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjY1NjVjZmJkZTVmNGM5MzAyNDIzZTYwYmRjYjQ1MzFkNzI4ZTlkMmExMmNlY2FjNTk5MjY2MWNiMGVlZmM2NyJ9"
+        },
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L74-L124",
+          "version": "repo-lines-v1:sha256:6480abce28ba6e78f6e60bbc4baa248962c7049c3c925d4c3f1cf4dad20fb357:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmMDdjYWEyMDFkY2IwYTU5MDZiNWY1Y2ZmZmZkNWI1M2YzOTY4ODIxMzUyN2M1M2RjMTVmMDg1NzNmNDM5MzMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNjkyYTIzZjg4ZjUyYjFmN2I3Zjk5NmJkYzgzMTNiNTJhOGI4OWUwZTBiYjg1YjE0NmY4ZWZiYzllZDMyMzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImZlNzZiMGY2NzY0MDIxM2ZmNTA1ZGMxYmI5YjYwNWVkYzM4NDY3NGRkMzExNmE2NjIyNDc4MTI3NjM4NGRiNTEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFiODRiNmFkYTU5M2M2ZWVjN2YwMzYyZDM2NTYxZjc1ZjljYzc5ZmUzOWRiNDY3MjU2ODhlNzJlYTRhNmYyMzIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_82969b39eb6d4b7fad4760a6dfaf75ec",
+      "statement": "Marketing-only staging extras are the comment moderation smoke, Playwright-based accessibility and contrast checks in light and dark modes, and upload of accessibility results even on failure.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L88-L109",
+          "version": "repo-lines-v1:sha256:ebae2fea450e6e619a21d8e1e9d3e8fa2844003651942ca50379a4682775bd60:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU2ZWJjZmY3NTZlODc4YWI0NjU1NDI1YmZhZjAzYWUxY2E2NjdhNmQzOTA5MmZhNTU0MjY0ODY0ODQwYzU2ZWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ2MmQ3Zjk0ODEwZThiOTJhYjVkNjI1ZWZjN2NmOGUzMjdhNzU1YjNiYTAwNDFmM2YyN2IyNjQ3NWM4MGM3ZjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdjZTFhMTA1NGE4ZmRkNTM1ZTlkNjU3NjQ2MjVjYWFlNWY5ZmMwZjNmMTBkZmQ2YmQyYTJiZWE0OWVhMjExZDYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwZmUwZmNjZDlkNTNmMWIwNGQ2NzdlNjk5MDM3NTFlNTZlNDBmYTU0ZGYzOThkNjY2YzJhZDJiNzIyNGViMmIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1320ae44ae3040a6aea519480e4a6250",
+      "statement": "Promotion is manual, marketing-only, requires the production approval environment, resolves the most recent successful staging run's staged-sha artifact, re-confirms staging has not changed, and deploys the staged commit rather than the branch tip.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L129-L194",
+          "version": "repo-lines-v1:sha256:95ed34fb27e2ac014d04e77066e2fff4df263a2a47211605a43d8eae9853e5b7:eyJzZWxlY3RlZExpbmVDb3VudCI6NjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY5OGNhMTY2ZjUzMjBlM2EyZjNiN2RmMTcwZWYzZjExZmI0ZGFjMTA3YzE0MmExYzI5ZDI1N2E5ZTEzN2JiYTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyNjM1YjFmNjYxNmRmYWFlM2M4YzNiMDY0Mjc2MGQyMzgyZDQ0N2ZjODhhZjMyZDZlNTVlYWZjYjFjN2E4OGUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJjNzQ3YmIyMWYwYzQ3MmQyYWZkOGRmOTlkMzk4ZmQ1YzgzY2QxYmMxZjI1Mjk3NWJmYWVhMjJjYjFiNDhiNzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE2ODA4NzYxMmQ4MjBmMWRhNDFhMTk4Y2Y0ZWFlZTdlN2RkOTk0NTRkMTA2Y2U1NWE4MmQ1YzYwZTk0MDczMDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e32aa5ad521e4fab9ce3ac43b9bc65de",
+      "statement": "The migration-recovery workflow dispatch covers migration-status and recover-lock for either app and environment, with production passing through the production approval environment.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L195-L228",
+          "version": "repo-lines-v1:sha256:1c2080d0a987421c3a1ca729a6004f3ee4bbf8aa16df2fb2bff43277da050d98:eyJzZWxlY3RlZExpbmVDb3VudCI6MzQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIwMWQ2OTY1YjBlNGVkMTdmY2UzZjRjNDgzNWIyNjE0MGNiNTg0NjBiODQ2ZjBhMjk1MzQ3NTVlMTRlM2VjMDYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjcyOGRhOWVkZjI3ZjY5YzAzMTdmOGYwYTgxZWY1NGY0Nzc5NzQ2N2U1MTBhMGJhMmM0MTMwM2I0ODE3NGI0NTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMjI4NmFjY2I3ODMzZDY0YWJjZDg3NWIwZWRmZWVjNWE4NmZlZDg5MDI1YjllYmNiZDVjM2UzZTA0ZmU5Y2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjRkNDBiNDdiMjUwM2FmNGYwNzZmYjlkNTZhYmI0Zjc1OGZmM2ExNzM2MTM0YTk5MDJiMTIyMDNmZDIzMDNmZjgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5ca576b1f53c44b9b272babf84f49821",
+      "statement": "The deployment secrets wizard adds the Cloudflare account ID, scoped D1 Edit token, reviewed fingerprint variables, and per-environment EMDASH_ENCRYPTION_KEY Worker secrets, without saving the token locally.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L1-L14",
+          "version": "repo-lines-v1:sha256:1bf1b1c5f83d1fb6ad87f0c9d4f8286ccdc9af6067fa0001062852928d08c64b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg3YWUzMjYyNzBlMzUwMjk2ZmVlMTFlMzkzOGMxNjc5Y2U5ZTQ5N2Q2NzJjMzRiMWU0NGU3Mzg4YTRkNjUzYjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkY2I3NjNlODg5OTg4ZWU5Y2Y2ODM4MjAyNGFmY2M2MmI4YjFiMWNlNjhiMDk1ZjM0MGQ3Mjc1MjA3NWEzMTYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA0YTUwZjQ1MWMwMmUwYzlmYmNhYmZlMjhjYjUzYzlmOTc1YTMzZmE0OTRhMTFkMmFlOWFjMDVhZTI2MGQwNTcifQ"
+        },
+        {
+          "resource": "repo://scripts/wizards/deploy-secrets.sh#L267-L279",
+          "version": "repo-lines-v1:sha256:53d244e7fe097afef0c825f82282f651e14ac2ef1135a57dac419e91b2373a12:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MTFhYzY4NWM2ODc3MzllZjEwMWFhMDA1YjU5NGQxZmFiMTI3MjUzOTY2OTEwZmZlZTA0NDNjZjMzNTk3NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlZjBiODFhZmI0MGQyMmVjNGVkNTIxNTFkNTg0NjdiZDBlMTI0MGQ2Mjg5NTNkOTQxMWE3NjA2OWYzNDU4MmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwMmIxYjExNjJjZTViOGU1ZWMyNTI2NTk4M2FiMjc3NDgxNzZlNmI3MmRkODRmMjI2MzE3YTczZDJkYzZlYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3ZDVlZTlkZDM3NmIzODQxYTU3YTIyMWJhMmIwY2IwNDBmNWFjNDFlMGY2MTlkZWRkNGFiOGM5MWM3NmRhMTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

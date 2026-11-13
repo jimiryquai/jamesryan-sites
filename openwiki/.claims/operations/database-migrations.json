@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:8dd346cd863e1929ac64f1bfc61c6ddbe939e1809fc31344081c07b68e935c53",
+  "claims": [
+    {
+      "id": "claim_753d106f0ad0499fb232c7455512c555",
+      "statement": "migrate-deployment.sh runs from the app directory and consumes only that build's .emdash/migrations.json manifest with --wrangler-config wrangler.jsonc and --account-id, adding --wrangler-env staging for staging, never mixing manifests across builds.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L52-L57",
+          "version": "repo-lines-v1:sha256:607f71d820d1db9f81863278c5d6a5a727fe7f003b564b26170c489dd1f24846:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2MzZDg3OGNkMDRmMDBkMWM3ZjcwNTEzYjMxZDM3YjZmMmRhMjdjZGMzOTk4YTg1ZjZiZDY0MzE4MGZkYjY4YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTVjODRlNDZjNzczNTI3ZWFkOWY4YmZjZTBlOTI2ZGY2OGVkMGJkOGY1ODQxZGUxN2QxZWRjZGJkYzAzYjA3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjcxMDc1ZGNjOWEyMTVhZDQ0MjRiODEyYjRhYjI4NTEwYTA3NDcxZmU0YmNhYWYzNDJkYmU3MDUzMTI1YTEwZSJ9"
+        },
+        {
+          "resource": "repo://scripts/migrate-deployment.sh#L1-L24",
+          "version": "repo-lines-v1:sha256:bae98b4ef4467b0fc6b9f63c9d327b61bc07e14f4feeea1378f80339ea73f719:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFkOTVmYzA0YTgwYzk1MmY0OWNlNDE4ODYyN2M1M2IwZmJlOGM0NDA0MWI5NTJkNTkyYWNkMWRlOTk4NjE0NjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJkYTA5NGI2YTQwOTI3NDg1YjBjNzQxODI1MzdjNWE5NDU4NDNiMjM2YzUzNGViODdmZmM4Nzk0MWVlMmY1NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRjZjk3MzdlMTRkODNjMzY3MzliNTU3ZjE5ZTk1ODJiNmNmOTJhNDgxODdlNWFmMmM2YzBhNjVlODlkMzg3ZTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb853b4f5f6b48eeacac52aa75fbd1fa",
+      "statement": "When the reviewed fingerprint variable is missing, the script validates the status fingerprint shape, prints the full target and the exact gh variable set command, and exits before applying anything.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/migrate-deployment.sh#L30-L45",
+          "version": "repo-lines-v1:sha256:6414a136fb3dc23aad4b22cc4de5f2c1114c26b01c94f8892459ad746798e215:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjE3YWEwYWVhMmI2NWQxMmQ5OGJhMjI2MjY4NzgwMTEyMWViOGNjYWRiY2JhZjc3ZDlmZmQwMmZiZmI3MjdkMzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM0YWVjM2U3MjBjYjQ5NzVjODM4MDk1YWExOGFmZGE2NDM0MjNkZGMxM2FkZWU0YmE5YmY3ZjQzODZmOGQ4YWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImIxNzBiZjNiNmRkNWQwYmIyMmNjZDBiNDlmZjAwM2VmODQ1NjQ1M2E1YWIyMzFlMzUyN2VlM2I4YmZkOGM3MTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg5MDkyNjkxNGNhYjRiOWRmMmEwMjFiZDQwOGI2MjIzMDY5NjlhNGVlZDM3NWJhYTUxYTMxNGU0Y2YwMDQzNWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6d50379a9d8545be87cf7a967e1f4941",
+      "statement": "Recovery adds --take-over-lock with a required numeric lock id, transferring the lock directly so an older auto Worker cannot race into a released-lock gap; recovery deploys no Worker.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L111-L127",
+          "version": "repo-lines-v1:sha256:663114ffb5de7be8c296db7b4245cf1d820e6f9b61a7754e0c6faa2ddd121914:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJhZTNmNTM0ZjZlZjYwODIwYjg4MWUyYjQ1M2M5MDFkNzQ2MmFiY2QwMGUzZjBhYWI5NGFiNjg3OGE0ZTJmNGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQyMTIwZWQ1YzA2ZDBlYWRiZjFjMjBhY2QzODBkMTk3YzBiZTNjNjcyMWJmYjFkMGZhYWU0ZGM2YTM2NDdhZjQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMTI1YWU1NjE4OTI4ODEzM2M3OGI4YzNkNTFmNThlNGRkMzFjMmU0YzAwYWQwMmJhOGZlZmY1MjUxYTZjNzYifQ"
+        },
+        {
+          "resource": "repo://scripts/migrate-deployment.sh#L45-L47",
+          "version": "repo-lines-v1:sha256:1d3535fa998337df5cc294691d98d74de2fbb53905de749a40c22033f1c48f11:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzRhZWMzZTcyMGNiNDk3NWM4MzgwOTVhYTE4YWZkYTY0MzQyM2RkYzEzYWRlZTRiYTliZjdmNDM4NmY4ZDhhZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzhiYWRiZjAxMDAxNmM1MzA0ODAxYTVkMDczZDUyMmIzNjE2YzlkOTY2NTgzNjE0NmVkOGFiNDQyZjc2MjU5NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjY4ODExMjkxNmIyZTE0M2VhYTE5NjA1NmRlMDkyMWExZjY1MWFhNzQ4YzRjN2IxOTFhOWYyNjFmZmM5ZTQyNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_847865556e864a4fab37e4c3a7ab8e2a",
+      "statement": "Each app/environment migration target fingerprint lives in a reviewed GitHub Actions variable, and freshly discovered fingerprints must be human-reviewed before being accepted, never auto-accepted in CI.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L73-L95",
+          "version": "repo-lines-v1:sha256:a1e67e8430c9df66819662d65a1d0aa646949b88da65845f3b06653103dec31d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhkOWI5MGQyNDhjNzIxMTM3MTRiZDA3ZTFhYWU3ZTllNTZiODliYzgyY2NjYWY1ZDk1MTY2Y2IxOTZiMmQ1ZjYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxNjE4ZTVlOGYwMDQ5NDA0YjkyZDYxN2E2ZTgxZGJkMWNiOWIwZDUzMDBlZmQ3YjE4NmQyNGMyMGRjMzUzMWMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk1OWJmNDM1N2Y3YTcyOWVlMmJhMTgyY2EwZjM0NmY5MDI5OThkNjM0NDVkNTdmZGQ0NzQ1MjY4MDFmZDNmZDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a2db48a6300346b7be0e563261a5561a",
+      "statement": "Migration and deploy jobs share a per-app/environment concurrency group, so overlapping Actions jobs cannot migrate the same database; runs queue without cancellation.",
+      "evidence": [
+        {
+          "resource": "repo://.github/workflows/deploy.yml#L50-L50",
+          "version": "repo-lines-v1:sha256:71bcf655d38f7fa6a49a1b3a8486bb5c68e66039f3dff6f3966e9eb2a840832f:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzFiY2Y2NTVkMzhmN2ZhNmE0OWExYjNhODQ4NmJiNWM2OGU2NjAzOWYzZGZmNmYzOTY2ZTllYjJhODQwODMyZiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzFiY2Y2NTVkMzhmN2ZhNmE0OWExYjNhODQ4NmJiNWM2OGU2NjAzOWYzZGZmNmYzOTY2ZTllYjJhODQwODMyZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjZjNTdkYTc0Y2VhNWVhNzljNzhiMWY3ZDJmYzcxMWE4NjhiNjc3NzY1OGI4ODFhZDVkZTZjYTM3ZTU1Nzg5MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjM4ZmMwNTEzNjE1NjM4MWFlZjMxOTE5MTVjNTY0Njg3MzM4MWIzZmYxYmFlYjc2ZjI2OWQ5MzVjMTk5MzAxMSJ9"
+        },
+        {
+          "resource": "repo://docs/deploying.md#L107-L110",
+          "version": "repo-lines-v1:sha256:cbf83eed101b8da74c7c1a8d32c26351c4d6012d799aef882eee586f6b5e40c8:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTI2YTI5Yzk1Y2UyMmNjOGRlMjkzY2Q1MzBhNDE3OGNlNTIyZDg2NTg1NGJlZTk1NmQyOTc1NGIwYzgwZTUyMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDk4YmNiNGUzNDc3NDJkYTFiNzAxNDA5MjhmNTQ0NWIzMTUyYWY0NDA1MDRjMzVkZGZlNWU3YmU3ZjQ0NDZkMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzQzZjdiNTgwYmIyZDg2YTczNDM5MTM3MzY0MWZiMTc3MTY1NjRmNmY1YTUzMzIyM2U2MjI1OGY2MWVhMDFmYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNmU3MmRiZjE3MzYzMzMzYWFkMmFhNmQyZTZkMzU2ZTNhNGRiNmY1YTdiYmMxZDZmNDk3ZDJhMDhiMzVmYzg3MiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_73fd250c07034bc1a781521664080efe",
+      "statement": "migrate-deployment.test.mjs fakes only the pnpm/emdash CLI boundary and asserts argument vectors, including that a missing fingerprint never reaches an applying command.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/migrate-deployment.test.mjs#L7-L30",
+          "version": "repo-lines-v1:sha256:4ca5b3e65e214ad32c0b64aa9a1d24263eb31db073ebb472241590f01fe891dc:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhYTdlMmVlYmMxMjJkZjg1OWZmNzNmMDVkOGQ3NTcxMzc4ZTliZDY0YTRjOTZjNDVkYWY4OGExMTY2NzJlZTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4YThmZWJjOTQ1Y2Q3MTE3N2NlYjVmMTBiNjc0NzQ0NThkNGM0MmYzZTc0YmEzMWFmNGY3MTZiNDMxMjljZTciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImM4MjRmMjI0ZGM5YTE4OTI0MTMyYjFmNDIzODIxNjZmMzlkMWFhMTUyNDE0MmM1MTE3YjY3ZDdiZDM4YWM1ODgifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

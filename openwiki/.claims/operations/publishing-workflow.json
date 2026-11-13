@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:d91b897132cb76c692fdf517699e8fdc4fadf661ab964b53c47c15e0c96f0aaf",
+  "claims": [
+    {
+      "id": "claim_ecfd3caf8852415d94961dff8ca77102",
+      "statement": "Agents draft posts through the staging MCP server while James reviews and publishes in the EmDash admin; drafts are created without a published status and revisions require a fresh _rev from content_get.",
+      "evidence": [
+        {
+          "resource": "repo://docs/publishing.md#L1-L5",
+          "version": "repo-lines-v1:sha256:81ab8ad04acc81fbdc13aa8c16fd068aae6e1cb29acbbca09f210a53c1f1897d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDdjMjMzYmZkMzI2NDcwY2U5OWIwOGFmY2Y3OGUxNzc2M2ZiMjhkOTg3MGU0NzUwOWFhOTczOTNmODhhMzQxNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjY2NTlmNGZjNzdhOGE1YmYzNjNkNGUyNGIxYWU3MTdlNjFmM2E0OTA0NzU2NmJhMzJiNTNiMTNhZjcxNmE1NCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTg3MTRiN2FlMzQ5MTRkY2NlYzQ1ZTVmOTM2ODAyYWQ4NzY2MWEwOTUyMWVmOGVhNDAxNWJlM2NiODU5MmY5ZSJ9"
+        },
+        {
+          "resource": "repo://docs/publishing.md#L139-L151",
+          "version": "repo-lines-v1:sha256:97b8dd8b5d5ab5e73e9aa4faa0c2adebf82acbc579db688353e4f0fa7559a7b8:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJjNTlmYzY4ZTgzZWNkNjYxNGI5MWNmZGE2ZjYwODVjNmIyNDYzZDI1MmVjYjJhMDFhN2I4YzY3ZjMzNTA0NzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI5NDkwODkzYWJiY2IyNzNiMmY5YzE2ZDI2MjAyMDM1MjI1ZmZmZjZjZWQxYjc5NzJhOTgyZmVjZjE3MTIyNDMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU4NjA2ODdiYzdlZGNhYzc5YTVjM2U2MzMwYzQ3ZDhkMWEwZGNmZDI3MGE4YTRhOGM5YmU2NjgzODU5ZjY4YWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1M2QyYTFiMDMzODVhM2ZhZmY1MGM0NmRiMzFjOGQwMzAwZDE0OTU2YTE4YjRlMmE4ZWJkMTg2NTdjNTEyMDYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8153dcf818f14c938a0f3770c8f5dcb1",
+      "statement": "The token-owner preflight hashes the staging token locally and runs a read-only D1 query joining _emdash_api_tokens to users, passing only on one row owned by agent@jamesryan.dev with role 20, all four content/media scopes, and no expiry, without printing token, hash, or SQL.",
+      "evidence": [
+        {
+          "resource": "repo://docs/publishing.md#L21-L79",
+          "version": "repo-lines-v1:sha256:50ff71254f5ac12732eea6ea510cff6dbdb8db604d04539bb9ea3ebd950de57c:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgyYWJiNGVmOTI0MjBmYmFiOTNmMzU0OTE5ZjU1NWVjZjM0NWZkODNlOTY1MjAwNzcwMDg1YWQ2MTczMDBkZWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU1YzVkM2NlN2JjZWEzM2FlMDdjODQwYzZlZjFhYzJjZDUzOTE1Mjg1MWNkNTAyMDkyZTYxZGFlYTU4YmVlZmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmNDI5NGYyNWM4ZGZlMGY1OGMwZWY4MjFmZjVjOGE0MzVjM2FlOGJkNGU5MWM5ZThmNWYzNzgyZmNjNWQwMmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_d41992d793a34be48a0fa38913846060",
+      "statement": "Draft media uploads go through the emdash-staging-agent media_upload tool with inline or file-based base64, and Portable Text bodies can mix code-block-pro plugin blocks that are not Markdown code fences.",
+      "evidence": [
+        {
+          "resource": "repo://docs/publishing.md#L81-L131",
+          "version": "repo-lines-v1:sha256:49d1278cb1dd9580d01d6d32e7b1c9fad66ec8a1da43c30a93322ff703569102:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY1OTVmZjMwMTIzNjIzZmQyMGVkYmVjMjk0NTMyZDExMWVkM2Q2OTJhYmNmNTdiYjFlOTFlYTMxMDk5NDFlZDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM1Y2U5ZDgzMTllNDE3MTE1MWZmODM3ODBjZDBlMDRhODJmZTJjM2Q2M2JiNmNmN2RjYTdkZDgyMGU0Mjg3ZDQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwN2M3ZTQ4NTYwY2VhODVlNTE1MTNjMTk1N2ZhY2QyMzJkYzA1YjVkOGQ1MDdhYjhjM2FlZTFkOTAxMjVmMGQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_629028afc54c4930b51fb4ef2e6bdeb7",
+      "statement": "The default .mcp.json (symlink to config/mcporter.json) carries only the public emdash-docs server; staging, local, and Cloudflare servers live in on-request configs because no supported harness expands .env values into MCP headers.",
+      "evidence": [
+        {
+          "resource": "repo://docs/mcp.md#L7-L18",
+          "version": "repo-lines-v1:sha256:654ecd641d8e64598b3993d9706ff760451bd344854078aee07fdc7c00410f7e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIzYzc3ZGJiOWE3MGM2NDBjMjIzZmIzZDZlYzUwZmY4OWY3ZDZlZjI3OTViYWIwMDgzMTYyMjkwODM2ZDVkYjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFhOTdiMGU2MGFkZTY2N2M2OWI5M2JhMTYxMDY1YzdiYjZmY2EyNGJmZDgyNDc5N2JiZjU2MTBlYzdmZTM4NzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4Nzc4Mjk3NTg1YmU1MGRiZmUwYmRjMGFlNGY0Njc1YjhmYjljNjBjY2ExYzM3MWE1Y2RhMzJiYjYzYjBlOWIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAxYzY1NDNlNWRjMmIzOTJlNzM2MWIyZjVmYjUwOWVlOWE0YmU4MTE0OWJmMTc2YzYxMzE2MzM3NTA3Y2I4ZjAifQ"
+        },
+        {
+          "resource": "repo://docs/mcp.md#L78-L100",
+          "version": "repo-lines-v1:sha256:48a56abe1f41f72157317e4e6b0f759ff891a2ea16f87772e9eb0566eb816b80:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNkY2VjZjI2N2YxOWY4NDliNDIwZGIyZTc5ZmExNjI0ZDViMDY2Mjc1MTAzM2U4YzQ0OWRkYWM3MDNiOTk0ODkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkwYjgwNGZkNWEwZDZkNTZhMTFlYjMwNTI4YzhhNTIzZGFlMjYwMzkxMDg3Yjg5YTg3ZDQ4YjYxYWMzYWYyNTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZmMzg4YTBiOGI3MWRlMTVjYzg2NzYzZDk2ODcyYmMyOWUyMzY2ZWViM2JjNTEzYjQzMmNkYzk5N2Y0YjdjNGMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f850acce26104ec2803c67a19e3beb98",
+      "statement": "The Cloudflare mcporter wrapper permits only list, call, and resource operations with --no-oauth, blocks --config and --root argument injection, and fails rather than starting OAuth when the grant is missing or expired.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/mcp-no-oauth.mjs#L6-L25",
+          "version": "repo-lines-v1:sha256:e3b0b4b4e294e2500ed5a1fabf948144224394764fe4d3bff8f18e6086b65ffd:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwZmRjMTY2YjkxODBlNTc1MDdlYWVjMTllMWZkYjExMDI0ODkxNDFlYWIwMjU0MGE2NzUwYmUyMzg5M2Q1YzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU3MzAxOGEwNWIyYWE2MTIxN2U1ZDBiMWMxMTdhMmI1OTQ1MmJjOTA5MDliMjQ2Y2EwZTg0ZmM5YWYzNTNkMGYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJmMTcwNzY0M2VlYTU5YzFjNzI5MDIxNDc5MDM0YTJhMGRmYWYwNThiYTRjZjkwYjZkYTAyM2YzNmQwYWQyNGQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU2MzMyYTg3OTBlMzg1YWFmOWFjNmZkMWEyYzliNjJhZjU1ZmVhMjZhYzhhYzQ3M2YxNWNiZDE3YjkxMmJlY2QifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3c5eaf907e1540da8e7040904b03fab5",
+      "statement": "All mcporter configs use direct Streamable HTTP transport with ephemeral lifecycle and empty imports, with no mcp-remote subprocesses.",
+      "evidence": [
+        {
+          "resource": "repo://config/mcporter.local.json",
+          "version": "repo-file-v1:sha256:3e62abf5c0be7d6990e0f53843480da1d6611b06587160e91f58fcd438defe7a"
+        },
+        {
+          "resource": "repo://config/mcporter.staging.json",
+          "version": "repo-file-v1:sha256:b04ca19debd06e837a3efcdeaac707626e46004eeefecc968f4538a7a64ea74d"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f7df79b48614221a02da36924039692",
+      "statement": "Post drafts must satisfy SEO field rules: seo.title without the site suffix keeping the rendered title 30-65 characters and a unique 70-200 character seo.description.",
+      "evidence": [
+        {
+          "resource": "repo://docs/publishing.md#L7-L13",
+          "version": "repo-lines-v1:sha256:b95cd841d5fac7a891238fcc8e674437fd7061f803babd0d26bd2bcd6ceaec93:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDhmNTUzMzZhZDY5ZDhlNjRmMTEzOGVlYzM3YzJiOWViOGUxMDRlZjUyODJiMmJhNmQwNjU4NzBhMWEyZDIxOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTVhYjI3YTZmMjU5ZWZiMDY5NjhiYTUwZWZkZDc3ZWQ0NWExMTg5M2NkOWNjYjRmMjlmYzdhM2RhZGEzYjdkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOWQ1Yzk2ZDgwNzEwOTQyYTc3MTZkMmQ3NjY2NTYxMWI4YzRmYTQ0Njk1YjE3OTdlOTM5ZTEwZDdlODExNjdkNiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}
