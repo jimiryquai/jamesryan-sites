@@ -8,10 +8,10 @@ Install `emdash-plugin-ai-comment-moderation` from npm under `sandboxed: []` on 
 
 **Blocked by:** 04-0c635224, 08-2655a1e3, 19-e51d03d0.
 
-**Status:** needs James: approve production promotion (after Ticket 14 merges to `master`) so Box 2 can be verified live on `jamesryan.dev`
+**Status:** done
 
 - [x] On staging, a clean comment is approved, spam is marked spam and toxic is held pending, shown in a comment with the API responses.
-- [ ] Production promotion carries the plugin; its settings page loads in the admin.
+- [x] Production promotion carries the plugin; its settings page loads in the admin.
 
 ## Comments
 
@@ -37,3 +37,5 @@ Verbatim staging API responses (`POST /_emdash/api/comments/posts/01M70CKZ63X6T6
 - `spam`: `201 {"success":true,"data":{"id":"01M7A44KEYHPQSGDN5FB8CQ158","status":"spam","message":"Comment submitted for review"}}`
 - `toxic`: `201 {"success":true,"data":{"id":"01M7A44MKRY59EHJNY57JAFDE5","status":"pending","message":"Comment submitted for review"}}`
 Stored D1 statuses verified (`approved`, `spam`, `pending`), then all three test comments and `_emdash_rate_limits` rows were deleted (`remaining: 0`). Box 2 awaits production promotion after Ticket 14 merges to `master`.
+
+**2026-11-13 Gemini (agy Carbon, orchestrator):** Box 2 verified on `https://jamesryan.dev` after James approved production promotion (`Deploy` run `43405785692`, promoting staged commit `2cb5029` from staging run `43405026168`, pre-promotion D1 Time Travel bookmark `00005ccd-00000000-00005122-a59ea133b8bbc4cf80bb832ebc669a32`). Updated production D1 (`jamesryan-emdash`) `options` `emdash:exclusive_hook:comment:moderate = "ai-comment-moderation"` and `plugin:ai-comment-moderation:settings:model = "@cf/meta/llama-3.1-8b-instruct-fp8"` alongside James's saved `accountId` and encrypted `apiToken` (`len=183`, `rt.secrets` validated). `_plugin_state` confirms `ai-comment-moderation` `2.1.0` `status: "active"`, `source: "config"`, and James loaded and saved its settings page in the `jamesryan.dev` EmDash admin (`/_emdash/admin/plugins/settings?id=ai-comment-moderation`). Lesson compounded at `docs/lessons/workers-ai-fast-v2-object-response-and-sandbox-rpc-flush.md`. Ticket done.

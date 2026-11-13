@@ -19,10 +19,10 @@ James asked whether to use Usermaven's Cloudflare Workers proxy (https://usermav
 
 **Blocked by:** none.
 
-**Status:** needs James: promote to production so Box 2 can verify live `/s1/lib.js` and event ingestion in Usermaven
+**Status:** done
 
 - [x] The proxy forwards `lib.js` and event requests with only allowlisted headers and the visitor's IP; without a key the snippet is absent and the route 404s (tests, and the rendered check in CI).
-- [ ] After promotion, production loads `lib.js` from the proxy path, an event request returns 2xx, and the event appears in Usermaven (orchestrator, through the Usermaven MCP or the dashboard; output in a comment).
+- [x] After promotion, production loads `lib.js` from the proxy path, an event request returns 2xx, and the event appears in Usermaven (orchestrator, through the Usermaven MCP or the dashboard; output in a comment).
 
 ## Comments
 
@@ -36,3 +36,12 @@ James asked whether to use Usermaven's Cloudflare Workers proxy (https://usermav
 Dispatching `h26c-codex` (Codex, OpenAI) on branch `26c-usermaven-form-tracking` from `origin/master` (`7edcc39`). Risk: high (visitor form-data boundary on production analytics snippet; cross-family review by Google orchestrator + James's merge approval).
 
 **2026-11-12 Gemini (agy Carbon, orchestrator):** Codex 5h quota was 0%, so moved before briefing to `h26c-copilot` (`GPT-6.1 Terra`, OpenAI). Commit `97fbc07` (`fix: limit Usermaven form tracking to tagged forms`) opened as PR #35, passed independent local CI + Playwright tagged/untagged form verification (`Untagged form: 0 $form events`, `Tagged form: 1 $form event request(s)`) + Google cross-family review (`.orchestrate/evidence/26c-cross-family-review.md`) + GitHub CI, and was merged to `master` by `jimiryquai` as `b992c73`. Lesson recorded at `docs/lessons/usermaven-sdk-storage-and-tagged-forms.md`; explainer at `.scratch/explainers/26-f1ded3ae.html`; evidence archived at `.orchestrate/runs/2026-11-12-26c-usermaven-form-tracking/`. Box 1 complete; Box 2 awaits next production promotion.
+
+**2026-11-13 Gemini (agy Carbon, orchestrator):** Box 2 verified live on `https://jamesryan.dev` after production promotion (`Deploy` run `43405785692`, staged commit `2cb5029`):
+1. `https://jamesryan.dev/` renders the inline bootstrap configured with `key = "UMNstP14wS"`, `trackingHost = "https://jamesryan.dev/s1"`, `scriptSrc = "https://jamesryan.dev/s1/lib.js"`, `data-form-tracking="tagged"`, `data-privacy-policy="strict"`, and `data-randomize-url="true"`.
+2. `GET https://jamesryan.dev/s1/lib.js` returned `HTTP/2 200` (`content-type: application/javascript`, `cache-control: private, max-age=3600`, no `Access-Control-Allow-Origin`).
+3. Browser visit in Chromium sent `POST https://jamesryan.dev/s1/api.58626?p_016f1=UMNstP14wS&cookie_policy=strict&ip_policy=strict` → `200 {"status":"Ok"}`.
+4. Confirmed ingestion via Usermaven MCP (`workspace_id: "3e4dc659-a41e-4a66-bf6c-cd1a3d188bca"`, `UMNstP14wS`, `2026-11-13`):
+   - `usermaven.analytics_query_web_analytics` (`start_date: 2026-11-13`, `end_date: 2026-11-13`): `visitors: 0 → 1`, `new_visitors: 0 → 1`, `sessions: 0 → 1`, `pageviews: 0 → 1`.
+   - `usermaven.analytics_query_page_performance` (`start_date: 2026-11-13`, `end_date: 2026-11-13`): `pages: [{"page_path": "/", "pageviews": 1, "visitors": 1, "visitor_share_percentage": 100, "bounce_rate_percentage": 100}]`.
+5. Legacy `um.jamesryan.dev` CNAME (`whitelabel.usermaven.com`, record `61744d554a6d031f745b9ed0ddd923df`) is no longer referenced by `jamesryan.dev` and can be retired at James's convenience. Ticket done.
