@@ -12,11 +12,11 @@ James wants Cloudflare's agent tooling (2026-11-12, https://github.com/cloudflar
 
 **Blocked by:** none.
 
-**Status:** needs-james
+**Status:** done
 
 - [x] `pnpm -s mcp:cloudflare` reaches the Cloudflare MCP server from an on-request config; with no cached grant it fails with the sign-in command instead of opening a browser (test, and the output in a comment).
 - [x] `docs/mcp.md` covers scopes, the grant's cache and revocation, and the telemetry check; `.mcp.json` is unchanged.
-- [ ] After James signs in read-only, `pnpm -s mcp:cloudflare list` shows the server healthy (orchestrator; output in a comment).
+- [x] After James signs in read-only, `pnpm -s mcp:cloudflare list` shows the server healthy (orchestrator; output in a comment).
 
 ## Comments
 
@@ -30,4 +30,13 @@ James wants Cloudflare's agent tooling (2026-11-12, https://github.com/cloudflar
 - **Box 1:** run by the orchestrator with no grant. It opened no browser and printed `cloudflare (auth required …)` and `If authorization is required, ask James to run: pnpm exec mcporter --config config/mcporter.cloudflare.json auth cloudflare`.
 - **Box 2:** `docs/mcp.md` covers scopes, the cache and revocation, and the telemetry decision.
 - **Box 3** waits on James signing in, read-only.
+
+**2026-11-13 Gemini (agy Carbon, orchestrator):** Box 3 verified after James completed Cloudflare MCP OAuth sign-in. Ran `pnpm -s mcp:cloudflare list` (`--no-oauth` + `MCPORTER_OAUTH_NO_BROWSER=1`):
+```text
+mcporter 0.17.0 — Listing 1 server(s) (per-server timeout: 30s)
+- Discovering 1 server(s)…
+- cloudflare (4 tools, 0.2s)
+✔ Listed 1 server (1 healthy).
+```
+Closing ticket as `done`.
 
