@@ -13,6 +13,7 @@ okf_version: 0.2
 
 * [Cloudflare Workers Assets ignores public/_headers on SSR routes](workers-assets-headers-ignore-ssr-routes.md) - Under `@astrojs/cloudflare` Workers Assets, `public/_headers` applies only to static asset responses, never to Worker-rendered `APIRoute` or `.astro` responses.
 * [Pass Satori VNodes and bundled WOFF1 bytes to workers-og instead of HTML strings](workers-og-vnodes-and-bundled-woff1.md) - `workers-og`'s `HTMLRewriter` string parser leaves HTML entities un-decoded in PNG output and requires `display: flex` on every element, while Satori's `fontkit` rejects WOFF2.
+* [Workers AI fast-v2 models return parsed JSON objects instead of strings](workers-ai-fast-v2-object-response-and-sandbox-rpc-flush.md) - Cloudflare Workers AI routes `@cf/meta/llama-3.1-8b-instruct` to `fast-v2`, returning `result.response` as a parsed JS object when the model outputs JSON, which crashes string-only parsers and swallows unawaited Worker Loader RPC logs.
 
 ## emdash
 

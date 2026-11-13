@@ -10,3 +10,7 @@
 * **Creation**: Workspace Astro UI packages need their own `astro check` and canonical platform unions (from ticket `29-79f19342` cross-family review).
 * **Creation**: EmDash published queries still overlay pending draft revisions during `editMode` and `preview` sessions (from ticket `32-a552c031` cross-family review).
 * **Creation**: Keep Astro config factories inside Vite's config bundle, run `Astro.rewrite` before component streaming, and attach taxonomy cache tags (from ticket `34-688a3b6c` implementation and cross-family review).
+
+## 2026-11-13
+
+* **Creation**: Workers AI fast-v2 models return parsed JSON objects instead of strings (from ticket `11-3b1d7a85` live staging verification of `emdash-plugin-ai-comment-moderation`).
