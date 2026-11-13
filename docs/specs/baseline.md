@@ -1,6 +1,6 @@
 # Baseline: a codebase we can trust
 
-**Status:** agreed 2026-11-08 (grilling session). Tickets: `.scratch/baseline/issues/`.
+**Status:** done (agreed 2026-11-08; completed 2026-11-13). Tickets: `.scratch/baseline/issues/`.
 
 ## Why
 
