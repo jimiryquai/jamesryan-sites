@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:a596356a4e7386d070fdc9bfb9456b6ba480734debfd315fd98678c85b595c7a",
+  "claims": [
+    {
+      "id": "claim_a4c98509e1514c87a4cfd4f52d421ef5",
+      "statement": "All plugins are npm installs whose sources live in sibling repositories; this repository contains no in-repo plugin copies.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L84-L91",
+          "version": "repo-lines-v1:sha256:b7ffc5d892ff4baaa36c7bde235228280a515d096bd27215a2d778a6c7cfc0ba:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2JlMmUwY2FmOTkxYzQ5NDZlNzBjMmYzOTYxNDQ0YTBhODg1ODgxZDdlNGYyMGRiMDg4ZjdjMzQ3NzVlY2M3OCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYWU1NjJmYjMxMGM5MjM3Zjk5NTdmOGI2NDZiNTNhYjYyZjY4MzI1NWFlMTAxYTE2ODAwODQ1NzBhZTYxOTc0OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWI3NGU2OWViN2NkYTE1YmY2M2JiMGEzZGMwOWUyZjg5MTMyMjFiYjJhMjllOTBmZjMzZTVkY2I2OTIyY2RjMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b634f76b6b8d4b399b3efa12b78357d3",
+      "statement": "The factory's shared native plugin list is the patched SEO plugin plus code-block-pro; marketing adds the page builder plugin through extraPlugins.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/astro.config.mjs#L5-L13",
+          "version": "repo-lines-v1:sha256:e0804c1e87846c83de73947913bca0bed82562f7ffa37ec7427c3639f6fb6952:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGMyNDU5NTg1ODEyODBlOWQ0ODhlZTFlM2M0ZDFjYjgzZDRhNThiNmFlYzFmZDYxZGM4MWQwNTVjZWU0YjlhMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTRiNDRlMWVkMDIyYzI3MDgyOTdkODM0ZDNkMDFlZDY5NDllM2UyMzI3NGRhNTljMWY3MjU2MjgwMTk1ZWI2ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjZmNWI0MGIxNTg0NTdkMTc4NjRmMjE3OTA3ODZkZDVhMmVjZGI2NGI2NmE2NTFmNzg4ZDRlMjVjZDMzMDNkMiJ9"
+        },
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L110-L121",
+          "version": "repo-lines-v1:sha256:05f0e585816fd04fe3f3d44a7f6f19025d9b963ed977636ecccc341f685400b0:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkNzRlMWJhYWVkYjcyMTY5ZGU1OWE5ZTdhMGQwMzU4ZTE3MDFkNDU5ZjViMjA1NzA4NDVkNjNjZjZlYjQ0ZDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc5ZWNlY2U4NDM0ODY4NGJmYzY4MGUyMzI3Mzg5YzEwM2U3NDA1ZTU0MGZiYjY4ZjU3MmQ1YjI2ZjcxYmE3ODciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg4ODQwYjM4NDhhM2ZlODMyMmI3NDFjYTE5ZmM0NzEzMGFkMzQ1ZWVmOTJkNmE3ZDY5ZTc5YzA3ZmEyZGM2ZWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImZiNzBlNjdjZjU3MTg3ZGE3MzI2ZjAyYmRiODcxMTc5OGE0MmQzMjIwMjE2ZTFmODJjNTcwNTQzMDk1M2ViMWYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_1085ca1d54c642acb3d27cbf4a6e5582",
+      "statement": "AI comment moderation runs only on marketing as a sandboxed plugin through the Worker Loader LOADER binding, with the PluginBridge exported from the shared worker entrypoint.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/astro.config.mjs#L9-L11",
+          "version": "repo-lines-v1:sha256:969bf703416a74ce64883947c6fd596786c5eea788e99dcc3a53d633044624cd:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTA3ZjlhY2JiNjlkMDIzNTc3ZTkyZjY0OGM3NzZlNGZmMWRiYTI4ZGE3YjRhMjY1MTBkZmUxN2FjMDJlZjYyNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDlhZTkwODFmY2E0NjMzOWI1ZDQ4NmJkMTVkN2NiNmM1MzllYWM4NzVmZDRjNWFjNGFlNDUyMDgzZjQ0YmMxZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjYxM2U5MzE0NWNkYWYzMzY4YzhiYzBmYWM0ZmMzZDZmOGFhM2I0Mzk4MjVlZTU2Y2ViNjBiNDY4ZGQzMjAwZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiY2NmZTkwZjI4OWU0YTg2ZWIwYzFiNGM2ZGExMThhMTY1ZTAxYmI5OGQ3NWYyNjU3YmQ1OWUxYWFlY2ZhMzFhYiJ9"
+        },
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L105-L109",
+          "version": "repo-lines-v1:sha256:8fd8b9c888e74da832c604aa252c76f4f4fffc76d817fa62035fe75ac7abc854:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ3YmY5NTI1ZjM4ODNjODA0M2MyNjJhOGUxMDM1ODUwMjBkZWU1YjdmMTgwZDE2MWM1OWRlMWE2ZmEwODNkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGEzNGZjMjk1NjNlNGQ0NTdkYjdhZjdhZmE5MTlkMDUyZmMyMGI0YWZkY2FkODhiZWZkMDM0YmUzNTNlZWU0ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzdkZmRjNjA0ZDdjMzRjYTNjMjljZjQzZDM0ZjE1OTgxZjY5MTgzNjk1ZmVjM2QzN2ZhZjRlNDZiZjE3NTMxYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDI3ZDFjYzUxMzllMjYwZDYyZGZlN2M3YmVlNTg5MmY4ZTYyY2Y2Y2Q2MGQ5NDFhZDI4MDA1NWY3ZDEzMTZhMSJ9"
+        },
+        {
+          "resource": "repo://packages/astro-config/worker.ts#L3-L3",
+          "version": "repo-lines-v1:sha256:e0d4ecb5b2e2ec581992d9285ac2aab75ed03ce12374a072041eb7c53e98e903:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBkNGVjYjViMmUyZWM1ODE5OTJkOTI4NWFjMmFhYjc1ZWQwM2NlMTIzNzRhMDcyMDQxZWI3YzUzZTk4ZTkwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTBkNGVjYjViMmUyZWM1ODE5OTJkOTI4NWFjMmFhYjc1ZWQwM2NlMTIzNzRhMDcyMDQxZWI3YzUzZTk4ZTkwMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNmRkNjdhMmJkNjBlZjU2OTlhOGNiNjRhYjFmNWFiZjNhOTBhNjlmMzExZTVjODc3YjUyZDdhZTY0YzIzOTgxZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjIsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmM1YzFkYTM5ODBjYzU5NjI0NjY5NDUxYTQ2NmQ4MDg0NTU0NjZlOGJhOWYwMGJhZDlhZjRlNTQxNTRkODJkNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6cc95385b8c046ec98f8e86d7973ab08",
+      "statement": "The deployment secrets wizard writes a separate EMDASH_ENCRYPTION_KEY secret per marketing Worker environment and skips targets that already have one, since replacing the key makes encrypted settings unreadable.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L7-L14",
+          "version": "repo-lines-v1:sha256:046c2fe9ec843f17762f41dd5bb48cc661afed5c86caa6a2b3af86f44199c133:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTk5YzVhNGY2MmM2YzllZTAyN2I1MTkyZGZiMGY4MjM3MzE5ZjQxNGNiMTk1MzRjZDQyODhhNTBhMDk3YTYyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmRjYjc2M2U4ODk5ODhlZTljZjY4MzgyMDI0YWZjYzYyYjhiMWIxY2U2OGIwOTVmMzQwZDcyNzUyMDc1YTMxNiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTgwZjY4YWFjOTM5NzMwYzI3ZTc5YzBjNjdlODYxYTAyY2I4ODc5ZTE1ZjllNzdkYTMzNjI0ZjlmMzQ0YzdhOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDRhNTBmNDUxYzAyZTBjOWZiY2FiZmUyOGNiNTNjOWY5NzVhMzNmYTQ5NGExMWQyYWU5YWMwNWFlMjYwZDA1NyJ9"
+        },
+        {
+          "resource": "repo://scripts/wizards/deploy-secrets.sh#L267-L279",
+          "version": "repo-lines-v1:sha256:53d244e7fe097afef0c825f82282f651e14ac2ef1135a57dac419e91b2373a12:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MTFhYzY4NWM2ODc3MzllZjEwMWFhMDA1YjU5NGQxZmFiMTI3MjUzOTY2OTEwZmZlZTA0NDNjZjMzNTk3NDgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlZjBiODFhZmI0MGQyMmVjNGVkNTIxNTFkNTg0NjdiZDBlMTI0MGQ2Mjg5NTNkOTQxMWE3NjA2OWYzNDU4MmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIwMmIxYjExNjJjZTViOGU1ZWMyNTI2NTk4M2FiMjc3NDgxNzZlNmI3MmRkODRmMjI2MzE3YTczZDJkYzZlYmUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3ZDVlZTlkZDM3NmIzODQxYTU3YTIyMWJhMmIwY2IwNDBmNWFjNDFlMGY2MTlkZWRkNGFiOGM5MWM3NmRhMTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_97ba46c6abf442ea86bd3bee149ea640",
+      "statement": "The moderation smoke check submits three labelled comments and asserts clean resolves to approved, spam to spam, and toxic to pending, deleting each immediately with the admin token.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-comment-moderation.mjs#L34-L62",
+          "version": "repo-lines-v1:sha256:85b353ced3f2c2fee874e718118e37871a40456a084515191c7741e7ff612d7d:eyJzZWxlY3RlZExpbmVDb3VudCI6MjksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNjZmQ3NjkzYTM3YTRhYjdhMDNlMzhkODE2NzY1OWE1YjYwOGQ5NjM5NjZjOWYwOTExZDY0OTZjZWVmODZkMWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4M2Q2MTc1MWNlYzQyYWY2NjdiOWQyMGJjYzQ0MmFlNTNlZTNlZWU4M2IzYjM0MTdiMjhkNjMyNzgwNDNlYjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjkxZGRmMWE3ODZiZDQwZGJhZGRkODI0OTk0NTgxZmQxYjBkNGViYmU1NmFjY2M0NTExMGI2ZjYzOGUwMTNkYWYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijg2ZTMxMTE4ZmIzOWJjOWZhZWVkZWMzMGEzMTQ5MTdlNzY1NDc2NTJkNjAyYjhiNGJmNGMzNWFmMjM2MjE1OWQifQ"
+        },
+        {
+          "resource": "repo://scripts/check-comment-moderation.mjs#L6-L10",
+          "version": "repo-lines-v1:sha256:8a27bc4abb43a85e0fa431630a1535998b2fc6550b146e70b78204ad190b6cba:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzUwYmUxMTE4ZDQ5N2M3ZmYwMWU5Njc0NGYwODZiZWUzMThkY2EwNzc1NzYwYjg1MWUzOTM4NjE2MzlmYmY0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNjE5MTY1OGFmOWE5NGU3NDNlMzgyYzg2NWRmYjA2YTgxZTYwMTgxYWI4Nzk3MDUzYjAzZGQyYWFmMWY0ZDEzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmUxYjZjZGEyYzk2MzJiNzcxZTk5ZGY2NzBlZmI3NzAzNzBkN2M5MGJjYTIwMzNkNGI2MjFlOWVmODk1ZWFkNCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_9f8c01661f264e5e8f94161ad33a68b3",
+      "statement": "The smoke token must belong to an administrator (role 50); the check redacts the auth payload to the role in logs and fails the job when comment cleanup fails.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-comment-moderation.mjs#L25-L39",
+          "version": "repo-lines-v1:sha256:cd85e8973bc3a9b1429c64fb22a9f69fba0694f715821cdf3a31a0d26ebe2961:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc2YWJhZDY4YTg4OWM3MmY1MDJiYmM0OTVkMGJlN2M1YzZhODc2ZjAxMTE1M2FhODE0ZDVlYjk2MjhkOTUxNmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImM3ZGY5NDE2ZDQ1MWExOGU0YTQ5ZDUwZWUyNTE0MzJhNjk0NjJmMjA0NGMxZjlkMjMyZDRhNDlmM2ZjODMwOTciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY5ZDQ2MWUzMGQ3MTkxODVkODMwOTU4M2JjNzZkYmRhNTVhYmI0NzI0Y2ZmNDcwMGNlMTVmYzM1Njc0MGYwYzgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImEyNWEzNWQyNWU4M2NiYjJiZTI1NGU1ZjdiY2IzMWVmYTg4YTAwMDE4NjFjMjkyMDhmYzQ2NTY0NTE0NGY4OTEifQ"
+        },
+        {
+          "resource": "repo://scripts/check-comment-moderation.mjs#L52-L61",
+          "version": "repo-lines-v1:sha256:d465c84a4ced3573db2b2701de4e24687071bf0ac3900273d4cd05d462d69ed6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZhODM5M2MxNWY2MGYyNTA2ZGFiYzMwNGNiZDE3OGJmNzA2NTUyZTI0ZmQ5NGRkNjhjNDZhZDE2MmE3NDRkNTIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVmZWMyYTM4ZGIxM2Q1NTdlMTQ2YjNiNmY4YzYzNmQ1MWJlMzZhOTkyMDBhODg3MWVkMDZhZjU3NDUyZDA5MjEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBjZjUxY2ZjMGE0Y2Y2NjliZjhkYjUwZjU3NDM0OGI5MDYwMjRlYTgyMDUxM2MzOTY0NjQxMTYwYzVhMTg0OWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc0MjM3NTlmNDA0ZWM5NmZlMzZkMmJiMmU1MDU0Y2IxMDcyZmMzMDQ2YTM2ZDYyYzRiZjY0YjFhYjJhY2Y5YTMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_4332820cc8e049b5a213ce65d915c99d",
+      "statement": "Without working Workers AI credentials the moderation plugin falls back to the collection's standard moderation policy rather than AI classification.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L15-L19",
+          "version": "repo-lines-v1:sha256:1e2e33062834315320f7514a06e7afdf5dc4034344685f1cdd6f7ee54fb8b660:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDc0MWM5OGYwZGExY2ZmNGEwOGJiNDVhYmU3OWY2ZTZhZDYzOGE1Y2IzNmI3NTI1N2M4MmYyNjAxODNjNDBlMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiY2YzZDJiN2MzMTRkMjY1OTZiYTljMmJmMzZkNjFmZjM2Y2FlY2I0MGU1MTJiYWRlYTYwMjk0Y2Y5NDJjMDZiZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjI3NWQzMzk0MzgwYjNhYmI1NGU5Y2JmZDI3ZjFhZmVjMWQ4Y2Q5YTU5NjIwODUxMTY0Mzk2ZjNjOWZiNTc1YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiM2NlOGQzZjhkZjcwMGMwZjJkNGNjY2M5NTI2YTAyZWNlYTgzM2ZjMDhlYjUzMGY5YmZhNzY5NTQ2MGFkZGMwNyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

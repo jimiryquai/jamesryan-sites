@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:5fe386a1b4654cd1c86a69b6d71c75071c7bc7ec10b5115ea047f5d1cfa3e424",
+  "claims": [
+    {
+      "id": "claim_e7da13e3e99349c1bc382246fe30f140",
+      "statement": "discoveryResponse applies the runtime caching policy Worker responses need since static _headers files do not run there: no-store on 5xx, private no-store with route caching disabled for edit-mode or preview sessions, otherwise public max-age, and Access-Control-Allow-Origin star always.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/discovery-response.ts#L1-L17",
+          "version": "repo-lines-v1:sha256:36660fec5db439e02c59c78b6ecc0d95cc3f495620806ea4665502234ed6ac16:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlNTAzY2Q1ZDc2ZmRmZDAyMzQ3ZWFjODZmZDU1ODk0YWJhMjg0NmVlZTU5MmFjN2QyNjY2MjkwM2NjNmI4NGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_75f1c9626acf4b73b9c5c4566e4b762b",
+      "statement": "The rss handler emits the latest 20 published posts ordered by published_at with escaped XML, absolute URLs from resolved site identity, and a one-hour public cache.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/discovery-handlers.ts#L11-L36",
+          "version": "repo-lines-v1:sha256:4cbd6cb5d6d428d00ab21cbeb210927c264856bc5cb6e9df832ffe875734071e:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQ3N2VmNGY2YTIzMGRlOGE1ZjJhZjllNzE3N2VjN2ZkZWMzMWFmNTM2ZWI5Y2E2MTViNzEzYzI5OGU5ZmU4NzIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI5ZTBiYWJmMjVlMDhiYmExNDM0MzE3OWZhNWMxZGI4ZDJhNjI2ZGE1NDBjZDAyNjNiZmVlZWU2YmY5NDUyMDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdkMGQ4MzhmNTUyNzJkOTkwYWM3MGI5NmViZWM0Mzc4NGMxNmI2MGUxNGY1ODI0NDVhOTFiY2UzODdjOTI4ZTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjNlYWY4NGU4NmM1NzBiODAxNmEwY2JiNDc4MWNhNjliOTQ0YTdlYzY5YmQ4YTkwODY1ZDRmZDkxZTNlMTg4MGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_45eed967faa7437787d7df84838c55ed",
+      "statement": "llms.txt has two generators: getLlmsTxt builds sections from the shared published-route map while getGardenLlmsTxt is a garden-only legacy path enumerating collections directly, and both fail closed with a 500 rather than emitting partial content.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/llms.ts#L8-L68",
+          "version": "repo-lines-v1:sha256:f38c5924bf256ae9b31706c32c8e1e66cb46e5737c2f6b11a710f4b0e5aee119:eyJzZWxlY3RlZExpbmVDb3VudCI6NjEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5Yzg0ZWViZWVmYzEzMDQzYzkyYmQzMGE4ZDYwOGQ4M2MwODUwZGQ5YWQ1MDNkYjE1NzI2ZTg0MWJiYzdjN2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM2YjJhMWZmMDdmMDkzYTFlNmU0ODA0NmMwYzAwNTAyOWY2M2I3NDZhZTdmYWEwYWIwZjAzMTU1OGRhM2RhZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhMjE1ZTljMjdlOGVlZWJlZGEyMTlkYzk2NjVhMzhiOGNkMTI3YWMyN2QxODVmN2M5YTMyMjlhYzllOTgyZGYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_832e2c1cbe484425b3c2b7037069800a",
+      "statement": "Sitemap URLs come from getPublishedRoutes, so unpublished entries and empty archives never appear in sitemap.xml.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/pages/sitemap.xml.ts#L1-L12",
+          "version": "repo-lines-v1:sha256:41430a72d18949e68ff40371fe94e3241d0137ddcffb04e6a77d6e706da3498d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMwOWQ1YWMwOTk4NDUwNzk4M2EzNzQ1MjRmMmFkYjkyNTkxZDBmYTk3ODdkMzBjN2RkZThiZDY5ZGNhOWQ0MWMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJjZjUxOWI1OGMzMmU3ZGQ4YzZlOGYzZGI3YTU4YjcxZmVkNWNjMjdjZDMyMDY1MjYxOTNjNjY2MDM2NjhkNjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjYwNjQyNzAyNGJhZDE1MDYxYTMxYjhhNjAzN2Q4ZDNlN2RlMGM5OWM0MmYzZjgyYmJkZjM0YWI4NWFlOGJiNWEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8e16fface510482a93bfe09b87ab95eb",
+      "statement": "getSchemaCollections lists exactly the public collections with published entries, mapping posts to BlogPosting and others to WebPage with latest updatedAt, feeding schemamap.xml and the api-catalog at 300-second caching.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/discovery-handlers.ts#L104-L116",
+          "version": "repo-lines-v1:sha256:757865f4fecc6f32b5304a9178b0e3ca4ccafa63a35eb0705a1fba9a838729ea:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI3Y2JkNDFjOGRhNTU1YzIwMmVkZThjZTFmM2I2MmNjYzIyM2I2MGYxZTcxNTY1MmZiMTk0MzQ1ODViMWYzNDAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjI3ZDc0NjBmZjRmZmIwZjQ2ZmQzYjk1YjU2NjFmNzBhMWYxYWU1ZGZhM2Y3YzlkNTcxMGMzMzk1Y2Y1MDg0NTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/schema-collections.ts#L4-L23",
+          "version": "repo-lines-v1:sha256:7f6005f8d06280e685d88221439da69cae4c3782f300e490ca78b295f9da0600:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc5YTQxNGY2Y2Q1Mjk4NjYyZGVlMTM3ODcyMGUzMzQ0YmQyOWQ5MGIwZTJlNGEyNDAzNjJlOWQ3NmZmMjhkYTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_8fb24d4925d34b1686fe662153331fc1",
+      "statement": "robots.txt allows all crawlers, points at sitemap.xml and schemamap.xml, and carries Content-Signal ai-train=no, search=yes, ai-input=yes both as a header and inline.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/discovery-handlers.ts#L84-L102",
+          "version": "repo-lines-v1:sha256:9bd58590646c6eabc3a2d19825d253c181390431ae7d93be11d4473d8acdd15e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImVjZmMyM2UxYWY5MWQ3MmRiNWZjOTQ2ZDJkNGViNjYwOTJiZmViNmIzZDJkZTBlZjcwOTllY2E1NmI2NjkwODkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhMWQxYTYzMzkwMjI5Yzc5ODM0N2U4M2EwNDA1NDQxYzk0MDAwMzUyODRhZDE2OGMxYmY2Y2RmMWQ3MGEzNzAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE1NTMzMzVhMGJjOGJiMjhjYmMyNWY5NTZlNzZiZDU3MDkyM2VjOGI2NTIxY2ExNjdkODMyYzA2MzI5MGRkYzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwNDliOTViMWQ5N2U1ZjQxNWVlMTZiNTM4YTVkODZlMTYxNDkzNjQyNjBkNzUyNzYyYTcwZTQ0NmViYWUzN2EifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_c2c99030628a45d7a1c6882c0017fbb9",
+      "statement": "getTaxonomyArchive resolves terms recursively through children, lists published posts filtered by the taxonomy term, and batches per-post tags through one getTermsForEntries call for category archives.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/taxonomy-archive.ts#L23-L47",
+          "version": "repo-lines-v1:sha256:57dea493467041b74a119cf1b09bb8de0fe2d10a463362f10619d45a46ce5f4f:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjhiZDY1ZTU3MGZjZDhkYzhhMDU3YzgzZWE1NzllZjFiZDRiZjc2ODFhODZmN2ZjNDE1MmE2YjY4YThkY2MwNmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYyOTY0MDc5YzNjNWM4MTUyMGVmMzNhMmI5ZDJlMTVhMWI4NGQ3MjgwZGI4NTkwZGNkNjU3NDdlM2UwMTJhNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

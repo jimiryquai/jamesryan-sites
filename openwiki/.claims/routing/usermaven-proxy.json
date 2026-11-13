@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4d43507f337097702c494cc495a4883a87212f990d674c9fd9b917b3981a80ba",
+  "claims": [
+    {
+      "id": "claim_a33c20a6660a485182a06ea69b22257e",
+      "statement": "The /s1 proxy maps /s1/lib.js to t.usermaven.com and all other /s1 paths to events.usermaven.com with the prefix stripped, under method allowlists of GET/HEAD for the script and GET/HEAD/POST for events.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L137-L168",
+          "version": "repo-lines-v1:sha256:085c7a5025018f4965c1c768de9e3ffec0787e894b95e6438405ff13d8f5bbc7:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwMjc3NjkyODY2MDE1ZjZhOTNkMzVhMTAzMTI1MmMwZDE4MDEyZWJkMGY3YTY5NzIxZWUyNDdkNDQ5ODZjMDIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdkZjVmYjMwNWU0YmM5ZjhjYjU4NDE1MjViN2QwMTMzNWIzNzdhY2ZlNTdkODcyZTVhOTY0Y2E1ODZkOTZiNGQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNmZmNiZTJjNDBjYmZjNjRjYTIwYmY5N2UyOTMxZDI5MTNmYzEyYzgyNWVmZGNmYTQzODc5MjhjZmNhMGQyZTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzMjdiMmY1NDM5ZTBkNjM1Y2JkMzczNDk5ZTVkMDE5ZGFiNjI5ZDA4ZDRjNTg3ZGQ4YzZmMmRlNjNmNDE5OTgifQ"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L22-L27",
+          "version": "repo-lines-v1:sha256:afb43fb5775777ebd21499fc1ed0902658fdb74d9c25c730956912188bf027ec:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTg2YzcwMjZjYjQzMWI0MjNiNTdmMWNhZTdkNjJmZGRkMDkzMWE1MzAwYTk2NzNlY2Q4ZDFhYTIzYWIyYzdmMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2JmZWJlY2JmNGE3ZTY2OGE4NDBkMmZjZmIyNWVlMWYyMzVkOWI1NzgyNjY5OTUzMzAzNjZlODNhMWEzNDIxNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODAwMDdjMDBlMTI2MDBkMDI4Y2RmYzE0NWE5NTBjNGYyYTMzMTBhOTRjNzA4MDI2YjYyMjkzNTQwNTI0YzZjYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjc2YjkwY2Y3ZTY2Y2YyM2FlZmE4MTZjNjUzYmM3N2M4OGI0ZDI1YjczMzIyM2E3OTUwYjA1MGQ2NWNjY2NhNyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b1178b81e4b4abb89fae9a5a5fc0415",
+      "statement": "Only accept, accept-language, content-type, referer, and user-agent are forwarded upstream; cookie, authorization, and client x-forwarded-for are never copied, and the Worker's cf-connecting-ip becomes x-forwarded-for.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L170-L181",
+          "version": "repo-lines-v1:sha256:56bb79aa4d1580b1de7a17925953c2f9ec2354c56342bc50bd322073a5ed2be4:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUyOTgwNGE0NTY5MDViZTFkM2Y5ZDMzNDgzMWE5ZWIzZTFhNWQwMWE1NzI5ZTMyNTFkMDY5NGNhM2NkYzk5YTkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg5N2NmMWQ1YTg3ZjE1NmExMjk1MjQ5ODUyNDE2ODA3ZTAwZjk5NzJlYjhkYzIzMGY5ZGEzYzM0N2E4MWZiNDIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjlmYWZjMTJhZmNiNGU5M2NkZWY2ZTRkNDljZWExYjJkZWI3ZTllNTA3OTMzZDM0YWIzZDcxYmJmOWU4OGRiZmYifQ"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L29-L35",
+          "version": "repo-lines-v1:sha256:f297ae683ab0e64619aa31eb3e712c1a4fb200992e58d3291c82674190119d77:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNmNkYzc2ZDEyZTUzMDRkMzA3OWVkYjVmODkwMDA3ZWEwNWYyMjZlNGQ5M2I2OTU2ODQ2MGNhZmFmODAwNzQ0YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzdhMzM4ZGVkNDY5MGMzOGM0YzBjMTA1OWY0Nzg1YmRkOGVmNDg5YWYzMjNmNTdhN2Q3ODg4MmYzZTUxOGYyYiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTFhODgwZmFlNDJlMzk1NGExMmI4NjQ5Y2JkM2QwYTY0YWQ3YTcyZGU1Mjc1MDYyZjk2ZWJkOGJkZTJkMGNjOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWRmYWE0MjY5NzI4YWE5NmI0MWFkMDI0NWI4NmI3M2FjZjZkZTEyYjNlZmJkMWU3MTM3ZTE4OTAyZWIwYzJiNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_eba3b42f98cc465f891e88b90ec7d0e2",
+      "statement": "A missing, blank, or whitespace-only USERMAVEN_KEY makes every /s1 request return 404 no-store without contacting the upstream, so the proxy disappears rather than erroring or leaking.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L271-L278",
+          "version": "repo-lines-v1:sha256:40a78cf5ff690cb430f623ee0374c54eb0edbbcc0c65c8772c37c7e81bf3b1f1:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2NiZjFlY2Y5ZjFhYjkxYjlmYzkzMjgyZDllNDIxZmRmODU0NmMxNDVlNWVjOGEzODBlZWMxYjAyNjBlMTEwZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMTlhMjBlNDcxOTA4ZGMzYjRjZjQzNTNkYzMzN2I1NGNmNzNjMzE4YWVhZjYxYTAzM2I5NmNmOWQwNjI0NzIxZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWJjMjdjM2NkY2RjOWQ3MjJkM2Q3ZDM0Zjk3OGNjZjU2YmIwZDA1NjZiNDVmODcwNDIwNmQ4YzdmZmU4NzFjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGI1MTUwNjc5NmIzMWEzNzM0NjNlZTc5N2JhYTQ1OGQ1M2U4MWM2YmQwNThkYTg1MzM2YzNkMmIyZjU1MTA0NCJ9"
+        },
+        {
+          "resource": "repo://apps/marketing-site/test/usermaven.test.mjs#L34-L50",
+          "version": "repo-lines-v1:sha256:fb90114d18fe681e4e6696941a08a2b550f9b545c83297abbb7b67493e2cfaed:eyJzZWxlY3RlZExpbmVDb3VudCI6MTcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ0Y2M0ZTA2MGY5NDQxN2YxYzBhOTUzNmRiYmU5YTE0YzM5OTlkNDFlM2M2ZTdjZTdkMjVkMDViN2YwNDMzMzciLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0NDBiY2M3M2YzZWI2MzMzOTJlMmRlMjE3MmRkOGY1Y2I0YWVjZDM2MDdhZDFiNWI3YzY2M2NiODEwZTIyMGIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImMwYjgzM2IzMDVmMjJlZjVhMWNiYjhjZjI4Njc5ZWZlYTQzMTk0YjYzOTU0Yzc1MDc2ZjM0NTFjNWFiZWRjMzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE1ODUyZmYyYTEwYzA4YzA5NGM4ZGRjNWI2ZjNhOGJiZTc3MTIxNjI5ZjQ1ODNmOWRmM2UwNzE0ODdlMWRiNzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a154ed88ba2046dc8e77082827770ae4",
+      "statement": "Event bodies are capped at 64 KiB with 413 above the limit, Content-Length over the cap short-circuits before reading, and rejected requests drain at most 16 KiB before responding.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L15-L19",
+          "version": "repo-lines-v1:sha256:bbdde37d66cf9f9bab3f45a7f0156fcd6a14bd99054bebd90954fe157e1a4f4d:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMGI2OTAxNTYxNWRlZWU4ODQ5NDE2NzcyMGVkYmY1YTY5NDdlYWY2NDRmNDkxY2ExNmUwMTRmMmZkZDg0NzZkMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNWVhMDMwZWM5N2YwNWViMTU2MzU0NDEwZjllNzRjNDZiOGIyOGYyYzAyMTdhYWVkYTUxNzFjODBmMDE3ODU3OSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWRjMjZhYzAyMDk4YzIxNDQ5ODExN2FlYTY3ODQ4MDE3MDhlYzhjNjQzNzc1ZGUxOTY3NTEwOGQyMTc5YTdkNiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTQ3MzUzMmY1N2IyMDI1YmMzNWY1N2QwN2RlZGY5MTQzNWQ4ODU1ZWFlMDY5NzI5OWQ1ZmM0MGM4MjI1NDIxOCJ9"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L221-L268",
+          "version": "repo-lines-v1:sha256:b91c58f629893615511f1b26e92574b8cced720be7842f444be09dbb62e01dd4:eyJzZWxlY3RlZExpbmVDb3VudCI6NDgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImMxYTdjNmVlNmQ5YjkxYWU0Y2ZiYmMyZGM2N2Q0M2Q4Y2UxYjNjYTVmNWU4Nzc5ZTljN2RmNjZkYjY3YjVlZTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVmMmFmY2JjOWY2OGQ4ODQ0ZWEyZDMxZDEyZDUyODE1NTE4NjA3YjI3ZTQ3NTE0YjQzY2U4MDBlNTZmNTNiMWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI3Zjg4MjBhZTBkYjE4YTUxYzMyNzUxOTQ4N2Q3ZjZjMWRhZWZhNDc2MzYwZWMwZmNkZmE4OTVkNTZlNzM0Y2MifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_72ac865f1f124a79ac8313e9d7d138dc",
+      "statement": "The proxy disables Astro route caching and serves no-store everywhere except a successful /s1/lib.js response, which is private max-age 3600 so the tracker script is browser-cacheable but never shared-cached.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L269-L272",
+          "version": "repo-lines-v1:sha256:fee6363af3acc263d6611d5aeab3bdb715db06a466cea44fb6b79c25db414945:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWIwMjg3ZmY2MzZjYTA5NTgwMDA1ZTI4ZjRlZDgzMTI2MjA5YWFkOTQ0MzUxYzYwZWY1NWMxMjNhZDZmMzZhYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmUyYzIzOWFiYWIyNGFhNmZjODVlYTM4NTI0NmRjZDJiYmYyOGVmYjAxMDNjYmJlOTNhMDI1N2Q2ZjhmMGQ0YSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWMwNDgwODljZmQ3ZWVlNmY0ZjJlYjQzYWM3OWJjYTBiZTNiMmE3ZTNlMTY2MDdlM2I0M2I3MTAxMDg1YTA0NyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjRhODg4NjEyMDdkZjE2ODhmZmJjYjVlNDliM2MyZWMxMGQ4MzdlOTI5MmZjZmU0OGQ3YzM4ODgwMjZhMTNhMiJ9"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L318-L330",
+          "version": "repo-lines-v1:sha256:e19e8b13cc89ea03262b367cecf874a804997c84b7aa2e0cb01a88a9eb60037f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3Y2RhODJkYTYwNjIzOGUwNWU2MjM5OTU2OWM1ZWUwMzk5MzQxOTY0OGFlNWQ0M2EyYmY4Y2Q2MzQ3ZjgyNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxZmVjYjVmN2IwMTIwNTBmYjY3Y2ZiYTYxNDE1MGY1NzU3ZjA4MDlhNWQ4MTc4OWE5NDVjNmE1MDA1YTA0OTkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_60acd08e05b34b02b8bbef09165955a1",
+      "statement": "Path safety is validated on both raw and decoded suffixes, rejecting double slashes, backslashes, encoded dot and slash sequences and dot-dot segments, and requiring the rebuilt upstream URL to stay on the intended origin.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L106-L135",
+          "version": "repo-lines-v1:sha256:3a2fc26aeabd63a50f3dff17410721359daee18544e5c21ca0e417b21fe58a33:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEzNzEyMWY5YmI0ODRkNGFlNDA4ZmJjODQzMjAxNmM3MGE0ZTk0NTAwMTRlNWNjNWQ2ODQ4ZDdjMWNjMzU2M2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY3Y2RhODJkYTYwNjIzOGUwNWU2MjM5OTU2OWM1ZWUwMzk5MzQxOTY0OGFlNWQ0M2EyYmY4Y2Q2MzQ3ZjgyNjMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQxYjNkMDZmZDJhZDM3MjQ0N2FlODE1MGRjY2MxMDc1NDc0MTI1N2E3NDA4YWM4NDU5MTA5ODk2MWU1ZWU0ZTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImYwNmVhODg3YTNhMjRlZTJjOTZjMmJkZDQ1OGZhNDE0YzhjZjVhMTUyNzU4YTE0NDY5OTEzZDY0MzgyMWRlODgifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_46a6d7e1fbb9477b8419f0d3a1bc7831",
+      "statement": "The events-origin override is honored only for well-formed loopback origins on loopback requests; malformed or non-local overrides fall back to the production events origin.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/usermaven.ts#L61-L83",
+          "version": "repo-lines-v1:sha256:34b5e6497f3cf87e9b6c0c09b78b8d17ebbeac3e65fdf2269eaef155b60111bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhNTUzNWQ4ZTEyYjZmYjRkODUyMTlhOTc4MTg4MjI2NzgyYzYyZjNkZDM3YzhlMmI1NjQwYzc2NGRjMDRmZDYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImYwZTBmOWIwY2ZlNjFjM2ZiMzI1NWQ1MjNlOTU0YTYxZWY4MzU0MTQ0ZTIwNjdhZjhlY2Q1NmExYzUwZWVhZDgiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImE4ZThhYTNkYzM4YzZlMTViNDA5ZjFkZWMyY2JiNjEzOTQxOTQ3OTUyZmNkOWYwYTM4YjA2ZmEyYTY1Mzc1M2YifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e149455436564f528e1c3d54626af53e",
+      "statement": "The tracker snippet is injected only when the Worker env key resolves, and the API route wires USERMAVEN_KEY and the optional events origin from the Worker environment.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/UsermavenAnalytics.astro#L1-L7",
+          "version": "repo-lines-v1:sha256:c7b24ad6663b7a582cbfdbf3e2359552d8cdc33fc0041b36b75575bb4434aba5:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjUyZDcxMTEwM2Q1MGE0Mzc4MzBjNmZiY2QwNGZiNGJhYjQ5YTBmODJmNmQyNmQxYzc5MWM2ZTg0ODhkZDA5MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjUyZDcxMTEwM2Q1MGE0Mzc4MzBjNmZiY2QwNGZiNGJhYjQ5YTBmODJmNmQyNmQxYzc5MWM2ZTg0ODhkZDA5MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmUxMzRlMjQ2YmRmMmU2YTE4Njg0MGY0MjhhODJkODVmMzgxYzIzYWQxMjc0MGExN2U2ZjA1Y2NlNTE5NzJiOSJ9"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/pages/s1/%5B...path%5D.ts#L1-L10",
+          "version": "repo-lines-v1:sha256:210a64fcb1ef4cf108bf88c19d6152696ae2759cdbe8dd486070059922e0f798:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQzNjA2ZWYxNjg5ZWE0NWE1YTZlZmMxOGYzMWQ1OTIzNDkwYmYwZGE5NmU1N2ExNzAxYWE1NDJjNzljN2U0NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIxNzlmNDliMDBhN2UwYWI2OGRlNjQyNWJiN2JmYTA4Y2JhNGM0NDRhNzhmYzk0MWY0MmFmZDFkM2ZhOGNjNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjgyNmZhMTcxYTMxZDE1MzAzYmI2NTU4Mzc0NWI4YzlkNTAzM2RkOGMxY2RiNDJjYTllMGU4OTkyMjlhN2Q5NmMifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

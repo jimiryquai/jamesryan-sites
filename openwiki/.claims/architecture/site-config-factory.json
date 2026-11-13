@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ad96581652cad643690af3b66124c7a7920680038e797016c9ccc9687888a6c1",
+  "claims": [
+    {
+      "id": "claim_646269822a564caba9774b6c66d65f2e",
+      "statement": "createSiteConfig is the single owner of Astro/Cloudflare/EmDash platform wiring; both apps' astro.config.mjs import it and pass only site, port, inspectorPort, displayFont, redirects, appRootUrl, and plugin lists.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/astro.config.mjs",
+          "version": "repo-file-v1:sha256:83ca9ed68b4f8e08adbffe4b52a4c074387cbbd0595eee564a0f782feccf0d7d"
+        },
+        {
+          "resource": "repo://apps/marketing-site/astro.config.mjs",
+          "version": "repo-file-v1:sha256:77d20462db87f1a61bf3daf72c4c58b15debfc50927a9fccf57e4f90b93bc64c"
+        },
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L9-L16",
+          "version": "repo-lines-v1:sha256:660d4813f8fd67a3add1f736dfca744be7ab3a62df65071ef3d696bda59708bf:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDU0YmFjZDNmYWZmOGMxNGUxMmJmYjhkZTQ2NmMyZjZhYzI3ODAwOThmZGUyNzg2NThiNzU2NjI0YjcxYTIxMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZmIxN2FjNGNkNTRiMzA2YzFkNzc2MWZmNGI4Mzg1MTdkZjA1ZTZiYmJlZDMzZGMzZGE3MjZhOTRlYmQ5YTljNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGU2MWMxZmM4ZTkwYjQ2MWZkNzc5ODc5M2MyZmRiMjMxMTc5YTcyNWIzMTFlYTIzYWRkYWQyNmFmNmI1OTFmOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTgzNGVmZmE2NzUwNDRiODYwNGI1NDYxYjIyMTljMzBmOGM0MDM1MmRjYWQ0YWFhMjRkMDExZjRiOWQxNzFlMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_88e68117ca734ee887a0a4255941cd95",
+      "statement": "The factory pins output server so CMS content stays server-rendered, with getStaticPaths incompatible with live CMS content.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L19-L23",
+          "version": "repo-lines-v1:sha256:e8772b973ffe625e328ca5e7e57a9c77173315a0d80a38d061ea95a2259c04cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDE3MzQ0OTU0ZGMyMGFjMTdmMjhlNTM4NTkxMjg3YTAwMGQ3MDRhZDFiMzA1ZGVhYTZmNDJlOTFkZDdhZjM1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjA2NDFkN2QyNjJhYmM2MTk3NjczMWI4NGRlNTMzOTgzMDBkZDg2MWIzZTg3NGM4ZDJkMDc1OGEyMzhmMzFhZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk3NzY1NTM5MWRlMWY4Y2RmOTQ4ODQ4NjM1OGUzOGNjZjJkZWZhNWZhMjI5MDk4Y2U1NDBmNWQ2MDUyZTY2YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNhZjUxODk1MDVmNzBlYjc4ZmJiYjBkY2E1NWQ4MDJmOGU4ZTA0YjEyNWY3ZWJjYjViMjI5OTcyNjNlZWQwZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_33f2ff51adcf4ab6ae42e736f7940356",
+      "statement": "Image domains and HTTPS remote patterns are derived from each app's site hostname including its staging subdomain and localhost, rather than hardcoded lists.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L25-L36",
+          "version": "repo-lines-v1:sha256:e39a355ec89eef8ea17f7f939ea72cae596b167a65b8ab14bfa39d4538d949a2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY4NTMyMmQ3MTJlOTYyMTg0Y2Y4ZTFjY2VhOGFkNDY1YmVjMTJhNzI0ZmI2ZjQzYzk3MTVmNTI1MDYyMTI5YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ4OTcyZTRhZTk4N2YzYTcwZTI5MTlmYmY2NWE0MjBmNTNkODc3ZDhkZTAyOTgwZTQ0OWU1ZWI5ODE5Y2ExNmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjljYmIxMTRkOTdlOTlhM2MxM2I4ZTNlMDM3YmQzNzczYTYzZDEwNjQ5YmM0ZTY5YzNjN2M3YjJkMGViZTVmMzkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjAwYjc2ZDQwZTg2NDRhOGFjZGQ2ZjQ3OTc2NDRkMmE3M2U4OWU2MGY5Y2VmZWVlNWM0ZjA0ZjZmMmY2MzdjYzAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_e37bdf65a6ca4a9e885c2cf5a179a28e",
+      "statement": "The astro-iconset integration ships only an explicit allowlist of Phosphor icons so the full icon set does not bloat the deployed Worker bundle.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L74-L98",
+          "version": "repo-lines-v1:sha256:4eb3469f14f560b70859ace0c04a1f2cf0f3ee8fba3148fa72474d826e02b4a9:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM0YTYyMjViODNhNjM4ZWQwOGYwMWVjZGJmMzBjZjBiZTM0NzhmZmRkMzZiZTkyMjk1ZmVlOTJjNTU4NWQ1N2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYzZTBiYTQ0YmVkNzlmMjk3MGE0ZDgwNTU0MTI0ZGNmYzAzMmVjZTAwZTc2ZWRlM2M5MTNmZmFkNGI3Mjc1YTUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImM4ODNjODJiMTY1ZmRmYWM3NTJmMGQ0YWVhZTRjYWY0OTJhNGRlMjkzMGU2OGU0OWMxOWYyOWQ4OThlZDUwOGUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkxZGUyZDMzNDcwNWZiYmVhNGY4YzE0ZThhODFhYTk2OWJkMDlkYWY0YTA3NzgyNjliMTE3ZTc3MzcyZjk5ZjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_646a29dbb5fc4721b578aa566e126ee1",
+      "statement": "The factory patches the SEO plugin's entrypoint and adminEntry to the installed package sources resolved against the calling app's appRootUrl, because SEO 0.12 descriptor paths are stripped by EmDash 1.4's definePlugin.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L111-L118",
+          "version": "repo-lines-v1:sha256:cc6d3515722a0661dfa862f6e3e4e341f571b0954f93debd3cddc7c1bd37cf93:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjQ4ZWZmYTIyY2UxMjM3ODMwMWUzM2VlZTgzMDk0ZGRmNTU0MDdkMTJlZmEyMGJlOWFhNjcyY2I3NzY0M2NjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZTdlMWFhMzcyNTkyYjFkYzQwNTlhYWM5ZTA1MjM1NDRiNzE5OTEwOGQwOWU0NzdjZGU1OTEwNGE3Yjc4NWYyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDA3MGFlODVhZmMzY2EzNWE0N2IwMzIzNWJhMTQ2N2Q5ODZmY2M3YmM0YTBiZTNhMzhjNmM1NzJmMGZkYjIxYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzI4MWRkMDkxOTkzNmY4MDM1NTMzYzcwZTZmNDdkOWZkNzgwM2Y5NzdhNzg5ZmMwOGE2NjYxNWE4MGY5YmZkMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a8848e37ef4d43f59061931ebea2d4f8",
+      "statement": "The config test loads both real app configs and asserts the shared decisions (server output, vite optimizeDeps, seo validators, icon allowlist, emdash bindings, fonts) and that per-app differences survive the factory.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/test/config.test.mjs#L30-L81",
+          "version": "repo-lines-v1:sha256:75a5658151290e91548479154c4be1de25689001bbfb1bf42a32ecc1252bfb97:eyJzZWxlY3RlZExpbmVDb3VudCI6NTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImIyNDE3NmM0NGI2M2I5MTQwMzM4MWUwZDI0NjJhMTgyMGVjMzRiN2UyODY1M2NiMDhkNDUwMjg5MjYwMDY4MjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRhOGMwNjY3ZTI4ZTdmMjMyZDI3ZjVkZDE3NzIzMTFjMmZiMGUxZmNhYWNlODg2OTdlNTlmYjM0MTA3NzU3MjkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijg1NTNjZWM3ODBjMmYxZTAyYWQxNTQyOTdjNzY0ZDllNDA5YWQ0OTRhN2QzZmUzYjk1ZTk3Y2UxZTY4YzUyM2IiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc1MmJmODYwNWZmOWFiNDg0MzVmYjcxMWRhMWQ1MGJlY2I5ZmM1MTQzZTFhZWExNjllOGQ5NGVkYTg1YzQzYTkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7224fd3e1cee4b61a3724c7fc6c8c43b",
+      "statement": "The Cloudflare adapter's dev inspector port is enabled only when the dev command is present in argv, otherwise false.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L22-L24",
+          "version": "repo-lines-v1:sha256:9cbb114d97e99a3c13b8e3e037bd3773a63d10649bc4e69c3c7c7b2d0ebe5f39:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZDVkYTQwMTkzNzA4ZWZjODljOGM1NDQ1ZTMzNDY3NThjODY2MTFlN2Y4ZmUzNzU1MWUyMzkyZWI5OGY1ZTI5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmMxNjE2YjA2NTIyYWMwNzUxOWM0YzlmN2E4OTJiZWU1OWNkZTkwYjMxNTAyODk4OWQ1Y2RiOTEwZGZlNGYwNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWJiZTliZmUzMzdlZmNmNTkwOWFmYWVhNzk1OTg2OTZjY2VhYTIzNDYyMzFjYjE2M2Y0YzBmOWVmYjdmMzEyMCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjhhYTBlN2E1NzYzYTM5ZDdhZWEzNTgyMjNhYzRjNTBlMTRlZTY0MjcxNzQ3MmVkZTQ0YjFlNTdkODcwNTJhNSJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

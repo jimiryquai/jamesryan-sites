@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:4e7ef3df2e3eeac08ae34b862b9a464d6f4c07ad86138b5a2dd5e64dc49df18a",
+  "claims": [
+    {
+      "id": "claim_9db6720552d84ff9aa80f09585baadce",
+      "statement": "Both apps' Workers expose the shared worker entrypoint: the default export is Astro's Cloudflare server handler and PluginBridge is re-exported from @emdash-cms/cloudflare/sandbox.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/src/worker.ts",
+          "version": "repo-file-v1:sha256:b71ad4cd397e8308715231bead7401dcaabdd9fda2cd78806b53ee5c33c1051b"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/worker.ts",
+          "version": "repo-file-v1:sha256:b71ad4cd397e8308715231bead7401dcaabdd9fda2cd78806b53ee5c33c1051b"
+        },
+        {
+          "resource": "repo://packages/astro-config/worker.ts",
+          "version": "repo-file-v1:sha256:d47c48b318bcf770778bf9093929a5ebcd169fe9c75f40fe5e26ab2f8294fffe"
+        }
+      ]
+    },
+    {
+      "id": "claim_74d4b520a63741088c45b626d60dc6c9",
+      "statement": "Each app declares DB (D1), SESSION (KV), MEDIA (R2), and LOADER (Worker Loader) bindings at top level and again under a staging environment override with its own resources and custom domain.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/wrangler.jsonc",
+          "version": "repo-file-v1:sha256:95b2bbef444d90114bb4e717ad2dedddfbc5b482ec2e399929826908e5ad674e"
+        },
+        {
+          "resource": "repo://apps/marketing-site/wrangler.jsonc",
+          "version": "repo-file-v1:sha256:588d624f0456d792b9e57af90cc6e01eb4c5c722b82f0f20e192962de7ba2f34"
+        }
+      ]
+    },
+    {
+      "id": "claim_dcdd3eb54b16400786023065439da51c",
+      "statement": "The digital garden Worker has no production route and is deployed staging-only; production promotion for it has not happened.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/wrangler.jsonc#L37-L37",
+          "version": "repo-lines-v1:sha256:4864844b555ddb119dadb0e4fab5526c4ee536cfe860f1d02ec716dcbd17d050:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg2NDg0NGI1NTVkZGIxMTlkYWRiMGU0ZmFiNTUyNmM0ZWU1MzZjZmU4NjBmMWQwMmVjNzE2ZGNiZDE3ZDA1MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg2NDg0NGI1NTVkZGIxMTlkYWRiMGU0ZmFiNTUyNmM0ZWU1MzZjZmU4NjBmMWQwMmVjNzE2ZGNiZDE3ZDA1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTVkMmVhNmYwNGI3ZDE5MjNkMWU2OTBiNmQ0MTkyYTMzMmY5ODVlMzA2MDRhOGQwYmI5OTIyYjE3MjE5NzM2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzNlMGFkYWI2YTg5MzBhMDQ2MmE3ZDdjYjc2ZTA2MzM4YzdjZTZiNzBmYzZlMTc2ZTcwMWI4Y2I3YjEwNDM4MSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2647c4ab161f4aeebbf9be9295e9311c",
+      "statement": "createSiteConfig wires EmDash with the DB D1 binding, MEDIA R2 binding, sandboxRunner via the Worker Loader, and per-app sandboxed plugin lists.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L105-L109",
+          "version": "repo-lines-v1:sha256:8fd8b9c888e74da832c604aa252c76f4f4fffc76d817fa62035fe75ac7abc854:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ3YmY5NTI1ZjM4ODNjODA0M2MyNjJhOGUxMDM1ODUwMjBkZWU1YjdmMTgwZDE2MWM1OWRlMWE2ZmEwODNkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGEzNGZjMjk1NjNlNGQ0NTdkYjdhZjdhZmE5MTlkMDUyZmMyMGI0YWZkY2FkODhiZWZkMDM0YmUzNTNlZWU0ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzdkZmRjNjA0ZDdjMzRjYTNjMjljZjQzZDM0ZjE1OTgxZjY5MTgzNjk1ZmVjM2QzN2ZhZjRlNDZiZjE3NTMxYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDI3ZDFjYzUxMzllMjYwZDYyZGZlN2M3YmVlNTg5MmY4ZTYyY2Y2Y2Q2MGQ5NDFhZDI4MDA1NWY3ZDEzMTZhMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_883721ec73474898bca7ea38f6dd3b18",
+      "statement": "Both apps set EmDash migrations to runtime check and dev auto, so deployed requests never apply migrations or take the migration lock; known pending migrations produce 503.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L65-L69",
+          "version": "repo-lines-v1:sha256:12944acb3caa6ead486d613f0c1f77e0ae10086d6ea6210eedb7e4da1146f725:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2M4YjkxMzhhNzBhNmVmNDI0YTkxYmE1OWZmZDI2OGI0MjZjNjA4NTZmNjcwNjFiODQ5ZjM3N2EwNDVkYzNkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZhMWMzNzM0OWY5MTdlMDNkMGYwZmEwZWI0NmZmODQ1ZDQ0Yzg1YzY4YzEzNmFkN2VkNjBlNDE2M2NkNjEwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODU1ZGEzNjEwOWIwZTQzZWUyOGY4NjBlODQ2NTIwZjdkODgwMTMwMWU5MWJkNWU2MGJkYzg2NTBmYWQyZmIxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjE2MThlNWU4ZjAwNDk0MDRiOTJkNjE3YTZlODFkYmQxY2I5YjBkNTMwMGVmZDdiMTg2ZDI0YzIwZGMzNTMxYyJ9"
+        },
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L106-L106",
+          "version": "repo-lines-v1:sha256:c5a0b81ae376de36d1f5ca8a03eaa1e50c38bc9df2f61d353857186495db259c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzVhMGI4MWFlMzc2ZGUzNmQxZjVjYThhMDNlYWExZTUwYzM4YmM5ZGYyZjYxZDM1Mzg1NzE4NjQ5NWRiMjU5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzVhMGI4MWFlMzc2ZGUzNmQxZjVjYThhMDNlYWExZTUwYzM4YmM5ZGYyZjYxZDM1Mzg1NzE4NjQ5NWRiMjU5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2UyN2M4NDY5N2FiNjlkNmM5ODIyNmVhYWE5ZDNiYTIwYTM0MjA4ZTZjMDEwOTYxNjNjYzc1YmQ2ZDczOGExOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODg4NDBiMzg0OGEzZmU4MzIyYjc0MWNhMTlmYzQ3MTMwYWQzNDVlZWY5MmQ2YTdkNjllNzljMDdmYTJkYzZlZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_a72def5e523e4249bc5682f677118477",
+      "statement": "Deployment bindings are fixed at build time by CLOUDFLARE_ENV, so staging deploys must build with CLOUDFLARE_ENV=staging and deploy with --env staging.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L28-L33",
+          "version": "repo-lines-v1:sha256:ad9fe091dde0fa03e3c298c333a2f4c670a9ba796f879053bedda68cdc36e1b9:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYTNlMmUzNzI4NzRkMWExMjBiZDhlYWJkMWU1YmMxYWRjNzk0YjRkN2MwODUzYjczNzQxZjRkNDVhMjM3MzBhZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGJkZGFjOWU3OTI1MTBhNTQ3NDU4NWMwN2ZhZGQ2ODVhYmJiYTZhOWJlNThjMzlmYWEwNzA2Zjc4OWNiMDJhNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDdlNjVjM2ZjNGRjYTUzY2EwNWIzZjgxYzE1MDc4NGEyYTc0MzM4MDA1MWNkYzk4ZjVmOTU2Yjc4YTQzM2UyZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODJkZjdmNzQ1YmFjMDhkZjRjYjdhZDc0ZDUzZjI1YWUxMDE4NWM0Y2ZkNTA0YWIxYzc3OTMyZDhiMTYzNzVjNiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_c66ddffbc9244a25acedfb17862061d8",
+      "statement": "Each app's live.config.ts defines a single _emdash live collection backed by emdashLoader() from emdash/runtime.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/src/live.config.ts",
+          "version": "repo-file-v1:sha256:5a04761c5d354874c09bd376adc47b68c0af6c5f02984b86a480fc4a656d3e57"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/live.config.ts",
+          "version": "repo-file-v1:sha256:5a04761c5d354874c09bd376adc47b68c0af6c5f02984b86a480fc4a656d3e57"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

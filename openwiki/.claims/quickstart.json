@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:bdcfbfaf25062bb3ab6abd2845e718d50713f86269eca5476ed89ce97ebd4af1",
+  "claims": [
+    {
+      "id": "claim_81b6ebe23a6d4e47958c6805b801952a",
+      "statement": "The monorepo builds two Astro apps on EmDash and Cloudflare Workers — marketing-site serving jamesryan.dev and digital-garden serving jamesryan.me staging-only — plus three shared packages astro-config, cms-helpers, and ui.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L1-L18",
+          "version": "repo-lines-v1:sha256:1983fcdbd7cbeb7d3effb22fb7043601bf040bcda4772ac0c4dd185c2d5fd7b7:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwODNhYjI1ZDIyNTlmZTAzOTU5NTFjNzU2NGY5YjIxZGRhNjNjOWExZWI4N2Q0NTYxMTBhZjkwZDRjOTlkYjQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwMmFmZWQ1Y2FmMDY0Yjk2ODViNzA4ODgzYjNkOTNkOWI0OTcxNGRlNTVlNzI5NmE2ZjNiY2M3NmY3ZGUzNDgiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjBiODNiZjRkZjcwYjZlMzdmZjI1YmIyMjQwNjUyNWJmY2Y4MzJlOTlhNDgxNmE1ZjQ0MjRhYzg4YzkzNjJiYzgifQ"
+        },
+        {
+          "resource": "repo://pnpm-workspace.yaml#L1-L3",
+          "version": "repo-lines-v1:sha256:253208fa7c1b64372c219b9e19cef15ed70ca93b66a4d5c4c4d2297a5aff8880:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWRiMDc2ZWI4MGFkZTE5ZmVhM2UwYTQzMTk4NmI2NTVmNWZhNTllZDYyNjdlMTA3ZDY4OGI2MWMzZjQyMTc5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODBjY2ZhN2IwNGIzODcxMmI4NTI5Y2I3M2QwYTAyOTU1N2Y2MDVkOTFjMGQwOTE5M2I3OTA3OTY3ZGRlMTQyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGQ0ZmU3MTcyOWY5ZGQ2MjljNDkyOTdlYWYzN2QyYWIyODIxOWU4OTU0ZmRkMGQ3Yjc1NGU5OTNjZDUzYjA2YyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_6d8e13e9c4b745acbf105ce5dda87e1b",
+      "statement": "Local development runs marketing on port 4321 and the garden on 4322 with telemetry env vars exported, and a fresh local database is built, seeded, then served before opening setup or dev-bypass.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L28-L62",
+          "version": "repo-lines-v1:sha256:5a259f21d36519d79226ac98a0b523622100d975038a54619706fd665f508df2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI2MzgxOGUwYzdiNDZmZWJhNzU5ZWU3MWM4MDMzMjA5OTBmZmYzMzJhODczZmJiMDc3YWU5ZmVjM2VmOTcwYmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgwYmNkNTcwMzJmNzkxZTZlMzFmMzgyNTk1ZjI5MzAxYjZlZjliNmYyYTgyNzRjZmY3ZmZiZjIwYjFhYjc1OTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYyN2I1YzY0Zjc3ZjBhMzUxYWIwZDk4MGE4NTljM2JhM2I1OWUzM2EyYTI2OWY1MTQ0YmZkOWI0MmJkZDYxN2MiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA5Mzg5YzNlYzcxMjE2YzVmZDQ0OWNmYjg4MjNmYWEwMmJmMTQxOTc4M2IwZDVmZmY3MDcwZTkxNWI3ODQ3MDIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd0a417211e24254ba4f29cf1e10294f",
+      "statement": "Content routes must stay server-rendered with output server because getStaticPaths is incompatible with live CMS content, and the shared config factory pins that output mode for both apps.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L44-L45",
+          "version": "repo-lines-v1:sha256:96b63c7586809b39de2712a092ccbbd8ba2d1d41876ffb7f49790248f7407bed:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZGNkYWRkNTc4MzNkYzNkNDAyNWU2MTdlMmNiMmEzNGViMjIxNmY0Y2E0ZTAzMjEzYmExZjhmZDA2NDdlODVhNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzgzNzhiN2YzMjU5MGY0ZDg4YzM2YmM2MTQyZGY3N2IxYTgyZmUwYmU5ZmJhYjVjZDNiMTNhOWFhZDQxMjM4YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMzU5ZjQwZjA0MDBhZjc1ZGZiNWNlNDQ1NzcxYjA1NGYzMjk2ZmUwODVkOWQ4MzdlYWJiODBjZGY4MzYwYTRjMSJ9"
+        },
+        {
+          "resource": "repo://packages/astro-config/index.mjs#L19-L23",
+          "version": "repo-lines-v1:sha256:e8772b973ffe625e328ca5e7e57a9c77173315a0d80a38d061ea95a2259c04cb:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDE3MzQ0OTU0ZGMyMGFjMTdmMjhlNTM4NTkxMjg3YTAwMGQ3MDRhZDFiMzA1ZGVhYTZmNDJlOTFkZDdhZjM1NCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjA2NDFkN2QyNjJhYmM2MTk3NjczMWI4NGRlNTMzOTgzMDBkZDg2MWIzZTg3NGM4ZDJkMDc1OGEyMzhmMzFhZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTk3NzY1NTM5MWRlMWY4Y2RmOTQ4ODQ4NjM1OGUzOGNjZjJkZWZhNWZhMjI5MDk4Y2U1NDBmNWQ2MDUyZTY2YiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNhZjUxODk1MDVmNzBlYjc4ZmJiYjBkY2E1NWQ4MDJmOGU4ZTA0YjEyNWY3ZWJjYjViMjI5OTcyNjNlZWQwZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_4c1bc176caa9445fa74b0ba32ec12ecd",
+      "statement": "Root scripts expose dev, dev:garden, dev:all, recursive build/typecheck, test as root node --test plus recursive package tests, mcporter entry points, and seed:local for the marketing app.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L7-L15",
+          "version": "repo-lines-v1:sha256:ef74b4494432a291139e5f06012df84c6f50e09092d681df27d11922ff2e3c82:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ4MzNkNTk0OWMwM2E0MGNhOTUyNDkxNjEwYTY2NTk2NDRiM2FhNDY2MzYyZjc5OTAyMGRiZjE5ODE1NDdkYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNzZkMTE4MDliYzM1OWZkMjY5YmQwMmNjNjdhYzE4Y2ZhNzFmNDE3NzRjODUxN2VjYjdhMmI3N2E5NzQ3NWJhZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWNlMjM3OTlkNzRkMTc3ZWQwZmEwOTE4MjNlZmFlZjJhZDZmYTNhMThhMzUxODZlNDlhMjczYWVhNDg0M2M3MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjQ0OWE4MzUwMzI2ZmQ5YTQ4MTUwYmFlZTZkOGZmM2M2YTY0YTkwYjliNmY2NjZlOGJhYTQ4MjExMGMyZmJiNSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_68cf6e80c33b4baba5e991800a52f7d9",
+      "statement": "Deployment publishes both staging sites on master merge, promotes jamesryan.dev manually, and keeps the garden staging-only, with agents drafting content through Contributor-scoped MCP while James publishes.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L77-L84",
+          "version": "repo-lines-v1:sha256:1a79b0b50905049fd861aa6c3e5e32e8e94060486f414c62a574e6d3b810ef7b:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2JlMmUwY2FmOTkxYzQ5NDZlNzBjMmYzOTYxNDQ0YTBhODg1ODgxZDdlNGYyMGRiMDg4ZjdjMzQ3NzVlY2M3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDcwOWYzODdlMTBiODVkMTQ4MWZkZjE0MWY2MDBkM2NlMzA0MjFhMGZiNzMyMGU2MmU5Mjg1ZTQ4NzBkNjRkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmJjOWM4MGJhMzA4YjJhZWFhY2U3NmFjMmU2Mzk2Mzc2ZDFlOTllNjY2ZjM2YTNhODYzOTQyZjIzYmM5ZTJiNiJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

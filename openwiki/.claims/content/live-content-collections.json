@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:0a14e4d2b1e7ef13d5bac3c837446d22a91b8fc25086cff71ddb99304cf1d8a3",
+  "claims": [
+    {
+      "id": "claim_b718337856cc4f3591c20c6b1528ab4c",
+      "statement": "Each app's live.config.ts defines a single _emdash live collection with emdashLoader() from emdash/runtime, and this boilerplate is preserved unchanged as the only Astro-to-CMS content bridge.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/src/live.config.ts",
+          "version": "repo-file-v1:sha256:5a04761c5d354874c09bd376adc47b68c0af6c5f02984b86a480fc4a656d3e57"
+        },
+        {
+          "resource": "repo://apps/marketing-site/src/live.config.ts",
+          "version": "repo-file-v1:sha256:5a04761c5d354874c09bd376adc47b68c0af6c5f02984b86a480fc4a656d3e57"
+        }
+      ]
+    },
+    {
+      "id": "claim_86edac75f88d42089a1b97bbc039acf8",
+      "statement": "EmDash generates each app's emdash-env.d.ts on dev server start with one interface per seed collection, plus versioned PageLayout block interfaces and a PageLayoutBlock union on marketing whose seed defines blockTypes.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/emdash-env.d.ts",
+          "version": "repo-file-v1:sha256:f1f484e361a395950f0859ddc0717fd8b2a47ec0fa0ea630e0b80ff75b874e44"
+        },
+        {
+          "resource": "repo://apps/marketing-site/emdash-env.d.ts#L1-L155",
+          "version": "repo-lines-v1:sha256:25b90653ef7e04a51aa2095c554d8e7ec1709544c2ecc54af46af91d2232f86b:eyJzZWxlY3RlZExpbmVDb3VudCI6MTU1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmNTA0ODc4NTJmYmRiZWRiM2I5OGZkN2UyN2QwYTRiZmZkMmM3NTFjZTYwYmFlN2RmNDEyOTg1YWNlOGI2NGRlIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJkZjI5ZjY5NjEzNjdiNWJjOWM5ZmJmYzlhY2Y5ZmExMWZiZDFiNTc0MWUzY2ZlNDI1OWQ4ZmQ5Y2JlMWRiMGI4IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlNDM0ZDc2MDY3NjkyYWI0ZmUxNzJmYWE4YjgzYmY4NmVkYTc4MGFhMzZhNGE4Zjk0ZWIzMjczMmNlMTQwNTBmIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_9cc1c70f2cee45ccb6648fa10846e00a",
+      "statement": "runPublishedOnly re-runs collection queries with editMode and preview stripped from the request context so discovery endpoints enumerate live revisions even during editor sessions.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/content-query.ts#L12-L20",
+          "version": "repo-lines-v1:sha256:b7129becef5d1f6224c1ba1769f33a322a554dc4d70d13971429957f6398490e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZiMjhiNWU2NWZjNzI5YTk0Y2QyMjZjODllYzhhOTI5MzkyYTQyMWU0MWY3NTZlOTg3ZmIwNmIxNzRkMWFkYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDk2Y2VlZGRlZjk1ODA1NTUyODEyYTRhMWRhYzg3MmQ0YzE2YmRjNDQ0OTg1ODBmMTIxYjVmY2Y0ZWJiOWQ1MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjk1N2MyODdlNmRjNDNhYTQ2ZTkyN2VlYmY1NGM4Y2Y3Yjc3MTM2ZGMyZjFiYzlmMWY2NjhkMWI2MzI5YTRmOSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_96492f58c8594ec7ac9f62ad9051bd37",
+      "statement": "getPublishedEntries paginates collections with limit 100 and nextCursor under status published, setting the cache hint after each page.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/content-query.ts#L22-L41",
+          "version": "repo-lines-v1:sha256:d43541ec5b0f4752e2aeb887b295de29e111862cf67836f8c41e4e5008d6646b:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE1YTczMWYxYmNjMDRjMGI4YjcyYjYyNjExZmUyZGQ2Y2JjYWI4ODdmZmQxMDc0YTBmNDRmNDIyOGY0MWEyZWYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBhNzM0OTJkODk0NmIxZDBmOWQ5YzA0YjcwNGE5MjBmMjRmODllZjdjN2Y3MzExYTg1OTlkMTBjN2Y2MzU4ZDAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImNiOTg2YmYwNGEyNjUyNTUzODA1ODQwZDJlYmI4NjdlZjUyYzk0M2I1MmQ4OTFjMDQ5ODM2MGYyMDQyMjIyNDUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoxLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_66e72c4135c94439920ae02dd3cc815c",
+      "statement": "entry.id is the URL slug while entry.data.id is the database ULID used by calls such as getEntryTerms.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/pages/posts/%5Bslug%5D.astro#L23-L40",
+          "version": "repo-lines-v1:sha256:04feb51265db7ae7e2028fdc08c468059a86240e1336680b144fe363c89c41f9:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjA5YTExZDgyNGVlYmJmZDJhODc0ZTE2ZWU2MGE5MjU4N2I4ODhlNjUxZTIzYmQ4MjQzYjEzYzNjMGFlYTcyYWIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZkMmM4MGJjNmUzNTk2NDBhODcxOTBiZWIwNTgyOTQ5NTgxNjI5OGE3YjgwYWFmODM2MmVjZTk1YWRhOWVlYzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImRjODBhMDViMjBmZmI5M2EzMDMzMGVkYWYyNDgyZDk3YTJmZDM4NDZmZTgzNzQyYTEyZGQwNGYxZWUwYWFkN2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdjYTdhMDQ1MDNlNmVkODQ5Y2Q4Mzk3MGIxNWY4OGI0NTYyNzY2NDNmM2FlMDAyN2UwN2M4YmQ2NDcyMTJjMWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_99899ae5e8374c008f785782521a80bb",
+      "statement": "Content routes decode params with decodeSlug and re-encode when mapping content paths, keeping encoded and decoded slugs distinct.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/pages/posts/%5Bslug%5D.astro#L23-L29",
+          "version": "repo-lines-v1:sha256:75eb139d182e3d8a3ead3469474da76f976d79efd878a599a9056f3e74a34ebd:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDlhMTFkODI0ZWViYmZkMmE4NzRlMTZlZTYwYTkyNTg3Yjg4OGU2NTFlMjNiZDgyNDNiMTNjM2MwYWVhNzJhYiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyZDU1MzFlMWM4NDc5ZmVkYTg2NzY3OTg2ZGZmOGJlNTBlNzhkNWY4YzIwODU1ODUwODgwMmQwZjgxMDVkYyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZGM4MGEwNWIyMGZmYjkzYTMwMzMwZWRhZjI0ODJkOTdhMmZkMzg0NmZlODM3NDJhMTJkZDA0ZjFlZTBhYWQ3ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTk3ZGJjOWI4MzUwYjY2NThmNDhjOGUyMTkwZDNjMzJhNmFkYmRiMzRiYTc2MjAzZDVkNTJjYmI0NzhlODhhMiJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/content-url.ts#L15-L19",
+          "version": "repo-lines-v1:sha256:888668596e20393d8624f187e267703c4051d1a6daa93d24ef20a3e946f1263e:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVhYjFkY2Y2YjEwZTJlYmVlM2FkOWQ4MWE0OWM0NmIyNDAxNTkzMDVhZGViNmZlMDgwNjIxMGExMzdhMzkwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzcwZTljYTUxMDE5NjdjN2E3YTk0OTFhNjJhNDA1ZTY3NTM4ZTFkMzc1ZjY0YjdmOGYyMjA1ZDBlMzQ1ZDZlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2IwMGFmMzM4MmI4Nzc2ZGEyMmVkOGVlMjQ1MmFkZmIyY2FlZWQ4NWFmNWMyODEwYzNiOTc0Zjk3NGYwNDEwNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjAyMThkNDY0NWYxMzliZTBkOWEyNzNmZDc0ODQwMDAxZDgzMDUwMGEyMWVlZDgwNzhkODA0NmNiMDMwMjBjNCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}
