@@ -1,137 +1,51 @@
-This is an EmDash site -- a CMS built on Astro with a full admin UI.
+# Working on this monorepo
 
-## Commands
+Read [README.md](README.md) for workspace layout, local development, seed media, checks, and plugin locations.
+
+## Task context
+
+Read the matching document before working on these areas:
+
+- Drafting posts or handing off publication: [publishing](docs/publishing.md), including the token-owner preflight.
+- Reaching `emdash-docs`, `emdash-staging-agent`, `emdash-site`, `emdash-garden`, or `cloudflare`: [MCP access](docs/mcp.md).
+- CI/CD, deployment secrets wizard, production promotion, or migration lock recovery: [deploying](docs/deploying.md).
+- Content routes, discovery endpoints, `/og/*`, or verified previews: [published-route rules](docs/published-routes.md) and [post descriptions](docs/posts-description.md). Preserve the anonymous published-only boundary.
+- Dependencies or Astro/Vite configuration: [dependency overrides](docs/dependency-overrides.md) and [Astro 7 upgrade](docs/astro-7-upgrade.md).
+
+Before using an EmDash API, hook, config option, field type, or pattern, verify it against live documentation from the repository root:
 
 ```bash
-npx emdash dev        # Start dev server (runs migrations, seeds, generates types)
-npx emdash types      # Regenerate TypeScript types from schema
+pnpm exec mcporter list emdash-docs --schema
+pnpm exec mcporter call emdash-docs.search_docs query:"your question"
 ```
 
-The admin UI is at `http://localhost:4321/_emdash/admin`.
+## Project skills
 
-## Key Files
+Load the matching skill from `.agents/skills/`:
 
-| File                     | Purpose                                                                            |
-| ------------------------ | ---------------------------------------------------------------------------------- |
-| `astro.config.mjs`       | Astro config with `emdash()` integration, database, and storage                    |
-| `src/live.config.ts`     | EmDash loader registration (boilerplate -- don't modify)                           |
-| `seed/seed.json`         | Schema definition + demo content (collections, fields, taxonomies, menus, widgets) |
-| `emdash-env.d.ts`        | Generated types for collections (auto-regenerated on dev server start)             |
-| `src/layouts/Base.astro` | Base layout with EmDash wiring (menus, search, page contributions)                 |
-| `src/pages/`             | Astro pages -- all server-rendered                                                 |
+- `building-emdash-site`: site features, content queries, Portable Text rendering, schema, seeds, menus, widgets, search, SEO, comments, and bylines.
+- `creating-plugins`: plugin hooks, storage, admin UI, API routes, and Portable Text block types.
+- `emdash-cli`: CLI content management, seeding, generated types, and visual editing.
+- `emdash-mcp`: querying and preparing drafts through mcporter for human publication.
 
-## Skills
+## Implementation rules
 
-Agent skills are in `.agents/skills/`. Load them when working on specific tasks:
+- Keep CMS content routes server-rendered (`output: "server"`); `getStaticPaths()` is incompatible with live CMS content.
+- Image fields are `{ src, alt }` objects. Render them with `<Image image={...} />` from `"emdash/ui"`.
+- `entry.id` is the URL slug; `entry.data.id` is the database ULID for calls such as `getEntryTerms`.
+- Call `Astro.cache.set(cacheHint)` on every route that queries content.
+- Match taxonomy queries to the seed’s exact `"name"`, such as `"category"` or `"tag"`.
+- Preserve each app’s `src/live.config.ts` loader boilerplate unchanged. EmDash generates each app’s `emdash-env.d.ts` collection types.
+- Keep telemetry disabled: `ASTRO_TELEMETRY_DISABLED=1` and `WRANGLER_SEND_METRICS=false`.
+- User-visible copy belongs to James; obtain his wording for new or changed copy.
+- Keep palette changes in `packages/ui/src/styles/`, with WCAG 2.2 AA contrast in light and dark modes. Display fonts are Instrument Serif on marketing-site and Familjen Grotesk on digital-garden.
 
-- **building-emdash-site** -- Querying content, rendering Portable Text, schema design, seed files, site features (menus, widgets, search, SEO, comments, bylines). Start here.
-- **creating-plugins** -- Building EmDash plugins with hooks, storage, admin UI, API routes, and Portable Text block types.
-- **emdash-cli** -- CLI commands for content management, seeding, type generation, and visual editing flow.
+## Marketing page builder
 
-## Documentation
+Pages use the `layout` field, rendered through `apps/marketing-site/src/components/page-builder/PageLayout.astro`; section components live alongside it. The legacy Portable Text `content` field is retired.
 
-For drafting posts and the human publishing handoff, read `docs/publishing.md`.
-
-For reaching the site MCP servers (`emdash-site`, `emdash-garden`,
-`emdash-staging-agent`) on local dev or staging, read `docs/mcp.md`.
-
-For EmDash documentation, run `pnpm exec mcporter list emdash-docs` and
-`pnpm exec mcporter call emdash-docs.search_docs query:"your question"` from
-the repository root, rather than browsing the website. `config/mcporter.json`
-is the server source; `.mcp.json` links to it for Claude Code. mcporter
-0.17.0 requires Node.js 24 or newer.
-
-The EmDash docs are available as an MCP server at `https://docs.emdashcms.com/mcp`. When you need to verify an API, hook, config option, field type, or pattern, call `search_docs` against the live documentation rather than relying on training-data recall. The docs reflect current behaviour; assumptions may not.
-
-This template ships with `.mcp.json`, `.cursor/mcp.json`, and `.vscode/mcp.json` so Claude Code, Cursor, and VS Code auto-discover the docs server. Other tools (OpenCode, Windsurf, etc.) need a manual one-time setup -- see [docs.emdashcms.com/docs-mcp](https://docs.emdashcms.com/docs-mcp).
-
-## Rules
-
-- All content pages must be server-rendered (`output: "server"`). No `getStaticPaths()` for CMS content.
-- Image fields are objects (`{ src, alt }`), not strings. Use `<Image image={...} />` from `"emdash/ui"`.
-- `entry.id` is the slug (for URLs). `entry.data.id` is the database ULID (for API calls like `getEntryTerms`).
-- Always call `Astro.cache.set(cacheHint)` on pages that query content.
-- Taxonomy names in queries must match the seed's `"name"` field exactly (e.g., `"category"` not `"categories"`).
-
-## This Template
-
-A SaaS-style landing page template with modular content blocks: hero, features, testimonials, pricing and FAQ. Designed for product marketing sites, app landing pages, and anything that needs a hero + features + pricing + CTA flow.
-
-Bolder than the blog and portfolio templates: vibrant gradient accents, isometric illustration in the hero, heavy headline weights. The voice is product-confident without tipping into stock SaaS cliche.
-
-## Pages
-
-| Page | Path | What it shows |
-| --- | --- | --- |
-| Home | `/` | Published Home content and recent posts |
-| About | `/about` | About layout, available only with a published About entry |
-| Pricing | `/pricing` | Published Pricing content rendered through `PublishedPage.astro` |
-| Contact | `/contact` | Published Contact content rendered through `PublishedPage.astro` |
-| Privacy Policy | `/privacy-policy` | Published Privacy Policy content rendered through `PublishedPage.astro` |
-| Posts | `/posts` | Post archive, available only with published posts |
-| Work | `/projects` | Project archive, available only with published projects |
-
-When editing content routes or discovery endpoints, follow [published-route rules](docs/published-routes.md).
-
-## Schema
-
-- `pages` collection: `title`, `layout` (page-builder blocks), optional `service` reference that scopes shared-content blocks (testimonials, pricing, faqs, team).
-- No taxonomies.
-- Four menus: `primary`, `footer_product`, `footer_company`, `footer_support`.
-
-Site settings have `title` and `tagline`. Title renders in the header; tagline is used in the footer / metadata.
-
-## Page builder
-
-Pages are built from `emdash-plugin-page-builder` blocks in the `layout` field; the old Portable Text `content` field is retired from the schema and the templates. Rendering goes through `src/components/page-builder/PageLayout.astro`; the visual sections also live in `src/components/page-builder/`.
-
-- The offered block list is `src/components/page-builder/offered-blocks.json`; regenerate the seed's `blockTypes` and `allowedTypes` from it with `node apps/marketing-site/scripts/sync-page-builder-seed.mjs` (typecheck runs it with `--check`).
-- Apply the offered definitions to a live site with `pnpm --filter marketing-site page-builder` (wraps the `emdash-page-builder` CLI; needs `EMDASH_TOKEN`).
-- Shared-content blocks (testimonials, pricing, faqs, team) read the matching collections scoped by the page's `service` reference; inline blocks (hero, cta, features, stats, comparison, prose) carry their own data.
-- The plugin's publish policy blocks publishing a layout whose blocks miss required fields; block schema fields stay optional and the policy enforces on publish.
-- Moving legacy Portable Text content into `layout` and retiring the old field are scripted: `scripts/move-content-to-layout.mjs` and `scripts/retire-pages-content.mjs` (plan by default, `--apply` to write).
-
-## Visual character
-
-Typography is **Inter** on `--font-sans` with weights up to 800 for headline emphasis. There is no mono font, no serif. Headline tracking is tight.
-
-Colour is the loudest of any template here. The default palette is:
-
-- `--color-primary: #6366f1` (indigo) -- main brand colour, used in buttons and links
-- `--color-accent: #f472b6` (pink) -- paired with primary in gradients (CTA buttons, icon backgrounds)
-- `--color-success`, `--color-warning` -- semantic colours for inline icons (pricing checkmarks)
-
-Gradients are part of the look (`--color-primary` -> `--color-accent` on the "Get Started" button, on contact-method icons, on the "Most popular" pricing badge). Don't strip them entirely -- the template will look generic without them. Do swap them for a different pair if the brand calls for it.
-
-Roundness is generous: `--radius` is 10px, `--radius-lg` 16px, plus a `--radius-full` for pills. Shadows are layered (`--shadow-sm` through `--shadow-xl`).
-
-## Customisation
-
-`src/styles/theme.css` is the only file to edit for visual changes. Every CSS variable from `Base.astro` is listed there as a commented default. The dark mode palette is defined inside `Base.astro`; light-mode overrides in `theme.css` won't affect dark mode. To customise dark mode, add `@media (prefers-color-scheme: dark)` and `:root.dark` rules in `theme.css`.
-
-Fonts are configured in `astro.config.mjs` under `fonts:`. To swap the typeface, change the `name:` for the entry bound to `cssVariable: "--font-sans"`. Inter has 5 weights loaded (400-800) for hero impact -- if you swap, ensure the replacement has comparable weight range. Geist, Plus Jakarta Sans, Manrope, and DM Sans all work well as replacements.
-
-CSS variables worth knowing:
-
-- `--color-primary`, `--color-primary-dark`, `--color-primary-light`
-- `--color-accent`, `--color-accent-light`
-- `--color-bg`, `--color-surface`, `--color-text`, `--color-muted`, `--color-border`
-- `--font-sans`
-- `--font-size-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl}` -- type scale up to 4.5rem for the largest hero
-- `--radius-sm` (6px), `--radius` (10px), `--radius-lg` (16px), `--radius-full`
-- `--shadow-sm`, `--shadow`, `--shadow-lg`, `--shadow-xl`
-
-To re-brand, the highest-leverage moves are:
-
-1. Change `--color-primary` and `--color-accent` to the brand pair.
-2. Update the site title (logo wordmark) and tagline.
-3. Edit the home hero block's `heading` and `body` to specific, concrete copy.
-
-## What not to do
-
-- Don't write stock SaaS copy: "Build products people actually want", "Elevate your workflow", "The all-in-one platform for modern teams". These are placeholder. Write what the product actually does, for whom, with one specific outcome.
-- Don't ship more than three pricing tiers. Three is the default for a reason -- more makes choice harder, not easier.
-- Don't use icon and stock photo combos that fight each other. Pick illustration _or_ photography, not both.
-- Don't enable the gradient on every interactive element. The CTA gradient is the signal; if it's on every button, it stops signalling.
-- Don't add a hero block followed immediately by another hero block. One hero, then features / testimonials / pricing / FAQ in some order.
-- Don't replace the `pricing` block with a hand-coded table. The block is the data shape downstream renderers expect.
+- `apps/marketing-site/src/components/page-builder/offered-blocks.json` owns offered definitions. Sync seed `blockTypes` and `allowedTypes` with `node apps/marketing-site/scripts/sync-page-builder-seed.mjs`; typecheck checks this with `--check`.
+- Apply definitions with `pnpm --filter marketing-site page-builder`, which wraps `emdash-page-builder` and requires `EMDASH_TOKEN`.
+- Shared-content blocks (testimonials, pricing, faqs, team) query matching collections scoped by the page’s optional `service` reference. Inline blocks (hero, cta, features, stats, comparison, prose) carry their own data.
+- Block schema fields stay optional; the plugin’s publish policy enforces required fields on publish.
+- Migrate legacy content and retire its field with `scripts/move-content-to-layout.mjs` and `scripts/retire-pages-content.mjs`: plan by default, `--apply` to write.
