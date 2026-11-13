@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:2519c9f2ca8c4b3508630739dea7044e6bb8d28f694e496457f0ced46ab8daee",
+  "claims": [
+    {
+      "id": "claim_442b421df1ef44978d9ad1fe534d4889",
+      "statement": "The page-builder sources wire the plugin's pricing, testimonials, faq, and team source factories with groupField service, so shared-content blocks query collections scoped by the page's service reference rather than post-filtering.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/sources.ts#L178-L187",
+          "version": "repo-lines-v1:sha256:3a50f5f1a176ecab0001a5e1e78671e844faf2e46df54bf674241db65eca7187:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI4YTQ5MjFlMWFhMzgwZTk5ZjY4NjFkODc1MzYxNTgxYzg3NDhiNmI1ZjE1MGNiM2ExMDQ2MWI0YWI1ZmY4NDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjNjMxMGMzMGRmN2IxNTVhNjJjOTFiNzFiY2Q0N2RjOTc4YmVlNDhhZmIzYzRjMTFhZDAzNWY4NWY5MmQ4NjQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImI4Zjk4ODAxN2ZjNmJmZmY1NDIxMTMxN2YxZDNmM2QyZjRkMTAwNTQxYzQzNTU4ZjIyZmNjNjFlZWJhNzY5YmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7f25e73580e9466d969057a90b7675fe",
+      "statement": "getServiceEntries resolves service-linked content through published references by paging the collection and reading every entry's service selection via getEmDashReferences, because EmDash 1.4 has no reverse-reference collection filter; its cache hint unions all tags and the max lastModified.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/service-content.ts#L14-L58",
+          "version": "repo-lines-v1:sha256:589e45c79c624ff3a46894c1d7d598a781f7bb27e83944c56ce49bbfb8235211:eyJzZWxlY3RlZExpbmVDb3VudCI6NDUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFhYzdhYTlkYjI1MzY4NWUzMmU0NzZiNDNhNjk1M2Q0OGJiNmI4OTU1YzUzZTg3ZTgwZjQ0YTQ1MTk5ZmVmZDUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1MDZiY2NiMWI5NjQ5NGQwMWFjNTVmZTE4ZWM4ZGEwMWJmZGI2ODA4Mzg4NGEyZjY3ZGVkZGVmNWUxNTBlNDAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_9e90fa5d7fa14ab986fcb4c5a2747782",
+      "statement": "perRequestSource memoizes the posts source's reads per request keyed by a canonical sorted context serialization, so the home route's featured-image preload and rendered section share one collection read, while builds and tests read afresh.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/sources.ts#L116-L141",
+          "version": "repo-lines-v1:sha256:c20f8c306f628845b517a39264247e471d7d8230e483f6a50ac15220c90c6858:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjM3ZDZlMWQ0YjJkMTA4ZWU2YjU5MzdiNzc4OGRkOWVkNjgwNzA4NzAyZGRmM2YxNjYyZDc4NTViOWFiMDUyZGYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg2NTk3OWNkOGY2MjUwYjFhZWJhMWQ5ZTFjOTliOTY0ZGU2ZGEzYjIwNWU2YjQxYjg0OTI3ZDUxNmNjYjBhNmUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjBhODcxNzJjYTBjOTczMWNmNjBkMDM0OGEyMGE5ZThjNDgxZGM4MWVjOGZjYTFhYzAwZDFmMTdkZmFkMzQ5NmYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImJhOGM1MmYzNGU2NmRhYzk0ODUxOTU5Yjc2MzgyMmY1Yzk2NDAyOWFlYzE5NTlhODU3ZDZmMzk2Y2Y5MDllODIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_a292929153da4a6c890b52ceb0e12d8e",
+      "statement": "The sources' get seam exposes legacy scalar service selections at the same place bound references resolve, fetching the service entry and merging cache hints when needed.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/sources.ts#L143-L160",
+          "version": "repo-lines-v1:sha256:c3a8a513c04604aa7707d4709c1b304f9d91d2decf741bed3845ca5b408d823f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3ZjUyMzM2NWNiNWJjODA1NWJhNDAyZjBiZmVhNDk1ODhmMjE5YjNlZWI5MTFmZjY2NDFhMDI5Y2JkZWE1Y2MiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVhMTNiMjg0NWYyMTVmYTQxNzk2MjI2M2ViOTlkYTFkYzhiZmZlZTZkNDhkOWI1MjkxZTgzNmI3MWRhYTE5MDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijk3MGQwZDQ3YjlkNzAzZjljNDhjMjRlNjQ5NWVhYjBhMmNmNTQ2YWEzYjk2NTQ5YjM5YzNmZjBkZjNkNzRmYzYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU0M2QzZWE1NTVmNzA4YzdhNDBlZTljNDBhMzFiZmFmZTRjY2UyMGE5NmZjOTAyMGIyNDhkMGUxMWM3ZDkyNWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3d28f25fedbd46fdab2dedd53fcd7b50",
+      "statement": "move-content-to-layout.mjs maps ten marketing Portable Text block types to page-builder blocks through one mapper each, conservatively stopping a page with a named reason when a field has no home, and turning plain text runs into one centered prose block whose leading heading becomes the section heading.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/move-content-to-layout.mjs#L1-L62",
+          "version": "repo-lines-v1:sha256:78c9aa7d2d8c64d141677357b5b9507ccc36c383adbcc8f05e5e6961e53f2da2:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczZGExNDAwOWI0Y2QwMDMzOTc4OTlkOWYwNGRkZDBiMTZlY2I3Y2RlZjRmNjFjMGJlNDE4ODVmYzg0Zjc3NTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImExYTlhN2IwOGI0MGFjM2EzYTE5ZjZkZDk4ZTQzYTg2MWY5NWM2MjdmM2Q4MmZhMzVkNzE0NTdjZDRiZGIwOTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI2ZDM0ODVmOTE5M2ZhZGZjZDBhNWE2NzZmMjRjNzRjNDk2OGUxZmYwMGVhMDMwNDQ3NGMyZjU0YTZmYzc5MjkifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_aee423e189024b0d9e2363a09cb314f8",
+      "statement": "retire-pages-content.mjs plans by default and only deletes the pages content field under --apply when every page is migrated, clear, and free of pending drafts, re-reading the page list before the schema delete and documenting the collection-revision race on field DELETE.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/retire-pages-content.mjs#L1-L27",
+          "version": "repo-lines-v1:sha256:13a9999bd075c39c9a8742324090959b7251d8bc07c521b076c29a900c268364:eyJzZWxlY3RlZExpbmVDb3VudCI6MjcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjczZGExNDAwOWI0Y2QwMDMzOTc4OTlkOWYwNGRkZDBiMTZlY2I3Y2RlZjRmNjFjMGJlNDE4ODVmYzg0Zjc3NTMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjkzMjY0NmIwNzNiMGVjOGQyNTg3Mzg0ZWYzNGE2MmU0M2YyZjJjNmY2ZGQzMTM1MDU0ZjFjYjBjZjEzOTI2MDAifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0007a844ef3443a6823959149bdf959d",
+      "statement": "The posts source maps each post with tag terms folded in through one getTermsForEntries call per page of ids, plus bylines, image, date, and reading time from cms-helpers.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/sources.ts#L96-L114",
+          "version": "repo-lines-v1:sha256:19c77f4e43d17257f98ee10fff592e8d708174455f90e9bfe4df2c0525c5390a:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYmQwZGZiMWIyMDliMmU5YmU4NzU3ZmQ2ZjJkNTg1NTk0NzNjZTcxZWQyZjNmYmUwYzRmZTJmNDliNjA1YmYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQzOWZlZmQ5MzcxMTA4Yzk1ZGYyN2E3OWRjMGMzYjJiZDk2Yjc5ZTA0ZmM3NzgyZWJmY2E1N2QyYTQ0ODAyYzciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjUwNjliZjIzOGYxYTI4NzdjYzczNTE3OGI1YzA0YTdiNmNjZTYzZjlmNTZhMjQwZmE2MzYxMTY2Mjk0NGY1YjYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQ0MzZiZmQyNmQxMzNjMDZmNDFkYzZmYTExYWY0ZTExNThmYTk3YmY4ODlmMWEwNTkwYjQ5ZTZiNjBiYjdmYTIifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

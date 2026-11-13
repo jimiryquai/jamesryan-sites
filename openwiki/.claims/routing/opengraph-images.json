@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:fb3a1824a24e40e94f9bbedb577ccff9bfc3e45a848d18ebb33e726c1c6f5dc6",
+  "claims": [
+    {
+      "id": "claim_62ee919938764b6bb59e4f710678a7e6",
+      "statement": "OG cards are built as Satori VNode trees rather than HTML strings because workers-og's HTMLRewriter path does not decode entities, while VNodes hand exact glyphs to Satori with no parser or injection surface.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L1-L18",
+          "version": "repo-lines-v1:sha256:74e9db332f252f1a06c013be79955ebba4e3866b3d007bd5e8d4444d3d6e9e84:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjUwMWQ0YWM3NzE5YTYzMWI0NTYwYzk4NTc5NjMxM2ZjZDIxNzA5NjBhZTQ3OTMyZDI0MmFlN2YzMzM2NWYxMTEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijk3MzRmODRhZjlkNjM5Y2U5YjUxNGIyOWExNDI5Y2NiYWQxMjkxZDI1N2RiNDI2ZDUzOTg1ODU4MmY3NmJmMDkifQ"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L75-L80",
+          "version": "repo-lines-v1:sha256:5bea213b4e9fa204a61464295dcbf7f22b7a0a2c3a3ef4039df2dd8c8b169866:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1ZDYzYjk4NmUwMzA3YWI0MjY5NGU5NTBlYjdhOWYyYTQ3ZTlhMmUyZTI2OTY1NTg1MWUyNTI1NDNmZjM2NyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzc5NDgyNGNkMzQxYzBjYzJhZTg2NDYzYzVlOTg4OWQ4NjFkNGRjZWYwNmJiZDUwMzQ3YThmNTExNzIyZjc5YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTM2ODEwNjVkNmIzYWVjNzBjZjQ5ODZjNjFkZjcwMWRmM2FlODlhNGYxMTEyNDVjNDQ4ZmFlOThkZmI2NGQzZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOTY0OTEwMjQyZjA2MDA4MWFjNGJmN2NkNDQwNGEwZjA0N2NlMGZlYWRhMmUyM2M1ZWExN2JiN2U5MDI4YmNkYSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_af6c4a946b9945c59496f007016ec13e",
+      "statement": "embed-og-fonts.mjs regenerates og-fonts.ts from @fontsource/inter latin WOFF1 files for weights 400, 600, and 700 because Satori's fontkit cannot read WOFF2, base64-embedding the bytes so OG rendering makes zero outbound requests; its --check mode runs in cms-helpers typecheck.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/package.json#L10-L11",
+          "version": "repo-lines-v1:sha256:cfbe7dc949af288d5c8a3d3327f0f46daedff3ab2514103115e73455921a949b:eyJzZWxlY3RlZExpbmVDb3VudCI6MiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiY2FjYjAwM2NjYTFhZDcwZGMwNjc3YWI2Yjk5Mjk1MWVmOTQ0OGZiNDQ2OTliMDEyYWJmNjBmNDRhNTlhNzEyNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjU4MDY1OGI4MGJlMmZmOGI0NWM4OGQ2ZDJhNGU4YTg4MGZjNjk2YTJlZTUwNzA1YTU4ODE0YjQ5NDRlYTU0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjM0ODNmNjk3NTYzOGI1YzdhZjE0ZjQ1M2E1YmRjYWMxY2NjZmVlNWIyZWEyZTlkMDM3ZGUwNzg5MWFmYzcyNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWY2OWVhZjM4NjJjYTY1MzQzNDdmY2MzZDhmM2YzNTNjYmUzYzY5ZTNjYzQyYmQ0NzIxMWQ0MDc2MTM5OGM0ZCJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/scripts/embed-og-fonts.mjs#L1-L24",
+          "version": "repo-lines-v1:sha256:1a9b80c19a68bd7ea4035450f58019807c3115fce27ce4dfeb7322834539adcf:eyJzZWxlY3RlZExpbmVDb3VudCI6MjQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQwMzAyNTRmNWYxZTQ1N2ViZTM0MzVkYTY0MWI0ODlkNjRkOTJlZGE1N2NmYTYxYjVmNDE4MDczMmU4NWJkMTgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjI0YTU0YzMzMTlhMmFhMmFkNmJhNjNlMjdkZjM4MWFkMDkwMmFkNGI3ODZiNjM1ZWFlMzEwNDg1YjM3NjIxZWIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImRmMTM1OTRhMTQ4MWMyNDA1MGQzMjY4YTc1ZjM3OWJlZTIxYTBlY2YzNzUwYTdiYjRiYTBjZjExMjEzODAwYWUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_91a1c5ca238f4c4e9015ead034093ebb",
+      "statement": "Anonymous requests to /og/<collection>/<slug>.png render only published entries and 404 unknown prefixes, missing slugs, and non-published entries with a bounded 60-second cache, never immutable.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L140-L158",
+          "version": "repo-lines-v1:sha256:0eec5e1e836d6c8c907ce074521c37b70912132643bc5cd75154b93c7313fb2f:eyJzZWxlY3RlZExpbmVDb3VudCI6MTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNjOWJiMjBlOWU4OTE1MDJmODBlYTkzYTg4Y2M5MDI0NWU4ZTJlYzIxYWU0OWQ3YTcxNDc3YWI3MzY0MjFjYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImRjYjVjMGQ5ODQ2N2E5MjFhZjFhN2QxM2YyNDEyMjFlNmMzMzJiMjU2YWVhNDg1NWJjZmU0YThjMWNlOWVkN2EiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjU5Yzc2NzVlNGY1ZjQwOGViNmI1Yzg4M2ZkMzhkYWJlZDc4ODE1ZDY4MmJkNGYxY2IxYzIzYjM3NTFkNmMxMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImY4ZWRiMDEyYWQ2NmI1YWQ0ZjYwODg5YzM4NGI2ZTA5YmQ5NzRmZjAyN2FkMmUzOTdlNmQyZjNmNjBlZDJmZGEifQ"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L19-L22",
+          "version": "repo-lines-v1:sha256:c3e512d86fb4b8e310ed8971d2f6b1dce1d33e818f4886bc2303d1f148596aee:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTQ5MjQyOGRlMzNiNGJhNDU3ZGU1MjRiM2ZkODhmZDY1OGY4MjM3YmYxYzI2OWM0MTgyMThmNmUwNDQ2ZDdmMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWMwMzhmOTljMzVhYjBjMTM5YWM4MzhmZWMzYThhNTkzNmMzMWJhZTdjNjQ0YjAwZTYwOTA4OTA0NTJiYjliNyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmQxYzA1NTY4YzY2MTQ5NTJlMWY4ZDU1OTBhMjg0NmU3ZWJmNTM4ZTIyZGFiN2ZkYjJjZTY0N2FlMTRhYjdiZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_79acd090b3334d6fbe150cedbda7c5dd",
+      "statement": "Verified previews and edit mode may render drafts with private, no-store and route caching disabled, mirroring the markdown twins' session rule.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/content-markdown.ts",
+          "version": "repo-file-v1:sha256:cc6d3753a34411f37a95e65f52fc87b28f14e8ab96c53d124a155dfa3b5485c7"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L69-L75",
+          "version": "repo-lines-v1:sha256:85fb386a39605c401d818603cd2df3a0609c1663b95c18a0380c08d9a0975349:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1ZDYzYjk4NmUwMzA3YWI0MjY5NGU5NTBlYjdhOWYyYTQ3ZTlhMmUyZTI2OTY1NTg1MWUyNTI1NDNmZjM2NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjc1NGMxMTgyN2Y3MGNkNTJhMmI1YTUzMjMzNjAzMjk5NjljNjYwMzNjMGMyN2FjYjgyOTQ1MmM1NzA5M2E3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODA0NTkzMWM4NjUyOTg5Mzc1YmI1ODBkZGNhZTE4OTZjZDJjOWM5ZDdjMDgwOTBkODkzZGY0NmNjZDJkNTViMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0b4f55d874b34927bfdbf0885492ea91",
+      "statement": "Published OG images are cached public max-age 3600 with s-maxage 86400 and stale-while-revalidate 604800, and both the entry and site-settings cache hints are set.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L159-L165",
+          "version": "repo-lines-v1:sha256:4a69c81af250946012802f7d3633eaab96c9f5a8fa032141ea4b769854c279a3:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODgwMTE1YmMwM2QyZWVlNmQwNTQ0ZGIxY2U3NGQ0MmI4ZmZjOGY1OGRhM2VhMGI3NzI4MTdmYTM1YWQ1N2UwYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiM2MyNjE1NGI3ODY1NGE3MzUyZGRiOGFhYTNmNTM1NGJkNjkzNzU5NTNkOTY2ZDY1MmU0ZmQxZDIzNTZjYjQzZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDU2ZTNmNTUxYjJmNjU2ZWI0ODI3NDhlYmM1N2Y3YWI2MDJiOGFjNzY0NTU5OTE4N2NiMTA3NTVmMGExYjZjYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYTIzODcxYTU1MGQ0MTUxZTllMmQxMjg3ZmQyODJiNGViMDRlNmFkNTRhYTVmZWZmODMzYTVlNTc0N2JjYzM0NCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_2fc4d9f9650c465fb4af8e5e1107a38e",
+      "statement": "The collection prefix is matched by scanning the known public collections list rather than a plain-object map, avoiding prototype-key matches such as constructor that would 500 downstream.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L140-L146",
+          "version": "repo-lines-v1:sha256:2b2bb9daf140a73d96547bf0493760ec34358769ada36f3c60e5a57ac1863924:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiM2M5YmIyMGU5ZTg5MTUwMmY4MGVhOTNhODhjYzkwMjQ1ZThlMmVjMjFhZTQ5ZDdhNzE0NzdhYjczNjQyMWNjMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiOTIxMGVmODMzM2Y2OGRhM2IzZDlmNDJlYWJlNTUxYzBkZjM5MDEzY2EzNGE3ZGIzNTliMzJhNDc5ZWU3ODNjOSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTljNzY3NWU0ZjVmNDA4ZWI2YjVjODgzZmQzOGRhYmVkNzg4MTVkNjgyYmQ0ZjFjYjFjMjNiMzc1MWQ2YzExMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjViYjFhZjUyMWJlY2Q1NWQ3MDU2YThhOWEwZGQxZWJjZGExZmM3OWZmMjNmNzQ1Nzc2ZjQ5OTU4MzM1MjkyMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b6fc1ac0c37f4b8f84ce2ed259b3e95c",
+      "statement": "Each app's OG route is a thin wrapper supplying its palette socialBackground to the shared getOgEntryImage builder.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/pages/og/%5B...slug%5D.png.ts#L1-L7",
+          "version": "repo-lines-v1:sha256:fe0b6886aed392272e4257e06bc6a5d5b0c6565382da2979636d40fa86773d80:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGU0NDRjNTU5ZWZhYjFjY2ZlNzA3M2I5NDBjOTQ4Y2Q1MDQ2NmMzZjJmZGIxYjRiMmRlMTMxZWFkODRjZjQwYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDAyZTZjOTIzNDVhY2IxYTk5OWVlNWRkYzllYWRkZTkzMDk3ZDMyOGVjZTdlMmU5MzllYmY4NTE1MDNmZWU1YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjEsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGE3MzQ5MmQ4OTQ2YjFkMGY5ZDljMDRiNzA0YTkyMGYyNGY4OWVmN2M3ZjczMTFhODU5OWQxMGM3ZjYzNThkMCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

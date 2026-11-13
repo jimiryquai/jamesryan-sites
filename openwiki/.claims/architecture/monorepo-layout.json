@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:c644341e4c33d1a077f65b885913320a39b2663c12f6cdc303dbef7f5ee9ae14",
+  "claims": [
+    {
+      "id": "claim_9dff722b184f4bbdbea9763e5d07c605",
+      "statement": "The pnpm workspace contains exactly two apps (marketing-site, digital-garden) and three shared packages (astro-config, cms-helpers, ui), each declaring a typecheck script so the root recursive typecheck covers the whole tree.",
+      "evidence": [
+        {
+          "resource": "repo://pnpm-workspace.yaml#L1-L3",
+          "version": "repo-lines-v1:sha256:253208fa7c1b64372c219b9e19cef15ed70ca93b66a4d5c4c4d2297a5aff8880:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWRiMDc2ZWI4MGFkZTE5ZmVhM2UwYTQzMTk4NmI2NTVmNWZhNTllZDYyNjdlMTA3ZDY4OGI2MWMzZjQyMTc5NiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODBjY2ZhN2IwNGIzODcxMmI4NTI5Y2I3M2QwYTAyOTU1N2Y2MDVkOTFjMGQwOTE5M2I3OTA3OTY3ZGRlMTQyZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjAsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZGQ0ZmU3MTcyOWY5ZGQ2MjljNDkyOTdlYWYzN2QyYWIyODIxOWU4OTU0ZmRkMGQ3Yjc1NGU5OTNjZDUzYjA2YyJ9"
+        },
+        {
+          "resource": "repo://scripts/workspace-packages.test.mjs#L5-L16",
+          "version": "repo-lines-v1:sha256:d62c00a5b8b8a803bddaf22b8b17321bf4f62d427e5cdf998962e58d717a1644:eyJzZWxlY3RlZExpbmVDb3VudCI6MTIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI2YjI2YWU3NDA5YjE3Y2U3YWNhNDU4YzYyMTNiYWRjMDAyNDZmZDVhNjc3YWIwYTVhN2ViZjJlNTkxZTIxYWYiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjgwMjc0OTJmYTBlN2M5ZmFjYmE0NTU5Y2Y0NWRmYWY5OWU1MjZiY2EyMmJlODVlZmE5YjdmZDg0ZjFkZGNmYmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImFmZWVhYWI0M2Q0ZmI5MTZhMWIzMzFiNWQ3YjcyYjM4NGFiOTkzYzJkZTIyNDBlNDM3YTUyNmVkYjc5ZWUzZjQifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5201a34e34a04e45b12429deb2b19797",
+      "statement": "Both apps are wired to all three shared packages via workspace:* protocol dependencies.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/package.json#L22-L24",
+          "version": "repo-lines-v1:sha256:ef4557ea3b27bf27f21dac679ad7052d6e3fb80188e0b893e71b65128d5a7c01:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODFkNzVjMGNlNjI4NmY5MzM5OWEwODgzZmYxYjkyZDAwYTM4YTQxOTVhNDU4ZGI2NWMzZjg4ZDFiZDQwNWIxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmZkNDE5ODdiN2Y5ZmQzODMzZmFkMmUwNjI3M2RlNzA5ZWY5M2YyNjI5YTlhYWRkY2IwNjg0YjExN2RhZDRjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTM5MWE1OTY4NWVkZjUxZDcyMWI4MTNkODAwZjU0ZWQ2OGMxMTY3NzE0MWI3ZTMxZmQ4NGE4OTA0YzM5NTVjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGU1M2ZmMDIwNzUxNmIwMzhlYTFjYmFjMzFiMzUwZGFjOTFjMGI4YTI2NDcxMjI1NGE4ZmJiOTEzNjc2Y2EwMyJ9"
+        },
+        {
+          "resource": "repo://apps/marketing-site/package.json#L24-L26",
+          "version": "repo-lines-v1:sha256:ef4557ea3b27bf27f21dac679ad7052d6e3fb80188e0b893e71b65128d5a7c01:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODFkNzVjMGNlNjI4NmY5MzM5OWEwODgzZmYxYjkyZDAwYTM4YTQxOTVhNDU4ZGI2NWMzZjg4ZDFiZDQwNWIxNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmZkNDE5ODdiN2Y5ZmQzODMzZmFkMmUwNjI3M2RlNzA5ZWY5M2YyNjI5YTlhYWRkY2IwNjg0YjExN2RhZDRjYSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTM5MWE1OTY4NWVkZjUxZDcyMWI4MTNkODAwZjU0ZWQ2OGMxMTY3NzE0MWI3ZTMxZmQ4NGE4OTA0YzM5NTVjNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNGU1M2ZmMDIwNzUxNmIwMzhlYTFjYmFjMzFiMzUwZGFjOTFjMGI4YTI2NDcxMjI1NGE4ZmJiOTEzNjc2Y2EwMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_da6d9842cbaa4012836a5a8dba9f7a4c",
+      "statement": "Only the marketing app depends on the page builder and sandboxed AI comment moderation plugins, and its typecheck enforces page-builder seed parity before astro check.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/package.json",
+          "version": "repo-file-v1:sha256:6387f28b1c1dd0d48eb746fb1b732b10f526d3990de346f3b77ecd9f857c7cfb"
+        },
+        {
+          "resource": "repo://apps/marketing-site/package.json#L13-L16",
+          "version": "repo-lines-v1:sha256:9a5cdf9ef89a7c72f7f06ea02866c8a0c8d0eeef8a714f7d5840c20574556590:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjNTJkNzZmODllMWJhMWM1ZmI5OWM5NDZkZWU5ZmVjZjhjY2ZlMTQyNmM4MTQ5MmI3OWQ4NzZhMDkzYzFjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODczZDMyZjM2MzNlZTI4YTFmODJhZjNkZjBjMWYwNjBmM2IxOWZiN2ExODk1ZmZmOTdiZTFlOWQyMzYyZGZiZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDM0MGUyYjhhMjE4NmU5NWU4ODBjNWEyNGUxZTM4NDM3MGMzNWY0MTI2YjI2YTFmNmFkZmQxMWJmMGVlZGE5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjZkMTAxZGY5ZTFjZTEzOGUzZjdlM2VhZGQ0M2YyMzFmOTAzYjlmMTY0MWRiYjU3Y2ZlMThmNDU5MjM3YWRjZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_69a912cfee4844e18d32c54a61f7162d",
+      "statement": "@jamesryan/astro-config is the sole owner of platform dependency pins and exports only the createSiteConfig factory and the worker entrypoint.",
+      "evidence": [
+        {
+          "resource": "repo://packages/astro-config/package.json#L3-L9",
+          "version": "repo-lines-v1:sha256:503d7795b3909850141fad49067eb7243a525c9478ee602e5fc54136e5a69b65:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDBmYTZiN2M3YWRjMTFjZTA5OGE0YTljZjc1MmViZDg1ZGQzZTU4YWMwZjhlODA0ZDkzMjljYWY5YjRhYmZlNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYmEzYjQ2OWQ5ZTA5NzU3MjI0NjY2NzM0YzllZjdiMjU0ZDg4NTM0ZjVkNWJiNzA5ODk2MDgwNWM1NTNkYzMwNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjIsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOTQ0NjI1ODViMzdjN2YxODcwNzNmOTFlNGNmNWVjOTQ4ZmFhYmU3NGZmYTA2OGE3MGZmYzMxZjQ0OTkwYzk3ZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTkwOTZmNDRiYmQxZDM3YjY0ZjdhNTU0YmJiNjI3NGQyMzE4ODZiNjQzN2M3MjljMjE0MDIxOGI3NWVlMmI4OSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_b483c7bc3c434be0936811bc2df391aa",
+      "statement": "@jamesryan/cms-helpers ships TypeScript sources directly with exports for content helpers, og, reading-time, discovery, and taxonomy-archive, and its typecheck verifies embedded OG fonts are current.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/package.json#L3-L12",
+          "version": "repo-lines-v1:sha256:2bbb992a78ca737fef60eb851c760209f12e119d1a5992554fef3fb86ee857c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYjk1YWU4YmE4ZmZlOTM5YzliNmEyNmRiOTlmZmFhNzU4ZmIyODI5YmU1MTUwN2I5OGJjY2U2ZTU4YmY5NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0NDU1MWZkMTk2ODkxY2I1ZTYyMjI1NDRkYzA2ZDg4NDBmMDlkN2RmNzJiNDNjNmIwNzFkNTBmN2M4ZGIzY2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMDEzYTNiZjdmZWZjODFiN2Q2MGNkNWQ0ZDE1ZjhkZWM1YWU5OWRkYzU3MTNlZDQ1MTA5NjQxOGQxYTY1YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNDA2OTI2MmE0ZmE1ZmRiZTcwZDRhNTAzNGMwZDZiNThhOGFkODVkYTkzYTcyZmMxZGJkYTRjZGYzZWNiNmUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0f4aabafd0364c04a5d08c365b6a4d21",
+      "statement": "The workspace enforces a supply-chain policy: builds allowed only for esbuild and workerd, exotic subdeps blocked, and a one-day minimum release age with named EmDash-family exclusions.",
+      "evidence": [
+        {
+          "resource": "repo://pnpm-workspace.yaml#L5-L22",
+          "version": "repo-lines-v1:sha256:babe977d29aae203d0f9add132107a9dd4d60e64d8ceb1adec8d3e7b8e97dc72:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE5MmE2NzA3ZGVjZDE1OTE5OWM5MzQ1OTU4MGY4NjFjMDhlZjJkZWQ3ZTVkNzk1MGY2NzE1ZTE2NDZiYmE0MWUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjMzYzVlOTE4ZWM1ZDMxMGNjY2JiZDJhNDg0NDE1NWQ2ZDFhMzBmYWI4Y2MwMDIyYjA3MGY3ZmViNWZjMmIwZTMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjYzNTIwMDY4ODY4OTU2OGNiNWZmZTg4N2U2ODIwNGQwMmVjY2UyMTBiNTY2ZWExOWQyMWJiNzBlZDE4ZWQwNzEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_06346cf955d94003873b97e61d245c9a",
+      "statement": "scripts/workspace-packages.test.mjs asserts the garden's dev/build/typecheck scripts keep telemetry disabled and that stale kysely/ulidx dependencies stay removed.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/workspace-packages.test.mjs#L5-L12",
+          "version": "repo-lines-v1:sha256:b7c2482a893ebe675c90840548d589195499b48b21b3e509b84c412a9be3db23:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGE2NGMzY2IyZmU0M2IwOTZlZGExMjJmNTMxOGExNmViNTc5MWJjNzE1YjE2YjEzYmE4ODJlOTRiYzExMGE0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODAyNzQ5MmZhMGU3YzlmYWNiYTQ1NTljZjQ1ZGZhZjk5ZTUyNmJjYTIyYmU4NWVmYTliN2ZkODRmMWRkY2ZiYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmExM2JmMzU2YjczMzhmOWEwOTAwMjUyZjIzOTQ0OWRhMDBhMzcyNzM5M2U5MjdiNWZhZDYyN2FhMWU4NjAwYyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

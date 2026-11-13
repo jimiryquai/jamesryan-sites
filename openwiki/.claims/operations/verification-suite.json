@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:18fa9382f5b432c7973170a4d98bc8de3179b67be1ab03410f0dc3803298d498",
+  "claims": [
+    {
+      "id": "claim_f95ed1a26a2e4c258c5e6402262096d3",
+      "statement": "Root pnpm test runs node --test scripts/*.test.mjs first and then every workspace package's test script recursively.",
+      "evidence": [
+        {
+          "resource": "repo://package.json#L12-L12",
+          "version": "repo-lines-v1:sha256:f0d8926e7207a50eca5ee6591f44d2f8486df5607bb254a8d52fabedb682d143:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBkODkyNmU3MjA3YTUwZWNhNWVlNjU5MWY0NGQyZjg0ODZkZjU2MDdiYjI1NGE4ZDUyZmFiZWRiNjgyZDE0MyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZjBkODkyNmU3MjA3YTUwZWNhNWVlNjU5MWY0NGQyZjg0ODZkZjU2MDdiYjI1NGE4ZDUyZmFiZWRiNjgyZDE0MyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzk5ZjFkN2E3MWQ2Yjk1ZDc4NDQ3MWRmNjlmNzFjZTFjNDhiZTA5NzllN2NiMTA4YzYzNGQ1OGM0N2ZhNzg1YyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjYxYzYwZGFkNTJhN2ZiOWZiZjY5MzI0ZTU1MjBiOGI1MzMzY2Y0MmRjOTc4MTY5ODhlZGY5YzYwNmE2ODEwZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f4ecf6c0aa774e62a5ae0e6e1f050b5d",
+      "statement": "check-rendered-seo.sh builds isolated per-entry state under a mktemp root with an OS-chosen free port, seeds it with seed-local.mjs, serves the built Worker via wrangler dev --local --persist-to, and validates rendered SEO, media, and markdown over HTTP.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-rendered-seo.sh#L1-L105",
+          "version": "repo-lines-v1:sha256:708f88e71261be651310b7c597d0f082068ab88b127a1ce06b50adf41b31f80d:eyJzZWxlY3RlZExpbmVDb3VudCI6MTA1LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiIxZDk1ZmMwNGE4MGM5NTJmNDljZTQxODg2MjdjNTNiMGZiZThjNDQwNDFiOTUyZDU5MmFjZDFkZTk5ODYxNDY2IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiIxZmM5YTZkODZkMmNiYzhmNDAyMDQ3Zjk2NGM0MThmMjdlYWQ5ZDEyMzA0NzIxM2FkOTIwZWZkODY3NzdmODMzIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MCwicHJlY2VkaW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MiwiZm9sbG93aW5nQ29udGV4dEhhc2giOiIyN2QxY2RiYTVmOWIzODY2YjcyYWU1ZDc2NmRhYjg5NzNjMGUwYTA5MDYzNDc2OGYxM2ZmOGVhNjk4ZTFkMjMwIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_7c2a79149c6d468d98962acd9a4b3592",
+      "statement": "Fixture mode generates seed, seed-unpublished, and garden-code fixtures through seo-fixture.mjs, with the unpublished variant stripping wrangler vars to test the no-settings path.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-rendered-seo.sh#L27-L77",
+          "version": "repo-lines-v1:sha256:f9ba5619ea6919d1e7443a909957a6e4ede94b209b0f7e717020cc60902143a4:eyJzZWxlY3RlZExpbmVDb3VudCI6NTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjODA1OWY4MDFlZTAyM2NkNmRjZjY2M2E1M2EyZTZhNzVmZTQwNjYxNTg3NWI0YTk2N2Y5ZDJhZWE2Nzg2NTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI4NjBjM2Y3MTAxNmUwMWY3NGU2OWU1M2M2MWEzODNmY2JlMTY3NDRiNTI1MmE0ZjhjMzI3NTY5MzIwZjI4YzIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0MjdhZWRmOThkZmEyZjc1Y2RjZTdlNmNiOTVkYzdjZTNkNjhmMjE5NmMzYzRjMDJjYTFiNzFlMGE3MTBiMTMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImIxNjg3MWIxYWUzMzg3NTU3MTg3N2QxMzAyNzVmZjkyZmU0OGI0Mjk2OTUzN2FhNjdjYjA0MjUyNjIxZGQ3MGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_ac42d51ce50d49beb8f341db342675b7",
+      "statement": "Smoke checks retry failed endpoints every five seconds within a three-minute shared deadline with request timeouts capped at fifteen seconds, memoizing per-URL results and printing each URL's last result on failure.",
+      "evidence": [
+        {
+          "resource": "repo://docs/deploying.md#L59-L64",
+          "version": "repo-lines-v1:sha256:7c861529a426afdf5f239915b035ac036fca4ba0478c2a3d225d00db4a5ae599:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzBlMjE3MDU2MDFiY2I5Y2UwNTVjOTZlMzY2NmRkNjZlY2ZmNTQxNWMyM2I0MWFmYzUxNWViOTZjYTkyNThmNyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMWYyOTFkMTE0YWEwYmJiODk3NjU4NGRiMGNkYjc5NmEyZDU4YjNkNzdjZGFmMGIwMWM1NTg2YzU5YWI5NjI1MCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmJhZTI3MjllMWYyNGU2OTQ5MDBlYzRkNjMyNDM5NmVjYzFiNjg4MGFkODgyODM0ZmQzNGZjMDBlMGFiMmYxNSJ9"
+        },
+        {
+          "resource": "repo://scripts/smoke-staging.mjs#L6-L36",
+          "version": "repo-lines-v1:sha256:0ad05dd90dcaaefeb313d14d7c75c19d88b7c4da0f5db17cd570aa00b03d388b:eyJzZWxlY3RlZExpbmVDb3VudCI6MzEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU0ZWEwZjRmOWEwNDJhZmE0ZmYyYjkyMGUzZDY3NTVlZTFmYzRmYjA0NzAwNmZmNDNiMGU0OGJjMTI4MGM3NTAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImYwNjdlNjJkYjI3YjYyMmY3YjgwYTRjNmRkNTE2YmM2NDAzNjFlYWE4NDZjODYwMzU4OTcyZjU0MzY0MWI1NjIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjcwNTJlMzY5OGZmMTk4NTEzODk4M2ZlZDU3OGI1YjFlMGZkMTdjZGNlZDgwMmUxZjAzNzlkYzEwN2EyMWE5YTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImI5NjY4NzMwMTljZDIyMTAzZjZjNjVhYzNlNjhmMDIyN2QwYmZjYzk3YTA3MTViNjA5NWZiOGI0MDYxZmM1YmMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_3bd921bbb39f439db201dcdeba0ddb9f",
+      "statement": "check-accessibility.mjs scans every sitemap page plus the unlisted admin login and search pages in light and dark themes with axe wcag2a through wcag22aa and best-practice tags, failing only on serious or critical violations and uploading full results as an artifact.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-accessibility.mjs#L5-L45",
+          "version": "repo-lines-v1:sha256:5fb003f8b958295291b9cca4bff83d534d04d248da730e861feb818d6aed7ae5:eyJzZWxlY3RlZExpbmVDb3VudCI6NDEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRlZGM2MjVjMjliN2ZiOTVjNWRkNGIzZTI5NGE2Yzk5ZjJmZGQyM2ExMTBjMWQ3MWI2M2Q1OWZkOWRhYzk2OGUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmMzg0MzAzNWYwMzhmOTk3MGY5ODE3Mzc1YWU3N2VhODlmZjY0ZDk0ZDRmODA1OGIwN2RjZjUyNGNmYjEzMzkiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImJjZTM3NTFiZDM0NmFiMGMwMGY3ZTc3YzJhZjBkNmQ4OThkMDlmYmFkYWMyNmQyMjQxMWY5Yjc4NDE4YTJmMjMiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI0ZDJkNmQ2MjAxM2U3ZDg3Njc5NmFlNTU1MTdhMzFhNDM3YzA1ODRmMGYxYzM3ZmExODE1NTQ0OWQ3NmIxOTIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_08b9369ff5c94f958a8fa2c3083f0b57",
+      "statement": "The accessibility check searches the first published post's title words so search result snippets and mark highlights are contrast-scanned on every seeded site.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-accessibility.mjs#L17-L26",
+          "version": "repo-lines-v1:sha256:a9a065cba1a163d000ee463ccae3f9a0c0e795923a44dc841783e9db665a0ab1:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjljY2U2YmY0ZTIwNGE2ZTM4ZTE5MzE2YjM3YTYwZGU5ZTU4MWUxZWJkMmYxYTk0ZjhkOGIwMWI3ODgzY2U5N2UiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjZlZDJiMDQyYjViYWM4MWMwMDBlODhkMzNmM2QzN2Y2NDc3NDE2NmJjZTQ3MGJlOGVhZjllMGZlMzE2ZTIxY2IiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjVjMzgyOTBjNGY5NmIxNWQwY2FjODA4ZGU1NTA2OTEwYzY2NjE1MzEwMGJmMGU0MWIzMmRkNDJiMzA4MWQ0MzciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjcxNWVmOWIzNzFiMGMwMzhhYzkxNjRlNjM3YmMwMjM0YWY4NDE5Y2I5M2FlODdhODdmMjQ2OTRkMmYwMzAyOWMifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_5844599f40ed4c7b97c83e101eae2d5c",
+      "statement": "check-theme.mjs drives the theme menu keyboard-only against a running seeded marketing worker, asserting menuitemradio checked state and focus movement while recording video.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-theme.mjs#L1-L30",
+          "version": "repo-lines-v1:sha256:a2fdfe97885879136f89f118959312798c46566297de70b538a73df90e4c4b85:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlZTJiZmYwMzgxMzExM2NlMTM3NDBjMzE4ZDhlNWJjZmM0NjJjMTA1YzhkNDZlNDZmMmNiMzQ2YzFkM2JjNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyZjg1MmU0OWExNzgzMGZmMDUyNTZiZjgzOWFkNjg4M2VjMDY2MGYwNTgyNzdlM2ViMmQ3NzlhMjczYThmNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1M2I0ZDg3ZmM0ZmJjOTA4ZTMxZWRhNWYzOGIyNDNhZTdhYWQ0YmNiNDJiYTlhZTYwOTlkODUyODJiNDFkZmUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

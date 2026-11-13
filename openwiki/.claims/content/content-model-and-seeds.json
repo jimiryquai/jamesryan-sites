@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:1bd27cbc3a35157f448fa3b1be6ccbcf314bf3cbdae087a218b3649785d3adfa",
+  "claims": [
+    {
+      "id": "claim_d845e4d1ff894791b473adbab5f23fbe",
+      "statement": "Both apps define the same eight collections (pages, services, testimonials, faqs, pricing, team, posts, projects), with posts and projects supporting search and seo and marketing posts enabling comments.",
+      "evidence": [
+        {
+          "resource": "repo://apps/digital-garden/seed/seed.json#L14-L250",
+          "version": "repo-lines-v1:sha256:44c0c101e9bf7b64e25557fb9be861fbac9055505c6ba7935cb7bf4acf598d3a:eyJzZWxlY3RlZExpbmVDb3VudCI6MjM3LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4OWJjNzUxMWIyMmI1MzhkZjE0MjgzMzc1MWQ0YTAzNzQxYmIyODM5M2I0M2YxOWY4ZDY2ZDQ5MWRhZjUyZDllIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5Mjg0N2Y1MzIzN2Q2NWQ1NTgzYjRlMTkwMzMyOTM5MjdhNTA4MWNkMDZhZjJjOTVjNWJiZTllNDBiZTg5ZjJiIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZDE0ZWU1NWU0MTgyMWEwZDk3ZTIyYWZhZDIxZGRkODJiYjVkMWE0YzcyYzQwOWQ3NmI1OWVlNWE4NzE1ZTk1IiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiJjYmU5ZjY3N2E0YmYzZGViMDNmNDVmMjVjNjlmYTRkODU1YzdiYTY0Y2NiYmY5YTdmZDZiOWMxMGZhMmZlZTk1In0"
+        },
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L14-L372",
+          "version": "repo-lines-v1:sha256:9767094ac96d91889aeca15bff5aeb1ee13112b308d2522c4f0dda7e8abafa9e:eyJzZWxlY3RlZExpbmVDb3VudCI6MzU5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmOWNhODkxYmZmN2FjMWY3Y2VhYWU0MGVmMDUxMDY2YmU5ZWZlNDdiNGU0MjgxZTg2YzMxOWJlMmM1NWViY2U0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI5NjRkOGMwNzM0Mjk4OTMxMDE1NzZkODhkOTkxMjdlODlkNjg5MWQzYjE3ZTg5ZGYwMmVjOWFlNzA3MDVkOGJlIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJiYTZjOTA5Y2JiZDE4MDdjMDA5MDQzNTc5YWM1Y2Q5NGY1YmE3MDRmMjUxMjVmMDA2MjdjZTgxYjZkMWU4ZWViIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI0NzM1OTA2ZWNhZWQ5MjJmMGU0OGU3OGM0ZjE5N2YyN2U2YzI0ZGMyZDMwNjFjZjAyZGMyYTk0NTliZGUwOWQxIn0"
+        }
+      ]
+    },
+    {
+      "id": "claim_1954fa76664d47919445d223d7f392f1",
+      "statement": "Marketing's pages collection has a layout blocks field whose allowedTypes list exactly the eleven seeded blockTypes, plus an optional service reference to the services collection.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L15-L58",
+          "version": "repo-lines-v1:sha256:bf1341c50810eb1b07d6f42208c6b6da41c18321c3b1d14b5740cb7b9659dcd7:eyJzZWxlY3RlZExpbmVDb3VudCI6NDQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQ5YTk2NDQ5NDcwNzI1Mzc4ZDBmZmQzOWNlYmViMzYxMmQwYzNmMmQ4ZDFjYzY4YzMyMjYxMGE4ZTFmMTMxYjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0MjIzOWIxYmQ4MmI4NWVkNTBjMThhYmU2YjhlOTk3ODc1NWRhYzZmZDgwNDA5MjRjOGE4ODBjNTJmMDY1ZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImE2MjhhZjZlMGQ0ZThlMTU2YWNmMmZhYjgyNGU5OTQ3N2JiNzI1ZGM2MGQzYjRiYWQyOTEwODI0YTU1NDQ0YzAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6Ijc4MzRiMGY2YmQwMjg5MTYwNDQzMTQ3MDhiNTBkYmZiOTcwZDg4Mzg4YTBmYmU5OGVjODhkOGIyMDliMWRjN2YifQ"
+        },
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L3278-L3278",
+          "version": "repo-lines-v1:sha256:33fe409785c03448a9860af6eca2de2025a82543431c740de93f872f6952d5b4:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNmZTQwOTc4NWMwMzQ0OGE5ODYwYWY2ZWNhMmRlMjAyNWE4MjU0MzQzMWM3NDBkZTkzZjg3MmY2OTUyZDViNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzNmZTQwOTc4NWMwMzQ0OGE5ODYwYWY2ZWNhMmRlMjAyNWE4MjU0MzQzMWM3NDBkZTkzZjg3MmY2OTUyZDViNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNWYzNmE3Y2M0YjUxZTg5ZDY0ZWZkZTA3NDc4ZjdiZDhiMWVkYzZhY2I2MjdjNjYzOWRkOTMxZjM0NmNjNzY3OCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmNmODdkNDRiZWJlNDYwOTAwZjRlN2UzY2JhM2JmZTBjOTBkODVmMGI1ZmYyOTM2NzY0OGJjYmUzOTRlZjVhMiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_83c600e7d66a4d829b106f22ec8b08e2",
+      "statement": "Shared-content collections (services, testimonials, faqs, pricing, team) each carry an optional service field used to scope page-builder block queries to a page's service reference.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L60-L240",
+          "version": "repo-lines-v1:sha256:499e3a0e2408797d9a853fd7f7479867e388fe8be1ded30a392a6cb533954c8e:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgxLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJmOWNhODkxYmZmN2FjMWY3Y2VhYWU0MGVmMDUxMDY2YmU5ZWZlNDdiNGU0MjgxZTg2YzMxOWJlMmM1NWViY2U0IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmOWNhODkxYmZmN2FjMWY3Y2VhYWU0MGVmMDUxMDY2YmU5ZWZlNDdiNGU0MjgxZTg2YzMxOWJlMmM1NWViY2U0IiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiIxZDFjNWExN2E3OTBkNDkzZWNlM2Y4MDNkOTRhMTBlNTBhYzhjYzZjNzg5MzZlNTY1NTE5NjVlYjkwYmNhNTFiIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI1MGI1OWM1NWE3OTc2YzUyNTZmMDhmMzgxNGY4MTM5ZTUwZmY0OTcwZWYxNzA2YzJlYmUwYTI5MjI2YmFiN2I4In0"
+        }
+      ]
+    },
+    {
+      "id": "claim_cd215bca13f5479abd5e3ba30efde238",
+      "statement": "Both seeds define exactly two taxonomies, category and tag, applying to posts and projects.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L373-L440",
+          "version": "repo-lines-v1:sha256:77bd53762e442eab7e966f79c72af6aa9aeb14a2e64477578a699b4947ce3a93:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJiMGMxOTgzZDIxMDZiMzEwZjQzYTQ1YjA0ZGFhOWU5NWUwZTI5YTk5NThhNzkyNDRmYmU0MmRkZDI4YTgzMjAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU5M2ZjOTc4OTQxNDA2MjMwOTZjYTlkYjcxNTQ0MjJkNDA0NGNkZGJmYzk1YWQ0MGRhYTc4NWY5YjkzNDJjZmEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6Ijc0MmNlMWQ2N2RkNzliNTQ2ZTRlNWNjMDdhMDkxY2YxOWIzOWNhZjBlODBlMzk5MzA1YjU5ZDhlYTM0MjYyYzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjQxZTRhNDAxOWQ1YjRlZTRhMGQ0YTFkODc2NmE1ZGQ5ZGI1NGQzNDY2OTkzYjE4OThiODNiYWNlMjQ4ODFmZGEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_6964b29b50df451d9d22798cec054bed",
+      "statement": "Seed settings title and tagline are the site identity source consumed by layouts and metadata via resolveSiteIdentity.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L9-L12",
+          "version": "repo-lines-v1:sha256:82609d433407843c322b8d2483e63bd9a8b3a7eb98cc8670f49ba4e235535f89:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ4NDYwM2UzMjg1YzU3MjUxNTM2Y2EyMjkwYjBiZDc3OTc1NTA0YmNiNDZjODEwYzc2YThkNzA1YjNmY2YwMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzkzYTViNjM4NDlhYjEzODVlNGVlNWEzMjQzZGRmZDZhMjY4MTAxZTM0MTQ0NTI4YmVhODc2MmZhNDIyODU3MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWM5YWI1ZDdkMDlhNjhmZjY5OTM2MTBlOWVjY2I0MTIyY2VhYjBiZGUxZmEwMDdjYWI2YWVkYTFhMjg0YmEwNyJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/site-identity.ts",
+          "version": "repo-file-v1:sha256:01d94f9d71b6f7c59ee133bd43d6da2a9f2394185cf2b079117b32a768e06d40"
+        }
+      ]
+    },
+    {
+      "id": "claim_803816937b8f4545b8c9f89ae9e0cea8",
+      "statement": "Seed media uses EmDash 1.5 native $media.file objects with paths relative to seed.json, and seeding passes an uploads directory so EmDash reuses its upload, dimensions, and hash deduplication.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/seed/seed.json#L3277-L3277",
+          "version": "repo-lines-v1:sha256:4d5cd2fb4f3df884515255b39523f2f8b5472beea9f566ffca204db802561041:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZDI1NGY4NTY5NzlkMzZjNzZmNGZiYTdkMjk3NWM0MjE5NjVjYTcwNTYzNDhiMzZlNmViZDA1ZmZhYmVkZDZiNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzZhZmVmNmY3Y2IwZmVjN2I0YWEyNzJiY2UzY2FjZTNlNzNmYzJlNDc4ZjZmMmM4ZGRmMDQ2YmRiMDYwNDhlMCJ9"
+        },
+        {
+          "resource": "repo://scripts/seed-local.mjs#L30-L32",
+          "version": "repo-lines-v1:sha256:3083844a659f224c51682d7d7d774b0df2fbc5567c6f1453ab3446c551b58ebb:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiODU1YmYyM2NmZGViZWNlNTZjOTllZjZmZDk4NTRkZGMxMWU1ZjE4NmNlZjkxNjU3YzRhNmZmNTZkOTk1NDhmNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDcyYzk2YTBmYmMzYjBlOWE2N2I1MWEwYWRhNDVjMWQzODk3N2VhYmRiOWY2MzgyOGZiZDdkMDdlYjNhNmNkMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYzRhYmEyMDVkMmE2OTNlYjk0NTk3YWMxNzcxYzJjNGUxMDQ0MDRkZTA4NmVlNGRkMWQ4Nzg4MzU2M2MxYzhjZCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjdkYzU2OWU3ZDdjNTczMjkwNjU4ZGM0MmM0NWE1ZmI0NTlhMDFiYmUyYWUyYjIwNjQ0YmIxMzBmN2EzMjc3ZSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_f347d5cb00af44e28fba411b22837227",
+      "statement": "Both apps declare their EmDash admin label and seed path in package.json emdash blocks, and the site schema in the seed may differ from live deployments.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/package.json#L6-L9",
+          "version": "repo-lines-v1:sha256:822d6486d5a8ef73304c656b7d8800bbacfe151fe7a09340099f65fe79be065b:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjk4ODRjZDk0YjQ2NjQ2ZmU1OWM4MTgxZjgwMDgzY2Q3MTYzZjE0MWU2OTFhZjZmZDVkMDNhN2RlZmM2ZTE5YSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNGQ1Y2QyZmI0ZjNkZjg4NDUxNTI1NWIzOTUyM2YyZjhiNTQ3MmJlZWE5ZjU2NmZmY2EyMDRkYjgwMjU2MTA0MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOGI0OGU1YWYwMTk2OTU5YTdhMWQyMjZiNGM4OTRhNzI3ZjM4NGNjZjg0ZWQ1YzI1NGUzNGM2YzAxZjUwZDc2MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDM0MGUyYjhhMjE4NmU5NWU4ODBjNWEyNGUxZTM4NDM3MGMzNWY0MTI2YjI2YTFmNmFkZmQxMWJmMGVlZGE5YSJ9"
+        },
+        {
+          "resource": "repo://docs/publishing.md#L13-L16",
+          "version": "repo-lines-v1:sha256:090cef47698e0095feba17630c21696a5987e62d5f90fa242e60f711196433f1:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDhmNTUzMzZhZDY5ZDhlNjRmMTEzOGVlYzM3YzJiOWViOGUxMDRlZjUyODJiMmJhNmQwNjU4NzBhMWEyZDIxOCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzY0YzE0OTI2YThkOTYyNWNhOWM2YTJhMTUwM2QzYzhiZGQ0MjE1Zjc2MjhjODU2MzhmNDdkNDcwM2FiNWI3NSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYWZmNjEyZjI4OTVlMTA5YmM5NWVmMzFlMDdmYTU4ZmQ1YWU2M2Y1NWRjOTJiNDI3MjczMGZjYTgzODYyNDE5ZiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZDk4MTNlYjc2ODEzOTU1NGFlNTM5NDIwNzQyZjkyMDUyNDc0ZDVjOGRmZWEzZjIyNmQ5ZmJlYTc4ODZjOGRkYyJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

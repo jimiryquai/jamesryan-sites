@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:ac870955e2cd2fb3ca6501a0ce3caa8b6f82b3a88784f1151f00b6bc7764edde",
+  "claims": [
+    {
+      "id": "claim_d2bd38e0bcfa44f18bdc63f22e0454e1",
+      "statement": "seed-local.mjs requires a prior build, locates the single local D1 sqlite file under .wrangler/state/v3/d1, applies the seed via emdash seed with an uploads directory, then copies staged uploads into local R2 with wrangler r2 object put.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/seed-local.mjs#L6-L41",
+          "version": "repo-lines-v1:sha256:f8c481971c2531ec2cca47afc2b743dc337c4b01df485394fc73985fd89ad75a:eyJzZWxlY3RlZExpbmVDb3VudCI6MzYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImQxMWFiOWU3ZmMyMzgxNzUwZDExMDNmMWQ3NjRjNTBmMjQ2ZWI5NDU5ZDVhYjczNjU3ZWNiZjg5OTA5MTUwNjkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE4Mjg2NTg5MzdiOGIzYzNiZWNmOWEzNGM4MTA0ZWVhMTlmZDA2Mjk0ZmM3YWU2YTZmZGUwY2Q0NDJkNDVhMWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU2ODI1ZjQzMWJjM2YzZjEwNWY5ZDYzMGFjNzlhYzRjNjcxM2U4NjgyMzNmYWRhYWYwNjhkODJkMzZmNmUyMDkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMzZTVjOTJhNDQzYzEzMDc0NzcwZGQxNTFlOTEzNTA3OWEwMjhmMzM3MWU1YzI2OWNmNDcwNjRiNzNmYjMxNWIifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_b9b8da0699274a1ca76db6a3488aef8f",
+      "statement": "Staged uploads are kept so a failed R2 copy can be repaired by rerunning; reruns reuse existing media rows and write no new upload, making the copy loop idempotent.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/seed-local.mjs#L28-L30",
+          "version": "repo-lines-v1:sha256:9643a1b79037c4a1f36cfd82da5215c5b709094a1c691e25f4eb8e06b80134ec:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTI4ZjcwNDYyZDA1MGNiNGRhMWIyYTE4M2RkMDc0OGMxMjY4Y2RhNWIxODVlYTY5ZThkNzkyZGE1OWQxZTkzZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODU1YmYyM2NmZGViZWNlNTZjOTllZjZmZDk4NTRkZGMxMWU1ZjE4NmNlZjkxNjU3YzRhNmZmNTZkOTk1NDhmNCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMzIwNGVkNTFkYjA3N2ZlN2ZjY2IwNmRmMTU2NjI1M2E5ZmM3YmQwMWI5MWI0ZGIwZWU3YjVkZDIzNjNmMGRlNCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZWYzZmZkZWYyZmIxZmNiNDIzNTJiYzI3YmIwYjY2NGVjODA4NzYxNGM0NjNiNTAxZmEyYjNjNWNjYjlkMTEyZCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_03a38772280b4fd5b159b6f1b1987c15",
+      "statement": "seed-media.mjs rewrites image references into $media.file form using exported media-table rows, preserves content alt text and captions, rejects filename collisions and differing bytes, and downloads assets from the source origin into the seed's assets directory.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/seed-media.mjs#L48-L73",
+          "version": "repo-lines-v1:sha256:0d3ddd759548a2ce78accdd528349d39775860e43910e840ee65d6a63c967c78:eyJzZWxlY3RlZExpbmVDb3VudCI6MjYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjdjNGU4ZjEwZTM2NDVhOTViMTU3ZjdhZDE1ZGVkZGQzNTkzZDg2ZGVjOGVkZjc2NTg4MjUyODMzNzg5NzU2NDEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImI0ZDJkNmM0Y2U4M2E1NzJjMWFiY2NhZGNiZTllMzJlMDc4ZmJmOTkzY2YwN2RiMzg3NWNmZTcwYzgxMWRmNTIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImU4MzY3NjdhY2EzMGI4MmU5ZDYxYTA2NzQ3OTM2MDY5Y2EwZDI4NzUzZGRiMTQ0ZGFhODk2ZTg2NTYyNDRlNmIiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjMwODJhM2UzNzhjNWY0N2I0ZGVlZjAzMmFhZmQyMDM1ZmFmNDFlNDNkNDgyYzc1OWYzNmYzNDAzY2E1MTc5MzYifQ"
+        },
+        {
+          "resource": "repo://scripts/seed-media.mjs#L5-L46",
+          "version": "repo-lines-v1:sha256:d7ee797ec330ed31417294de0ced1096aa15cfcb41efd81e188e935ad4ab0b1e:eyJzZWxlY3RlZExpbmVDb3VudCI6NDIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNkNGYzY2YyZjQ4MzAyYzhkYmQ2OTZjZjZmZTg2YWZiNzQ4NmZmNTMwOGM1ODgyMDEyNjU4YjA5ZDJlYzY2YjIiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjAxYmE0NzE5YzgwYjZmZTkxMWIwOTFhN2MwNTEyNGI2NGVlZWNlOTY0ZTA5YzA1OGVmOGY5ODA1ZGFjYTU0NmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUyMTI5Y2UyODBkMGMwYjZiZjQ4Mzg5MTMyOGM1YWQ1MDc0NDAyNDM1Mzc1OTU3NzZhMDBiYjlmNmVkYzQ5N2EiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjU4OGVlZTg5OGQyNTNiOGU4NjViNTc0NGI5ZThkYTMwNTg3ZWQ1ZGU2ZGJmYWM1NDNhYmJiOTkzMGNkOGY4MjEifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_cb5fe60cd96242bf8a8f2d4fbd3d1472",
+      "statement": "seed-local.mjs forces WRANGLER_SEND_METRICS=false and ASTRO_TELEMETRY_DISABLED=1 on every spawned wrangler and emdash command.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/seed-local.mjs#L17-L22",
+          "version": "repo-lines-v1:sha256:f368d19664904cae0a54c066ec50cd4bc24ccdd3ac6125399f36eed461b8f72f:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNzMyOGMyMTg5OGI4YjVjMDlmZWMxNmVmNzBhNTgwNDk1MDIzNGUxYTk3YmNlYTg4NGM4Y2I0NmRmM2ZjOWNkZSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDA2MmZkMjQwOTcxZThmMzRhNjkxZmViZDUxNDg0MWRmNjVkNzIwZTY2OTA4ZDYyZDRhODc2ZWU2YTcwZTExNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZjU2YzJmZTlkZWU4MDAwNTJiZWNmMGQzNzE1YjE4NWIyNTA3NDFiZDc4YzM1YzM5OThhNjJhOTViYzNlOWQwOSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMmJhZDk3YjcyOTk3YTQ0NjgyY2QwOWJjYjIxNGNhM2Q5OWFiZjY2NDIxOTZkMWM5N2VkNDU5NmY1NmRkYzQ3ZiJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_8eafaabe77f64a5fa1a3a366c70028e8",
+      "statement": "Local admin access is recovered through each app's dev-bypass endpoint redirecting to the EmDash admin, and the documented fresh-database order is build, seed, then dev.",
+      "evidence": [
+        {
+          "resource": "repo://README.md#L66-L72",
+          "version": "repo-lines-v1:sha256:4ca8d5118ecb6af267b83d435b37ec549ef0ea15fe6245334f339c563d5b3cc8:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDY3M2E0ZjJkM2M4ODc1MmQ5MWVlZDU5ODkzZDBlNTlhMWM5ZWNkZWNlMWYxYzZkMWI2ZTZhNDFiOWI2ODYyNCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmQxN2JlMzc4ZWUwYmI2NGI4MGE5ODcwZjZhNGRjYzdmODQxY2M3YWNjMWFmNDJmMzU4Y2JmNTBmYjMzYTVjMyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMDkzODljM2VjNzEyMTZjNWZkNDQ5Y2ZiODgyM2ZhYTAyYmYxNDE5NzgzYjBkNWZmZjcwNzBlOTE1Yjc4NDcwMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNjNjZWMyZjIzNGMwZDkyZTliNzQyZTE2NzAzNmUxMGYzZmRlZGM4NTk2MDg4M2FkYWMxMWI4N2E1MDhiOGYxOCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_1bcbee1a8e9f4a61a4b3bb782227906d",
+      "statement": "seed-local.test.mjs exercises the real emdash CLI end to end, checking original bytes, per-use alt and caption attachment, and rejection of path escapes.",
+      "evidence": [
+        {
+          "resource": "repo://scripts/seed-local.test.mjs#L15-L30",
+          "version": "repo-lines-v1:sha256:43c9159ba38c921ba013c21b88d710c03c3334b2a19d9c4342e9c7df45f429d6:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImZmZDdjMWViMzhiMDZjYmViMjk5OTI5ODY1MDY5M2ZlNmQwODVhNGNmNDE0M2Q3YTA4MmMzYWU4OTdhMThlYzEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY0NDUyYTc1ZDkyMTNhZGM2MjBiN2MyODhmMGIzZmQ3YTVhNzU1ZjBkODMwYWU1NDI3ZTliOWQ0MTRjZTFhOTAiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjZlMjNlMmJhNmE4ZWFhZTgzN2VmNjc3YWZiOWI2YTU0OTZlMTUwMjE3MTMxZWY2NTc0ZjY4ZjMxMTI5OGJlZTAiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjE3NzZiMmMyYmIzYWNkYWNiNWM0MWRkY2NkZDBlN2ZhMDgzOGZhNGFlZTU3M2E4MTY4NmNjNjQ1MjczNWZkYjUifQ"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}

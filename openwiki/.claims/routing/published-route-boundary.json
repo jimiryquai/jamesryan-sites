@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "pageVersion": "sha256:14341b7b6cc425c0cdbb384ef4ac9fbd649c1fca410727947e9e11c75b84f194",
+  "claims": [
+    {
+      "id": "claim_65b80c3bc0d047ecaab783f189312fa0",
+      "statement": "getPublishedRoute performs one request-authorized entry lookup per route: EmDash decides visibility, so verified previews and edit-mode sessions receive drafts while rendering trusts the returned entry, and missing or unpublished content makes routes rewrite to the 404 page.",
+      "evidence": [
+        {
+          "resource": "repo://docs/published-routes.md#L1-L10",
+          "version": "repo-lines-v1:sha256:9973e2232f4bc08f49567cb1919abc736a884967f334afd4593ffe82b807ca10:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIwNjZhZTA0ZjliNDBiNWFjN2M3ODUzYzhkZDczMTRhNDNiMTRmYmQ5OWE0MjZjYjZjNGZiZDNkZDZiY2U1NmQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3ZGRiNmVjN2ViYTE2YjRjYjNlMTY2MjA2YzhiMTZiMGEyMWQzMmJlNDY1ZTAwZWZhM2UyZDRiOTZmYmZlNGMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjdhZWEwOWM1ZTQ4OGNlZDFmMTM3YjAwMThkYTk2NTU4YzQ5YWI4NjAzOTJlMGZlZDMzZTY5Mzg5MmRmZDZkZjUifQ"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/published-routes.ts#L41-L62",
+          "version": "repo-lines-v1:sha256:fd520afae20a9ddce3f1e41232fad38e3f0756b4eef26be3f428d9002f64c4b3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijk3MmE0MjkzODJiMmUxNDcxOGUwZTM3YjA1NzBhOGExNzAyOTkxZmNkODQ5OGNkODQwNjBhOGJmNGYwNTAxN2IiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImJkMGMwYWE5ZWZlYTI2NjVjZGU3NTUxMmM2YjhiZDM4YTk4NWEzYzRiNjY4YjU0NTQ2ZjE3NDc0ZWQ3MmExMTQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNjMmJkOGViYWNhYjlkZWIyODFkY2RmYTZiMDdhNTFjMTExZjhkZTY3YzkyMjRlZjY4MjUzNDgzYjczNTE1ZTQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQxZDcwZmJlN2MxNTUwMGQzZTRkOWI1YjUxZTE0MTA5NTJlNGQ2NDlhYzlkOWE3MGM2ZjM5YWMwYTM2ZGNiYTYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_f1f5914423714c579dc6ec41cdc20970",
+      "statement": "Archive routes exist only when their collection contains at least one published entry, checked with a limit-1 published probe.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/published-routes.ts#L43-L50",
+          "version": "repo-lines-v1:sha256:5123b662889c9619554633b08324b611590da5229410dc8177b6e9afcb8ca8fe:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZTVmOGU0ZTBmMDI4YWU4NjA2ZDFhZmU4MjJmYWZmZjNjMTM2MDdiMWU3ZWUyOGU5MmZhMDcwYTM1OTcyMDNmMSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ2YTQ5YWUzZjkxM2JlNThmZTA5MWYwMmQ2OWFhMTU1YmI0NDZhNWUzOWZiMDk3OGY2YmEzMzM3ZjM4YWEwNSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYTliNTgxZGFhOTRjMTRlNGE4MDdkNWYzYWE0N2RkODZjYmM4N2JkNmJhNDcyNWZhNjQxOGU5NmU3NDgzODI2MSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiOThlZjA1YjcxOTAxNzczMmJjNDFiZTBmMDdiMjUyYTRlYWJlNDA5MTk4NmEyNTIzNjkxY2MzNTg2ZDYxZGYwMCJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_38d6ae99f6c94e4fb82bd21fa232c867",
+      "statement": "A route's reference selection is passed into the same getPublishedRoute call and read from entry.references, keeping one entry read and one cache hint per route.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/content-markdown.ts#L15-L22",
+          "version": "repo-lines-v1:sha256:abf47f8033694699301200467ed0e9c6a86b1c95b4b75fafb54b5c954471500c:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNGU0ZDM0YzFjZmYxNWUwYTlhN2Q5ZDllYzJiODJjZDdhZTkwYjc3N2JmYjUzNTU1YTBjZTBlNTg5MzYxMThkYSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiZDkzZjUzN2Y5NWUyYmQ3NjYxN2FiM2QyMGI1ZTE4ZmUyZDQ4MDRlNmZhMTNhZGU2OTQwMTFjZjVmNjdkYTQxMiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTc0ZTdmY2FhOWQ2NjY3Y2QyZmFhNTcxOTA1MTY2MWY0MTJkYzc2MGIxZDA5NmY5ZDQ5ZGU0ZTlmMjJkOWQ2NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNTQ0ZjU0NmQ0MWQzOTMzOThmYjBhZDg1YzBhOTYxMTdjMzk2NTRmYWUzZGY0YWFhNjRmYjZhNmFhYThmNmI0ZiJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/published-routes.ts#L36-L40",
+          "version": "repo-lines-v1:sha256:7ba39eb3e51ab215fc5cfe569fea58879ed7ac28d841ab181484ea3a23870806:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2YzMDljZWFlZjAxY2YzMjJmYzM0NjUyOTNlMTM2YmM3NTQ0ZmEwMDQ0NDJkZWRhZjE3NmI0ZTVlYzZkZDc2OSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYTI1ODA4NmZhZGZmZjM5MzAxMDFjOGU3OTk2MDZjZWJhM2M4NTIyNzdhZTg5MTczY2ExNDFkOWMyMzBlYzYyZCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiMTkxODk5Yzg3NDJiMzIxZWVkZmEwY2FkMDhmNzQ5YjZmNjg4MzZhOGQ5YTc0ZmFhN2MwZTdhNzZjMjc1NzZhOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMGY0NTZmNTQxODBjOWYzYmZkZDFkZGRlN2JlYjcyZTI0M2ZhODU5ZmIwMGIxNTYzYTBjNzkyOWY1YTU2ZTFmMSJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_de3bb9c6c8fe40558a8cda84fcd0cf7f",
+      "statement": "URL mapping gives pages special top-level paths (home to slash, plus about, contact, pricing, privacy-policy) and other collections collection-prefixed encoded paths, while resolveContentPath is the strict inverse that rejects aliases and malformed encodings by re-encoding and requiring equality.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/content-url.ts#L3-L34",
+          "version": "repo-lines-v1:sha256:6ec9772849eb47ac9bbf12f1eaeff49e9ffd0fb439c07d66b8d76218c3a66ad2:eyJzZWxlY3RlZExpbmVDb3VudCI6MzIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFjM2VhODJmMzY0ODNiYjM5YTdmNzAwNTBlMDlhMWU1ODE3NjgyNWIzMzdkNjM4ZTg5NWIwNzc2MmZkNmQ0MzUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjY3ZGRhMTdhYjM0ZTljYWI1NmQ1NWY5Zjg3MWVhOTlmODhlODdjNzhiNGMwYzg1MWQwOWZkMGU3NmZkN2M1ZjkiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_7442d26fa97e4850be92a1c001755c3a",
+      "statement": "getPublishedRoutes builds the full discovery map of published entries and existing archive paths, and runs under runPublishedOnly so enumeration stays published-only even during editor sessions.",
+      "evidence": [
+        {
+          "resource": "repo://packages/cms-helpers/src/content-query.ts#L12-L20",
+          "version": "repo-lines-v1:sha256:b7129becef5d1f6224c1ba1769f33a322a554dc4d70d13971429957f6398490e:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMzZiMjhiNWU2NWZjNzI5YTk0Y2QyMjZjODllYzhhOTI5MzkyYTQyMWU0MWY3NTZlOTg3ZmIwNmIxNzRkMWFkYyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDk2Y2VlZGRlZjk1ODA1NTUyODEyYTRhMWRhYzg3MmQ0YzE2YmRjNDQ0OTg1ODBmMTIxYjVmY2Y0ZWJiOWQ1MyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZjk1N2MyODdlNmRjNDNhYTQ2ZTkyN2VlYmY1NGM4Y2Y3Yjc3MTM2ZGMyZjFiYzlmMWY2NjhkMWI2MzI5YTRmOSJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/published-routes.ts#L64-L74",
+          "version": "repo-lines-v1:sha256:c1d8cd6ac2986bec735a0c13bc9f516439f72bfb1b1cb49df025faa648d31e06:eyJzZWxlY3RlZExpbmVDb3VudCI6MTEsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImE3ZmZmYjhiYjRhNmRiODg0ZmQ1NzNjZjA3NGQxMmI1ZDU4OWE4NTI1MWIzNmI4NDgwM2ZkMjIyODQ5MDFlNjMiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJmMTU1OWViYmUzYjVjZjNhMDBlYmRkNDgzOGE3NGZkMzYzMjI0MWJiMmZmNWE5ODUzZGU3NzVhMGQ0NWUwMDciLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_00f376355c024261a436acd6894d66d8",
+      "statement": "EmDash's preview middleware disables Astro route caching for _preview parameters and sets private, no-store on verified previews, while entry cache hints carry invalidation tags including for previews; session-specific OG and Markdown responses enforce the same private rule.",
+      "evidence": [
+        {
+          "resource": "repo://docs/published-routes.md#L33-L39",
+          "version": "repo-lines-v1:sha256:13eff71c7423d02a33cf24330afdfb82db13d9f1c250390ec511f40508ccc086:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZjdlY2NlMWQxYjA4ZmFlNzUzODY3MTdjMjdiNDU3NDc3OTI3MmVjNzlmMmY5NzdmNmMyODMwMjAyMDE3YWMwZCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmVjYTJiM2YwYzM1Mzg4N2UxNmExZmI4MDQ3NDU0M2YwOTgyN2ZkNDExZTU5OTBmN2JhOThkZjQ0ODYzYzQyOCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjBlMGY5Mjc5MjQ2MTk5ZDdmMGYzMzk3MzRmMTc4M2YzNzg2Njg2YWUwMGMxZWUwYTEzY2M1ODVkN2UxZDUzMiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjAsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiZTNiMGM0NDI5OGZjMWMxNDlhZmJmNGM4OTk2ZmI5MjQyN2FlNDFlNDY0OWI5MzRjYTQ5NTk5MWI3ODUyYjg1NSJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/og.ts#L69-L75",
+          "version": "repo-lines-v1:sha256:85fb386a39605c401d818603cd2df3a0609c1663b95c18a0380c08d9a0975349:eyJzZWxlY3RlZExpbmVDb3VudCI6NywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDEyY2EzNDVjY2Y3NWJmOWMwODA2YmNlNjk1YmU4ZGU4MDhiNzk5ODQyNTFhN2E1NGQyMDJjZjYxMDFkZDQ1MSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMzQ1ZDYzYjk4NmUwMzA3YWI0MjY5NGU5NTBlYjdhOWYyYTQ3ZTlhMmUyZTI2OTY1NTg1MWUyNTI1NDNmZjM2NyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiYjc1NGMxMTgyN2Y3MGNkNTJhMmI1YTUzMjMzNjAzMjk5NjljNjYwMzNjMGMyN2FjYjgyOTQ1MmM1NzA5M2E3NSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODA0NTkzMWM4NjUyOTg5Mzc1YmI1ODBkZGNhZTE4OTZjZDJjOWM5ZDdjMDgwOTBkODkzZGY0NmNjZDJkNTViMyJ9"
+        }
+      ]
+    },
+    {
+      "id": "claim_0f2dce8aabe349f380f0bd50da8380be",
+      "statement": "The Markdown twins map decoded .md params back to encoded content paths with getMarkdownContentPath, with home as the .md spelling of the root path.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/utils/content-markdown.ts#L13-L18",
+          "version": "repo-lines-v1:sha256:82f0e6acdaafe05a86de77479e18d74fdb759c1cf0e132a83f826ba5f9c2aede:eyJzZWxlY3RlZExpbmVDb3VudCI6NiwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNjI5NjFhMWM5MDI1MTUzYWU1YmMxNTAzN2MzMTA2N2E5MTM0NWJmMGUzZjJmMGM3ODJmNWNjYjJjODVkNzYxMiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMjEzZTQzNzIwZjZjOTdkZTJjZDM4ZGZjYTQwODU4MWQ5NTJlYTI3MDNkZTM2MzQ0OGFlYmE5NGQ4MWFiZjdlNyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNGFkMjdlNTUxYTIzNTg0YjcxOTZmZmZmNzNlNzkzZjJkN2NlOWEwMzBkZDk2NmMzZTVlY2M0ZGIxZDk0MDQ1MiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYzcyOTg1YzczMTU4YTY1OGM1ODE2MWE2YWZlMzc5N2RjNWY2OTRmMjVlZmRhY2RjYzM4MzNlNjUxNjE1OTA4ZCJ9"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/content-url.ts#L15-L19",
+          "version": "repo-lines-v1:sha256:888668596e20393d8624f187e267703c4051d1a6daa93d24ef20a3e946f1263e:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMTVhYjFkY2Y2YjEwZTJlYmVlM2FkOWQ4MWE0OWM0NmIyNDAxNTkzMDVhZGViNmZlMDgwNjIxMGExMzdhMzkwNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzcwZTljYTUxMDE5NjdjN2E3YTk0OTFhNjJhNDA1ZTY3NTM4ZTFkMzc1ZjY0YjdmOGYyMjA1ZDBlMzQ1ZDZlMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2IwMGFmMzM4MmI4Nzc2ZGEyMmVkOGVlMjQ1MmFkZmIyY2FlZWQ4NWFmNWMyODEwYzNiOTc0Zjk3NGYwNDEwNSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjAyMThkNDY0NWYxMzliZTBkOWEyNzNmZDc0ODQwMDAxZDgzMDUwMGEyMWVlZDgwNzhkODA0NmNiMDMwMjBjNCJ9"
+        }
+      ]
+    }
+  ],
+  "verification": {
+    "by": "openwiki/0.9.0",
+    "at": "2026-11-13T16:28:46.089Z"
+  }
+}
