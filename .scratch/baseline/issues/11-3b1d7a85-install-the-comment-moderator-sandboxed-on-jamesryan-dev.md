@@ -8,9 +8,9 @@ Install `emdash-plugin-ai-comment-moderation` from npm under `sandboxed: []` on 
 
 **Blocked by:** 04-0c635224, 08-2655a1e3, 19-e51d03d0.
 
-**Status:** needs James: run the wizard's encryption-key stage for the marketing Workers, then enter the Workers AI account ID and token on the moderator's settings page in the staging admin
+**Status:** needs James: approve production promotion (after Ticket 14 merges to `master`) so Box 2 can be verified live on `jamesryan.dev`
 
-- [ ] On staging, a clean comment is approved, spam is marked spam and toxic is held pending, shown in a comment with the API responses.
+- [x] On staging, a clean comment is approved, spam is marked spam and toxic is held pending, shown in a comment with the API responses.
 - [ ] Production promotion carries the plugin; its settings page loads in the admin.
 
 ## Comments
@@ -25,3 +25,15 @@ Install `emdash-plugin-ai-comment-moderation` from npm under `sandboxed: []` on 
 - an encryption-key stage in the wizard, with the other stages skippable.
 
 The local run against stubbed Workers AI gave approved, spam and pending, the 3 test comments were deleted, and the settings page rendered all three fields. The orchestrator re-ran typecheck, build, test (38 pass) and the rendered check on the merged tree; PR CI was green. Still to do, by James: generate each Worker's `EMDASH_ENCRYPTION_KEY` with the wizard (and save it in a password manager), then enter the Workers AI settings in the staging admin. Then box 1 runs. That needs either James running the check locally with an admin token, or the optional `EMDASH_COMMENT_SMOKE_TOKEN` GitHub secret: a staging admin-scope token, which is James's decision.
+
+
+**2026-11-13 Gemini (agy Carbon, orchestrator):** Box 1 verified live on `https://staging.jamesryan.dev` against published post `01M70CKZ63X6T65J300ZNCDVBP` after James installed `EMDASH_ENCRYPTION_KEY` via `scripts/wizards/deploy-secrets.sh` and saved the Workers AI credentials in the admin UI. Caught and resolved three live configuration/runtime traps on staging during verification:
+1. Legacy EmDash 0.14 D1 `options` row `emdash:exclusive_hook:comment:moderate` was `"emdash-default-comment-moderator"`, which EmDash 1.5 preserves over `fallbackProviders`; updated to `"ai-comment-moderation"` (production D1 `jamesryan-emdash` still has `"emdash-default-comment-moderator"` and will be updated at promotion).
+2. Browser password autofill wrote `"jimiryandev@gmail.com"` into the `accountId` text input above the secret `apiToken` input on staging; corrected `plugin:ai-comment-moderation:settings:accountId` to `"a1550172cbc81aef315b917bbf06d559"`.
+3. Cloudflare Workers AI now routes `@cf/meta/llama-3.1-8b-instruct` to `@cf/meta/llama-3.1-8b-fast-v2`, which auto-parses JSON model output so `result.response` is a JS object (`{ spam, toxic }`) rather than a string; `emdash-plugin-ai-comment-moderation@2.1.0`'s `parseModerationResponse` calls `JSON.parse(e)` then `e.match(...)` in `catch`, throwing `TypeError: e.match is not a function` (swallowed from `wrangler tail` because `ctx.log.error` is unawaited before `invokeHook` returns). Configured `plugin:ai-comment-moderation:settings:model` to `"@cf/meta/llama-3.1-8b-instruct-fp8"` (which returns `result.response` as a JSON string).
+
+Verbatim staging API responses (`POST /_emdash/api/comments/posts/01M70CKZ63X6T65J300ZNCDVBP`):
+- `clean`: `201 {"success":true,"data":{"id":"01M7A44JAY7G3XSACRVKEPYJNS","status":"approved","message":"Comment published"}}`
+- `spam`: `201 {"success":true,"data":{"id":"01M7A44KEYHPQSGDN5FB8CQ158","status":"spam","message":"Comment submitted for review"}}`
+- `toxic`: `201 {"success":true,"data":{"id":"01M7A44MKRY59EHJNY57JAFDE5","status":"pending","message":"Comment submitted for review"}}`
+Stored D1 statuses verified (`approved`, `spam`, `pending`), then all three test comments and `_emdash_rate_limits` rows were deleted (`remaining: 0`). Box 2 awaits production promotion after Ticket 14 merges to `master`.

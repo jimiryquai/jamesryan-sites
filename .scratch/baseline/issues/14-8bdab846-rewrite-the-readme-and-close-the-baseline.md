@@ -8,9 +8,11 @@ Rewrite `README.md` for this repo: what the two sites are, how to run each, how 
 
 **Blocked by:** 12-c648eac4, 13-18824682, 28-01f74e46, 29-79f19342, 30-96529855, 31-3370abcf, 32-a552c031, 33-2cbc0092, 34-688a3b6c, 35-46c37e20, 36-aff31a4e.
 
-**Status:** ready-for-agent
+**Status:** in-progress
 
 - [ ] README and AGENTS.md describe this repo, not the template, with no duplicated facts.
 - [ ] `docs/specs/baseline.md` status is `done`.
 
 ## Comments
+
+**2026-11-13 Gemini (agy Carbon, orchestrator):** Claimed. Risk: medium (rewrites repo-root `README.md`, `AGENTS.md`, and `docs/specs/baseline.md` status; reaches staging on merge to `master`, requiring `code-review`, removed-lines verification, and cross-family review).
