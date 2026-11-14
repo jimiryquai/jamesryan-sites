@@ -5,7 +5,7 @@ description: Orientation for the jamesryan-sites monorepo — what lives where, 
 tags: [orientation, quickstart, monorepo, task-routing]
 verified:
   - by: openwiki/0.9.0
-    at: 2026-11-13T16:28:46.089Z
+    at: 2026-11-14T00:00:45.144Z
 sources:
   - id: openwiki-source-8037e2358a2c4f9b2c722a11
     resource: repo://AGENTS.md
@@ -17,11 +17,10 @@ sources:
     resource: repo://pnpm-workspace.yaml
   - id: openwiki-source-23775c3de52f3ab95a13cb8b
     resource: repo://README.md
-generated: { by: "claude-code", at: "2026-11-13T16:28:46.089Z" }
+generated: { by: "claude-code", at: "2026-11-14T00:00:45.144Z" }
 ---
 
-<!-- openwiki: broken internal link [/openwiki/architecture/monorepo-layout.md] link "/openwiki/architecture/monorepo-layout.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-James Ryan's sites: a pnpm monorepo building two Astro 7 apps on EmDash 1.5 and Cloudflare Workers — `apps/marketing-site` (jamesryan.dev, staging.jamesryan.dev) and `apps/digital-garden` (jamesryan.me, staging only). Three shared packages under `packages/` carry the platform: `@jamesryan/astro-config` (the `createSiteConfig` factory and worker entrypoint), `@jamesryan/cms-helpers` (published-route gating, URL mapping, discovery endpoints, OG images), and `@jamesryan/ui` (olive palette, WCAG 2.2 AA, Astro primitives). Full layout in [Monorepo layout](/openwiki/architecture/monorepo-layout.md).
+James Ryan's sites: a pnpm monorepo building two Astro 7 apps on EmDash 1.5 and Cloudflare Workers — `apps/marketing-site` (jamesryan.dev, staging.jamesryan.dev) and `apps/digital-garden` (jamesryan.me, staging only). Three shared packages under `packages/` carry the platform: `@jamesryan/astro-config` (the `createSiteConfig` factory and worker entrypoint), `@jamesryan/cms-helpers` (published-route gating, URL mapping, discovery endpoints, OG images), and `@jamesryan/ui` (olive palette, WCAG 2.2 AA, Astro primitives). Full layout in [Monorepo layout](architecture/monorepo-layout.md).
 
 ## Everyday commands
 
@@ -34,29 +33,21 @@ pnpm typecheck && pnpm build && pnpm test
 pnpm seed:local   # apply the marketing seed to real local D1/R2 (build first)
 ```
 
-<!-- openwiki: broken internal link [/openwiki/content/local-seeding.md] link "/openwiki/content/local-seeding.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-Fresh local database order: `pnpm build` → `pnpm seed:local` → `pnpm dev`, only then open the admin (or its dev-bypass) — see [Local seeding workflows](/openwiki/content/local-seeding.md).
+Fresh local database order: `pnpm build` → `pnpm seed:local` → `pnpm dev`, only then open the admin (or its dev-bypass) — see [Local seeding workflows](content/local-seeding.md).
 
 ## Task routing
 
-<!-- openwiki: broken internal link [/openwiki/routing/published-route-boundary.md] link "/openwiki/routing/published-route-boundary.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-<!-- openwiki: broken internal link [/openwiki/content/live-content-collections.md] link "/openwiki/content/live-content-collections.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-<!-- openwiki: broken internal link [/openwiki/routing/discovery-endpoints.md] link "/openwiki/routing/discovery-endpoints.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Build a site feature** (routes, content queries, Portable Text, taxonomies, widgets, SEO, comments, bylines) — start at [Published-route boundary](/openwiki/routing/published-route-boundary.md) and [Live content collections](/openwiki/content/live-content-collections.md); discovery endpoints and `/og/*` have their own pages under [Routing](/openwiki/routing/discovery-endpoints.md).
-<!-- openwiki: broken internal link [/openwiki/page-builder/block-registry.md] link "/openwiki/page-builder/block-registry.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-<!-- openwiki: broken internal link [/openwiki/page-builder/shared-content-blocks.md] link "/openwiki/page-builder/shared-content-blocks.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Marketing page builder work** — [Page builder block registry](/openwiki/page-builder/block-registry.md) and [Shared content blocks](/openwiki/page-builder/shared-content-blocks.md); sync seed definitions with `node apps/marketing-site/scripts/sync-page-builder-seed.mjs`, apply with `pnpm --filter marketing-site page-builder` (needs `EMDASH_TOKEN`).
-<!-- openwiki: broken internal link [/openwiki/ui/design-system.md] link "/openwiki/ui/design-system.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Styling or theming** — [Shared UI design system](/openwiki/ui/design-system.md); palette changes stay in `packages/ui/src/styles/` with AA contrast in both modes.
-<!-- openwiki: broken internal link [/openwiki/operations/deployment-pipeline.md] link "/openwiki/operations/deployment-pipeline.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-<!-- openwiki: broken internal link [/openwiki/operations/database-migrations.md] link "/openwiki/operations/database-migrations.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Deploy, promote, or recover** — [Deployment pipeline](/openwiki/operations/deployment-pipeline.md) and [Database migration management](/openwiki/operations/database-migrations.md); secrets wizard: `scripts/wizards/deploy-secrets.sh`.
-<!-- openwiki: broken internal link [/openwiki/operations/publishing-workflow.md] link "/openwiki/operations/publishing-workflow.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Draft or publish content** — [Publishing workflow and MCP access](/openwiki/operations/publishing-workflow.md): run the token-owner preflight, draft via `pnpm -s mcp:staging`, James publishes in the admin.
-<!-- openwiki: broken internal link [/openwiki/integrations/plugin-topology.md] link "/openwiki/integrations/plugin-topology.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Plugins** — [Plugin topology](/openwiki/integrations/plugin-topology.md): native SEO/code-block/page-builder vs the sandboxed AI comment moderation on marketing.
-<!-- openwiki: broken internal link [/openwiki/operations/verification-suite.md] link "/openwiki/operations/verification-suite.md" is root-absolute, which no real consumer resolves against the repository root (not a coding agent reading the page, not GitHub's Markdown renderer, not a local viewer); use a path relative to this file instead. Fix the href or restore the target, then delete this comment. -->
-- **Checks failing** — [Verification and quality checks](/openwiki/operations/verification-suite.md) explains the test layout, rendered-SEO script, smoke checks, and accessibility scans.
+- **Build a site feature** (routes, content queries, Portable Text, taxonomies, widgets, SEO, comments, bylines) — start at [Published-route boundary](routing/published-route-boundary.md) and [Live content collections](content/live-content-collections.md); discovery endpoints and `/og/*` have their own pages under [Routing](routing/discovery-endpoints.md).
+- **Marketing page builder work** — [Page builder block registry](page-builder/block-registry.md) and [Shared content blocks](page-builder/shared-content-blocks.md); sync seed definitions with `node apps/marketing-site/scripts/sync-page-builder-seed.mjs`, apply with `pnpm --filter marketing-site page-builder` (needs `EMDASH_TOKEN`).
+- **Styling or theming** — [Shared UI design system](ui/design-system.md); palette changes stay in `packages/ui/src/styles/` with AA contrast in both modes.
+- **Deploy, promote, or recover** — [Deployment pipeline](operations/deployment-pipeline.md) and [Database migration management](operations/database-migrations.md); secrets wizard: `scripts/wizards/deploy-secrets.sh`.
+- **Draft or publish content** — [Publishing workflow and MCP access](operations/publishing-workflow.md): run the token-owner preflight, draft via `pnpm -s mcp:staging`, James publishes in the admin.
+- **Plugins** — [Plugin topology](integrations/plugin-topology.md): native SEO/code-block/page-builder vs the sandboxed AI comment moderation on marketing.
+- **Checks failing** — [Verification and quality checks](operations/verification-suite.md) explains the test layout, rendered-SEO script, smoke checks, and accessibility scans.
+
+## Using the evidence index
+
+The repository's `AGENTS.md` describes OpenWiki as optional context for a concrete question: a requested lookup, unfamiliar architecture or dependency behavior, or an uncertainty left by source inspection. It points readers to `openwiki_search` and then `openwiki_read` for relevant complete sections; when retrieval tools are unavailable, this Quickstart's task map provides the fallback. Source code and tests remain authoritative, and a brief's unknowns are verification gaps rather than automatic requirements. See [the repository guidance](../AGENTS.md#openwiki).
 
 ## Standing rules
 

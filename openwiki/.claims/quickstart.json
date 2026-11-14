@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:bdcfbfaf25062bb3ab6abd2845e718d50713f86269eca5476ed89ce97ebd4af1",
+  "pageVersion": "sha256:8bcf67ae0414ec5063aea271cb5021769d613cb7818c66c91271e88030528dee",
   "claims": [
     {
       "id": "claim_81b6ebe23a6d4e47958c6805b801952a",
@@ -59,10 +59,20 @@
           "version": "repo-lines-v1:sha256:1a79b0b50905049fd861aa6c3e5e32e8e94060486f414c62a574e6d3b810ef7b:eyJzZWxlY3RlZExpbmVDb3VudCI6OCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiMDFiYTQ3MTljODBiNmZlOTExYjA5MWE3YzA1MTI0YjY0ZWVlY2U5NjRlMDljMDU4ZWY4Zjk4MDVkYWNhNTQ2YiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiN2JlMmUwY2FmOTkxYzQ5NDZlNzBjMmYzOTYxNDQ0YTBhODg1ODgxZDdlNGYyMGRiMDg4ZjdjMzQ3NzVlY2M3OCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDcwOWYzODdlMTBiODVkMTQ4MWZkZjE0MWY2MDBkM2NlMzA0MjFhMGZiNzMyMGU2MmU5Mjg1ZTQ4NzBkNjRkOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYmJjOWM4MGJhMzA4YjJhZWFhY2U3NmFjMmU2Mzk2Mzc2ZDFlOTllNjY2ZjM2YTNhODYzOTQyZjIzYmM5ZTJiNiJ9"
         }
       ]
+    },
+    {
+      "id": "claim_3ec059c8d6204e6c9a24fe0e22d98343",
+      "statement": "The repository AGENTS.md documents OpenWiki as optional just-in-time context, routes relevant lookups through search and complete-section reads with Quickstart as the tool-unavailable fallback, and treats source code and tests as authoritative.",
+      "evidence": [
+        {
+          "resource": "repo://AGENTS.md#L55-L63",
+          "version": "repo-lines-v1:sha256:19023197f8de712ff65a6cea90e0ddab0fb87b6667eddae0878bd1469ae6565c:eyJzZWxlY3RlZExpbmVDb3VudCI6OSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ4MzZlZDdlMDA1Mzc3NWEwYTk2NmNlODYxMzRiMjM0N2Q4NTFhN2IwMmY0ODEyYmViMmM1OWQxYzY4ZDUyNiIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMmNiM2Q0YTQ2NjliZGM3YTQwZDk4MDc3MzVkZjYwOGJmZTMxZDM4NjA2N2M5OTliNzUwYWFjNjMyYzFiNmQzMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiZWIxYmM1YmM0YTIzN2Y1NzhlNmFmNGE0MTVkMDY0N2Y5OTEwYjAzYjM2NGUxZTI3YzFmMWRiYWE3NDNkMDNiYSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjA3OTQ1NGEwZWE3NWRmOTMzMjU1MzRjYzVlNmNlYTlhYjc5MThmMjJmYmY5MmFkMDcxNTBlYmZmYjM4NzZiYiJ9"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-13T16:28:46.089Z"
+    "at": "2026-11-14T00:00:45.144Z"
   }
 }
