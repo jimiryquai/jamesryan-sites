@@ -1,4 +1,5 @@
 ---
+import { IMAGE_SLOTS } from "@jamesryan/cms-helpers";
 import {
 	getEmDashCollection,
 	getTermsForEntries,
@@ -102,7 +103,7 @@ function formatDate(date: Date | null | undefined) {
 						<section class="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 							<div class="lg:col-span-7 aspect-[16/10] w-full overflow-hidden rounded-3xl bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5">
 								<a href={`/posts/${featuredPost.id}`} class="block w-full h-full">
-									<Image 
+									<Image {...IMAGE_SLOTS.featuredPost} priority
 										image={featuredPost.data.featured_image} 
 										class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
 									/>

@@ -44,7 +44,7 @@ test('shared config preserves deployment differences and resolves plugin assets 
     assert.equal(config.adapter.options.inspectorPort, inspectorPort);
     assert.deepEqual(config.redirects, redirects);
     assert.deepEqual(config.fonts[1], { provider: 'google', cssVariable: '--font-display', ...displayFont });
-    assert.deepEqual(config.image.domains, [new URL(site).hostname, `staging.${new URL(site).hostname}`, 'localhost']);
+    assert.deepEqual(config.image.domains, [new URL(site).hostname, `staging.${new URL(site).hostname}`, 'localhost', '127.0.0.1']);
     const emdash = config.integrations.find(item => item.name === 'emdash').options;
     assert.deepEqual(emdash.sandboxed, [sandboxed]);
     assert.equal(emdash.plugins.at(-1), extra);

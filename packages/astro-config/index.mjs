@@ -30,7 +30,7 @@ export function createSiteConfig({
 		image: {
 			layout: "constrained",
 			responsiveStyles: true,
-			domains: [hostname, `staging.${hostname}`, "localhost"],
+			domains: [hostname, `staging.${hostname}`, "localhost", "127.0.0.1"],
 			remotePatterns: [
 				{
 					protocol: "https",

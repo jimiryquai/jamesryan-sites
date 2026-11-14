@@ -1,4 +1,5 @@
 ---
+import { IMAGE_SLOTS } from "@jamesryan/cms-helpers";
 export const prerender = false;
 
 import {  getEmDashCollection, getSeoMeta, decodeSlug, getTermsForEntries } from "emdash";
@@ -140,7 +141,7 @@ function getImageSrc(img: unknown): string | undefined {
 		{/* Large Featured Image */}
 		{project.data.featured_image && (
 			<div class="aspect-[16/9] w-full overflow-hidden rounded-3xl bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5 shadow-md mb-16">
-				<Image 
+				<Image {...IMAGE_SLOTS.projectHero} priority
 					image={project.data.featured_image} 
 					class="w-full h-full object-cover" 
 				/>

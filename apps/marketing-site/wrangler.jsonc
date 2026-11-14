@@ -6,6 +6,7 @@
 	"compatibility_flags": ["nodejs_compat"],
 	"send_metrics": false,
 	"dependencies_instrumentation": { "enabled": false },
+	"images": { "binding": "IMAGES" },
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -41,6 +42,7 @@
 	},
 	"env": {
 		"staging": {
+			"images": { "binding": "IMAGES" },
 			"d1_databases": [
 				{
 					"binding": "DB",

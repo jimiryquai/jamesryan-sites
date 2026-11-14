@@ -4,6 +4,7 @@ import { getSiteSettings, getSeoMeta, getContentSeo } from "emdash";
 import Base from "../layouts/Base.astro";
 import PageLayout from "../components/page-builder/PageLayout.astro";
 import { resolvePageLayout } from "../components/page-builder/resolve-page-layout";
+import { getPublicOrigin } from "emdash/api/route-utils";
 import { resolveFeaturedPostPreload } from "../components/page-builder/featured-post-preload";
 import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
 
@@ -19,9 +20,9 @@ const homeSeo = getContentSeo(page);
 
 // The featured post's image is Home's LCP: preload it when the layout's posts
 // block features one. The read is shared with the section that renders it.
-const preloadedImageUrl = pageLayout
-	? await resolveFeaturedPostPreload(pageLayout.layout.map((block) => ({ ...block })), pageLayout.group)
-	: "";
+const preload = pageLayout
+	? await resolveFeaturedPostPreload(pageLayout.layout.map((block) => ({ ...block })), pageLayout.group, getPublicOrigin(Astro.url, Astro.locals.emdash?.config))
+	: undefined;
 ---
 
 <Base
@@ -29,11 +30,13 @@ const preloadedImageUrl = pageLayout
 	description={seo?.description ?? siteTagline}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	{preloadedImageUrl && (
+	{preload && (
 		<link 
 			rel="preload" 
 			as="image" 
-			href={preloadedImageUrl} 
+			href={preload.href}
+			imagesrcset={preload.imagesrcset}
+			imagesizes={preload.imagesizes}
 			fetchpriority="high"
 			slot="links" 
 		/>

@@ -1,4 +1,5 @@
 ---
+import { IMAGE_SLOTS } from "@jamesryan/cms-helpers";
 import type { MediaValue, ContentBylineCredit } from "emdash";
 import { Image } from "emdash/ui";
 
@@ -38,7 +39,7 @@ const formattedDate = date
 		{
 			featuredImage ? (
 				<div class="aspect-[16/10] overflow-hidden rounded-2xl bg-olive-950/2.5 dark:bg-white/5 mb-4 border border-olive-950/5 dark:border-white/5">
-					<Image 
+					<Image {...IMAGE_SLOTS.card}
 						image={featuredImage} 
 						class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]" 
 						style="width: 100%; height: 100%; object-fit: cover;"

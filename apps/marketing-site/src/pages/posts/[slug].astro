@@ -1,4 +1,5 @@
 ---
+import { IMAGE_SLOTS, resolveResponsiveImagePreload } from "@jamesryan/cms-helpers";
 import {
 	getEmDashCollection,
 	getEntryTerms,
@@ -13,6 +14,7 @@ import {
 	WidgetArea,
 } from "emdash/ui";
 import { Comments, CommentForm } from "emdash/ui/comments";
+import { getPublicOrigin } from "emdash/api/route-utils";
 import { getImage } from "astro:assets";
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
@@ -50,22 +52,12 @@ function getImageUrl(img: unknown): string | undefined {
 }
 const featuredImageUrl = getImageUrl(post.data.featured_image);
 
-let preloadedImageUrl = "";
-if (post.data.featured_image) {
-	try {
-		const rawSrc = post.data.featured_image.src || `/_emdash/api/media/file/${post.data.featured_image.id}`;
-		const optimized = await getImage({
-			src: rawSrc,
-			width: post.data.featured_image.width || 1200,
-			height: post.data.featured_image.height || 750,
-			format: "webp",
-		});
-		preloadedImageUrl = optimized.src;
-	} catch (e) {
-		console.error("Failed to generate preload image URL in [slug].astro:", e);
-		preloadedImageUrl = post.data.featured_image.src || `/_emdash/api/media/file/${post.data.featured_image.id}`;
-	}
-}
+const preload = post.data.featured_image
+  ? await resolveResponsiveImagePreload(getImage, post.data.featured_image, {
+      origin: getPublicOrigin(Astro.url, Astro.locals.emdash?.config),
+      ...IMAGE_SLOTS.postHero,
+    })
+  : undefined;
 const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsHint);
 const { siteTitle, siteUrl } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
@@ -123,11 +115,13 @@ const publishDate =
 	modifiedTime={post.data.updatedAt.toISOString()}
 	content={{ collection: "posts", id: post.data.id, slug }}
 >
-	{preloadedImageUrl && (
+	{preload && (
 		<link 
 			rel="preload" 
 			as="image" 
-			href={preloadedImageUrl} 
+			href={preload.href}
+			imagesrcset={preload.imagesrcset}
+			imagesizes={preload.imagesizes}
 			fetchpriority="high"
 			slot="links" 
 		/>
@@ -137,7 +131,7 @@ const publishDate =
 		{
 			post.data.featured_image && (
 				<div class="mb-12 rounded-3xl overflow-hidden bg-olive-950/2.5 dark:bg-white/5 border border-olive-950/5 dark:border-white/5 max-h-[500px]" {...post.edit.featured_image}>
-					<Image image={post.data.featured_image} class="w-full h-full object-cover" loading="eager" fetchpriority="high" />
+					<Image {...IMAGE_SLOTS.postHero} priority image={post.data.featured_image} class="w-full h-full object-cover" />
 				</div>
 			)
 		}
