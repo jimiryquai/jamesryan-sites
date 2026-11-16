@@ -85,6 +85,7 @@ for (const path of paths) {
       assert.equal(attribute(tag, 'fetchpriority'), 'high', `${path}: avatar lacks high priority`);
       assert.equal(attribute(tag, 'width'), '500', `${path}: avatar width`);
       assert.equal(attribute(tag, 'height'), '500', `${path}: avatar height`);
+      assert.equal(attribute(tag, 'decoding'), 'async', `${path}: avatar decoding`);
     }
     const image = await fetch(new URL(src, origin));
     assert.ok(image.ok && image.headers.get('content-type')?.startsWith('image/'), `${path}: broken image ${src}`);

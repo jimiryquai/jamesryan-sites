@@ -150,6 +150,12 @@ test('rendered media checker requires about avatar priority and 500 by 500 dimen
   const missing = await checkMedia(() => '<img src="/images/avatar.webp" alt="James Ryan">', { seed: aboutSeed, sitemap });
   assert.equal(missing.code, 1, missing.output);
   assert.match(missing.output, /\/about: avatar/);
+  const undecoded = await checkMedia(
+    () => '<img src="/images/avatar.webp" alt="James Ryan" width="500" height="500" fetchpriority="high">',
+    { seed: aboutSeed, sitemap },
+  );
+  assert.equal(undecoded.code, 1, undecoded.output);
+  assert.match(undecoded.output, /\/about: avatar decoding/);
   const present = await checkMedia(
     () => '<img src="/images/avatar.webp" alt="James Ryan" width="500" height="500" fetchpriority="high" decoding="async">',
     { seed: aboutSeed, sitemap },
