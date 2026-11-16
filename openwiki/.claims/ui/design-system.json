@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:b6a76f0896eaee872faa73b683baa3e6f425bf6b07ffa92d8df663327617bdd3",
+  "pageVersion": "sha256:5aacb1bbdc51f259e5bf6a5a4c2af1304d22542cd991abf1058712a7a0e74144",
   "claims": [
     {
       "id": "claim_55d89ca50dbc436ab1dce79cf10bc02c",
@@ -72,17 +72,39 @@
     },
     {
       "id": "claim_b06424070cb8467a89b4cc0cd8692433",
-      "statement": "Base.astro composes the shared page chrome: site identity, cached primary menu with cache hint set, OG image URLs derived from og-image utils, and EmDash runtime plugin fragments.",
+      "statement": "Base.astro composes the shared page chrome: site identity, cached primary menu with cache hint set, OG image URLs derived from og-image utils, optional high-priority responsive <link rel=\"preload\" as=\"image\"> emission for preloadImage, and EmDash runtime plugin fragments.",
       "evidence": [
         {
-          "resource": "repo://packages/ui/src/components/Base.astro#L59-L86",
-          "version": "repo-lines-v1:sha256:f000724c5577e9cd51ce8e11fa9712c95fe9616d3b2fe763f9b33633ce8e64d3:eyJzZWxlY3RlZExpbmVDb3VudCI6MjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU4YmRkNDE0ZTgzMzBiODI5NDU5Zjg1NDI0YmU0YjRiNWRiMGI3ZjYyOWMwNjdlYjE5ODQ4OGM5OTkwMzNiZjUiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjJmODc5MTcxZGM4OTkwOTAzMzQyZjVhOTA4N2Q3MDE3MWU1Nzc3Y2Y2ZjI3NzNiMTdiMjg4YmM0ZGVkOGFmYmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjJkNTU3NTEwMWVmOGFiNjEzMDM5MDQ2MDc3NWZlMDExNTM3MmYyZmQyOWExMGEwYjEwMzdlZDg1ZjQxNWJjMTYiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjhhNjVjYzU1MGNiZThiOTU4YWUxMjQyOWZhMTVkZTI5YTI0ZDM5ZDk5MzI3ZjZkOTRiNmU2Y2JmYWQzZTZlMzgifQ"
+          "resource": "repo://packages/ui/src/components/Base.astro#L242-L244",
+          "version": "repo-lines-v1:sha256:4f325f5385ea268d14f987589b0ff6fa2e6b72e506b250bad440d91cbbf60721:eyJzZWxlY3RlZExpbmVDb3VudCI6MywiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiZWIzYWRhZjQxODFiMjI1Y2MyMDczYjJjMzEyMzE3MTU2ZGM2NjY3MGYyNmRlOGUwYzIxYTIyNzk3YjFiYjdiMyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNmY0NWNhZTA3NDU3OTZiNmE0MzAzOTdmZWQ0M2MwNGM2NWM2ZmJmM2QyMGY3OWRiNmNiN2ZhZTA4ZmU4NTgxMSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiOWJiMTY5M2E3ZmFjNTM3NThhODIxNTY4YmViYTU4MjEyMDBmOTExOGUxMjkzMTEyNDU5NTJmNDU2MmRlZjFjMSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNDY0ODU2MzZhOWRjMmVkNTQ4ZTE1ZjlkZWNiYTgyYjk2ZTIxYjY3OWRiOWJjNWRkYTBhYjY5MWVmYzFmMGIwMSJ9"
+        },
+        {
+          "resource": "repo://packages/ui/src/components/Base.astro#L37-L95",
+          "version": "repo-lines-v1:sha256:315fb8510473278f5dc1dd67fc18987686158a4b2cb1832b763a7c4a6cbbd77e:eyJzZWxlY3RlZExpbmVDb3VudCI6NTksImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijg1OTY1MTg2YmQ3M2E2MzBhOWYwYjJlNWUwNTcwZTk0MmYwMmM5Nzg5M2E1Yjc1ZDRiNTgxODJiYThiMzU2MTQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjEwYWJjMTQ1ZTU3Yjk1MDA1ODQzZGIxYTQwNmVhMDlkZGFhNWM4Y2U5ZTg0NmNlMjAxNTQ2MDQ5YTAwODE4YzMiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjIxMGE4MTAwZGEzZDg0NmVmYWE2ZmZjN2ZkN2IxYTg3YzIzMmVmNjRjYmJkZDA3MDgyZWI2NjI3OGRiYmZjYWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjVlMjYwZDIyMmU3MGNhNTRiMmMyNDUyY2YyNDI5ZDUzNzYxOWI0ODJhNGI4OWVlYTE0OWU5NjlmNWRhNjM4NjYifQ"
+        }
+      ]
+    },
+    {
+      "id": "claim_0f3466a990094b568e3e02c15cbfd40c",
+      "statement": "IMAGE_SLOTS and resolveResponsiveImagePreload in @jamesryan/cms-helpers define the shared card, featuredPost, postHero, and projectHero display presets and resolve matching constrained Astro getImage preloads across shared UI cards, hero routes in both apps, and marketing's resolveFeaturedPostPreload.",
+      "evidence": [
+        {
+          "resource": "repo://apps/marketing-site/src/components/page-builder/featured-post-preload.ts#L14-L31",
+          "version": "repo-lines-v1:sha256:2b76a35ea40764591d3014d47a0c6330a505afbc074f406a9cb99bac06afd975:eyJzZWxlY3RlZExpbmVDb3VudCI6MTgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6Ijc0OTZmOThlM2UzMDE4NTc1N2NiMDg5Y2VkNjk5MGU3MDFmOWNiM2YzNjlmMjI2ZTY5ZGFhMTVhYTRlYWUzYjYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjA1YWZiMjIzMGY3N2Y4ZDRkM2Y1NThjNDNlNjgyNzQzOTY3MzAyNzkyNjRkMDc4MTRmMGUyMjFkM2I2NzA4OGEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://apps/marketing-site/test/featured-post-preload.test.mjs#L34-L119",
+          "version": "repo-lines-v1:sha256:ff299024072777d4bf884da86ce6d34de4499f24c5afec1cd2e84b9b423535b1:eyJzZWxlY3RlZExpbmVDb3VudCI6ODYsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjIyZDRiY2U3Yzc0MjRlMDY5MjRkYTIyZGQ1ZjZhNzEyZjE3MTFmNzY5ZTk0YTgzNDIzZWY5NTVkNTRmZDk0OGQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjdhZTFkZWQzNjBjNmVkNGNiZWFkYWRhYjc3YjFjZWZmYzg3OTc3NTQ5ZDU0ZDI5OWFhYjAyODI3MDMzZjNiY2YiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/responsive-images.ts#L1-L77",
+          "version": "repo-lines-v1:sha256:2b7e1087f79ac0b6f79ca1f2a84fd00186111022da5b9a4695f262faa79acb55:eyJzZWxlY3RlZExpbmVDb3VudCI6NzcsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImNmZDM0N2Q0NzZhYTAzNWEyMWQ1MmU3ODUyZDY5NWQ4ZDQxZDQzM2E5OTUyNjgyNGMyOTJmOWM3Mzk3OGRlNWEiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQxMmNhMzQ1Y2NmNzViZjljMDgwNmJjZTY5NWJlOGRlODA4Yjc5OTg0MjUxYTdhNTRkMjAyY2Y2MTAxZGQ0NTEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-13T16:28:46.089Z"
+    "at": "2026-11-16T14:08:20.656Z"
   }
 }

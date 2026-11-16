@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:18fa9382f5b432c7973170a4d98bc8de3179b67be1ab03410f0dc3803298d498",
+  "pageVersion": "sha256:541ce6bfd3275a11cca356b09385b0aa75925321c247f83619eb4d7a15f44179",
   "claims": [
     {
       "id": "claim_f95ed1a26a2e4c258c5e6402262096d3",
@@ -75,10 +75,24 @@
           "version": "repo-lines-v1:sha256:a2fdfe97885879136f89f118959312798c46566297de70b538a73df90e4c4b85:eyJzZWxlY3RlZExpbmVDb3VudCI6MzAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVlZTJiZmYwMzgxMzExM2NlMTM3NDBjMzE4ZDhlNWJjZmM0NjJjMTA1YzhkNDZlNDZmMmNiMzQ2YzFkM2JjNzgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjQyZjg1MmU0OWExNzgzMGZmMDUyNTZiZjgzOWFkNjg4M2VjMDY2MGYwNTgyNzdlM2ViMmQ3NzlhMjczYThmNDUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjA1M2I0ZDg3ZmM0ZmJjOTA4ZTMxZWRhNWYzOGIyNDNhZTdhYWQ0YmNiNDJiYTlhZTYwOTlkODUyODJiNDFkZmUifQ"
         }
       ]
+    },
+    {
+      "id": "claim_1f814665dadb43a18bec9d3435eda9a8",
+      "statement": "check-rendered-media.mjs rejects external /_astro/ stylesheets, verifies that non-avatar CMS media renders through /_image with a valid srcset and sizes, requires hero routes (including / and /posts when one of the newest seven published posts has a featured image) to pair a high-priority slot-sized image with a matching <link rel=\"preload\" as=\"image\">, and requires /about's /images/avatar.webp to declare width=\"500\", height=\"500\", fetchpriority=\"high\", and decoding=\"async\".",
+      "evidence": [
+        {
+          "resource": "repo://scripts/check-rendered-media.mjs#L20-L148",
+          "version": "repo-lines-v1:sha256:ac265178c7c1a802eb6a067f0a9a12ebce5af8ec89471d7d0419385cd8458f63:eyJzZWxlY3RlZExpbmVDb3VudCI6MTI5LCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiI4NDIwMjJlYWQ4ZTg4YTVmM2YzYzdmYTMzZmFhYjMxYmI0ZWFmNzE0MmJhMzNhMjNmZjRhMDkwNTFhOWVjOTJjIiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiI0MTJjYTM0NWNjZjc1YmY5YzA4MDZiY2U2OTViZThkZTgwOGI3OTk4NDI1MWE3YTU0ZDIwMmNmNjEwMWRkNDUxIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiJhNDNhMmQwM2UxZGQwZThhNzZmNTcxYTAzMTAzNjI2MGY0YWYwY2U2M2ExYjQ4MTMzODgxNTg2YWM0YmE5Y2NmIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MywiZm9sbG93aW5nQ29udGV4dEhhc2giOiI3Mjc3ZGViNDA0N2ZhZDFmMmM3NmQ1MmRlZWNkZTFkMzgxYmFjZjRhZTE2YzM3N2JjMTFkNDIwOThjZjY3Mzg5In0"
+        },
+        {
+          "resource": "repo://scripts/check-rendered-media.test.mjs#L51-L210",
+          "version": "repo-lines-v1:sha256:7e0c9a8c8198109725d5e40e46bd317c47a35ec30288effac6fa3c90e02817ad:eyJzZWxlY3RlZExpbmVDb3VudCI6MTYwLCJmaXJzdFNlbGVjdGVkTGluZUhhc2giOiJiNWY3MjgyYzM3NmU3ZGZlMjQyMTViM2Y0ZjI1NGQyNTg4MDE0MzU1ODkzYjMxZWZhNjQzNjViNDM4YTYzN2Y1IiwibGFzdFNlbGVjdGVkTGluZUhhc2giOiJmNmY1YjQwYjE1ODQ1N2QxNzg2NGYyMTc5MDc4NmRkNWEyZWNkYjY0YjY2YTY1MWY3ODhkNGUyNWNkMzMwM2QyIiwicHJlY2VkaW5nQ29udGV4dExpbmVDb3VudCI6MywicHJlY2VkaW5nQ29udGV4dEhhc2giOiI1ZjA3ODMwMTcxZGJjNWM4ZTY2NmFkNTdlMjQ5NWMyOTIyZjdmMjZiNzBjYzdjNDhmZTcwNmUwNmEwYjUxNzExIiwiZm9sbG93aW5nQ29udGV4dExpbmVDb3VudCI6MCwiZm9sbG93aW5nQ29udGV4dEhhc2giOiJlM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1In0"
+        }
+      ]
     }
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-13T16:28:46.089Z"
+    "at": "2026-11-16T14:08:20.656Z"
   }
 }

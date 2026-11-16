@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:4e7ef3df2e3eeac08ae34b862b9a464d6f4c07ad86138b5a2dd5e64dc49df18a",
+  "pageVersion": "sha256:900ecc6c1d2733eee744be8d6fd26de1694581cb1523d2f8fdc883f1d4220363",
   "claims": [
     {
       "id": "claim_9db6720552d84ff9aa80f09585baadce",
@@ -22,15 +22,23 @@
     },
     {
       "id": "claim_74d4b520a63741088c45b626d60dc6c9",
-      "statement": "Each app declares DB (D1), SESSION (KV), MEDIA (R2), and LOADER (Worker Loader) bindings at top level and again under a staging environment override with its own resources and custom domain.",
+      "statement": "Each app declares DB (D1), SESSION (KV), MEDIA (R2), LOADER (Worker Loader), and IMAGES (local Cloudflare Images) bindings at top level and again under a staging environment override with its own resources and custom domain, with IMAGES tracked in worker-configuration.d.ts and verified by config tests.",
       "evidence": [
         {
-          "resource": "repo://apps/digital-garden/wrangler.jsonc",
-          "version": "repo-file-v1:sha256:95b2bbef444d90114bb4e717ad2dedddfbc5b482ec2e399929826908e5ad674e"
+          "resource": "repo://apps/digital-garden/wrangler.jsonc#L9-L70",
+          "version": "repo-lines-v1:sha256:44e4f9ef91dfa6635ae423b10500fc1ff0ad221bd9b6949d871f5ead9877dc59:eyJzZWxlY3RlZExpbmVDb3VudCI6NjIsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzZjA1ZDQ5NzI3NjkzMDQ2MTY0MzgxYjBkYTM3YTg3ZmY4OTQ3NWRjYzhjMTg3MmE5N2Q4ZTEyZjM2MmY4MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjViYWQ3Y2MyZGZhZmMyMTc1ZmEyZDk3MDRlMDIwMmY5NDA4M2E5ZGE2OWE1ODViMGIxOGM0OGJlYTIzNjI3NWUiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YzFhMjUxYjM3MGVmNDQ1ODhlZTRkMTA4NzgwODI4ZTUwOGZjYzgyNDYxOGVkMjE4ODFiYjNmMmVhYjk5YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjY1ZWZiODU0YTE1YzA3ZjZlMmFlNzRhZmJiMjM4NWNjZTMxZTAzMzFhNDFkNmVhYjc0M2U1Nzc0OTYwZmVkNDcifQ"
         },
         {
-          "resource": "repo://apps/marketing-site/wrangler.jsonc",
-          "version": "repo-file-v1:sha256:588d624f0456d792b9e57af90cc6e01eb4c5c722b82f0f20e192962de7ba2f34"
+          "resource": "repo://apps/marketing-site/worker-configuration.d.ts#L4-L23",
+          "version": "repo-lines-v1:sha256:b67cb48091a97673b0359f5fcd885158de6aa6e8fce6e11cd37d260bd1d89bc2:eyJzZWxlY3RlZExpbmVDb3VudCI6MjAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjNlMTg4YzgxZDJkMTJmZWYyNzZlYjc0MTU3YWFjYzM0ZjgxYTM5MWZkNTA0YzU4N2RjMjRlNDA4MzVkNjRhMjgiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImFmZGYyYzIyZTZkOGM5ZTA1NzBkNWUzMGE3OGM3MzI0MzllNTM2YWI1Yzg2MzZlNDNjNmNlNWI4MWZiYTc5MjciLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjNmMjcxNTA3NDA3MjAxYTQ0NWU1M2I1NzRjOGM2MDVkZjNhZWNjNzdlZTk5MzQ5NDE4ZGQ2ZDAyZjA3MTE3YzUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQyOTQyYmI0ZjE4NWQyY2Q1ODg0MjAzY2Q4NWJkMGUzMmQ0MTY5ZThkMDUwOTkwZGYzNjcwMDMyYTgyOWQwNzMifQ"
+        },
+        {
+          "resource": "repo://apps/marketing-site/wrangler.jsonc#L9-L76",
+          "version": "repo-lines-v1:sha256:4fb69e2c3ef257c423da28f44bd710ca46f2783924df32f7c984df3cc88ce2dd:eyJzZWxlY3RlZExpbmVDb3VudCI6NjgsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjgzZjA1ZDQ5NzI3NjkzMDQ2MTY0MzgxYjBkYTM3YTg3ZmY4OTQ3NWRjYzhjMTg3MmE5N2Q4ZTEyZjM2MmY4MzYiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0ZWZjNDk0MThkMjZkY2YxMjliMjJhNmFhMjExMDhjZWVjMzc2NzdhMzJkMDhlOWQ1ZmVlMzVkZGE2NmJiOWQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjM0YzFhMjUxYjM3MGVmNDQ1ODhlZTRkMTA4NzgwODI4ZTUwOGZjYzgyNDYxOGVkMjE4ODFiYjNmMmVhYjk5YWQiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjoyLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwMzk5NDVmNzEzY2VjY2MyYTJiZTk4MWFiNWM1ZWVhMzdmOTVmOTc2OWU1NzVjZDhlZDlhOWZjYmFmZGYwNmEifQ"
+        },
+        {
+          "resource": "repo://packages/astro-config/test/config.test.mjs#L99-L112",
+          "version": "repo-lines-v1:sha256:352e745441613c36c967a3a4ef2f992e2f9a8bb9488a2d35a1a5be790823744c:eyJzZWxlY3RlZExpbmVDb3VudCI6MTQsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6ImU2ZmJkMzg1NzAwZDhmYmI4MGY4NzVjMDg1ZjBhYmE5ZmZjZjdhMjg0N2YwN2RhNjY4Y2E0OTgzY2MwYjVmYzkiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6ImY2ZjViNDBiMTU4NDU3ZDE3ODY0ZjIxNzkwNzg2ZGQ1YTJlY2RiNjRiNjZhNjUxZjc4OGQ0ZTI1Y2QzMzAzZDIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImExODRmYzBhMGFjMmViNDQwZjZhYTlhMGI4MDg3NTM5YmE4ZGQ4NDAyYjY4ZmVkNGNiNDVmYWIzMWM0YWEwMmEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -39,7 +47,7 @@
       "statement": "The digital garden Worker has no production route and is deployed staging-only; production promotion for it has not happened.",
       "evidence": [
         {
-          "resource": "repo://apps/digital-garden/wrangler.jsonc#L37-L37",
+          "resource": "repo://apps/digital-garden/wrangler.jsonc#L39-L39",
           "version": "repo-lines-v1:sha256:4864844b555ddb119dadb0e4fab5526c4ee536cfe860f1d02ec716dcbd17d050:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg2NDg0NGI1NTVkZGIxMTlkYWRiMGU0ZmFiNTUyNmM0ZWU1MzZjZmU4NjBmMWQwMmVjNzE2ZGNiZDE3ZDA1MCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiNDg2NDg0NGI1NTVkZGIxMTlkYWRiMGU0ZmFiNTUyNmM0ZWU1MzZjZmU4NjBmMWQwMmVjNzE2ZGNiZDE3ZDA1MCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNTVkMmVhNmYwNGI3ZDE5MjNkMWU2OTBiNmQ0MTkyYTMzMmY5ODVlMzA2MDRhOGQwYmI5OTIyYjE3MjE5NzM2NCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiNzNlMGFkYWI2YTg5MzBhMDQ2MmE3ZDdjYjc2ZTA2MzM4YzdjZTZiNzBmYzZlMTc2ZTcwMWI4Y2I3YjEwNDM4MSJ9"
         }
       ]
@@ -49,7 +57,7 @@
       "statement": "createSiteConfig wires EmDash with the DB D1 binding, MEDIA R2 binding, sandboxRunner via the Worker Loader, and per-app sandboxed plugin lists.",
       "evidence": [
         {
-          "resource": "repo://packages/astro-config/index.mjs#L105-L109",
+          "resource": "repo://packages/astro-config/index.mjs#L108-L112",
           "version": "repo-lines-v1:sha256:8fd8b9c888e74da832c604aa252c76f4f4fffc76d817fa62035fe75ac7abc854:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYjQ3YmY5NTI1ZjM4ODNjODA0M2MyNjJhOGUxMDM1ODUwMjBkZWU1YjdmMTgwZDE2MWM1OWRlMWE2ZmEwODNkOSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMGEzNGZjMjk1NjNlNGQ0NTdkYjdhZjdhZmE5MTlkMDUyZmMyMGI0YWZkY2FkODhiZWZkMDM0YmUzNTNlZWU0ZiIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNzdkZmRjNjA0ZDdjMzRjYTNjMjljZjQzZDM0ZjE1OTgxZjY5MTgzNjk1ZmVjM2QzN2ZhZjRlNDZiZjE3NTMxYiIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMDI3ZDFjYzUxMzllMjYwZDYyZGZlN2M3YmVlNTg5MmY4ZTYyY2Y2Y2Q2MGQ5NDFhZDI4MDA1NWY3ZDEzMTZhMSJ9"
         }
       ]
@@ -63,7 +71,7 @@
           "version": "repo-lines-v1:sha256:12944acb3caa6ead486d613f0c1f77e0ae10086d6ea6210eedb7e4da1146f725:eyJzZWxlY3RlZExpbmVDb3VudCI6NSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiN2M4YjkxMzhhNzBhNmVmNDI0YTkxYmE1OWZmZDI2OGI0MjZjNjA4NTZmNjcwNjFiODQ5ZjM3N2EwNDVkYzNkNSIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiMDZhMWMzNzM0OWY5MTdlMDNkMGYwZmEwZWI0NmZmODQ1ZDQ0Yzg1YzY4YzEzNmFkN2VkNjBlNDE2M2NkNjEwMCIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiODU1ZGEzNjEwOWIwZTQzZWUyOGY4NjBlODQ2NTIwZjdkODgwMTMwMWU5MWJkNWU2MGJkYzg2NTBmYWQyZmIxMyIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiMjE2MThlNWU4ZjAwNDk0MDRiOTJkNjE3YTZlODFkYmQxY2I5YjBkNTMwMGVmZDdiMTg2ZDI0YzIwZGMzNTMxYyJ9"
         },
         {
-          "resource": "repo://packages/astro-config/index.mjs#L106-L106",
+          "resource": "repo://packages/astro-config/index.mjs#L109-L109",
           "version": "repo-lines-v1:sha256:c5a0b81ae376de36d1f5ca8a03eaa1e50c38bc9df2f61d353857186495db259c:eyJzZWxlY3RlZExpbmVDb3VudCI6MSwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiYzVhMGI4MWFlMzc2ZGUzNmQxZjVjYThhMDNlYWExZTUwYzM4YmM5ZGYyZjYxZDM1Mzg1NzE4NjQ5NWRiMjU5YyIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiYzVhMGI4MWFlMzc2ZGUzNmQxZjVjYThhMDNlYWExZTUwYzM4YmM5ZGYyZjYxZDM1Mzg1NzE4NjQ5NWRiMjU5YyIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiY2UyN2M4NDY5N2FiNjlkNmM5ODIyNmVhYWE5ZDNiYTIwYTM0MjA4ZTZjMDEwOTYxNjNjYzc1YmQ2ZDczOGExOCIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiODg4NDBiMzg0OGEzZmU4MzIyYjc0MWNhMTlmYzQ3MTMwYWQzNDVlZWY5MmQ2YTdkNjllNzljMDdmYTJkYzZlZiJ9"
         }
       ]
@@ -95,6 +103,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-13T16:28:46.089Z"
+    "at": "2026-11-16T14:08:20.656Z"
   }
 }
