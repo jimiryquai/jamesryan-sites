@@ -9,6 +9,10 @@ okf_version: 0.2
 * [Cookie-forced theme tests mask broken cookie-less System dark mode](cookie-forced-theme-tests-mask-system-dark-mode.md) - Setting `Cookie: theme=light|dark` in Playwright skips the default `System` theme state where `<html>` has neither `.light` nor `.dark`, hiding scoped `:global(.dark)` CSS bugs on dark OSes.
 * [Place Tailwind v4 @variant dark rules after equal-specificity light rules](tailwind-custom-variant-dark-zero-specificity.md) - Because `@custom-variant dark` expands with zero-specificity `:where(.dark, .dark *)`, `@variant dark` blocks placed above light-mode rules lose the CSS cascade in both `.dark` and `system-dark` modes.
 
+## astro
+
+* [Strip style and script blocks before scanning SSR HTML for retired markup tokens](strip-inlined-style-and-script-before-html-token-scans.md) - With Astro `build.inlineStylesheets` set to `always`, route stylesheets inline into every HTML response including `/404`, so substring checks for retired classes or CSS custom properties must strip `<style>` and `<script>` blocks first.
+
 ## cloudflare
 
 * [Cloudflare bot_management enable_js injects challenge scripts even when fight_mode is false](cloudflare-bot-management-enable-js-deprecations.md) - Turning off Bot Fight Mode leaves `bot_management.enable_js` active on Cloudflare zones, injecting `/cdn-cgi/challenge-platform/scripts/jsd/main.js` and dropping Lighthouse Best Practices via Chrome `deprecations`.

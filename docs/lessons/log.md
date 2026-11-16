@@ -2,6 +2,7 @@
 
 ## 2026-11-16
 
+* **Creation**: Strip style and script blocks before scanning SSR HTML for retired markup tokens (from ticket `02-723e0f18` implementation).
 * **Creation**: Declare Cloudflare IMAGES per Wrangler environment, allow 127.0.0.1, and match EmDash constrained preload options (from ticket `01-735bab4f` implementation and cross-family Spec review).
 * **Creation**: Cloudflare bot_management enable_js injects challenge scripts even when fight_mode is false (from incognito mobile Lighthouse audit of `https://jamesryan.dev/`).
 

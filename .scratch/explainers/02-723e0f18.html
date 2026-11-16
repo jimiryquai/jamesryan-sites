@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 02: Inline Astro Stylesheets &amp; Complete LCP Image Preloads</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:54rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Inline Astro Stylesheets &amp; Complete LCP Image Preloads</h1>
+<p class="sub">Ticket 02 (<code>02-723e0f18</code>, <code>perf</code>) · merged to <code>master</code> 2026-11-16</p>
+
+<h2>Single-hop SSR document &amp; LCP preload architecture</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 780 220" role="img" aria-label="Shared Astro config inlines CSS into SSR HTML while @jamesryan/ui Base.astro owns the single LCP image preload link across all 7 hero routes">
+<rect class="box" x="12" y="18" width="236" height="86" rx="8"/><rect class="hl" x="12" y="18" width="236" height="86" rx="8"/>
+<text x="26" y="42" font-weight="600"><code>@jamesryan/astro-config</code></text>
+<text x="26" y="64" style="fill:var(--ok)">✓ <code>inlineStylesheets: "always"</code></text>
+<text x="26" y="84">• 0 external <code>/_astro/*.css</code> hops</text>
+
+<rect class="box" x="12" y="118" width="236" height="86" rx="8"/><rect class="hl" x="12" y="118" width="236" height="86" rx="8"/>
+<text x="26" y="142" font-weight="600"><code>@jamesryan/ui/Base.astro</code></text>
+<text x="26" y="164" style="fill:var(--ok)">✓ <code>preloadImage?: ...</code></text>
+<text x="26" y="184">• Single <code>&lt;link rel="preload"&gt;</code></text>
+
+<rect class="box" x="292" y="18" width="230" height="186" rx="8"/>
+<text x="306" y="42" font-weight="600">All Hero &amp; LCP Routes</text>
+<text x="306" y="68">• <code>marketing-site</code>:</text>
+<text x="320" y="86"><code>/</code> · <code>/posts</code> · <code>/posts/[slug]</code></text>
+<text x="320" y="104"><code>/projects/[slug]</code></text>
+<text x="306" y="130">• <code>digital-garden</code>:</text>
+<text x="320" y="148"><code>/</code> · <code>/posts/[slug]</code> · <code>/projects/[slug]</code></text>
+<text x="306" y="176" style="fill:var(--ok)">✓ <code>/about</code> <code>500×500</code> + <code>high</code></text>
+
+<rect class="box" x="564" y="18" width="204" height="186" rx="8"/>
+<text x="578" y="42" font-weight="600">Rendered CI Gates</text>
+<text x="578" y="68" style="fill:var(--ok)">✓ Rejects <code>/_astro/*.css</code></text>
+<text x="578" y="92" style="fill:var(--ok)">✓ All <code>heroSlots</code> preloaded</text>
+<text x="578" y="116" style="fill:var(--ok)">✓ 7-post visible window</text>
+<text x="578" y="140" style="fill:var(--ok)">✓ <code>/about</code> priority + size</text>
+<text x="578" y="164" style="fill:var(--ok)">✓ <code>/404</code> markup token scan</text>
+
+<path class="arrow" d="M248 61 L290 78"/>
+<path class="arrow" d="M248 161 L290 140"/>
+<path class="arrow" d="M522 111 L562 111"/>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Before → After</th></tr>
+<tr><td>Render-blocking CSS &amp; dependency tree</td><td><span class="no">Before:</span> <code>inlineStylesheets: "auto"</code> emitted <code>2–3</code> external <code>/_astro/*.css</code> chunks (<code>Base.css</code>, <code>components.css</code>, <code>_slug_.css</code>), adding a Slow-4G round-trip (<code>80–560 ms</code>) before First Contentful Paint.<br><span class="ok">After:</span> <code>build: { inlineStylesheets: "always" }</code> in <code>packages/astro-config/index.mjs</code> inlines route CSS directly into SSR HTML, collapsing the CSS dependency chain to zero extra hops.</td></tr>
+<tr><td>Shared <code>&lt;Base preloadImage&gt;</code> &amp; full hero coverage</td><td><span class="no">Before:</span> <code>/</code> and <code>/posts/[slug]</code> duplicated <code>&lt;link rel="preload" slot="links"&gt;</code> markup, while <code>/posts</code>, <code>/projects/[slug]</code>, and <code>digital-garden</code> omitted LCP preloads.<br><span class="ok">After:</span> <code>packages/ui/src/components/Base.astro</code> owns the sole <code>&lt;link rel="preload" as="image"&gt;</code> tag via <code>preloadImage?: ResponsiveImagePreload</code> (typed via <code>ComponentProps&lt;typeof SharedBase&gt;</code> in both apps), wired across all 7 hero routes.</td></tr>
+<tr><td><code>/about</code> static avatar LCP discovery</td><td><span class="no">Before:</span> <code>&lt;img src="/images/avatar.webp"&gt;</code> lacked <code>fetchpriority="high"</code> and intrinsic dimensions.<br><span class="ok">After:</span> Declares <code>width="500" height="500" fetchpriority="high" decoding="async"</code>.</td></tr>
+<tr><td>Rendered checks &amp; <code>/404</code> token scan</td><td><code>check-rendered-media.mjs</code> rejects external <code>/_astro/</code> stylesheets, requires matching preloads for every route in <code>heroSlots</code> (respecting the 7-post visible window on listing routes), and verifies <code>/about</code> avatar attributes; <code>seo-fixture.mjs</code> strips <code>&lt;style&gt;</code>/<code>&lt;script&gt;</code> before scanning <code>/404</code> markup for retired theme classes.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>SSR HTML size &amp; markup-only token scans:</strong> Each SSR HTML response carries ~14–18 KiB of Brotli-compressed inline CSS for single-RTT first paint. Any test scanning rendered HTML for retired CSS class or variable substrings should strip <code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> blocks first (as <code>verifyNotFound</code> in <code>scripts/seo-fixture.mjs</code> now does) so legacy variables in unmigrated stylesheets don't false-positive against clean page markup.</p>
+</div>
+</main></body></html>
