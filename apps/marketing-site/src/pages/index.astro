@@ -30,7 +30,7 @@ const preload = pageLayout
 	description={seo?.description ?? siteTagline}
 	content={{ collection: "pages", id: page.data.id, slug: page.id }}
 >
-	{preload && (
+	{preload?.href && (
 		<link 
 			rel="preload" 
 			as="image" 

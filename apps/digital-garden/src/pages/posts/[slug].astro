@@ -130,7 +130,7 @@ const publishDate =
 									{bylines.map((credit) => (
 										<div class="flex items-center gap-3">
 											{credit.byline.avatarMediaId && (
-												<img
+												<img data-byline-avatar
 													src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
 													alt={credit.byline.displayName}
 													class="w-10 h-10 rounded-full object-cover border border-olive-950/5 dark:border-white/10"

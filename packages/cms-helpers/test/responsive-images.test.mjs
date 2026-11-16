@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { IMAGE_SLOTS, resolveResponsiveImagePreload } from '../src/responsive-images.ts';
+import { IMAGE_SLOTS, resolveResponsiveImagePreload } from '../src/index.ts';
 
 test('local media preload matches the constrained image transform and responsive attributes', async () => {
   const preload = await resolveResponsiveImagePreload(async (options) => {
@@ -82,4 +82,29 @@ test('relative public assets retain their source like the EmDash component', asy
   }, 'cover.jpg', { origin: 'https://example.com', ...IMAGE_SLOTS.featuredPost });
   assert.equal(transforms, 0);
   assert.deepEqual(result, { href: 'cover.jpg' });
+});
+
+
+test('empty and malformed media identifiers never request an image transform', async () => {
+  for (const image of ['', {}, { id: '' }, { id: 123 }, { src: {} }, { meta: { storageKey: 123 } }, { meta: { storageKey: {} } }, { src: '', id: '', meta: { storageKey: '' } }]) {
+    let transforms = 0;
+    const result = await resolveResponsiveImagePreload(async () => {
+      transforms++;
+      return { src: '/_image?unexpected' };
+    }, image, { origin: 'https://example.com', ...IMAGE_SLOTS.featuredPost });
+    assert.deepEqual(result, { href: '' });
+    assert.equal(transforms, 0);
+  }
+});
+
+test('same-origin slash and backslash authorities retain their raw href without transforms', async () => {
+  for (const src of ['//example.com/a.jpg', '/\\example.com/a.jpg']) {
+    let transforms = 0;
+    const result = await resolveResponsiveImagePreload(async () => {
+      transforms++;
+      return { src: '/_image?unexpected' };
+    }, src, { origin: 'https://example.com', ...IMAGE_SLOTS.featuredPost });
+    assert.deepEqual(result, { href: src });
+    assert.equal(transforms, 0);
+  }
 });

@@ -2,7 +2,7 @@ import { getImage } from 'astro:assets';
 import { IMAGE_SLOTS, resolveResponsiveImagePreload, type ResponsiveImagePreload } from '@jamesryan/cms-helpers';
 import { migrateBlocks, resolveSourceContext, isSourceResult, type StoredBlock } from 'emdash-plugin-page-builder/blocks';
 import { getOfferedBlocks } from './offered-blocks.mjs';
-import { sources } from './sources';
+import { sources } from './sources.ts';
 
 /**
  * The responsive image attributes to preload for the layout's first `posts` block, or
@@ -26,5 +26,6 @@ export async function resolveFeaturedPostPreload(
   const featured = items.find((post) => post.image);
   const image = featured?.image;
   if (!image) return undefined;
-  return resolveResponsiveImagePreload(getImage, image, { origin, ...IMAGE_SLOTS.featuredPost });
+  const preload = await resolveResponsiveImagePreload(getImage, image, { origin, ...IMAGE_SLOTS.featuredPost });
+  return preload.href ? preload : undefined;
 }

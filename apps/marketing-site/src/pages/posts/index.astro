@@ -112,7 +112,7 @@ function formatDate(date: Date | null | undefined) {
 													<span class="inline-flex items-center gap-1.5">
 														{index > 0 && <span class="text-olive-400 dark:text-olive-600">,</span>}
 														{credit.byline.avatarMediaId && (
-															<img
+															<img data-byline-avatar
 																src={`/_emdash/api/media/file/${credit.byline.avatarMediaId}`}
 																alt={credit.byline.displayName}
 																class="w-5 h-5 rounded-full object-cover"

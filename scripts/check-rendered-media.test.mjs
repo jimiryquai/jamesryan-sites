@@ -17,7 +17,7 @@ async function checkMedia(render) {
   const seedPath = join(directory, 'seed.json');
   await writeFile(seedPath, JSON.stringify(seed));
   const server = createServer((request, response) => {
-    if (request.url.startsWith('/_image?')) {
+    if (request.url.startsWith('/_image?') || request.url.startsWith('/_emdash/api/media/file/')) {
       response.writeHead(200, { 'content-type': 'image/webp' });
       response.end('image bytes');
     } else if (request.url === '/sitemap.xml') {
@@ -74,5 +74,28 @@ test('rendered media checker rejects mismatched responsive preload candidates an
     const result = await checkMedia(path => renderPreload(path).replace(`${attribute}="`, `${attribute}="wrong `) + renderImage(path));
     assert.equal(result.code, 1, result.output);
     assert.match(result.output, /LCP preload (srcset differs|sizes differ)/);
+  }
+});
+
+
+test('rendered media checker loads raw byline avatars alongside responsive content', async () => {
+  const result = await checkMedia(path => renderPreload(path) + renderImage(path) +
+    '<img data-byline-avatar src="/_emdash/api/media/file/avatar" alt="Author" class="w-5 h-5 rounded-full object-cover">' +
+    '<img data-byline-avatar src="/_emdash/api/media/file/avatar" alt="Author" class="w-10 h-10 rounded-full object-cover">');
+  assert.equal(result.code, 0, result.output);
+  assert.match(result.output, /6 loaded images, 2 responsive images, 2 matching preloads/);
+});
+
+test('avatar exemption never hides unoptimized cards, EmDash images or seeded content', async () => {
+  for (const attrs of [
+    'alt="Unseeded card" width="800" height="500"',
+    'data-byline-avatar alt="Unseeded EmDash" class="emdash-image-media"',
+    'data-byline-avatar alt="Unseeded Astro" data-astro-image="constrained"',
+    'data-byline-avatar alt="Cover" class="w-5 h-5 rounded-full object-cover"',
+  ]) {
+    const result = await checkMedia(path => renderPreload(path) + renderImage(path) +
+      `<img src="/_emdash/api/media/file/unoptimized" ${attrs}>`);
+    assert.equal(result.code, 1, result.output);
+    assert.match(result.output, /unoptimized CMS image/);
   }
 });

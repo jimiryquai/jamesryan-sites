@@ -45,13 +45,18 @@ export async function resolveResponsiveImagePreload(
   options: { origin: string; width?: number; height?: number; sizes: string },
 ): Promise<ResponsiveImagePreload> {
   const media = typeof image === "string" ? { src: image } : image;
-  const rawSrc = media.src || `/_emdash/api/media/file/${media.meta?.storageKey || media.id}`;
+  const src = typeof media.src === "string" ? media.src : "";
+  const storageKey = typeof media.meta?.storageKey === "string" ? media.meta.storageKey : "";
+  const id = typeof media.id === "string" ? media.id : "";
+  const mediaKey = storageKey || id;
+  if (!src && !mediaKey) return { href: "" };
+  const rawSrc = src || `/_emdash/api/media/file/${mediaKey}`;
   const fallback = { href: rawSrc };
   const width = options.width ?? media.width;
   const height = options.height ?? media.height;
-  if (!width || !height || rawSrc.startsWith("//")) return fallback;
+  if (!width || !height || /^\/[/\\]/.test(rawSrc)) return fallback;
   if (!rawSrc.startsWith("/") && !/^https?:\/\//i.test(rawSrc)) return fallback;
-  if (media.provider && media.provider !== "local" && !media.src) return fallback;
+  if (media.provider && media.provider !== "local" && !src) return fallback;
   try {
     const origin = new URL(options.origin);
     const absolute = new URL(rawSrc, origin);

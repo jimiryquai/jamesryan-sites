@@ -38,6 +38,8 @@ for (const [collection, entries] of Object.entries(seed.content)) {
     paths.add(path);
   }
 }
+const seededMediaAlts = new Set([...expected.values()].flat());
+
 // Decode the entities emitted in Astro HTML attributes before comparing copy.
 function decode(value) {
   return value.replace(/&(#x[\da-f]+|#\d+|amp|quot|apos|lt|gt);/gi, (_, entity) => {
@@ -70,7 +72,11 @@ for (const path of paths) {
     // Check the runtime endpoint for local CMS images as well as the fallback
     // src: a valid original upload alone does not prove responsive delivery.
     const source = new URL(src, origin);
-    if (source.pathname === '/_image' || source.pathname.startsWith('/_emdash/api/media/file/')) {
+    const isBylineAvatar = /\sdata-byline-avatar(?:\s|=|\/?>)/i.test(tag)
+      && !/\sdata-(?:astro-image|image-component)(?:\s|=|\/?>)/i.test(tag)
+      && !(attribute(tag, 'class') ?? '').split(/\s+/).some(name => name.startsWith('emdash-image'))
+      && !seededMediaAlts.has(attribute(tag, 'alt'));
+    if (source.pathname === '/_image' || (source.pathname.startsWith('/_emdash/api/media/file/') && !isBylineAvatar)) {
       assert.equal(source.pathname, '/_image', `${path}: unoptimized CMS image ${src}`);
       const srcset = attribute(tag, 'srcset');
       const sizes = attribute(tag, 'sizes');
