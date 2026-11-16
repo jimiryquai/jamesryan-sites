@@ -1,5 +1,10 @@
 # Lessons log
 
+## 2026-11-16
+
+* **Creation**: Declare Cloudflare IMAGES per Wrangler environment, allow 127.0.0.1, and match EmDash constrained preload options (from ticket `01-735bab4f` implementation and cross-family Spec review).
+* **Creation**: Cloudflare bot_management enable_js injects challenge scripts even when fight_mode is false (from incognito mobile Lighthouse audit of `https://jamesryan.dev/`).
+
 ## 2026-11-12
 
 * **Creation**: Usermaven's browser SDK keeps a localStorage retry buffer and requires tagged form tracking (from ticket 26's SDK verification rounds `26b` and `26c`).

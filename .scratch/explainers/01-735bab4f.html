@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ticket 01: Cloudflare IMAGES Binding &amp; Responsive R2 Media Sizing</title>
+<style>
+:root{--bg:#f7f7f2;--fg:#20221b;--mute:#5d6152;--line:#c9cbbd;--card:#fff;--ok:#3d6b2f;--no:#9b3b2a;--acc:#5a6b2a}
+@media (prefers-color-scheme:dark){:root{--bg:#191a16;--fg:#e9eadf;--mute:#a4a795;--line:#3b3d33;--card:#22241e;--ok:#8fc27a;--no:#e08a76;--acc:#b5c47a}}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,sans-serif;margin:0;padding:2rem 1rem}
+main{max-width:54rem;margin:auto}h1{font-size:1.6rem;margin:0 0 .25rem}h2{font-size:1.15rem;margin-top:2rem}
+p.sub{color:var(--mute);margin-top:0}.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}
+code{font-size:.9em}svg{width:100%;height:auto}svg text{fill:var(--fg);font:13px system-ui,sans-serif}
+.box{fill:var(--card);stroke:var(--line)}.hl{fill:none;stroke:var(--acc);stroke-width:2}
+.arrow{stroke:var(--mute);stroke-width:1.5;fill:none}
+.ok{color:var(--ok)}.no{color:var(--no)}table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left;vertical-align:top}
+</style></head><body><main>
+<h1>Cloudflare IMAGES Binding &amp; Responsive R2 Media Sizing</h1>
+<p class="sub">Ticket 01 (<code>01-735bab4f</code>, <code>perf</code>) · PR #52 · merged to <code>master</code> (<code>e0e1702</code>) 2026-11-16</p>
+
+<h2>Responsive R2 media &amp; LCP preload pipeline</h2>
+<div class="card" style="overflow-x:auto">
+<svg viewBox="0 0 780 232" role="img" aria-label="Shared IMAGE_SLOTS and resolveResponsiveImagePreload feed EmDash Image components and LCP preload links into Astro and Cloudflare IMAGES">
+<rect class="box" x="12" y="18" width="238" height="196" rx="8"/><rect class="hl" x="12" y="18" width="238" height="196" rx="8"/>
+<text x="26" y="42" font-weight="600"><code>@jamesryan/cms-helpers</code></text>
+<text x="26" y="66" style="fill:var(--ok)">✓ <code>IMAGE_SLOTS</code></text>
+<text x="40" y="84"><code>card</code> · <code>featuredPost</code></text>
+<text x="40" y="102"><code>postHero</code> · <code>projectHero</code></text>
+<text x="26" y="128" style="fill:var(--ok)">✓ <code>resolveResponsiveImagePreload</code></text>
+<text x="40" y="146">• Non-empty string key guard</text>
+<text x="40" y="164">• Same-origin + <code>/^\/[/\\]/</code> guard</text>
+<text x="40" y="182">• <code>constrained</code> / <code>cover</code> / <code>center</code></text>
+<text x="40" y="200">• Emits <code>imagesrcset</code> + <code>imagesizes</code></text>
+
+<rect class="box" x="292" y="18" width="222" height="90" rx="8"/>
+<text x="306" y="42" font-weight="600">9 Card &amp; Hero <code>&lt;Image&gt;</code> Sites</text>
+<text x="306" y="64">• <code>packages/ui</code> cards (<code>800×500</code>)</text>
+<text x="306" y="84">• <code>marketing-site</code> + <code>digital-garden</code></text>
+
+<rect class="box" x="292" y="124" width="222" height="90" rx="8"/>
+<text x="306" y="148" font-weight="600">LCP <code>&lt;link rel="preload"&gt;</code></text>
+<text x="306" y="170">• <code>/</code> (<code>featuredPost</code> slot)</text>
+<text x="306" y="190">• <code>/posts/[slug]</code> (<code>postHero</code> slot)</text>
+
+<rect class="box" x="556" y="18" width="212" height="90" rx="8"/>
+<text x="570" y="42" font-weight="600">Astro + Cloudflare <code>IMAGES</code></text>
+<text x="570" y="64" style="fill:var(--ok)">✓ Top-level + <code>env.staging</code></text>
+<text x="570" y="84" style="fill:var(--ok)">✓ <code>127.0.0.1</code> in <code>image.domains</code></text>
+
+<rect class="box" x="556" y="124" width="212" height="90" rx="8"/>
+<text x="570" y="148" font-weight="600"><code>check-rendered-media.mjs</code></text>
+<text x="570" y="170" style="fill:var(--ok)">✓ <code>/_image?</code> <code>srcset</code> HTTP 200</text>
+<text x="570" y="190" style="fill:var(--ok)">✓ Exact LCP preload parity</text>
+
+<path class="arrow" d="M250 75 L290 63"/>
+<path class="arrow" d="M250 155 L290 169"/>
+<path class="arrow" d="M514 63 L554 63"/>
+<path class="arrow" d="M514 169 L554 68"/>
+<path class="arrow" d="M662 108 L662 122"/>
+</svg>
+</div>
+
+<h2>What changed &amp; why</h2>
+<table>
+<tr><th>Area</th><th>Before → After</th></tr>
+<tr><td>Cloudflare <code>IMAGES</code> Worker binding</td><td><span class="no">Before:</span> Neither app declared <code>"images": { "binding": "IMAGES" }</code>, so <code>@astrojs/cloudflare</code> could not transform R2 uploads in production/staging (<code>316 KiB</code> mobile Lighthouse waste on <code>jamesryan.dev/</code>).<br><span class="ok">After:</span> Declared in both top-level and <code>env.staging</code> in <code>apps/marketing-site/wrangler.jsonc</code> and <code>apps/digital-garden/wrangler.jsonc</code> (Wrangler does not inherit <code>images</code> into named environments), omitted <code>remote: true</code> so offline CI transforms locally, synced <code>worker-configuration.d.ts</code>, and added <code>"127.0.0.1"</code> to <code>packages/astro-config/index.mjs</code> <code>image.domains</code>.</td></tr>
+<tr><td>Shared slots &amp; fallback dimensions</td><td><span class="no">Before:</span> Media snapshots without stored <code>width</code>/<code>height</code> skipped responsive <code>srcset</code> generation, and grid cards defaulted to <code>sizes="100vw"</code> on desktop.<br><span class="ok">After:</span> <code>IMAGE_SLOTS</code> in <code>@jamesryan/cms-helpers</code> supplies canonical <code>width</code>, <code>height</code>, and viewport-accurate <code>sizes</code> across all 9 card, featured-post, post-hero, and project-hero <code>&lt;Image&gt;</code> call sites.</td></tr>
+<tr><td>LCP <code>&lt;link rel="preload"&gt;</code> parity</td><td><span class="no">Before:</span> Duplicated <code>getImage</code> blocks passed relative <code>/_emdash/...</code> paths that bypassed Astro's image service and omitted <code>imagesrcset</code>/<code>imagesizes</code>.<br><span class="ok">After:</span> <code>resolveResponsiveImagePreload</code> validates non-empty string media identifiers, enforces strict same-origin + <code>/^\/[/\\]/</code> guards, and passes <code>layout: "constrained", fit: "cover", position: "center"</code> so <code>/</code> and <code>/posts/[slug]</code> emit byte-identical <code>imagesrcset</code> and <code>imagesizes</code>.</td></tr>
+<tr><td>Rendered Worker gate</td><td><span class="no">Before:</span> <code>check-rendered-media.mjs</code> passed as long as raw <code>/_emdash/api/media/file/*</code> returned HTTP 200.<br><span class="ok">After:</span> Asserts <code>/_image</code> <code>srcset</code>/<code>sizes</code> rendering, HTTP 200 <code>image/*</code> bytes on generated <code>srcset</code> candidates, exact LCP preload parity on <code>/</code> and <code>/posts/&lt;slug&gt;</code>, and narrowly scoped <code>data-byline-avatar</code> handling.</td></tr>
+</table>
+
+<h2>What to watch</h2>
+<div class="card">
+<p><strong>Staging deploy &amp; production promotion:</strong> Merging PR #52 deploys to <code>staging.jamesryan.dev</code>; production (<code>jamesryan.dev</code>) keeps raw R2 media URLs until promoted via the manual <code>Promote to production</code> workflow. On your Cloudflare account, confirm Cloudflare Images transformations are enabled if staging returns any <code>/_image</code> binding errors, and always declare <code>"images": { "binding": "IMAGES" }</code> inside any future named Wrangler environment.</p>
+</div>
+</main></body></html>

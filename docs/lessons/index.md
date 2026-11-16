@@ -11,7 +11,9 @@ okf_version: 0.2
 
 ## cloudflare
 
+* [Cloudflare bot_management enable_js injects challenge scripts even when fight_mode is false](cloudflare-bot-management-enable-js-deprecations.md) - Turning off Bot Fight Mode leaves `bot_management.enable_js` active on Cloudflare zones, injecting `/cdn-cgi/challenge-platform/scripts/jsd/main.js` and dropping Lighthouse Best Practices via Chrome `deprecations`.
 * [Cloudflare Workers Assets ignores public/_headers on SSR routes](workers-assets-headers-ignore-ssr-routes.md) - Under `@astrojs/cloudflare` Workers Assets, `public/_headers` applies only to static asset responses, never to Worker-rendered `APIRoute` or `.astro` responses.
+* [Declare Cloudflare IMAGES per Wrangler environment, allow 127.0.0.1, and match EmDash constrained preload options](cloudflare-images-binding-and-emdash-preload-parity.md) - Wrangler does not inherit `images` bindings into `env.staging`, local Worker checks need `127.0.0.1` in `image.domains`, and EmDash LCP preloads must validate non-empty string media keys and pass same-origin constrained `cover`/`center` options to `getImage`.
 * [Pass Satori VNodes and bundled WOFF1 bytes to workers-og instead of HTML strings](workers-og-vnodes-and-bundled-woff1.md) - `workers-og`'s `HTMLRewriter` string parser leaves HTML entities un-decoded in PNG output and requires `display: flex` on every element, while Satori's `fontkit` rejects WOFF2.
 * [Workers AI fast-v2 models return parsed JSON objects instead of strings](workers-ai-fast-v2-object-response-and-sandbox-rpc-flush.md) - Cloudflare Workers AI routes `@cf/meta/llama-3.1-8b-instruct` to `fast-v2`, returning `result.response` as a parsed JS object when the model outputs JSON, which crashes string-only parsers and swallows unawaited Worker Loader RPC logs.
 
