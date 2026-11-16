@@ -1,6 +1,9 @@
 ---
+import type { ComponentProps } from "astro/types";
 import SharedBase from "@jamesryan/ui/components/Base.astro";
 import "../styles/globals.css";
+
+type Props = ComponentProps<typeof SharedBase>;
 
 const props = Astro.props;
 ---
