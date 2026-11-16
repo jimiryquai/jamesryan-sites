@@ -22,7 +22,26 @@ const publishedPosts = (seed.content.posts ?? []).filter(entry => entry.status =
 const home = (seed.content.pages ?? []).find(entry => entry.slug === 'home' && entry.status === 'published');
 const homeFeaturesPosts = home?.data.layout?.some(block =>
   block._type === 'posts' && (block.variant ?? 'featured-grid') === 'featured-grid');
-if (homeFeaturesPosts && publishedPosts.some(entry => entry.data.featured_image)) {
+function publishedTime(entry) {
+  const raw = entry.data?.published_at ?? entry.data?.publishedAt;
+  if (raw == null || raw === '') return null;
+  const time = typeof raw === 'number' ? raw : Date.parse(String(raw));
+  return Number.isNaN(time) ? null : time;
+}
+// Match POSTS_PER_PAGE in both blog indexes: only the newest seven can be the featured hero.
+const hasVisibleIllustratedPost = publishedPosts.slice().sort((left, right) => {
+  const leftTime = publishedTime(left);
+  const rightTime = publishedTime(right);
+  if (leftTime == null || rightTime == null) return 0;
+  return rightTime - leftTime;
+}).slice(0, 7).some(entry => entry.data.featured_image);
+if (homeFeaturesPosts && hasVisibleIllustratedPost) {
+  heroSlots.set('/', IMAGE_SLOTS.featuredPost);
+}
+if (paths.has('/posts') && hasVisibleIllustratedPost) {
+  heroSlots.set('/posts', IMAGE_SLOTS.featuredPost);
+}
+if (!home && paths.has('/') && hasVisibleIllustratedPost) {
   heroSlots.set('/', IMAGE_SLOTS.featuredPost);
 }
 for (const [collection, entries] of Object.entries(seed.content)) {
@@ -58,6 +77,14 @@ for (const path of paths) {
   const response = await fetch(new URL(path, origin));
   assert.ok(response.ok, `${path}: page failed`);
   const html = await response.text();
+  for (const [tag] of html.matchAll(/<link\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi)) {
+    if (attribute(tag, 'rel') !== 'stylesheet') continue;
+    const href = attribute(tag, 'href');
+    if (!href) continue;
+    let pathname = href;
+    try { pathname = new URL(href, origin).pathname; } catch { /* keep the raw href */ }
+    assert.ok(!pathname.startsWith('/_astro/'), `${path}: external Astro stylesheet ${href}`);
+  }
   const renderedAlts = [];
   const responsiveImages = [];
   const preloads = [...html.matchAll(/<link\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi)]
@@ -66,6 +93,12 @@ for (const path of paths) {
   for (const [tag] of html.matchAll(/<img\b(?:[^>"']|"[^"]*"|'[^']*')*>/gi)) {
     const src = attribute(tag, 'src');
     assert.ok(src, `${path}: image has no src`);
+    if (path === '/about' && src === '/images/avatar.webp') {
+      assert.equal(attribute(tag, 'fetchpriority'), 'high', `${path}: avatar lacks high priority`);
+      assert.equal(attribute(tag, 'width'), '500', `${path}: avatar width`);
+      assert.equal(attribute(tag, 'height'), '500', `${path}: avatar height`);
+      assert.equal(attribute(tag, 'decoding'), 'async', `${path}: avatar decoding`);
+    }
     const image = await fetch(new URL(src, origin));
     assert.ok(image.ok && image.headers.get('content-type')?.startsWith('image/'), `${path}: broken image ${src}`);
     assert.ok((await image.arrayBuffer()).byteLength > 0, `${path}: empty image ${src}`);
@@ -105,13 +138,11 @@ for (const path of paths) {
     assert.ok(lcp, `${path}: missing responsive featured image`);
     assert.equal(attribute(lcp, 'sizes'), heroSlot.sizes, `${path}: featured image sizes differ from its slot`);
     assert.equal(attribute(lcp, 'fetchpriority'), 'high', `${path}: LCP image lacks high priority`);
-    if (path === '/' || path.startsWith('/posts/')) {
-      const preload = preloads.find(tag => attribute(tag, 'href') === attribute(lcp, 'src'));
-      assert.ok(preload, `${path}: missing LCP image preload`);
-      assert.equal(attribute(preload, 'imagesrcset'), attribute(lcp, 'srcset'), `${path}: LCP preload srcset differs`);
-      assert.equal(attribute(preload, 'imagesizes'), attribute(lcp, 'sizes'), `${path}: LCP preload sizes differ`);
-      report.responsivePreloads++;
-    }
+    const preload = preloads.find(tag => attribute(tag, 'href') === attribute(lcp, 'src'));
+    assert.ok(preload, `${path}: missing LCP image preload`);
+    assert.equal(attribute(preload, 'imagesrcset'), attribute(lcp, 'srcset'), `${path}: LCP preload srcset differs`);
+    assert.equal(attribute(preload, 'imagesizes'), attribute(lcp, 'sizes'), `${path}: LCP preload sizes differ`);
+    report.responsivePreloads++;
   }
   report.routes.push({ path, originalAltValuesVerified: (expected.get(path) ?? []).length });
 }

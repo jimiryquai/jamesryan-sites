@@ -1,5 +1,5 @@
 ---
-import { IMAGE_SLOTS } from "@jamesryan/cms-helpers";
+import { IMAGE_SLOTS, resolveResponsiveImagePreload } from "@jamesryan/cms-helpers";
 import {
 	getEmDashCollection,
 	getEntryTerms,
@@ -8,6 +8,8 @@ import {
 	decodeSlug,
 	getSiteSettingsWithCacheHint,
 } from "emdash";
+import { getPublicOrigin } from "emdash/api/route-utils";
+import { getImage } from "astro:assets";
 import {
 	Image,
 	PortableText,
@@ -48,6 +50,12 @@ function getImageUrl(img: unknown): string | undefined {
 	return undefined;
 }
 const featuredImageUrl = getImageUrl(post.data.featured_image);
+const preload = post.data.featured_image
+	? await resolveResponsiveImagePreload(getImage, post.data.featured_image, {
+			origin: getPublicOrigin(Astro.url, Astro.locals.emdash?.config),
+			...IMAGE_SLOTS.postHero,
+		})
+	: undefined;
 const { data: settings, cacheHint: settingsHint } = await getSiteSettingsWithCacheHint();
 if (Astro.cache?.enabled) Astro.cache.set(settingsHint);
 const { siteTitle, siteUrl } = resolveSiteIdentity(settings, { site: Astro.site, requestUrl: Astro.url });
@@ -104,6 +112,7 @@ const publishDate =
 	publishedTime={post.data.publishedAt?.toISOString() ?? null}
 	modifiedTime={post.data.updatedAt.toISOString()}
 	content={{ collection: "posts", id: post.data.id, slug }}
+	preloadImage={preload}
 >
 	<article class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16">
 		{/* Hero: Full-width featured image */}

@@ -412,8 +412,13 @@ async function verifyNotFound(origin, secondLink) {
     if (!notFoundHtml.includes(text)) throw new Error(`/404: missing ${JSON.stringify(text)}`);
   }
   if (!secondLink && notFoundHtml.includes('href="/contact"')) throw new Error("/404: dead contact link rendered");
+  // Route CSS is inlined, so live palette tokens sit in <style>. The retired
+  // theme strings are banned from the document markup.
+  const markup = notFoundHtml
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, "")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "");
   for (const banned of NOT_FOUND_BANNED) {
-    if (notFoundHtml.includes(banned)) throw new Error(`/404: still contains ${banned}`);
+    if (markup.includes(banned)) throw new Error(`/404: still contains ${banned}`);
   }
   console.log("/404: olive not-found page rendered");
 }

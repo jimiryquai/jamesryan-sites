@@ -40,6 +40,7 @@ test('shared config preserves deployment differences and resolves plugin assets 
     finally { process.argv.pop(); }
     assert.equal(config.site, site);
     assert.equal(config.output, 'server');
+    assert.deepEqual(config.build, { inlineStylesheets: 'always' });
     assert.equal(config.server.port, port);
     assert.equal(config.adapter.options.inspectorPort, inspectorPort);
     assert.deepEqual(config.redirects, redirects);
@@ -81,6 +82,7 @@ test('both app configs delegate platform wiring to the shared factory with only 
     assert.deepEqual(topLevelKeys.sort(), (app === 'marketing-site'
       ? ['site', 'port', 'inspectorPort', 'displayFont', 'extraPlugins', 'sandboxedPlugins', 'appRootUrl']
       : ['site', 'port', 'inspectorPort', 'displayFont', 'redirects', 'appRootUrl']).sort());
+    assert.deepEqual(config.build, { inlineStylesheets: 'always' });
     assert.equal(config.site, app === 'marketing-site' ? 'https://jamesryan.dev' : 'https://jamesryan.me');
     assert.equal(config.server.port, app === 'marketing-site' ? 4321 : 4322);
     assert.equal(config.adapter.options.inspectorPort, false);

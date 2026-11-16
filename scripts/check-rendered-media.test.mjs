@@ -12,18 +12,20 @@ const seed = { content: {
   posts: [{ slug: 'example', status: 'published', data: { featured_image: { $media: { file: 'cover.webp', alt: 'Cover' } } } }],
 } };
 
-async function checkMedia(render) {
+async function checkMedia(render, options = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'responsive-media-'));
   const seedPath = join(directory, 'seed.json');
-  await writeFile(seedPath, JSON.stringify(seed));
+  await writeFile(seedPath, JSON.stringify(options.seed ?? seed));
+  const sitemap = options.sitemap ?? '<loc>https://example.com/</loc><loc>https://example.com/posts/example</loc>';
   const server = createServer((request, response) => {
-    if (request.url.startsWith('/_image?') || request.url.startsWith('/_emdash/api/media/file/')) {
+    const url = request.url ?? '/';
+    if (url.startsWith('/_image?') || url.startsWith('/_emdash/api/media/file/') || url.startsWith('/images/')) {
       response.writeHead(200, { 'content-type': 'image/webp' });
       response.end('image bytes');
-    } else if (request.url === '/sitemap.xml') {
-      response.end('<loc>https://example.com/</loc><loc>https://example.com/posts/example</loc>');
+    } else if (url === '/sitemap.xml') {
+      response.end(sitemap);
     } else {
-      response.end(render(request.url));
+      response.end(render(url.split('?')[0]));
     }
   });
   server.listen(0, '127.0.0.1');
@@ -84,6 +86,113 @@ test('rendered media checker loads raw byline avatars alongside responsive conte
     '<img data-byline-avatar src="/_emdash/api/media/file/avatar" alt="Author" class="w-10 h-10 rounded-full object-cover">');
   assert.equal(result.code, 0, result.output);
   assert.match(result.output, /6 loaded images, 2 responsive images, 2 matching preloads/);
+});
+
+test('rendered media checker rejects external Astro stylesheets and allows other stylesheets', async () => {
+  const blocked = await checkMedia(path => renderPreload(path) + renderImage(path) + '<link rel="stylesheet" href="/_astro/route.css">');
+  assert.equal(blocked.code, 1, blocked.output);
+  assert.match(blocked.output, /external Astro stylesheet/);
+  const allowed = await checkMedia(path => renderPreload(path) + renderImage(path) + '<link rel="stylesheet" href="https://fonts.example/a.css">');
+  assert.equal(allowed.code, 0, allowed.output);
+});
+
+const archiveSeed = { content: {
+  posts: [{ slug: 'example', status: 'published', data: { featured_image: { $media: { file: 'cover.webp', alt: 'Cover' } } } }],
+  projects: [{ slug: 'fixture', status: 'published', data: { featured_image: { $media: { file: 'cover.webp', alt: 'Project' } } } }],
+} };
+const archiveSitemap = '<loc>https://example.com/posts</loc><loc>https://example.com/posts/example</loc><loc>https://example.com/projects/fixture</loc>';
+
+function renderProject(priority = true, preload = true) {
+  const sizes = '(min-width: 1280px) 1200px, calc(100vw - 3rem)';
+  const image = `<img src="/_image?w=1280" width="1280" height="720" srcset="/_image?w=640 640w, /_image?w=1280 1280w" sizes="${sizes}" alt="Project" ${priority ? 'fetchpriority="high"' : ''}>`;
+  const link = `<link rel="preload" as="image" href="/_image?w=1280" imagesrcset="/_image?w=640 640w, /_image?w=1280 1280w" imagesizes="${sizes}">`;
+  return (preload ? link : '') + image;
+}
+
+function renderArchive(path, { postsPreload = true, projectPreload = true } = {}) {
+  if (path === '/posts') return (postsPreload ? renderPreload('/') : '') + renderImage('/');
+  if (path === '/projects/fixture') return renderProject(true, projectPreload);
+  return renderPreload(path) + renderImage(path);
+}
+
+test('rendered media checker verifies posts index and project hero preloads', async () => {
+  const result = await checkMedia(path => renderArchive(path), { seed: archiveSeed, sitemap: archiveSitemap });
+  assert.equal(result.code, 0, result.output);
+  assert.match(result.output, /3 responsive images, 3 matching preloads/);
+});
+
+test('rendered media checker rejects a missing posts index or project preload', async () => {
+  for (const options of [{ postsPreload: false }, { projectPreload: false }]) {
+    const result = await checkMedia(path => renderArchive(path, options), { seed: archiveSeed, sitemap: archiveSitemap });
+    assert.equal(result.code, 1, result.output);
+    assert.match(result.output, /missing LCP image preload/);
+  }
+});
+
+test('rendered media checker ignores an illustrated post outside the first seven on /posts', async () => {
+  const posts = Array.from({ length: 8 }, (_, index) => ({
+    slug: `post-${index + 1}`,
+    status: 'published',
+    data: index === 7
+      ? { featured_image: { id: 'late-cover' }, published_at: '2020-01-01T00:00:00.000Z' }
+      : { title: `Post ${index + 1}`, published_at: `2024-0${index + 1}-01T00:00:00.000Z` },
+  }));
+  const result = await checkMedia(() => '<p>Listing</p>', {
+    seed: { content: { posts } },
+    sitemap: '<loc>https://example.com/posts</loc>',
+  });
+  assert.equal(result.code, 0, result.output);
+  assert.match(result.output, /1 routes, 0 loaded images, 0 responsive images, 0 matching preloads/);
+});
+
+test('rendered media checker requires a featured preload on a garden home without a home page', async () => {
+  const gardenSeed = { content: { posts: archiveSeed.content.posts } };
+  const sitemap = '<loc>https://example.com/</loc><loc>https://example.com/posts/example</loc>';
+  const missing = await checkMedia(path => (path === '/' ? '' : renderPreload(path)) + renderImage(path), { seed: gardenSeed, sitemap });
+  assert.equal(missing.code, 1, missing.output);
+  assert.match(missing.output, /\/: missing LCP image preload/);
+  const present = await checkMedia(path => renderPreload(path) + renderImage(path), { seed: gardenSeed, sitemap });
+  assert.equal(present.code, 0, present.output);
+  const quiet = await checkMedia(() => '<p>No hero</p>', {
+    seed: { content: { posts: [{ slug: 'example', status: 'published', data: { title: 'Plain' } }] } },
+    sitemap: '<loc>https://example.com/</loc>',
+  });
+  assert.equal(quiet.code, 0, quiet.output);
+});
+
+test('rendered media checker requires about avatar priority and 500 by 500 dimensions', async () => {
+  const aboutSeed = { content: { pages: [{ slug: 'about', status: 'published', data: { title: 'About' } }] } };
+  const sitemap = '<loc>https://example.com/about</loc>';
+  const missing = await checkMedia(() => '<img src="/images/avatar.webp" alt="James Ryan">', { seed: aboutSeed, sitemap });
+  assert.equal(missing.code, 1, missing.output);
+  assert.match(missing.output, /\/about: avatar/);
+  for (const img of [
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high">',
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high" width="100">',
+  ]) {
+    const result = await checkMedia(() => img, { seed: aboutSeed, sitemap });
+    assert.equal(result.code, 1, result.output);
+    assert.match(result.output, /\/about: avatar width/);
+  }
+  for (const img of [
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high" width="500">',
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high" width="500" height="100">',
+  ]) {
+    const result = await checkMedia(() => img, { seed: aboutSeed, sitemap });
+    assert.equal(result.code, 1, result.output);
+    assert.match(result.output, /\/about: avatar height/);
+  }
+  const undecoded = await checkMedia(
+    () => '<img src="/images/avatar.webp" alt="James Ryan" width="500" height="500" fetchpriority="high">',
+    { seed: aboutSeed, sitemap },
+  );
+  assert.equal(undecoded.code, 1, undecoded.output);
+  assert.match(undecoded.output, /\/about: avatar decoding/);
+  const present = await checkMedia(
+    () => '<img src="/images/avatar.webp" alt="James Ryan" width="500" height="500" fetchpriority="high" decoding="async">',
+    { seed: aboutSeed, sitemap },
+  );
+  assert.equal(present.code, 0, present.output);
 });
 
 test('avatar exemption never hides unoptimized cards, EmDash images or seeded content', async () => {
