@@ -1,7 +1,10 @@
 ---
+import type { ComponentProps } from "astro/types";
 import SharedBase from "@jamesryan/ui/components/Base.astro";
 import UsermavenAnalytics from "../components/UsermavenAnalytics.astro";
 import "../styles/globals.css";
+
+type Props = ComponentProps<typeof SharedBase>;
 
 const props = Astro.props;
 ---

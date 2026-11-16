@@ -1,11 +1,13 @@
 ---
-import { IMAGE_SLOTS } from "@jamesryan/cms-helpers";
+import { IMAGE_SLOTS, resolveResponsiveImagePreload } from "@jamesryan/cms-helpers";
 import {
 	getEmDashCollection,
 	getTermsForEntries,
 	getSiteSettings,
 	getCollectionInfo,
 } from "emdash";
+import { getPublicOrigin } from "emdash/api/route-utils";
+import { getImage } from "astro:assets";
 import { Image } from "emdash/ui";
 import { getPublishedRoute } from "@jamesryan/cms-helpers";
 import Base from "../../layouts/Base.astro";
@@ -37,6 +39,12 @@ const hasMorePosts = posts.length > POSTS_PER_PAGE;
 
 // Find the first post with a featured image for the hero
 const featuredPost = visiblePosts.find((p) => p.data.featured_image);
+const preload = featuredPost?.data.featured_image
+	? await resolveResponsiveImagePreload(getImage, featuredPost.data.featured_image, {
+			origin: getPublicOrigin(Astro.url, Astro.locals.emdash?.config),
+			...IMAGE_SLOTS.featuredPost,
+		})
+	: undefined;
 const featuredIndex = featuredPost ? visiblePosts.indexOf(featuredPost) : -1;
 
 // Get remaining posts (exclude featured if found, limit to 6 for grid)
@@ -77,7 +85,7 @@ function formatDate(date: Date | null | undefined) {
 }
 ---
 
-<Base title="Blog" description={collection?.description || siteTagline}>
+<Base title="Blog" description={collection?.description || siteTagline} preloadImage={preload}>
 	<div class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16 sm:py-24">
 				<div class="space-y-24">
 					{/* Header / Intro */}

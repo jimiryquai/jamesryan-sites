@@ -21,6 +21,9 @@ export function createSiteConfig({
 		output: "server",
 		// Preserve inline spacing from Astro 6 across the compiler upgrade.
 		compressHTML: true,
+		build: {
+			inlineStylesheets: "always",
+		},
 		adapter: cloudflare({
 			inspectorPort: process.argv.includes("dev") ? inspectorPort : false
 		}),

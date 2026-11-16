@@ -114,18 +114,8 @@ const publishDate =
 	publishedTime={post.data.publishedAt?.toISOString() ?? null}
 	modifiedTime={post.data.updatedAt.toISOString()}
 	content={{ collection: "posts", id: post.data.id, slug }}
+	preloadImage={preload}
 >
-	{preload?.href && (
-		<link 
-			rel="preload" 
-			as="image" 
-			href={preload.href}
-			imagesrcset={preload.imagesrcset}
-			imagesizes={preload.imagesizes}
-			fetchpriority="high"
-			slot="links" 
-		/>
-	)}
 	<article class="mx-auto w-full max-w-7xl px-6 lg:px-10 py-16">
 		{/* Hero: Full-width featured image */}
 		{

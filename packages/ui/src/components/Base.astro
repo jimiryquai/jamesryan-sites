@@ -3,7 +3,7 @@ import {
 	getMenuWithCacheHint,
 	getSiteSettingsWithCacheHint,
 } from "emdash";
-import { resolveSiteIdentity } from "@jamesryan/cms-helpers";
+import { resolveSiteIdentity, type ResponsiveImagePreload } from "@jamesryan/cms-helpers";
 import Seo from "@jdevalk/astro-seo-graph/Seo.astro";
 import {
 	buildWebPage,
@@ -34,6 +34,7 @@ interface Props {
 	modifiedTime?: string | null;
 	content?: OgContent;
 	hideHeaderFooter?: boolean;
+	preloadImage?: ResponsiveImagePreload;
 }
 
 const {
@@ -48,6 +49,7 @@ const {
 	modifiedTime,
 	content,
 	hideHeaderFooter = false,
+	preloadImage,
 } = Astro.props;
 const settingsResult = hideHeaderFooter ? null : await getSiteSettingsWithCacheHint();
 const settings = settingsResult?.data;
@@ -237,6 +239,9 @@ const fragmentHtml = renderPageFragments(fragments);
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		{preloadImage?.href && (
+			<link rel="preload" as="image" href={preloadImage.href} imagesrcset={preloadImage.imagesrcset} imagesizes={preloadImage.imagesizes} fetchpriority="high" />
+		)}
 		<Seo
 			title={fullTitle}
 			description={resolvedDescription}

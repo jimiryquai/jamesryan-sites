@@ -74,10 +74,37 @@ test('image slots and responsive preload guards are wired across shared UI and b
     assert.ok(source.includes(`<Image {...IMAGE_SLOTS.${slot}}`), `${path}: missing image slot`);
     if (source.includes("avatarMediaId")) assert.match(source, /<img data-byline-avatar\s+src=\{`\/_emdash\/api\/media\/file\/\$\{credit.byline.avatarMediaId\}`\}/, path);
   }
-  for (const path of ['apps/marketing-site/src/pages/index.astro', 'apps/marketing-site/src/pages/posts/[slug].astro']) {
+  const base = await readFile(new URL('packages/ui/src/components/Base.astro', root), 'utf8');
+  assert.equal([...base.matchAll(/<link\b[^>]*rel="preload"[^>]*as="image"|<link\b[^>]*as="image"[^>]*rel="preload"/gs)].length, 1);
+  assert.match(base, /preloadImage\?\.href/);
+  assert.match(base, /href=\{preloadImage\.href\}/);
+  assert.match(base, /imagesrcset=\{preloadImage\.imagesrcset\}/);
+  assert.match(base, /imagesizes=\{preloadImage\.imagesizes\}/);
+  assert.match(base, /fetchpriority="high"/);
+  const heroRoutes = [
+    'apps/marketing-site/src/pages/index.astro',
+    'apps/marketing-site/src/pages/posts/index.astro',
+    'apps/marketing-site/src/pages/posts/[slug].astro',
+    'apps/marketing-site/src/pages/projects/[slug].astro',
+    'apps/digital-garden/src/pages/index.astro',
+    'apps/digital-garden/src/pages/posts/[slug].astro',
+    'apps/digital-garden/src/pages/projects/[slug].astro',
+  ];
+  for (const path of heroRoutes) {
     const source = await readFile(new URL(path, root), 'utf8');
-    assert.match(source, /preload\?\.href &&/, path);
-    assert.match(source, /imagesrcset=\{preload.imagesrcset\}/, path);
-    assert.match(source, /imagesizes=\{preload.imagesizes\}/, path);
+    assert.match(source, /preloadImage=\{/, path);
+    assert.doesNotMatch(source, /rel="preload"/, path);
+  }
+  for (const [path, slot] of [
+    ['apps/marketing-site/src/pages/posts/index.astro', 'featuredPost'],
+    ['apps/marketing-site/src/pages/projects/[slug].astro', 'projectHero'],
+    ['apps/digital-garden/src/pages/index.astro', 'featuredPost'],
+    ['apps/digital-garden/src/pages/posts/[slug].astro', 'postHero'],
+    ['apps/digital-garden/src/pages/projects/[slug].astro', 'projectHero'],
+  ]) {
+    const source = await readFile(new URL(path, root), 'utf8');
+    assert.match(source, /resolveResponsiveImagePreload/, path);
+    assert.match(source, /getPublicOrigin/, path);
+    assert.match(source, new RegExp(`IMAGE_SLOTS\\.${slot}`), path);
   }
 });
