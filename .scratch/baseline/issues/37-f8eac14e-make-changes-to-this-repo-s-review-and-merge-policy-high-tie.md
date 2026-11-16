@@ -12,10 +12,12 @@ This changes merge policy, so it is high under its own rule: James approves it.
 
 **Blocked by:** none.
 
-**Status:** ready-for-agent
+**Status:** in progress
 
 - [ ] `docs/agents/review.md`'s high row covers changes to `docs/agents/review.md`, `docs/agents/merging.md` and anything else that sets review, check or approver requirements, with the reason and James's attribution, and the medium row no longer includes them.
 - [ ] Nothing else in the medium or high policy changes (removed lines checked by the orchestrator).
 - [ ] The repo's checks pass, as `docs/agents/merging.md` and `AGENTS.md` define them.
 
 ## Comments
+
+**2026-11-16 Orchestrator:** Risk: high (changes `docs/agents/review.md` self-policy governing how this repo sets tiers, reviews and merges; self-policy changes require James's approval).
