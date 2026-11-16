@@ -129,6 +129,22 @@ test('rendered media checker rejects a missing posts index or project preload', 
   }
 });
 
+test('rendered media checker ignores an illustrated post outside the first seven on /posts', async () => {
+  const posts = Array.from({ length: 8 }, (_, index) => ({
+    slug: `post-${index + 1}`,
+    status: 'published',
+    data: index === 7
+      ? { featured_image: { id: 'late-cover' }, published_at: '2020-01-01T00:00:00.000Z' }
+      : { title: `Post ${index + 1}`, published_at: `2024-0${index + 1}-01T00:00:00.000Z` },
+  }));
+  const result = await checkMedia(() => '<p>Listing</p>', {
+    seed: { content: { posts } },
+    sitemap: '<loc>https://example.com/posts</loc>',
+  });
+  assert.equal(result.code, 0, result.output);
+  assert.match(result.output, /1 routes, 0 loaded images, 0 responsive images, 0 matching preloads/);
+});
+
 test('rendered media checker requires a featured preload on a garden home without a home page', async () => {
   const gardenSeed = { content: { posts: archiveSeed.content.posts } };
   const sitemap = '<loc>https://example.com/</loc><loc>https://example.com/posts/example</loc>';
@@ -150,6 +166,22 @@ test('rendered media checker requires about avatar priority and 500 by 500 dimen
   const missing = await checkMedia(() => '<img src="/images/avatar.webp" alt="James Ryan">', { seed: aboutSeed, sitemap });
   assert.equal(missing.code, 1, missing.output);
   assert.match(missing.output, /\/about: avatar/);
+  for (const img of [
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high">',
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high" width="100">',
+  ]) {
+    const result = await checkMedia(() => img, { seed: aboutSeed, sitemap });
+    assert.equal(result.code, 1, result.output);
+    assert.match(result.output, /\/about: avatar width/);
+  }
+  for (const img of [
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high" width="500">',
+    '<img src="/images/avatar.webp" alt="James Ryan" fetchpriority="high" width="500" height="100">',
+  ]) {
+    const result = await checkMedia(() => img, { seed: aboutSeed, sitemap });
+    assert.equal(result.code, 1, result.output);
+    assert.match(result.output, /\/about: avatar height/);
+  }
   const undecoded = await checkMedia(
     () => '<img src="/images/avatar.webp" alt="James Ryan" width="500" height="500" fetchpriority="high">',
     { seed: aboutSeed, sitemap },

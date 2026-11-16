@@ -55,6 +55,15 @@ test('featured preload omits missing and malformed media without requesting tran
   assert.equal(transforms.length, 0);
 });
 
+test('about avatar declares intrinsic size, high priority, and async decoding', async () => {
+  const source = await readFile(new URL('../src/pages/about.astro', import.meta.url), 'utf8');
+  const avatar = source.match(/<img\b[^>]*src="\/images\/avatar\.webp"[\s\S]*?\/>/);
+  assert.ok(avatar, 'about page is missing /images/avatar.webp');
+  for (const attribute of ['width="500"', 'height="500"', 'fetchpriority="high"', 'decoding="async"']) {
+    assert.ok(avatar[0].includes(attribute), attribute);
+  }
+});
+
 test('image slots and responsive preload guards are wired across shared UI and both apps', async () => {
   const root = new URL('../../../', import.meta.url);
   const slots = [

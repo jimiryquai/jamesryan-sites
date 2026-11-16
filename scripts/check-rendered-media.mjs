@@ -22,14 +22,26 @@ const publishedPosts = (seed.content.posts ?? []).filter(entry => entry.status =
 const home = (seed.content.pages ?? []).find(entry => entry.slug === 'home' && entry.status === 'published');
 const homeFeaturesPosts = home?.data.layout?.some(block =>
   block._type === 'posts' && (block.variant ?? 'featured-grid') === 'featured-grid');
-const illustratedPosts = publishedPosts.some(entry => entry.data.featured_image);
-if (homeFeaturesPosts && illustratedPosts) {
+function publishedTime(entry) {
+  const raw = entry.data?.published_at ?? entry.data?.publishedAt;
+  if (raw == null || raw === '') return null;
+  const time = typeof raw === 'number' ? raw : Date.parse(String(raw));
+  return Number.isNaN(time) ? null : time;
+}
+// Match POSTS_PER_PAGE in both blog indexes: only the newest seven can be the featured hero.
+const hasVisibleIllustratedPost = publishedPosts.slice().sort((left, right) => {
+  const leftTime = publishedTime(left);
+  const rightTime = publishedTime(right);
+  if (leftTime == null || rightTime == null) return 0;
+  return rightTime - leftTime;
+}).slice(0, 7).some(entry => entry.data.featured_image);
+if (homeFeaturesPosts && hasVisibleIllustratedPost) {
   heroSlots.set('/', IMAGE_SLOTS.featuredPost);
 }
-if (paths.has('/posts') && illustratedPosts) {
+if (paths.has('/posts') && hasVisibleIllustratedPost) {
   heroSlots.set('/posts', IMAGE_SLOTS.featuredPost);
 }
-if (!home && paths.has('/') && illustratedPosts) {
+if (!home && paths.has('/') && hasVisibleIllustratedPost) {
   heroSlots.set('/', IMAGE_SLOTS.featuredPost);
 }
 for (const [collection, entries] of Object.entries(seed.content)) {
@@ -126,13 +138,11 @@ for (const path of paths) {
     assert.ok(lcp, `${path}: missing responsive featured image`);
     assert.equal(attribute(lcp, 'sizes'), heroSlot.sizes, `${path}: featured image sizes differ from its slot`);
     assert.equal(attribute(lcp, 'fetchpriority'), 'high', `${path}: LCP image lacks high priority`);
-    if (path === '/' || path === '/posts' || path.startsWith('/posts/') || path.startsWith('/projects/')) {
-      const preload = preloads.find(tag => attribute(tag, 'href') === attribute(lcp, 'src'));
-      assert.ok(preload, `${path}: missing LCP image preload`);
-      assert.equal(attribute(preload, 'imagesrcset'), attribute(lcp, 'srcset'), `${path}: LCP preload srcset differs`);
-      assert.equal(attribute(preload, 'imagesizes'), attribute(lcp, 'sizes'), `${path}: LCP preload sizes differ`);
-      report.responsivePreloads++;
-    }
+    const preload = preloads.find(tag => attribute(tag, 'href') === attribute(lcp, 'src'));
+    assert.ok(preload, `${path}: missing LCP image preload`);
+    assert.equal(attribute(preload, 'imagesrcset'), attribute(lcp, 'srcset'), `${path}: LCP preload srcset differs`);
+    assert.equal(attribute(preload, 'imagesizes'), attribute(lcp, 'sizes'), `${path}: LCP preload sizes differ`);
+    report.responsivePreloads++;
   }
   report.routes.push({ path, originalAltValuesVerified: (expected.get(path) ?? []).length });
 }
