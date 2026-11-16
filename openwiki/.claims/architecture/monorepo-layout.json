@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "pageVersion": "sha256:c644341e4c33d1a077f65b885913320a39b2663c12f6cdc303dbef7f5ee9ae14",
+  "pageVersion": "sha256:937c5941dd1fa5393747b89dc62f2921de9ee2c14285bf58e4378a5b3214e72b",
   "claims": [
     {
       "id": "claim_9dff722b184f4bbdbea9763e5d07c605",
@@ -32,15 +32,15 @@
     },
     {
       "id": "claim_da6d9842cbaa4012836a5a8dba9f7a4c",
-      "statement": "Only the marketing app depends on the page builder and sandboxed AI comment moderation plugins, and its typecheck enforces page-builder seed parity before astro check.",
+      "statement": "Only the marketing app depends on the page builder and sandboxed AI comment moderation plugins, its typecheck enforces page-builder seed parity before astro check, and its test script enables --experimental-test-module-mocks.",
       "evidence": [
         {
           "resource": "repo://apps/digital-garden/package.json",
           "version": "repo-file-v1:sha256:6387f28b1c1dd0d48eb746fb1b732b10f526d3990de346f3b77ecd9f857c7cfb"
         },
         {
-          "resource": "repo://apps/marketing-site/package.json#L13-L16",
-          "version": "repo-lines-v1:sha256:9a5cdf9ef89a7c72f7f06ea02866c8a0c8d0eeef8a714f7d5840c20574556590:eyJzZWxlY3RlZExpbmVDb3VudCI6NCwiZmlyc3RTZWxlY3RlZExpbmVIYXNoIjoiNWZjNTJkNzZmODllMWJhMWM1ZmI5OWM5NDZkZWU5ZmVjZjhjY2ZlMTQyNmM4MTQ5MmI3OWQ4NzZhMDkzYzFjMCIsImxhc3RTZWxlY3RlZExpbmVIYXNoIjoiODczZDMyZjM2MzNlZTI4YTFmODJhZjNkZjBjMWYwNjBmM2IxOWZiN2ExODk1ZmZmOTdiZTFlOWQyMzYyZGZiZSIsInByZWNlZGluZ0NvbnRleHRMaW5lQ291bnQiOjMsInByZWNlZGluZ0NvbnRleHRIYXNoIjoiNDM0MGUyYjhhMjE4NmU5NWU4ODBjNWEyNGUxZTM4NDM3MGMzNWY0MTI2YjI2YTFmNmFkZmQxMWJmMGVlZGE5YSIsImZvbGxvd2luZ0NvbnRleHRMaW5lQ291bnQiOjMsImZvbGxvd2luZ0NvbnRleHRIYXNoIjoiYjZkMTAxZGY5ZTFjZTEzOGUzZjdlM2VhZGQ0M2YyMzFmOTAzYjlmMTY0MWRiYjU3Y2ZlMThmNDU5MjM3YWRjZiJ9"
+          "resource": "repo://apps/marketing-site/package.json#L13-L37",
+          "version": "repo-lines-v1:sha256:898c0f4420021364cc1b404fdd81f116081ae8bd5c8ee70e531b7907a00010a1:eyJzZWxlY3RlZExpbmVDb3VudCI6MjUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjVmYzUyZDc2Zjg5ZTFiYTFjNWZiOTljOTQ2ZGVlOWZlY2Y4Y2NmZTE0MjZjODE0OTJiNzlkODc2YTA5M2MxYzAiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjFjMGFjZTA4ZDQyNGRmYTFiMzRjMjJmN2NhMmQ1OWUxODAyYjUwYWM4ODE5MzRiMjQyZDZjYTUwOGNlNGQ3YzQiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjozLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjQzNDBlMmI4YTIxODZlOTVlODgwYzVhMjRlMWUzODQzNzBjMzVmNDEyNmIyNmExZjZhZGZkMTFiZjBlZWRhOWEiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6IjI2NTllYmJhYmRiZmNmMWFhMGYxZWFjMzBhNTBkYTViNzNmNjM0MTIxMGQ4NDUxY2IxNjJjMDI4MjY5YmI3M2IifQ"
         }
       ]
     },
@@ -56,11 +56,15 @@
     },
     {
       "id": "claim_b483c7bc3c434be0936811bc2df391aa",
-      "statement": "@jamesryan/cms-helpers ships TypeScript sources directly with exports for content helpers, og, reading-time, discovery, and taxonomy-archive, and its typecheck verifies embedded OG fonts are current.",
+      "statement": "@jamesryan/cms-helpers ships TypeScript sources directly with exports for content and responsive-image helpers, og, reading-time, discovery, and taxonomy-archive, and its typecheck verifies embedded OG fonts are current.",
       "evidence": [
         {
-          "resource": "repo://packages/cms-helpers/package.json#L3-L12",
-          "version": "repo-lines-v1:sha256:2bbb992a78ca737fef60eb851c760209f12e119d1a5992554fef3fb86ee857c2:eyJzZWxlY3RlZExpbmVDb3VudCI6MTAsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYjk1YWU4YmE4ZmZlOTM5YzliNmEyNmRiOTlmZmFhNzU4ZmIyODI5YmU1MTUwN2I5OGJjY2U2ZTU4YmY5NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjY0NDU1MWZkMTk2ODkxY2I1ZTYyMjI1NDRkYzA2ZDg4NDBmMDlkN2RmNzJiNDNjNmIwNzFkNTBmN2M4ZGIzY2QiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMDEzYTNiZjdmZWZjODFiN2Q2MGNkNWQ0ZDE1ZjhkZWM1YWU5OWRkYzU3MTNlZDQ1MTA5NjQxOGQxYTY1YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImVmNDA2OTI2MmE0ZmE1ZmRiZTcwZDRhNTAzNGMwZDZiNThhOGFkODVkYTkzYTcyZmMxZGJkYTRjZGYzZWNiNmUifQ"
+          "resource": "repo://packages/cms-helpers/package.json#L3-L17",
+          "version": "repo-lines-v1:sha256:6f18a35b31480932ab0cd25dfd35341a98b932f3f9a0893e289b72ab10f024bf:eyJzZWxlY3RlZExpbmVDb3VudCI6MTUsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjBjYjk1YWU4YmE4ZmZlOTM5YzliNmEyNmRiOTlmZmFhNzU4ZmIyODI5YmU1MTUwN2I5OGJjY2U2ZTU4YmY5NWQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRkNWNkMmZiNGYzZGY4ODQ1MTUyNTViMzk1MjNmMmY4YjU0NzJiZWVhOWY1NjZmZmNhMjA0ZGI4MDI1NjEwNDEiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjoyLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6IjlhMDEzYTNiZjdmZWZjODFiN2Q2MGNkNWQ0ZDE1ZjhkZWM1YWU5OWRkYzU3MTNlZDQ1MTA5NjQxOGQxYTY1YjUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjozLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImQwYzUzNmJmMTkwYzdiZWIxYjNjMmUwNzliMWExMDE4ZWZjMDc3ZTFmZDAxY2FmN2IwODIxZjlkMWZkZWM3YTkifQ"
+        },
+        {
+          "resource": "repo://packages/cms-helpers/src/index.ts#L1-L13",
+          "version": "repo-lines-v1:sha256:eeb63d5ee11645836636c2e3c8527727bdea54fa58d1bcea75ce1d414f379884:eyJzZWxlY3RlZExpbmVDb3VudCI6MTMsImZpcnN0U2VsZWN0ZWRMaW5lSGFzaCI6IjU1ODk1YWQ2Nzg1YmY4MWEwNzk0ZjJmOGNmMTEzMmQ2MDdkMjRlMmQ4YzgwM2UyNjNkNTE1MjJlOTg2YTA4NDQiLCJsYXN0U2VsZWN0ZWRMaW5lSGFzaCI6IjRmZjE0ZDcwMzE4Y2JmY2NkNmViYjI0NDZhZThmZDBiYWZjMjU4Yzc5YzdkZTRjN2JlMTc1MTE5OWIzYjU1YmIiLCJwcmVjZWRpbmdDb250ZXh0TGluZUNvdW50IjowLCJwcmVjZWRpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUiLCJmb2xsb3dpbmdDb250ZXh0TGluZUNvdW50IjowLCJmb2xsb3dpbmdDb250ZXh0SGFzaCI6ImUzYjBjNDQyOThmYzFjMTQ5YWZiZjRjODk5NmZiOTI0MjdhZTQxZTQ2NDliOTM0Y2E0OTU5OTFiNzg1MmI4NTUifQ"
         }
       ]
     },
@@ -87,6 +91,6 @@
   ],
   "verification": {
     "by": "openwiki/0.9.0",
-    "at": "2026-11-13T16:28:46.089Z"
+    "at": "2026-11-16T14:08:20.656Z"
   }
 }
