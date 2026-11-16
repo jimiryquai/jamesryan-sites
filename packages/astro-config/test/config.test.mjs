@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { mock, test } from 'node:test';
-import { registerHooks } from 'node:module';
+import { registerHooks, createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 // Node cannot mock an uncompiled TypeScript package under node_modules.
 const pluginHook = registerHooks({ load(url, context, next) {
@@ -44,7 +44,7 @@ test('shared config preserves deployment differences and resolves plugin assets 
     assert.equal(config.adapter.options.inspectorPort, inspectorPort);
     assert.deepEqual(config.redirects, redirects);
     assert.deepEqual(config.fonts[1], { provider: 'google', cssVariable: '--font-display', ...displayFont });
-    assert.deepEqual(config.image.domains, [new URL(site).hostname, `staging.${new URL(site).hostname}`, 'localhost']);
+    assert.deepEqual(config.image.domains, [new URL(site).hostname, `staging.${new URL(site).hostname}`, 'localhost', '127.0.0.1']);
     const emdash = config.integrations.find(item => item.name === 'emdash').options;
     assert.deepEqual(emdash.sandboxed, [sandboxed]);
     assert.equal(emdash.plugins.at(-1), extra);
@@ -91,4 +91,20 @@ test('both app configs delegate platform wiring to the shared factory with only 
     assert.deepEqual(config.redirects, app === 'marketing-site' ? undefined : { '/blog': '/' });
     assert.equal(emdash.plugins[0].adminEntry, new URL(`../../../apps/${app}/node_modules/@jdevalk/emdash-plugin-seo/src/admin.tsx`, import.meta.url).href);
   }
+});
+
+
+test('both apps declare local Images bindings in production and staging with tracked Env types', () => {
+  const require = createRequire(new URL('../../../apps/marketing-site/package.json', import.meta.url));
+  const { unstable_readConfig: readConfig } = require('wrangler');
+  for (const app of ['marketing-site', 'digital-garden']) {
+    for (const env of [undefined, 'staging']) {
+      const config = readConfig({ config: new URL(`../../../apps/${app}/wrangler.jsonc`, import.meta.url).pathname, env }, { hideWarnings: true });
+      assert.equal(config.images.binding, 'IMAGES', `${app} ${env ?? 'production'}`);
+      assert.notEqual(config.images.remote, true);
+    }
+  }
+  const types = readFileSync(new URL('../../../apps/marketing-site/worker-configuration.d.ts', import.meta.url), 'utf8');
+  assert.match(types, /interface __BaseEnv_Env \{[^}]*IMAGES: ImagesBinding;/s);
+  assert.match(types, /interface StagingEnv \{[^}]*IMAGES: ImagesBinding;/s);
 });
